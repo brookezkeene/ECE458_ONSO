@@ -1,0 +1,27 @@
+stages:
+        - test
+        - build
+        - deploy
+
+
+test:
+        stage: test
+        script:
+                - echo "Running test"
+
+
+build:
+        stage: build
+        script:
+                - echo "Building the app"
+
+
+deploy_staging:
+        stage: deploy
+        script:
+                - echo "Deploy to staging server"
+        environment:
+                name: staging
+                url: https://replaceme.example.com
+        only:
+                - feature/deployments
