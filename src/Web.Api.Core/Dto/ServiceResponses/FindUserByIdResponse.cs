@@ -3,15 +3,15 @@ using Web.Api.Core.Domain.Entities;
 
 namespace Web.Api.Core.Dto.ServiceResponses
 {
-    public class FindUserByIdResponse : BaseResponse
+    public class FindUserByIdResponse : ServiceResponseBase
     {
         public User User { get; }
 
-        public FindUserByIdResponse(IEnumerable<Error> errors) : base(false, errors) { }
+        public FindUserByIdResponse(IEnumerable<Error> errors) : base(errors) { }
 
-        public FindUserByIdResponse(Error error) : base(false, new[] { error }) { }
+        public FindUserByIdResponse(params Error[] errors) : base(errors) { }
 
-        public FindUserByIdResponse(User user) : base(true, null) => User = user;
+        public FindUserByIdResponse(User user) : base(true) => User = user;
 
     }
 }

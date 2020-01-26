@@ -2,6 +2,6 @@
 {
     public class InvalidPageSize : Error
     {
-        public InvalidPageSize(string description = null) : base(description) { }
+        public InvalidPageSize(string description = "Invalid value for page size parameter") : base("400", description) { }
     }
 }

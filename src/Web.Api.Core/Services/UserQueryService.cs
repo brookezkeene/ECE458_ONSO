@@ -4,7 +4,7 @@ using Web.Api.Core.Dto.Errors;
 using Web.Api.Core.Dto.ServiceRequests;
 using Web.Api.Core.Dto.ServiceResponses;
 using Web.Api.Core.Interfaces;
-using Web.Api.Core.Interfaces.Repositories;
+using Web.Api.Core.Interfaces.Gateways.Repositories;
 
 namespace Web.Api.Core.Services
 {
@@ -20,7 +20,7 @@ namespace Web.Api.Core.Services
 
         public async Task<FindUserByIdResponse> Handle(FindUserByIdRequest request)
         {
-            var user = await _userRepository.FindById(request.UserId);
+            var user = await _userRepository.GetUserByIdAsync(request.UserId);
             return user != null ? new FindUserByIdResponse(user) : new FindUserByIdResponse(new UserNotFound());
         }
 
@@ -29,8 +29,8 @@ namespace Web.Api.Core.Services
             if (request.PageSize <= 0) return new QueryAllUsersResponse(new InvalidPageSize());
 
             var users = request.PageSize.HasValue
-                ? await _userRepository.QueryAll(request.PageSize)
-                : await _userRepository.QueryAll();
+                ? await _userRepository.GetAllUsersAsync(request.PageSize.Value)
+                : await _userRepository.GetAllUsersAsync();
             return new QueryAllUsersResponse(users);
 
         }

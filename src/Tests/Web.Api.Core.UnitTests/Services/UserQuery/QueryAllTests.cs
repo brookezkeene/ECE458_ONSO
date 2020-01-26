@@ -4,7 +4,7 @@ using Moq;
 using Web.Api.Core.Domain.Entities;
 using Web.Api.Core.Dto.Errors;
 using Web.Api.Core.Dto.ServiceRequests;
-using Web.Api.Core.Interfaces.Repositories;
+using Web.Api.Core.Interfaces.Gateways.Repositories;
 using Web.Api.Core.Services;
 using Xunit;
 
@@ -30,7 +30,7 @@ namespace Web.Api.Core.UnitTests.Services.UserQuery
 
             var mockUserRepository = new Mock<IUserRepository>();
             mockUserRepository
-                .Setup(repo => repo.QueryAll())
+                .Setup(repo => repo.GetAllUsersAsync())
                 .ReturnsAsync(allUsers);
 
             var service = new UserQueryService(mockUserRepository.Object);
@@ -45,15 +45,15 @@ namespace Web.Api.Core.UnitTests.Services.UserQuery
         {
             var mockUserRepository = new Mock<IUserRepository>();
             mockUserRepository
-                .Setup(repo => repo.QueryAll(It.IsInRange(int.MinValue, 0, Range.Inclusive)));
+                .Setup(repo => repo.GetAllUsersAsync(It.IsInRange(int.MinValue, 0, Range.Inclusive)));
 
             var service = new UserQueryService(mockUserRepository.Object);
 
             var response1 = await service.Handle(new QueryAllUsersRequest(0));
             var response2 = await service.Handle(new QueryAllUsersRequest(-100));
 
-            Assert.False(response1.Success);
-            Assert.False(response2.Success);
+            Assert.False(response1.Succeeded);
+            Assert.False(response2.Succeeded);
             Assert.Contains(response1.Errors, error => error is InvalidPageSize);
             Assert.Contains(response2.Errors, error => error is InvalidPageSize);
         }
@@ -66,14 +66,14 @@ namespace Web.Api.Core.UnitTests.Services.UserQuery
                 .Take(pageSize);
             var mockUserRepository = new Mock<IUserRepository>();
             mockUserRepository
-                .Setup(repo => repo.QueryAll(It.IsInRange(1, int.MaxValue, Range.Inclusive)))
+                .Setup(repo => repo.GetAllUsersAsync(It.IsInRange(1, int.MaxValue, Range.Inclusive)))
                 .ReturnsAsync(limitedUsers);
 
             var service = new UserQueryService(mockUserRepository.Object);
 
             var response = await service.Handle(new QueryAllUsersRequest(pageSize));
 
-            Assert.True(response.Success);
+            Assert.True(response.Succeeded);
             Assert.Equal(pageSize, response.Users.Count());
         }
     }

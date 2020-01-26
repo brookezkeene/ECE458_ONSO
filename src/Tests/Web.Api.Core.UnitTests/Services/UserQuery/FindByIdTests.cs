@@ -2,7 +2,7 @@
 using Web.Api.Core.Domain.Entities;
 using Web.Api.Core.Dto.Errors;
 using Web.Api.Core.Dto.ServiceRequests;
-using Web.Api.Core.Interfaces.Repositories;
+using Web.Api.Core.Interfaces.Gateways.Repositories;
 using Web.Api.Core.Services;
 using Xunit;
 
@@ -16,7 +16,7 @@ namespace Web.Api.Core.UnitTests.Services.UserQuery
             const string id = "foo-id";
             var mockUserRepository = new Mock<IUserRepository>();
             mockUserRepository
-                .Setup(repo => repo.FindById(id))
+                .Setup(repo => repo.GetUserByIdAsync(id))
                 .ReturnsAsync(new User(null, null, null, id, null));
 
             var service = new UserQueryService(mockUserRepository.Object);
@@ -32,14 +32,14 @@ namespace Web.Api.Core.UnitTests.Services.UserQuery
             const string id = "foo-id";
             var mockUserRepository = new Mock<IUserRepository>();
             mockUserRepository
-                .Setup(repo => repo.FindById(id))
+                .Setup(repo => repo.GetUserByIdAsync(id))
                 .ReturnsAsync(new User(null, null, null, id, null));
 
             var service = new UserQueryService(mockUserRepository.Object);
 
             var response = await service.Handle(new FindUserByIdRequest(id));
 
-            Assert.True(response.Success);
+            Assert.True(response.Succeeded);
         }
 
         [Fact]
@@ -48,7 +48,7 @@ namespace Web.Api.Core.UnitTests.Services.UserQuery
             const string id = "nonexistent";
             var mockUserRepository = new Mock<IUserRepository>();
             mockUserRepository
-                .Setup(repo => repo.FindById(id))
+                .Setup(repo => repo.GetUserByIdAsync(id))
                 .ReturnsAsync(() => null);
 
             var service = new UserQueryService(mockUserRepository.Object);
@@ -64,14 +64,14 @@ namespace Web.Api.Core.UnitTests.Services.UserQuery
             const string id = "nonexistent";
             var mockUserRepository = new Mock<IUserRepository>();
             mockUserRepository
-                .Setup(repo => repo.FindById(id))
+                .Setup(repo => repo.GetUserByIdAsync(id))
                 .ReturnsAsync(() => null);
 
             var service = new UserQueryService(mockUserRepository.Object);
 
             var response = await service.Handle(new FindUserByIdRequest(id));
 
-            Assert.False(response.Success);
+            Assert.False(response.Succeeded);
         }
 
         [Fact]
@@ -80,7 +80,7 @@ namespace Web.Api.Core.UnitTests.Services.UserQuery
             const string id = "nonexistent";
             var mockUserRepository = new Mock<IUserRepository>();
             mockUserRepository
-                .Setup(repo => repo.FindById(id))
+                .Setup(repo => repo.GetUserByIdAsync(id))
                 .ReturnsAsync(() => null);
 
             var service = new UserQueryService(mockUserRepository.Object);
