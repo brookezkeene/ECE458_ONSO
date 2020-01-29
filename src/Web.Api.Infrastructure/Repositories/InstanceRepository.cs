@@ -1,13 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Web.Api.Common;
+using Web.Api.Common.Extensions;
+using Web.Api.Infrastructure.DbContexts;
+using Web.Api.Infrastructure.Entities;
+using Web.Api.Infrastructure.Repositories.Interfaces;
 
-namespace Web.Api.Infrastructure
+namespace Web.Api.Infrastructure.Repositories
 {
     public class InstanceRepository : IInstanceRepository
     {
@@ -29,11 +31,12 @@ namespace Web.Api.Infrastructure
                 .AsNoTracking()
                 .ToListAsync();
 
-            pagedList.Data.AddRange(instances);
+            pagedList.AddRange(instances);
             pagedList.TotalCount = await _dbContext.Instances
                 .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
                 .CountAsync();
             pagedList.PageSize = pageSize;
+            pagedList.CurrentPage = page;
 
             return pagedList;
         }

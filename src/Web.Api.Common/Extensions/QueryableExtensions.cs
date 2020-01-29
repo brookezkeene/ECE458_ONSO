@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 
-namespace Web.Api.Infrastructure
+namespace Web.Api.Common.Extensions
 {
     public static class QueryableExtensions
     {
@@ -27,8 +25,8 @@ namespace Web.Api.Infrastructure
             }
 
             query = orderByDescending
-                ? query.OrderByDescending(orderBy)
-                : query.OrderBy(orderBy);
+                ? Queryable.OrderByDescending<T, TKey>(query, orderBy)
+                : Queryable.OrderBy<T, TKey>(query, orderBy);
 
             return query.Skip((page - 1) * pageSize)
                 .Take(pageSize);

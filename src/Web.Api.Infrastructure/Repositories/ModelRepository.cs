@@ -4,8 +4,12 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Web.Api.Common;
+using Web.Api.Common.Extensions;
+using Web.Api.Infrastructure.DbContexts;
+using Web.Api.Infrastructure.Entities;
+using Web.Api.Infrastructure.Repositories.Interfaces;
 
-namespace Web.Api.Infrastructure
+namespace Web.Api.Infrastructure.Repositories
 {
     public class ModelRepository : IModelRepository
     {
@@ -27,11 +31,12 @@ namespace Web.Api.Infrastructure
                 .AsNoTracking()
                 .ToListAsync();
 
-            pagedList.Data.AddRange(models);
+            pagedList.AddRange(models);
             pagedList.TotalCount = await _dbContext.Models
                 .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
                 .CountAsync();
             pagedList.PageSize = pageSize;
+            pagedList.CurrentPage = page;
 
             return pagedList;
         }

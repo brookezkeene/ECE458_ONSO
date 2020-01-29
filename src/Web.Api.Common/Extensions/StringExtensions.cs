@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Web.Api.Infrastructure
+namespace Web.Api.Common.Extensions
 {
     public static class StringExtensions
     {
