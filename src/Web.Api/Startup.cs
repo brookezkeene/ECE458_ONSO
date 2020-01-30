@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SpaServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using VueCliMiddleware;
 using Web.Api.Extensions;
 
 namespace Web.Api
@@ -28,6 +30,8 @@ namespace Web.Api
         {
             services.ConfigureCoreServices()
                 .ConfigureDbContext();
+
+            services.AddSpaStaticFiles(options => options.RootPath = "VueClient/dist");
 
             services.AddControllers();
 
@@ -50,6 +54,8 @@ namespace Web.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseSpaStaticFiles();
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -59,6 +65,14 @@ namespace Web.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                endpoints.MapToVueCliProxy(
+                    "{*path}",
+                    new SpaOptions {SourcePath = "VueClient"},
+                    npmScript: System.Diagnostics.Debugger.IsAttached ? "serve" : null,
+                    regex: "Compiled successfully",
+                    forceKill: true
+                    );
             });
         }
     }

@@ -11,9 +11,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.Api.Core", "Web.Api.Cor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.Api.Infrastructure", "Web.Api.Infrastructure\Web.Api.Infrastructure.csproj", "{2614ADC2-CB7C-48DE-980F-B216BA4D19C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Api", "Web.Api\Web.Api.csproj", "{1D7F2C48-24F2-46FA-890B-3C74E47AC285}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.Api", "Web.Api\Web.Api.csproj", "{1D7F2C48-24F2-46FA-890B-3C74E47AC285}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Api.Common", "Web.Api.Common\Web.Api.Common.csproj", "{1F98C748-C334-4392-9741-C626313AAE93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.Api.Common", "Web.Api.Common\Web.Api.Common.csproj", "{1F98C748-C334-4392-9741-C626313AAE93}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7BD310C7-7ABE-4C54-B525-E61A8038EE09}"
+	ProjectSection(SolutionItems) = preProject
+		Dockerfile = Dockerfile
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

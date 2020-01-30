@@ -10,9 +10,6 @@ build:
     - cd src
     - dotnet restore
     - dotnet build
-    - cd VueClient
-    - npm install
-    - npm run build
 
 
 test:
