@@ -31,6 +31,7 @@ test:
 deploy_staging:
   stage: deploy
   script:
+    - chmod +x script.sh
     - ./deploy.sh
   environment:
     name: staging
