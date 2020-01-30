@@ -68,12 +68,13 @@ namespace Web.Api
 
                 endpoints.MapToVueCliProxy(
                     "{*path}",
-                    new SpaOptions {SourcePath = "VueClient"},
+                    new SpaOptions { SourcePath = "VueClient" },
                     npmScript: System.Diagnostics.Debugger.IsAttached ? "serve" : null,
                     regex: "Compiled successfully",
                     forceKill: true
                     );
             });
         }
+
     }
 }
