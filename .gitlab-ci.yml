@@ -36,7 +36,7 @@ deploy_staging:
     - docker build -t $CI_PROJECT_PATH -f ./src/Dockerfile .
     - docker tag $CI_PROJECT_PATH $CI_REGISTRY_IMAGE:latest
     - docker push $CI_REGISTRY_IMAGE
-    - ssh vcm@vcm-12801.vm.duke.edu docker run -d -p 80:80 $CI_REGISTRY_IMAGE
+    - ssh vcm@vcm-12801.vm.duke.edu sudo docker run -d -p 80:80 $CI_REGISTRY_IMAGE:latest
   environment:
     name: staging
     url: http://vcm-12801.vm.duke.edu/
