@@ -7,18 +7,13 @@ stages:
   - deploy
 
 
-build_dotnet:
+build:
   stage: build
   script:
     - cd src
     - dotnet restore
     - dotnet build
-
-
-build_js:
-  stage: build
-  script:
-    - cd src/VueClient
+    - cd VueClient
     - npm install
     - npm run build
 
@@ -29,8 +24,8 @@ test:
     - cd src
     - dotnet test
   dependencies:
-    - build_dotnet
-    - build_js
+    - build
+    - build
 
 
 deploy_staging:
