@@ -33,7 +33,7 @@ deploy_staging:
   script:
     - chmod +x ./deploy.sh
     - docker info
-    - docker build -t $CI_PROJECT_PATH ./src/Dockerfile
+    - docker build -t $CI_PROJECT_PATH -f ./src/Dockerfile .
     - docker tag $CI_PROJECT_PATH $CI_REGISTRY_IMAGE:latest
     - docker push $CI_REGISTRY_IMAGE
   environment:
