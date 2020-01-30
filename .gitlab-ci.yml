@@ -25,7 +25,6 @@ test:
     - dotnet test
   dependencies:
     - build
-    - build
 
 
 deploy_staging:
