@@ -31,7 +31,8 @@ test:
     - cd src
     - dotnet test
   dependencies:
-    - build
+    - build_dotnet
+    - build_js
 
 
 deploy_staging:
