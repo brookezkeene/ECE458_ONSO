@@ -31,9 +31,8 @@ test:
 deploy_staging:
   stage: deploy
   script:
-    - chmod +x script.sh
+    - chmod +x ./deploy.sh
     - ./deploy.sh
   environment:
     name: staging
     url: http://vcm-12801.vm.duke.edu/
-  when: manual
