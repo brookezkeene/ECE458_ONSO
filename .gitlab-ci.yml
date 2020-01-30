@@ -34,3 +34,4 @@ deploy_staging:
   environment:
     name: staging
     url: http://vcm-12801.vm.duke.edu/
+  only: dev
