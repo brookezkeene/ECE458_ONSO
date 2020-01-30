@@ -1,12 +1,15 @@
 image: mcr.microsoft.com/dotnet/core/sdk:3.1-alpine
 
+before_script:
+  - docker login -u ${REGISTRY_LOGIN} -p ${REGISTRY_PASSWORD} ${REGISTRY_URL}
+
 stages:
   - build
   - test
   - deploy
 
 
-build:
+build_dotnet:
   stage: build
   script:
     - cd src
@@ -14,19 +17,28 @@ build:
     - dotnet build
 
 
+build_js:
+  stage: build
+  script:
+    - cd src/VueClient
+    - npm install
+    - npm run build
+
+
 test:
   stage: test
   script:
     - cd src
     - dotnet test
+  dependencies:
+    - build
 
 
 deploy_staging:
   stage: deploy
   script:
-    - echo "Deploy to staging server"
+    - ./deploy.sh
   environment:
     name: staging
-    url: https://replaceme.example.com
-  only:
-    - feature/deployments
+    url: http://vcm-12801.vm.duke.edu/
+  when: manual
