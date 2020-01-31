@@ -41,7 +41,7 @@
                     <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="primary" text @click="close">Cancel</v-btn>
-                    <v-btn color="primary" text @click="save">Save</v-btn>
+                    <v-btn color="primary" text @click="save">Creae User</v-btn>
                     </v-card-actions>
                 </v-dialog>
             </v-toolbar>
@@ -109,9 +109,9 @@ import UserForm from "./UserForm"
       },
 
       save () {
-        if (this.editedIndex > -1) {
+        if (this.editedIndex > -1 && confirm('This will send an email to the new user to set up their account')) {
           Object.assign(this.users[this.editedIndex], this.editedItem)
-        } else {
+        } else if(confirm('This will send an email to the new user to set up their account')) {
           this.users.push(this.editedItem)
         }
         this.close()

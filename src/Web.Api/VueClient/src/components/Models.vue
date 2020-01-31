@@ -37,11 +37,11 @@
                 <v-btn color = "primary" class="mb-2" v-on="on">Add Model</v-btn>
               </template>
             <v-card>
-              <model-edit v-bind:editedItem="editedItem" v-bind:models = "models"></model-edit>          
+              <model-edit v-bind:editedItem="editedItem" v-bind:models="models"></model-edit>          
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+                  <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
+                  <v-btn color="blue darken-1" text @click="save">Save</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -61,6 +61,14 @@
             </v-dialog>
          </div>
 
+      </template>
+
+      <template v-slot:item.coloricon="{ item }">
+        <v-icon
+          class="mr-2"
+          :color=item.displayColor>
+          mdi-circle
+        </v-icon>
       </template>
 
       <template v-slot:item.action="{ item }">
@@ -115,7 +123,7 @@ import ModelEdit from "./ModelEdit"
           value: 'vendor' },
           { text: 'Model Number', value: 'modelNumber' },
           { text: 'Height', value: 'height' },
-          { text: 'Display Color', value: 'displayColor' },
+          { text: 'Display Color', value: 'coloricon', sortable: false },
           { text: 'Ethernet Ports', value: 'ethernetPorts' },
           { text: 'Power Ports', value: 'powerPorts' },
           { text: 'CPU', value: 'cpu' },
@@ -209,7 +217,7 @@ import ModelEdit from "./ModelEdit"
       },
       closeDetail () {
         this.detailsDialog = false;
-      }
+      },
     },
   }
 </script>

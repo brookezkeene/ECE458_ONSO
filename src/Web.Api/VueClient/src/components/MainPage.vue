@@ -21,6 +21,7 @@
                                 Users
                             </v-tab>
                             <v-tab ripple>
+                                Import/Export
                             </v-tab>
                             <v-tab-item>
                                 <Models />
@@ -29,10 +30,13 @@
                                 <Instances />
                             </v-tab-item>
                             <v-tab-item>
-                                <!-- For Racks! -->
+                                <Racks />
                             </v-tab-item>
                             <v-tab-item>
                                 <Users />
+                            </v-tab-item>
+                            <v-tab-item>
+                                <ImportFile />
                             </v-tab-item>
                         </v-tabs>
                     </v-container>
@@ -45,6 +49,9 @@
 import Users from '@/components/Users';
 import Instances from '@/components/Instances';
 import Models from '@/components/Models';
+import ImportFile from '@/components/ImportFile';
+import Racks from '@/components/Racks';
+
 
 export default {
     
@@ -52,6 +59,8 @@ export default {
         Users, 
         Instances,
         Models,
+        ImportFile,
+        Racks,
     },
     
 }
