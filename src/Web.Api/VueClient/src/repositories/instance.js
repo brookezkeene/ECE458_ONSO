@@ -27,7 +27,7 @@ const mockInstances = [
 	},
 	{
 		"id": 2,
-		"l": {
+		"model": {
 			"id": 1,
 			"vendor": "Dell",
 			"modelNumber": "R710",

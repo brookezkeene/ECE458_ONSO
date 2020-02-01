@@ -1,59 +1,71 @@
 <!--PUT <p style="page-break-before: always;">&nbsp;</p> 
 BEFORE AND AFTER CALLING THIS COMPONENT-->
 <template>
-  <v-card>  
-    <table id="table">
-        <!--Labeling the titles of the table-->
-        <thead>
-            <tr>
-            <th v-bind:style="borderColor">{{"U"}}</th>
-            <th v-bind:style="borderColor">{{"Rack Instance: B12"}}</th>
-            <th v-bind:style="borderColor">{{"U"}}</th>
-            </tr>
-        </thead>
-        <!--Filling each cell in the body of the table-->
-        <tbody>
-            <tr v-for="row in rows" v-bind:key="row">
-                <td v-bind:style="row.numStyle">
-                    {{row.rackU}} </td>
-                <td v-bind:style="row.style">
-                    {{row.model}}
-                </td>
-                <td v-bind:style="row.numStyle"> 
-                    {{row.rackU}} </td>
-            </tr>
-        </tbody>
-    </table>
-  </v-card>
+    <v-container v-if="!loading">
+        <v-row v-for="row in racksByRow" v-bind:key="row.rowLetter">
+            <v-col v-for="rack in row.racks" v-bind:key="rack.address">
+                <table id="table">
+                    <!--Labeling the titles of the table-->
+                    <thead>
+                        <tr>
+                            <th v-bind:style="borderColor">U</th>
+                            <th v-bind:style="borderColor">{{rack.address}}</th>
+                            <th v-bind:style="borderColor">U</th>
+                        </tr>
+                    </thead>
+                    <!--Filling each cell in the body of the table-->
+                    <tbody>
+                        <tr v-for="slot in rack.slots" v-bind:key="slot.rackU">
+                            <td style="color: white; backgroundColor: black;">
+                                {{ slot.rackU }}
+                            </td>
+                            <td v-bind:style="slot.style">
+                                {{ slot.value }}
+                            </td>
+                            <td style="color: white; backgroundColor: black;">
+                                {{ slot.rackU }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script>
+    import rowsOfRacks from '@/repositories/mock-racks-by-rows';
   export default {
-
-    inject: ['instanceRepository'],
+    inject: ['rackRepository'],
     el: '#secondTable',
     data () {
-        return{
-        instances: [],
-        loading: true,
-        search: '',
-        firstUser: null,
-        borderColor: {color: 'white', backgroundColor: 'black'},
-        rows: [],
-        styleObject: {
-        backgroundColor: 'red',
-        fontSize: '13px'      
-    }
+        return {
+            racks: [],
+            racksByRow: rowsOfRacks,
+            loading: true,
+            search: '',
+            firstUser: null,
+            borderColor: {color: 'white', backgroundColor: 'black'},
+            rows: [],
+            styleObject: {
+            backgroundColor: 'red',
+            fontSize: '13px'      
+        }
     }},
     async created () {
-        this.instances = await this.instanceRepository.list();
-        this.firstUser = await this.instanceRepository.find(1);
-        this.loading = false;
-        this.createRows();
-        this.fillRows();
+        this.fetchRacks();
+        //this.createRows();
+        //this.fillRows();
     },
-
     methods: {
+        fetchRacks() {
+            const start = this.$route.query.start;
+            const end = this.$route.query.end;
+            this.rackRepository.findInRange(start, end).then((response) => {
+                this.racks = response;
+                this.loading = false;
+            });
+        },
         createRows () {
             var i;
             for(i = 0; i < 42; i++){
