@@ -154,7 +154,7 @@
           { text: 'Power Ports', value: 'model.powerPorts', },
           { text: 'CPU', value: 'model.cpu', },
           { text: 'Memory', value: 'model.memory', },
-          { text: 'Storage', value: 'model.storage', },
+          { text: 'Storage', value: 'model.storage', }, 
 
 
           { text: 'Hostname', value: 'hostname' },
