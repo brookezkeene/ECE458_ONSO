@@ -1,6 +1,7 @@
 <template>
     <v-container>
         <div v-if="!loading">
+            <v-card-title>Model {{id}} details</v-card-title>
             <!-- TODO: convert to simple table (maybe?) -->
             <v-row no-gutters v-for="(value, name, index) in model" v-bind:key="name">
                 <v-col>{{ index }}</v-col>
@@ -10,10 +11,13 @@
 
             <v-spacer />
 
-            <!-- TODO: insert table of instances of this model -->
+
+
+              <!-- TODO: insert table of instances of this model -->
             <!-- <v-row no-gutters v-for="(instances) in model" v-bind:key="instances">
         <v-col>{{ instances }}</v-col>
     </v-row> -->
+            <a href="javascript:history.go(-1)"> Go Back</a>
         </div>
     </v-container>
 </template>

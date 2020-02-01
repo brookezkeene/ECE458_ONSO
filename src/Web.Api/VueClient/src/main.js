@@ -8,7 +8,6 @@ import serviceContainer from './service-container';
 Vue.config.productionTip = false;
 Vue.use(vuetify);
 Vue.use(VuetifyDialog);
-
 Vue.config.productionTip = false
 
 new Vue({
