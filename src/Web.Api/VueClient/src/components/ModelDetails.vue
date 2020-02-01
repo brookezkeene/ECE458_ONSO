@@ -13,43 +13,41 @@
 
 
 
-              <!-- TODO: insert table of instances of this model -->
+            <!-- TODO: insert table of instances of this model -->
             <!-- <v-row no-gutters v-for="(instances) in model" v-bind:key="instances">
-        <v-col>{{ instances }}</v-col>
-    </v-row> -->
+                <v-col>{{ instances }}</v-col>
+            </v-row> -->
             <a href="javascript:history.go(-1)"> Go Back</a>
         </div>
     </v-container>
 </template>
 
-<script>
-export default {
-    name: 'model-details',
-    inject: ['modelRepository'],
-    props: ['id'],
-    data () {
-        return {
-            loading: false,
-            model: {
-                vendor: '',
-                modelNumber: 'foo',
-            }
-        };
-    },
-    created() {
-        this.fetchModel();
-    },
-    watch: {
-        id: function() {
+<script>export default {
+        name: 'model-details',
+        inject: ['modelRepository'],
+        props: ['id'],
+        data() {
+            return {
+                loading: false,
+                model: {
+                    vendor: '',
+                    modelNumber: 'foo',
+                }
+            };
+        },
+        created() {
             this.fetchModel();
+        },
+        watch: {
+            id: function () {
+                this.fetchModel();
+            }
+        },
+        methods: {
+            async fetchModel() {
+                if (!this.loading) this.loading = true;
+                this.model = await this.modelRepository.find(this.id);
+                this.loading = false;
+            }
         }
-    },
-    methods: {
-        async fetchModel() {
-            if (!this.loading) this.loading = true;
-            this.model = await this.modelRepository.find(this.id);
-            this.loading = false;
-        }
-    }
-}
-</script>
+    }</script>
