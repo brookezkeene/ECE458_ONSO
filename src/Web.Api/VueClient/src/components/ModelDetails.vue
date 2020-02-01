@@ -12,8 +12,8 @@
 
             <!-- TODO: insert table of instances of this model -->
             <!-- <v-row no-gutters v-for="(instances) in model" v-bind:key="instances">
-                <v-col>{{ instances }}</v-col>
-            </v-row> -->
+        <v-col>{{ instances }}</v-col>
+    </v-row> -->
         </div>
     </v-container>
 </template>

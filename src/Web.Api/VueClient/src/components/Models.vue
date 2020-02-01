@@ -1,103 +1,93 @@
 <template>
-  <v-card>
-    <v-data-table
-      :headers="headers"
-      :items="models"
-      :search="search"
-      >
-        <template v-slot:top>
+    <div>
+        <v-card>
+            <v-data-table :headers="headers"
+                          :items="models"
+                          :search="search">
+                <template v-slot:top>
 
-        <v-toolbar flat color="white">
-          <v-toolbar-title>Models</v-toolbar-title>
-          <v-divider
-            class="mx-4"
-            inset
-            vertical
-          ></v-divider>
-          <v-spacer></v-spacer>
+                    <v-toolbar flat color="white">
+                        <v-toolbar-title>Models</v-toolbar-title>
+                        <v-divider class="mx-4"
+                                   inset
+                                   vertical></v-divider>
+                        <v-spacer></v-spacer>
 
-          <v-autocomplete
-            append-icon = "mdi-magnify"
-            :loading="loading"
-            :items="models"
-            :search-input.sync="search"
-            cache-items
-            class="mx-4"
-            flat
-            hide-no-data
-            hide-details
-            item-text="vendor"
-            label="Search"
-            single-line
-            solo-inverted
-          ></v-autocomplete>
+                        <v-autocomplete append-icon="mdi-magnify"
+                                        :loading="loading"
+                                        :items="models"
+                                        :search-input.sync="search"
+                                        cache-items
+                                        class="mx-4"
+                                        flat
+                                        hide-no-data
+                                        hide-details
+                                        item-text="vendor"
+                                        label="Search"
+                                        single-line
+                                        solo-inverted></v-autocomplete>
 
-          <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{ on }">
-                <v-btn color = "primary" class="mb-2" v-on="on">Add Model</v-btn>
-              </template>
-            <v-card>
-              <model-edit v-bind:editedItem="editedItem" v-bind:models="models"></model-edit>          
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                  <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </v-toolbar>
+                        <v-dialog v-model="dialog" max-width="500px">
+                            <template v-slot:activator="{ on }">
+                                <v-btn color="primary" class="mb-2" v-on="on">Add Model</v-btn>
+                            </template>
+                            <v-card>
+                                <model-edit v-bind:editedItem="editedItem" v-bind:models="models"></model-edit>
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
+                                    <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
+                    </v-toolbar>
 
-        <div class="text-center">
-          <v-dialog v-model="detailsDialog" width="500">
-            <v-card>
-              <v-card-text>
-                <model-details v-bind:id="detailItem.id"></model-details>
-              </v-card-text>
-              <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="orange darken-1" text @click="closeDetail">Close</v-btn>
-              </v-card-actions>
-            </v-card>
-            </v-dialog>
-         </div>
+                    <div class="text-center">
+                        <v-dialog v-model="detailsDialog" width="500">
+                            <v-card>
+                                <v-card-text>
+                                    <model-details v-bind:id="detailItem.id"></model-details>
+                                </v-card-text>
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn color="orange darken-1" text @click="closeDetail">Close</v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
+                    </div>
 
-      </template>
+                </template>
 
-      <template v-slot:item.coloricon="{ item }">
-        <v-icon
-          class="mr-2"
-          :color=item.displayColor>
-          mdi-circle
-        </v-icon>
-      </template>
+                <template v-slot:item.coloricon="{ item }">
+                    <v-icon class="mr-2"
+                            :color=item.displayColor>
+                        mdi-circle
+                    </v-icon>
+                </template>
 
-      <template v-slot:item.action="{ item }">
-        <v-icon
-          small
-          class="mr-2"
-          @click="editItem(item)"
-        >
-          edit
-        </v-icon>
-        <v-icon
-          small
-          @click="deleteItem(item)"
-        >
-          delete
-        </v-icon>
-        <v-icon
-          small
-          class="mr-2"
-          @click="showDetails(item)"
-        >
-          details
-        </v-icon>
-      </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">Reset</v-btn>
-    </template>
-    ></v-data-table>
-  </v-card>
+                <template v-slot:item.action="{ item }">
+                    <v-icon small
+                            class="mr-2"
+                            @click="editItem(item)">
+                        edit
+                    </v-icon>
+                    <v-icon small
+                            @click="deleteItem(item)">
+                        delete
+                    </v-icon>
+                    <v-icon small
+                            class="mr-2"
+                            @click="showDetails(item)">
+                        details
+                    </v-icon>
+                </template>
+                <template v-slot:no-data>
+                    <v-btn color="primary" @click="initialize">Reset</v-btn>
+                </template>
+                >
+            </v-data-table>
+        </v-card>
+    </div>
 </template>
 
 
@@ -212,11 +202,12 @@ import ModelEdit from "./ModelEdit"
         this.close()
       },
       showDetails (item) {
-        this.detailItem = Object.assign({}, item);
-        this.detailsDialog = true;
+          this.detailItem = Object.assign({}, item);
+          this.$router.push({ name: 'model-details', params: { id: this.detailItem.id } })
+        //this.detailsDialog = true;
       },
       closeDetail () {
-        this.detailsDialog = false;
+        //this.detailsDialog = false;
       },
     },
   }
