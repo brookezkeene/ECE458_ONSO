@@ -14,7 +14,7 @@
                 <v-btn color="primary" dark class="mb-2" v-on="on">Add Racks</v-btn>
             </template>
             <v-card>
-                <rack-form v-bind:editedDimensions="editedDimensions"></rack-form>
+                <rack-form v-bind:editedItem="editedItem"></rack-form>
                 <v-card-actions>
                 <v-btn color="primary" text @click="close">Cancel</v-btn>
                 <v-btn color="primary" text @click="save">Save</v-btn>
@@ -22,6 +22,9 @@
             </v-card>
             </v-dialog>
         </v-toolbar>
+        <v-row align="center" justify="center">
+            <rack-table v-bind:racks="racks" v-bind:editedItem="editedItem"></rack-table>
+        </v-row>
         <v-row>
             <v-col>
                 <rack-diagram v-bind:racks="racks"></rack-diagram>
@@ -33,32 +36,28 @@
 <script>
 import RackForm from "./RackForm"
 import RackDiagram from "./RackDiagram"
+import RackTable from "./RackTable"
 
 export default {
     components: {
       RackForm,
-      RackDiagram
+      RackDiagram,
+      RackTable
     },
     inject: ['rackRepository'],
     data () {
       return {
         dialog: false,
         loading: true,
-        search: '',
-        headers: [
-          { text: 'Display Name', value: 'displayName' },
-          { text: 'Username', value: 'username' },
-          { text: 'Email', value: 'email' },
-        ],
         racks: [],
         firstRack: null,
         editedIndex: -1,
-        editedDimensions: {
-          rowStart: '',
-          rowEnd: '',
-          rackStart: '',
-          rackEnd: ''
-    },
+        editedItem: {
+            rowStart: '',
+            rowEnd: '',
+            rackStart: '',
+            rackEnd: ''
+        },
       }
     },
 
@@ -69,8 +68,8 @@ export default {
     },
 
     async created() {
-      this.users = await this.userRepository.list();
-      this.firstUser = await this.userRepository.find(1);
+      this.racks = await this.rackRepository.list();
+      this.firstRack = await this.rackRepository.find(1);
       this.loading = false;
     },
 
@@ -84,10 +83,23 @@ export default {
       },
 
       save () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.users[this.editedIndex], this.editedItem)
-        } else {
-          this.users.push(this.editedItem)
+          if (this.editedIndex > -1) {
+              Object.assign(this.racks[this.editedIndex], this.editedItem)
+          } else {
+              var i, j;
+              for (i = this.editedItem.rowStart.charCodeAt(0); i <= this.editedItem.rowEnd.charCodeAt(0); i++) {
+                  for (j = this.editedItem.rackStart; j <= this.editedItem.rackEnd; j++) {
+                      var newItem = {
+                          "id": 0,
+                          "address": String.fromCharCode(i) + j,
+                          "position": {
+                              "row": String.fromCharCode(i),
+                              "column": j,
+                          }};
+
+                      this.racks.push(newItem)
+                  }
+              }
         }
         this.close()
       },
