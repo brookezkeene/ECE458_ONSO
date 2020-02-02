@@ -17,6 +17,8 @@ test:
   script:
     - cd src
     - dotnet test
+    - cd Web.Api/VueClient
+    - npm run test:unit
   dependencies:
     - build
 
