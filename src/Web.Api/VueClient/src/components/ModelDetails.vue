@@ -3,19 +3,55 @@
         <div v-if="!loading">
             <v-card-title>Model {{id}} details</v-card-title>
             <!-- Contains the model data-->
-            <v-row no-gutters v-for="(value, name, index) in model" v-bind:key="name">
-                    <v-col>{{ index }}</v-col>
-                    <v-col>{{ name }}</v-col>
-                    <div v-if="name==='instances'">
-                        <div v-for="(name) in value" v-bind:key="name">
-                            <v-col>
-                                <router-link :to="{ name: 'instance-details', params: { id: 1 } }">{{ name }}</router-link>
-                            </v-col>
-                        </div>
-                    </div> 
-                    <div v-else>
-                        <v-col>{{ name }}</v-col>
-                    </div>
+            <v-row>
+                <v-col cols="12" sm="6" md="4">
+                    <v-label>Model: </v-label>
+                    <v-card-text> {{model.vendor}} </v-card-text>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                    <v-label>Model Number: </v-label>
+                    <v-card-text> {{model.modelNumber}} </v-card-text>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                    <v-label>Height: </v-label>
+                    <v-card-text> {{model.height}} </v-card-text>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                    <v-label>Display Color: </v-label>
+                    <v-card-text> {{model.displayColor}} </v-card-text>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                    <v-label>Ethernet Ports: </v-label>
+                    <v-card-text> {{model.ethernetPorts}} </v-card-text>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                    <v-label>Power Ports: </v-label>
+                    <v-card-text> {{model.powerPorts}} </v-card-text>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                    <v-label>CPU: </v-label>
+                    <v-card-text> {{model.cpu}} </v-card-text>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                    <v-label>Memory: </v-label>
+                    <v-card-text> {{model.memory}} </v-card-text>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                    <v-label>Storage: </v-label>
+                    <v-card-text> {{model.storage}} </v-card-text>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                    <v-label>Comment: </v-label>
+                    <v-card-text> {{model.comment}} </v-card-text>
+                </v-col>
+
+            </v-row>
+            <v-label>Instances: </v-label>
+            <v-row no-gutters v-for="(value, name) in model.instances" v-bind:key="name">
+                <v-col>{{name}}</v-col>
+                <v-col>{{value}}</v-col>
+                <router-link :to="{ name: 'instance-details', params: { id: value.id } }">{{ name }}</router-link>
+
             </v-row>
 
             <v-spacer />

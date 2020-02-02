@@ -5,40 +5,48 @@
             <span class="headline">Instance {{id}} Details</span>
             </v-card-title>
             <v-card-text>
-            <v-row>
-                <v-col cols="12" sm="6" md="4">
-                    <v-label>Host Name: </v-label>
-                    <v-card-text> {{instance.hostname}} </v-card-text>
-                </v-col>
-                <v-col cols="12" sm="6" md="4">
-                    <v-label>Rack Number: </v-label>
-                    <v-card-text> {{instance.rack}} </v-card-text>
-                </v-col>
-                <v-col cols="12" sm="6" md="4">
-                    <v-label>Rack Position: </v-label>
-                    <v-card-text> {{instance.rackPosition}} </v-card-text>
-                </v-col>
-                <v-col cols="12" sm="6" md="4">
-                    <v-label>Owner ID: </v-label>
-                    <v-card-text> {{instance.owner.id}} </v-card-text>
-                </v-col>
-                <v-col cols="12" sm="6" md="4">
-                    <v-label>Owner Username: </v-label>
-                    <v-card-text> {{instance.owner.username}} </v-card-text>
-                </v-col>
-                <v-col cols="12" sm="6" md="4">
-                    <v-label>Owner Display Name: </v-label>
-                    <v-card-text> {{instance.owner.displayName}} </v-card-text>
-                </v-col>
-                <v-col cols="12" sm="6" md="4">
-                    <v-label>Owner Email: </v-label>
-                    <v-card-text> {{instance.owner.email}} </v-card-text>
-                </v-col>
-                <v-col cols="12" sm="6" md="4">
-                    <v-label>Comment: </v-label>
-                    <v-card-text> {{instance.comment}} </v-card-text>
-                </v-col>
-            </v-row>
+                <v-row>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Host Name: </v-label>
+                        <v-card-text> {{instance.hostname}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Rack Number: </v-label>
+                        <v-card-text> {{instance.rack}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Rack Position: </v-label>
+                        <v-card-text> {{instance.rackPosition}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Owner ID: </v-label>
+                        <v-card-text> {{instance.owner.id}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Owner Username: </v-label>
+                        <v-card-text> {{instance.owner.username}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Owner Display Name: </v-label>
+                        <v-card-text> {{instance.owner.displayName}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Owner Email: </v-label>
+                        <v-card-text> {{instance.owner.email}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Comment: </v-label>
+                        <v-card-text> {{instance.comment}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Model Vendor: </v-label>
+                        <v-card-text> {{instance.model.vendor}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Model: </v-label>
+                        <router-link :to="{ name: 'model-details', params: { id: instance.model.id } }"> {{ instance.model.vendor }} </router-link>
+                    </v-col>
+                </v-row>
 
 </v-card-text>
         </v-card>
