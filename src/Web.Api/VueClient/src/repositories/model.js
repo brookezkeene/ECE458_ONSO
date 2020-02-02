@@ -107,10 +107,37 @@ const mockModels = [
 ];
 
 export default {
-	find(id) {
-		return Promise.resolve(mockModels.find(o => o.id == id));
-	},
-	list() {
-		return mockModels;
-	}
+    find(id) {
+		const item = mockModels.find(o => o.id === id);
+        if (item)
+            return Promise.resolve(item);
+
+        return Promise.reject();
+    },
+    list() {
+		return Promise.resolve(mockModels);
+    },
+    create(item) {
+		if (mockModels.find(o => o.id === item.id))
+            return Promise.reject();
+
+        mockModels.push(item);
+        return Promise.resolve();
+    },
+    update(item) {
+		const index = mockModels.findIndex(o => o.id === item.id);
+        if (index < 0)
+            return Promise.reject();
+
+        mockModels[index] = item;
+        return Promise.resolve();
+    },
+    delete(item) {
+		const index = mockModels.findIndex(o => o.id === item.id);
+        if (index < 0)
+            return Promise.reject();
+
+        mockModels.splice(index, 1);
+        return Promise.resolve();
+    }
 };
