@@ -11,7 +11,7 @@ const mockModels = [
 		"memory": 32,
 		"storage": "2x500GB SSD RAID1",
 		"comment": "Retired offering, no new purchasing",
-		// "instances": "hello"
+		"instances": ["instance1", "instance2"]
 	},
 	{
 		"id": 2,
@@ -25,7 +25,7 @@ const mockModels = [
 		"memory": 32,
 		"storage": "2x500GB SSD RAID1",
 		"comment": "This is my personal favorite!",
-		// "instances": "hello2"
+		"instances": ["instance3", "instance4", "instance5"]
 	}
 ];
 

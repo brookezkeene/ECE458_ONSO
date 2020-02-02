@@ -25,7 +25,6 @@
                 <v-row class="pa-6">
                     <v-autocomplete
                       append-icon = "mdi-magnify"
-                      v-model="select"
                       :loading="loading"
                       :items="instances"
                       :search-input.sync="search"
@@ -240,8 +239,9 @@
         this.close()
       },
       showDetails (item) {
-        this.detailItem = Object.assign({}, item)
-        this.detailsDialog = true
+          this.detailItem = Object.assign({}, item)
+          this.$router.push({ name: 'instance-details', params: { detailItem: this.detailItem, id: this.detailItem.id } })
+        //this.detailsDialog = true
       },
 
       /**

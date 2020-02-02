@@ -2,27 +2,40 @@
     <v-container>
         <div v-if="!loading">
             <v-card-title>Model {{id}} details</v-card-title>
-            <!-- TODO: convert to simple table (maybe?) -->
+            <!-- Contains the model data-->
             <v-row no-gutters v-for="(value, name, index) in model" v-bind:key="name">
-                <v-col>{{ index }}</v-col>
-                <v-col>{{ name }}</v-col>
-                <v-col>{{ value }}</v-col>
+                    <v-col>{{ index }}</v-col>
+                    <v-col>{{ name }}</v-col>
+                    <div v-if="name==='instances'">
+                        <div v-for="(name) in value" v-bind:key="name">
+                            <v-col>
+                                <router-link to="{ name: 'instance-details', params: { id: {name}} }">{{ name }}</router-link>
+                            </v-col>
+                        </div>
+                    </div> 
+                    <div v-else>
+                        <v-col>{{ name }}</v-col>
+                    </div>
             </v-row>
 
             <v-spacer />
 
-
-
             <!-- TODO: insert table of instances of this model -->
-            <!-- <v-row no-gutters v-for="(instances) in model" v-bind:key="instances">
-                <v-col>{{ instances }}</v-col>
-            </v-row> -->
+            <v-row no-gutters v-for="(instance) in model.instances" v-bind:key="instance">
+                
+            </v-row>
+
+            <v-spacer />
+
+            <!--Back button to return to main page-->
             <a href="javascript:history.go(-1)"> Go Back</a>
         </div>
     </v-container>
 </template>
 
-<script>export default {
+<script>
+
+    export default {
         name: 'model-details',
         inject: ['modelRepository'],
         props: ['id'],

@@ -40,11 +40,11 @@
 
 <script>
 export default {
-    name: 'instance-edit',
+    name: 'instance-details',
     inject: ['instanceRepository'],
     item: null,
     props: {
-        detailItem : Object
+        detailItem : Object,
     },
     data () {
         return {
