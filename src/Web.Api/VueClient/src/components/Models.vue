@@ -301,7 +301,11 @@
             closeDetail() {
                 this.detailsDialog = false;
             },
- 
+          /**
+           * Filter code below; TODO: refactor this 
+           * end/start values are the filter inputs 
+           * @param value is the value of the table entry
+           */
           heightFilter(value) {
             // If this filter has no value we just skip the entire filter.
             if (!this.startHeightValue && !this.endHeightValue) {
