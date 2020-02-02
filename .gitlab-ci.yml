@@ -18,6 +18,7 @@ test:
     - cd src
     - dotnet test
     - cd Web.Api/VueClient
+    - npm install
     - npm run test:unit
   dependencies:
     - build
