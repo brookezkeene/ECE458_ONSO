@@ -1,18 +1,17 @@
+
 <template>
-    <div>
-        <v-card>
-            <v-data-table :headers="headers"
-                          :items="models"
-                          :search="search">
-                <template v-slot:top>
-
-                    <v-toolbar flat color="white">
-                        <v-toolbar-title>Models</v-toolbar-title>
-                        <v-divider class="mx-4"
-                                   inset
-                                   vertical></v-divider>
-                        <v-spacer></v-spacer>
-
+    <v-card>
+        <!--<v-container>-->
+        <v-row>
+            <!--<v-toolbar flat color="white">-->
+            <!--<v-toolbar-title>Models</v-toolbar-title>-->
+            <!--<v-divider class="mx-4"
+               inset
+               vertical></v-divider>
+    <v-spacer></v-spacer>-->
+            <v-col cols="10">
+                <v-row>
+                    <v-col cols="4">
                         <v-autocomplete append-icon="mdi-magnify"
                                         :loading="loading"
                                         :items="models"
@@ -26,68 +25,136 @@
                                         label="Search"
                                         single-line
                                         solo-inverted></v-autocomplete>
+                    </v-col>
+                    <!-- Custom filters; sorts between height ranges -->
+                    <v-col cols="2">
+                        <v-row>
+                            <v-col cols="6">
+                                <v-text-field v-model="startHeightValue"
+                                              placeholder="from"
+                                              type="text"
+                                              label="Height">
+                                </v-text-field>
+                            </v-col>
+                            <v-col cols="6">
+                                <v-text-field v-model="endHeightValue"
+                                              type="text"
+                                              placeholder="to">
+                                </v-text-field>
+                            </v-col>
+                        </v-row>
+                    </v-col>
+                    <v-col cols="2">
+                        <v-row>
+                            <v-col cols="6">
+                                <v-text-field v-model="startMemoryValue"
+                                              placeholder="from"
+                                              type="text"
+                                              label="Memory">
+                                </v-text-field>
+                            </v-col>
+                            <v-col cols="6">
+                                <v-text-field v-model="endMemoryValue"
+                                              type="text"
+                                              placeholder="to">
+                                </v-text-field>
+                            </v-col>
+                        </v-row>
+                    </v-col>
+                    <v-col cols="2">
+                        <v-row>
+                            <v-col cols="6">
+                                <v-text-field type="text" placeholder="from" label="Ethernet ports" />
+                            </v-col>
+                            <v-col cols="6">
+                                <v-text-field type="text" placeholder="to" />
+                            </v-col>
+                        </v-row>                    
+                    </v-col>
+                    <v-col cols="2">
+                        <v-row>
+                            <v-col cols="6">
+                                <v-text-field type="text" placeholder="from" label="Power ports" />
+                            </v-col>
+                            <v-col cols="6">
+                                <v-text-field type="text" placeholder="to" />
+                            </v-col>
+                        </v-row>
+                    </v-col>
+                </v-row>
+            </v-col>
+            <v-col cols="2">
+                <v-btn color="primary" @click.stop="dialog = true">Add Model</v-btn>
+                <v-dialog v-model="dialog" max-width="500px">
+                    <v-card>
+                        <model-edit v-bind:editedItem="editedItem" v-bind:models="models"></model-edit>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
+                            <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+            </v-col>
+            <!--</v-toolbar>-->
+        </v-row>
+        <!--</v-container>-->
+        <v-data-table :headers="headers"
+                      :items="models"
+                      :search="search">
+            <!--<template v-slot:top>-->
+            <!--</template>-->
+            <div class="text-center">
+                <v-dialog v-model="detailsDialog" width="500">
+                    <v-card>
+                        <v-card-text>
+                            <model-details v-bind:id="detailItem.id"></model-details>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="orange darken-1" text @click="closeDetail">Close</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
 
-                        <v-dialog v-model="dialog" max-width="500px">
-                            <template v-slot:activator="{ on }">
-                                <v-btn color="primary" class="mb-2" v-on="on">Add Model</v-btn>
-                            </template>
-                            <v-card>
-                                <model-edit v-bind:editedItem="editedItem" v-bind:models="models"></model-edit>
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                                    <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
-                    </v-toolbar>
+            </div>
 
-                    <div class="text-center">
-                        <v-dialog v-model="detailsDialog" width="500">
-                            <v-card>
-                                <v-card-text>
-                                    <model-details v-bind:id="detailItem.id"></model-details>
-                                </v-card-text>
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn color="orange darken-1" text @click="closeDetail">Close</v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
-                    </div>
+            <template v-slot:item.coloricon="{ item }">
+                <v-icon class="mr-2"
+                        :color=item.displayColor>
+                    mdi-circle
+                </v-icon>
+            </template>
 
-                </template>
+            <template v-slot:item.coloricon="{ item }">
+                <v-icon class="mr-2"
+                        :color=item.displayColor>
+                    mdi-circle
+                </v-icon>
+            </template>
 
-                <template v-slot:item.coloricon="{ item }">
-                    <v-icon class="mr-2"
-                            :color=item.displayColor>
-                        mdi-circle
-                    </v-icon>
-                </template>
-
-                <template v-slot:item.action="{ item }">
-                    <v-icon small
-                            class="mr-2"
-                            @click="editItem(item)">
-                        edit
-                    </v-icon>
-                    <v-icon small
-                            @click="deleteItem(item)">
-                        delete
-                    </v-icon>
-                    <v-icon small
-                            class="mr-2"
-                            @click="showDetails(item)">
-                        details
-                    </v-icon>
-                </template>
-                <template v-slot:no-data>
-                    <v-btn color="primary" @click="initialize">Reset</v-btn>
-                </template>
-                >
-            </v-data-table>
-        </v-card>
-    </div>
+            <template v-slot:item.action="{ item }">
+                <v-icon small
+                        class="mr-2"
+                        @click="editItem(item)">
+                    edit
+                </v-icon>
+                <v-icon small
+                        @click="deleteItem(item)">
+                    delete
+                </v-icon>
+                <v-icon small
+                        class="mr-2"
+                        @click="showDetails(item)">
+                    details
+                </v-icon>
+            </template>
+            <template v-slot:no-data>
+                <v-btn color="primary" @click="initialize">Reset</v-btn>
+            </template>
+            >
+        </v-data-table>
+    </v-card>
 </template>
 
 
@@ -102,7 +169,14 @@ import ModelEdit from "./ModelEdit"
       ModelEdit,
     },
     inject: ['modelRepository'],
-    data: () => ({
+    data() {
+        return {
+            // Filter values.
+        startHeightValue: '',
+        endHeightValue: '',
+        startMemoryValue: '',
+        endMemoryValue: '',
+
         dialog: false,
         detailsDialog: false,
         loading: true,
@@ -110,14 +184,15 @@ import ModelEdit from "./ModelEdit"
         headers: [
           { text: 'Vendor', 
           align: 'left',
-          value: 'vendor' },
-          { text: 'Model Number', value: 'modelNumber' },
-          { text: 'Height', value: 'height' },
+          value: 'vendor'
+            },
+          { text: 'Model Number', value: 'modelNumber',  },
+          { text: 'Height', value: 'height',  filter: this.heightFilter},
           { text: 'Display Color', value: 'coloricon', sortable: false },
           { text: 'Ethernet Ports', value: 'ethernetPorts' },
           { text: 'Power Ports', value: 'powerPorts' },
-          { text: 'CPU', value: 'cpu' },
-          { text: 'Memory', value: 'memory' },
+            { text: 'CPU', value: 'cpu' },
+            { text: 'Memory', value: 'memory', filter:this.memoryFilter },
           { text: 'Storage', value: 'storage' },
           { text: 'Comment', value: 'comment' },
           { text: 'Actions', value: 'action', sortable: false },
@@ -153,12 +228,13 @@ import ModelEdit from "./ModelEdit"
           detailItem : {
           comment: ''
         },
-      }),
-      computed: {
-      formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+        }
       },
-    },
+          computed: {
+              formTitle () {
+                return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+              },
+        },
     watch: {
       dialog (val) {
         val || this.close()
@@ -208,6 +284,38 @@ import ModelEdit from "./ModelEdit"
       },
       closeDetail () {
         //this.detailsDialog = false;
+      },
+      /**
+       * Filter for calories column.
+       * @param value Value to be tested; in this case the height value.
+       * @returns {boolean} based on the start and end height value inputs 
+       */
+      heightFilter(value) {
+        // If this filter has no value we just skip the entire filter.
+        if (!this.startHeightValue && !this.endHeightValue) {
+          return true;
+        // If only one filter has a value, leans entirely on that one filter
+        } else if (!this.endHeightValue) {
+          return value.toLowerCase() >= this.startHeightValue.toLowerCase();
+        } else if (!this.startHeightValue) {
+          return value.toLowerCase() <= this.endHeightValue.toLowerCase();
+        }  
+ 
+        // Check if the current loop value (The height value)
+        // is between the height values inputted
+        return value.toLowerCase() >= this.startHeightValue.toLowerCase()
+                && value.toLowerCase() <= this.endHeightValue.toLowerCase();
+        },
+      memoryFilter(value) {
+        if (!this.startMemoryValue && !this.endMemoryValue) {
+          return true;
+        } else if (!this.endMemoryValue) {
+          return value.toLowerCase() >= this.startMemoryValue.toLowerCase();
+        } else if (!this.startMemoryValue) {
+          return value.toLowerCase() <= this.endMemoryValue.toLowerCase();
+        }  
+        return value.toLowerCase() >= this.startMemoryValue.toLowerCase()
+                && value.toLowerCase() <= this.endMemoryValue.toLowerCase();
       },
     },
   }
