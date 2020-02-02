@@ -20,7 +20,7 @@ export default new Router({
             component: Login
         },
         {
-            path: '/ModelDetails',
+            path: '/ModelDetails/:id',
             name: 'model-details',
             component: ModelDetails,
             props: true
