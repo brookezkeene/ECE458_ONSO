@@ -87,7 +87,7 @@
 
           <v-dialog v-model="detailsDialog" width="500px">
             <v-card>
-              <instance-details v-bind:detailItem="detailItem"></instance-details>
+              <instance-details v-bind:id="detailItem.id"></instance-details>
               <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn text @click="closeDetail">Close</v-btn>
@@ -108,6 +108,7 @@
         </v-icon>
         <v-icon
           small
+          class="mr-2"
           @click="deleteItem(item)"
         >
           delete

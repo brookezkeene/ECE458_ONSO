@@ -1,38 +1,17 @@
 <template>
     <div v-if="!loading">
-        <v-card color="blue" dark>
+        <v-card flat>
             <v-card-title>
-            <span class="headline">Details</span>
+            <span class="headline">Instance {{id}} Details</span>
             </v-card-title>
             <v-card-text>
-            <v-container>
-                <v-row no-gutters>
-                <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="detailItem.hostname" label="Host Name"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="detailItem.rack" label="Rack Number"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="detailItem.rackPosition" label="Rack Position"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="detailItem.owner.id" label="Owner ID"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="detailItem.owner.username" label="Owner User Name"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="detailItem.owner.displayName" label="Owner Display Name"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="detailItem.owner.email" label="Owner email"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="detailItem.comment" label="Comment"></v-text-field>
-                    </v-col>                                 
-                </v-row>
-            </v-container>
+                <v-container>
+                    <v-row no-gutters v-for="(value, name, index) in instance" v-bind:key="index">
+                        <v-col>{{ index }}</v-col>
+                        <v-col>{{ name }}</v-col>
+                        <v-col>{{ value }}</v-col>
+                    </v-row>
+                </v-container>
             </v-card-text>
         </v-card>
     </div>
@@ -43,20 +22,36 @@ export default {
     name: 'instance-details',
     inject: ['instanceRepository'],
     item: null,
-    props: {
-        detailItem : Object,
-    },
+    id : 0,
+    props: ['id'],
     data () {
         return {
             loading: false,
+            instance: {
+                id: 0,
+                hostname: '',
+                rack: '',
+                rackPosition: '',
+                owner: '',
+                comment: '',
+                model: Object
+            },
         };
+        },
+    created() {
+        this.fetchInstance();
     },
-    detailItem : {
-          hostname:'',
-          rack:'',
-          rackPosition:'',
-          owner:'',
-          comment: ''
+    watch: {
+        id: function () {
+            this.fetchInstance();
+        }
     },
+     methods: {
+        async fetchInstance() {
+            if (!this.loading) this.loading = true;
+            this.instance = await this.instanceRepository.find(this.id);
+            this.loading = false;
+        }
+    }
 }
 </script>
