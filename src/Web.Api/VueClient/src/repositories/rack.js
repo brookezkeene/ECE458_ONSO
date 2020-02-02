@@ -19,7 +19,7 @@ const mockRacks = [
 
 export default {
 	find(id) {
-		return mockRacks.filter(o => { return o.id == id; });
+		return mockRacks.filter(o => { return o.id === id; });
 	},
 	list() {
 		return mockRacks;

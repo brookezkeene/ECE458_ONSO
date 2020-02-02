@@ -108,7 +108,7 @@ const mockModels = [
 
 export default {
 	find(id) {
-		return Promise.resolve(mockModels.find(o => o.id == id));
+		return Promise.resolve(mockModels.find(o => o.id === id));
 	},
 	list() {
 		return mockModels;
@@ -118,12 +118,12 @@ export default {
         return Promise.resolve();
     },
     update(item) {
-		const index = mockModels.find(o => o.id == item.id);
+		const index = mockModels.find(o => o.id === item.id);
         mockModels[index] = item;
         return Promise.resolve();
     },
     delete(item) {
-		const index = mockModels.find(o => o.id == item.id);
+		const index = mockModels.find(o => o.id === item.id);
         mockModels.splice(index, 1);
         return Promise.resolve();
     }

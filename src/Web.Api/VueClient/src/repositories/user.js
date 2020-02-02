@@ -21,9 +21,8 @@ const mockUsers = [
 
 export default {
 	find(id) {
-		return Promise.resolve(mockUsers.find(o => o.id == id));
-
-	},
+		return Promise.resolve(mockUsers.find(o => o.id === id));
+    },
 	list() {
 		return Promise.resolve(mockUsers);
 	},
@@ -32,12 +31,12 @@ export default {
         return Promise.resolve();
     },
     update(item) {
-		const index = mockUsers.find(o => o.id == item.id);
+		const index = mockUsers.find(o => o.id === item.id);
         mockUsers[index] = item;
         return Promise.resolve();
     },
     delete(item) {
-		const index = mockUsers.find(o => o.id == item.id);
+		const index = mockUsers.find(o => o.id === item.id);
         mockUsers.splice(index, 1);
         return Promise.resolve();
     }

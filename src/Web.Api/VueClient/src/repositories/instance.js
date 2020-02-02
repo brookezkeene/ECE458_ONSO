@@ -82,7 +82,7 @@ const mockInstances = [
 
 export default {
     find(id) {
-        return Promise.resolve(mockInstances.find(o => { return o.id == id; }));
+        return Promise.resolve(mockInstances.find(o => { return o.id === id; }));
     },
     list() {
         return Promise.resolve(mockInstances);
@@ -92,12 +92,12 @@ export default {
         return Promise.resolve();
     },
 	update(item) {
-		const index = mockInstances.find(o => o.id == item.id);
+		const index = mockInstances.find(o => o.id === item.id);
 		mockInstances[index] = item;
         return Promise.resolve();
     },
 	delete(item) {
-		const index = mockInstances.find(o => o.id == item.id);
+		const index = mockInstances.find(o => o.id === item.id);
 		mockInstances.splice(index, 1);
         return Promise.resolve();
     }

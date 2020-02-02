@@ -39,7 +39,7 @@ export default {
 
     isAdmin() {
         return localStorage.user && localStorage.user.admin;
-    }
+    },
 
     onChange() { }
 }
