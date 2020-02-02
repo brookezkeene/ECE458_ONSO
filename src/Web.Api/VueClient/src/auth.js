@@ -1,24 +1,18 @@
 ﻿/* globals localStorage */
 
 export default {
-    login(email, pass, cb) {
-        cb = arguments[arguments.length - 1];
+    login(username, pass) {
         if (localStorage.token) {
-            if (cb) cb(true);
-            this.onChange(true);
-            return;
+            return Promise.resolve(true);
         }
-        pretendRequest(email,
-            pass,
+        return pretendRequest(username, pass).then(
             (res) => {
                 if (res.authenticated) {
                     localStorage.token = res.token;
                     localStorage.user = res.user;
-                    if (cb) cb(true);
-                    this.onChange(true);
+                    return true;
                 } else {
-                    if (cb) cb(false);
-                    this.onChange(false);
+                    return false;
                 }
             });
     },
@@ -27,10 +21,9 @@ export default {
         return localStorage.token;
     },
 
-    logout(cb) {
+    logout() {
         delete localStorage.token;
-        if (cb) cb();
-        this.onChange(false);
+        return Promise.resolve();
     },
 
     loggedIn() {
@@ -41,18 +34,14 @@ export default {
         return localStorage.user && localStorage.user.admin;
     },
 
-    onChange() { }
 }
 
-function pretendRequest(email, pass, cb) {
-    setTimeout(() => {
-        if (email === 'joe@example.com' && pass === 'password1') {
-            cb({
-                authenticated: true,
-                token: Math.random().toString(36).substring(7)
-            });
-        } else {
-            cb({ authenticated: false });
+function pretendRequest(username) {
+    return Promise.resolve({
+        authenticated: true,
+        token: Math.random().toString(36).substring(7),
+        user: {
+            admin: username === 'admin'
         }
-    }, 0);
+    })
 }

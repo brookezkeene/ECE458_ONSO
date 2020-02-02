@@ -21,22 +21,35 @@ const mockUsers = [
 
 export default {
 	find(id) {
-		return Promise.resolve(mockUsers.find(o => o.id === id));
+		const item = mockUsers.find(o => o.id === id);
+		if (item)
+			return Promise.resolve(item);
+
+        return Promise.reject();
     },
 	list() {
 		return Promise.resolve(mockUsers);
 	},
-    create(item) {
+	create(item) {
+		if (mockUsers.find(o => o.id === item.id))
+			return Promise.reject();
+
         mockUsers.push(item);
         return Promise.resolve();
     },
     update(item) {
-		const index = mockUsers.find(o => o.id === item.id);
+		const index = mockUsers.findIndex(o => o.id === item.id);
+		if (index < 0)
+			return Promise.reject();
+
         mockUsers[index] = item;
         return Promise.resolve();
     },
     delete(item) {
-		const index = mockUsers.find(o => o.id === item.id);
+		const index = mockUsers.findIndex(o => o.id === item.id);
+        if (index < 0)
+            return Promise.reject();
+
         mockUsers.splice(index, 1);
         return Promise.resolve();
     }
