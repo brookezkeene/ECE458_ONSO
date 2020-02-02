@@ -48,9 +48,8 @@
             </v-row>
             <v-label>Instances: </v-label>
             <v-row no-gutters v-for="(value, name) in model.instances" v-bind:key="name">
-                <v-col>{{name}}</v-col>
-                <v-col>{{value}}</v-col>
-                <router-link :to="{ name: 'instance-details', params: { id: value.id } }">{{ name }}</router-link>
+                <v-label>Host Name: </v-label>
+                <router-link :to="{ name: 'instance-details', params: { id: value.id } }">{{ value.hostname }}</router-link>
 
             </v-row>
 
