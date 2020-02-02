@@ -81,13 +81,24 @@ const mockInstances = [
 ];
 
 export default {
-	find(id) {
-		return Promise.resolve(mockInstances.find(o => { return o.id == id; }));
+    find(id) {
+        return Promise.resolve(mockInstances.find(o => { return o.id == id; }));
+    },
+    list() {
+        return Promise.resolve(mockInstances);
 	},
-	findModels(id) {
-		return mockInstances.filter(o => { return o.model.id == id; });
-	},
-	list() {
-		return Promise.resolve(mockInstances);
-	}
+	create(item) {
+		mockInstances.push(item);
+        return Promise.resolve();
+    },
+	update(item) {
+		const index = mockInstances.find(o => o.id == item.id);
+		mockInstances[index] = item;
+        return Promise.resolve();
+    },
+	delete(item) {
+		const index = mockInstances.find(o => o.id == item.id);
+		mockInstances.splice(index, 1);
+        return Promise.resolve();
+    }
 };

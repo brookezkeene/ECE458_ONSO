@@ -26,5 +26,19 @@ export default {
 	},
 	list() {
 		return Promise.resolve(mockUsers);
-	}
+	},
+    create(item) {
+        mockUsers.push(item);
+        return Promise.resolve();
+    },
+    update(item) {
+		const index = mockUsers.find(o => o.id == item.id);
+        mockUsers[index] = item;
+        return Promise.resolve();
+    },
+    delete(item) {
+		const index = mockUsers.find(o => o.id == item.id);
+        mockUsers.splice(index, 1);
+        return Promise.resolve();
+    }
 };

@@ -112,5 +112,19 @@ export default {
 	},
 	list() {
 		return mockModels;
-	}
+	},
+    create(item) {
+        mockModels.push(item);
+        return Promise.resolve();
+    },
+    update(item) {
+		const index = mockModels.find(o => o.id == item.id);
+        mockModels[index] = item;
+        return Promise.resolve();
+    },
+    delete(item) {
+		const index = mockModels.find(o => o.id == item.id);
+        mockModels.splice(index, 1);
+        return Promise.resolve();
+    }
 };
