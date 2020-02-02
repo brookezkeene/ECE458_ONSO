@@ -1,52 +1,46 @@
 <template>
-    <div v-if="!loading">
+    <v-container>
         <v-card flat>
             <v-card-title>
-            <span class="headline">New Rack</span>
+                <span class="headline">Range selection</span>
             </v-card-title>
 
             <v-card-text>
-            <v-container>
-                <v-row>
-                <v-col cols="12" sm="6" md="6">
-                    <v-text-field v-model="editedItem.rowStart" label="Row Letter Start"></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="6" md="6">
-                    <v-text-field v-model="editedItem.rowEnd" label="Row Letter End"></v-text-field>
-                </v-col>
-                </v-row>
-                <v-row>
-                <v-col cols="12" sm="6" md="6">
-                    <v-text-field v-model="editedItem.rackStart" label="Rack Number Start"></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="6" md="6">
-                    <v-text-field v-model="editedItem.rackEnd" label="Rack Number End"></v-text-field>
-                </v-col>
-                </v-row>
-            </v-container>
+                <form>
+                    <v-text-field v-model="range.start" label="Start"></v-text-field>
+                    <v-text-field v-model="range.end" label="End"></v-text-field>
+
+                    <v-btn class="mr-4" @click="viewDiagram">View</v-btn>
+                    <v-btn @click="createInRange">Create</v-btn>
+                </form>
             </v-card-text>
         </v-card>
-    </div>
+    </v-container>
 </template>
 
 <script>
 export default {
     name: 'rack-form',
     inject: ['rackRepository'],
-    item: null,
-    props: {
-        editedItem: Object
-    },
-    data () {
-        return {
-            loading: false
-        };
-    },
-    editedItem: {
-          rowStart: '',
-          rowEnd: '',
-          rackStart: '',
-          rackEnd: ''
-    },
+    data: () => ({
+        range: {
+            start: '',
+            end: ''
+        }
+    }),
+    methods: {
+        viewDiagram() {
+            this.$router.push({ name: "RackDiagram", query: { start: this.range.start, end: this.range.end } });
+        },
+        createInRange() {
+            this.rackRepository.createInRange(this.range.start, this.range.end)
+                .then(() => {
+                    // indicate success
+                })
+                .catch(() => {
+                    // indicate failure
+                });
+        }
+    }
 }
 </script>

@@ -1,91 +1,70 @@
-<!--PUT <p style="page-break-before: always;">&nbsp;</p> 
-BEFORE AND AFTER CALLING THIS COMPONENT-->
 <template>
-  <v-card>  
-    <table id="table">
-        <!--Labeling the titles of the table-->
-        <thead>
-            <tr>
-            <th v-bind:style="borderColor">{{"U"}}</th>
-            <th v-bind:style="borderColor">{{"Rack Instance: B12"}}</th>
-            <th v-bind:style="borderColor">{{"U"}}</th>
-            </tr>
-        </thead>
-        <!--Filling each cell in the body of the table-->
-        <tbody>
-            <tr v-for="row in rows" v-bind:key="row">
-                <td v-bind:style="row.numStyle">
-                    {{row.rackU}} </td>
-                <td v-bind:style="row.style">
-                    {{row.model}}
-                </td>
-                <td v-bind:style="row.numStyle"> 
-                    {{row.rackU}} </td>
-            </tr>
-        </tbody>
-    </table>
-  </v-card>
+    <v-container v-if="!loading">
+        <v-row v-for="row in racksByRow" v-bind:key="row.rowLetter">
+            <v-col v-for="rack in row.racks" v-bind:key="rack.address">
+                <table id="table">
+                    <thead>
+                        <tr>
+                            <th class="rack"></th>
+                            <th class="rack">{{rack.address}}</th>
+                            <th class="rack"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="slot in rack.slots" v-bind:key="slot.rackU">
+                            <td class="rack">
+                                {{ slot.rackU }}
+                            </td>
+                            <td v-bind:style="slot.style">
+                                {{ slot.value }}
+                            </td>
+                            <td class="rack">
+                                {{ slot.rackU }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
-<script>
-  export default {
-
-    inject: ['instanceRepository'],
-    el: '#secondTable',
-    data () {
-        return{
-        instances: [],
-        loading: true,
-        search: '',
-        firstUser: null,
-        borderColor: {color: 'white', backgroundColor: 'black'},
-        rows: [],
-        styleObject: {
-        backgroundColor: 'red',
-        fontSize: '13px'      
+<style scoped>
+    .rack {
+        color: white;
+        background-color: black;
     }
-    }},
-    async created () {
-        this.instances = await this.instanceRepository.list();
-        this.firstUser = await this.instanceRepository.find(1);
-        this.loading = false;
-        this.createRows();
-        this.fillRows();
+    .rack-bottom {
+        background-color: black;
+    }
+    table {
+        font-size: 10px;
+        border-collapse: collapse;
+    }
+</style>
+
+<script>
+    import rowsOfRacks from '@/repositories/mock-racks-by-rows';
+    export default {
+    inject: ['rackRepository'],
+    data () {
+        return {
+            racks: [],
+            racksByRow: rowsOfRacks,
+            loading: true,
+        }
     },
-
+    async created () {
+        this.fetchRacks();
+    },
     methods: {
-        createRows () {
-            var i;
-            for(i = 0; i < 42; i++){
-                var u = 42-i;
-                var row = { rackU: u, model: '',
-                            style: {color: 'black', backgroundColor: 'green'},
-                            numStyle: {color: 'white', backgroundColor: 'black'}};
-                row.style.backgroundColor = 'white';
-                this.rows.push(row);
-            }
-        },
-        fillRows(){
-            var i;
-            var instances_length = Object.keys(this.instances).length;
-            for(i = 0; i < instances_length; i++) {
-                //getting root position and color of the current instance
-                var rackU = 42 - this.instances[i].rackPosition;              
-                var color = this.instances[i].model.displayColor;
-
-                //changing bottom rackU's name and color 
-                this.rows[rackU].style.backgroundColor = color;
-                this.rows[rackU].model = this.instances[i].model.vendor;
-
-                //going through the second for loop to fill up the remaining rackU's
-                //which the instance fills 
-                var j;
-                var model_height = this.instances[i].model.height
-                for(j = 1; j < model_height; j++) {
-                    var position = rackU - j;
-                    this.rows[position].style.backgroundColor = color;
-                }  
-            }          
+        fetchRacks() {
+            const start = this.$route.query.start;
+            const end = this.$route.query.end;
+            this.rackRepository.findInRange(start, end).then((response) => {
+                this.racks = response;
+                this.loading = false;
+            });
         }
     }    
 }

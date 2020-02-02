@@ -28,12 +28,12 @@ const mockInstances = [
 	{
 		"id": 2,
 		"model": {
-			"id": 2,
+            "id": 2,
 			"vendor": "Lenovo",
 			"modelNumber": "Foobar",
 			"height": 3,
 			"displayColor": "#C39BD3",
-			"ethernetPorts": 2,
+            "ethernetPorts": 2,
 			"powerPorts": 1,
 			"cpu": "Intel Xeon E5520 2.2GHz",
 			"memory": 32,
