@@ -27,7 +27,7 @@ const mockInstances = [
 	},
 	{
 		"id": 2,
-		"l": {
+		"model": {
 			"id": 1,
 			"vendor": "Dell",
 			"modelNumber": "R710",
@@ -81,7 +81,7 @@ const mockInstances = [
 
 export default {
 	find(id) {
-		return Promise.resolve(mockInstances.filter(o => { return o.id == id; }));
+		return Promise.resolve(mockInstances.find(o => { return o.id == id; }));
 	},
 	findModels(id) {
 		return mockInstances.filter(o => { return o.model.id == id; });

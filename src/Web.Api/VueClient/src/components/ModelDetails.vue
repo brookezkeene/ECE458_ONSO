@@ -9,20 +9,13 @@
                     <div v-if="name==='instances'">
                         <div v-for="(name) in value" v-bind:key="name">
                             <v-col>
-                                <router-link to="{ name: 'instance-details', params: { id: {name}} }">{{ name }}</router-link>
+                                <router-link :to="{ name: 'instance-details', params: { id: 1 } }">{{ name }}</router-link>
                             </v-col>
                         </div>
                     </div> 
                     <div v-else>
                         <v-col>{{ name }}</v-col>
                     </div>
-            </v-row>
-
-            <v-spacer />
-
-            <!-- TODO: insert table of instances of this model -->
-            <v-row no-gutters v-for="(instance) in model.instances" v-bind:key="instance">
-                
             </v-row>
 
             <v-spacer />

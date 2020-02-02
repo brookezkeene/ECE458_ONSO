@@ -5,14 +5,42 @@
             <span class="headline">Instance {{id}} Details</span>
             </v-card-title>
             <v-card-text>
-                <v-container>
-                    <v-row no-gutters v-for="(value, name, index) in instance" v-bind:key="index">
-                        <v-col>{{ index }}</v-col>
-                        <v-col>{{ name }}</v-col>
-                        <v-col>{{ value }}</v-col>
-                    </v-row>
-                </v-container>
-            </v-card-text>
+            <v-row>
+                <v-col cols="12" sm="6" md="4">
+                    <v-label>Host Name: </v-label>
+                    <v-card-text> {{instance.hostname}} </v-card-text>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                    <v-label>Rack Number: </v-label>
+                    <v-card-text> {{instance.rack}} </v-card-text>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                    <v-label>Rack Position: </v-label>
+                    <v-card-text> {{instance.rackPosition}} </v-card-text>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                    <v-label>Owner ID: </v-label>
+                    <v-card-text> {{instance.owner.id}} </v-card-text>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                    <v-label>Owner Username: </v-label>
+                    <v-card-text> {{instance.owner.username}} </v-card-text>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                    <v-label>Owner Display Name: </v-label>
+                    <v-card-text> {{instance.owner.displayName}} </v-card-text>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                    <v-label>Owner Email: </v-label>
+                    <v-card-text> {{instance.owner.email}} </v-card-text>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                    <v-label>Comment: </v-label>
+                    <v-card-text> {{instance.comment}} </v-card-text>
+                </v-col>
+            </v-row>
+
+</v-card-text>
         </v-card>
     </div>
 </template>
@@ -28,13 +56,13 @@ export default {
         return {
             loading: false,
             instance: {
-                id: 0,
                 hostname: '',
                 rack: '',
                 rackPosition: '',
-                owner: '',
+                owner: { id:0, username:'', displayName:'', email:''
+                    },
                 comment: '',
-                model: Object
+                model: {id:0}
             },
         };
         },
