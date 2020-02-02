@@ -1,62 +1,93 @@
 <template>
     <div v-if="!loading">
-        <v-card color="blue" dark>
+        <v-card flat>
             <v-card-title>
-            <span class="headline">Details</span>
+            <span class="headline">Instance {{id}} Details</span>
             </v-card-title>
             <v-card-text>
-            <v-container>
-                <v-row no-gutters>
-                <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="detailItem.hostname" label="Host Name"></v-text-field>
+                <v-row>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Host Name: </v-label>
+                        <v-card-text> {{instance.hostname}} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="detailItem.rack" label="Rack Number"></v-text-field>
+                        <v-label>Rack Number: </v-label>
+                        <v-card-text> {{instance.rack}} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="detailItem.rackPosition" label="Rack Position"></v-text-field>
+                        <v-label>Rack Position: </v-label>
+                        <v-card-text> {{instance.rackPosition}} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="detailItem.owner.id" label="Owner ID"></v-text-field>
+                        <v-label>Owner ID: </v-label>
+                        <v-card-text> {{instance.owner.id}} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="detailItem.owner.username" label="Owner User Name"></v-text-field>
+                        <v-label>Owner Username: </v-label>
+                        <v-card-text> {{instance.owner.username}} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="detailItem.owner.displayName" label="Owner Display Name"></v-text-field>
+                        <v-label>Owner Display Name: </v-label>
+                        <v-card-text> {{instance.owner.displayName}} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="detailItem.owner.email" label="Owner email"></v-text-field>
+                        <v-label>Owner Email: </v-label>
+                        <v-card-text> {{instance.owner.email}} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="detailItem.comment" label="Comment"></v-text-field>
-                    </v-col>                                 
+                        <v-label>Comment: </v-label>
+                        <v-card-text> {{instance.comment}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Model Vendor: </v-label>
+                        <v-card-text> {{instance.model.vendor}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Model: </v-label>
+                        <router-link :to="{ name: 'model-details', params: { id: instance.model.id } }"> {{ instance.model.vendor }} </router-link>
+                    </v-col>
                 </v-row>
-            </v-container>
-            </v-card-text>
+
+</v-card-text>
         </v-card>
     </div>
 </template>
 
 <script>
 export default {
-    name: 'instance-edit',
+    name: 'instance-details',
     inject: ['instanceRepository'],
     item: null,
-    props: {
-        detailItem : Object
-    },
+    id : 0,
+    props: ['id'],
     data () {
         return {
             loading: false,
+            instance: {
+                hostname: '',
+                rack: '',
+                rackPosition: '',
+                owner: { id:0, username:'', displayName:'', email:''
+                    },
+                comment: '',
+                model: {id:0}
+            },
         };
+        },
+    created() {
+        this.fetchInstance();
     },
-    detailItem : {
-          hostname:'',
-          rack:'',
-          rackPosition:'',
-          owner:'',
-          comment: ''
+    watch: {
+        id: function () {
+            this.fetchInstance();
+        }
     },
+     methods: {
+        async fetchInstance() {
+            if (!this.loading) this.loading = true;
+            this.instance = await this.instanceRepository.find(this.id);
+            this.loading = false;
+        }
+    }
 }
 </script>

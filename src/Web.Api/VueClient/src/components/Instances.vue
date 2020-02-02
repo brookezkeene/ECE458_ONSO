@@ -25,7 +25,6 @@
                 <v-row class="pa-6">
                     <v-autocomplete
                       append-icon = "mdi-magnify"
-                      v-model="select"
                       :loading="loading"
                       :items="instances"
                       :search-input.sync="search"
@@ -88,7 +87,7 @@
 
           <v-dialog v-model="detailsDialog" width="500px">
             <v-card>
-              <instance-details v-bind:detailItem="detailItem"></instance-details>
+              <instance-details v-bind:id="detailItem.id"></instance-details>
               <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn text @click="closeDetail">Close</v-btn>
@@ -109,6 +108,7 @@
         </v-icon>
         <v-icon
           small
+          class="mr-2"
           @click="deleteItem(item)"
         >
           delete
@@ -240,8 +240,9 @@
         this.close()
       },
       showDetails (item) {
-        this.detailItem = Object.assign({}, item)
-        this.detailsDialog = true
+          this.detailItem = Object.assign({}, item)
+          this.$router.push({ name: 'instance-details', params: { detailItem: this.detailItem, id: this.detailItem.id } })
+        //this.detailsDialog = true
       },
 
       /**

@@ -7,9 +7,9 @@
             ref="form"
             v-model = "valid">
             <v-text-field
-                v-model="email"
-                :rules="emailRules"
-                label="Email"
+                v-model="username"
+                :rules="usernameRules"
+                label="Username"
                 required
             ></v-text-field>
             <v-text-field
@@ -36,9 +36,8 @@ export default {
     data: () => ({
       valid: true,
       email: '',
-      emailRules: [
-        v => !!v || 'E-mail is required',
-        v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+      usernameRules: [
+        v => !!v || 'Username is required',
       ],
       password: '',
       passwordRules: [
