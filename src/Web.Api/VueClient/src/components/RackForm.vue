@@ -9,18 +9,18 @@
             <v-container>
                 <v-row>
                 <v-col cols="12" sm="6" md="6">
-                    <v-text-field v-model="editedDimensions.rowStart" label="Row Letter Start"></v-text-field>
+                    <v-text-field v-model="editedItem.rowStart" label="Row Letter Start"></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6" md="6">
-                    <v-text-field v-model="editedDimensions.rowEnd" label="Row Letter End"></v-text-field>
+                    <v-text-field v-model="editedItem.rowEnd" label="Row Letter End"></v-text-field>
                 </v-col>
                 </v-row>
                 <v-row>
                 <v-col cols="12" sm="6" md="6">
-                    <v-text-field v-model="editedDimensions.rackStart" label="Rack Number Start"></v-text-field>
+                    <v-text-field v-model="editedItem.rackStart" label="Rack Number Start"></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6" md="6">
-                    <v-text-field v-model="editedDimensions.rackEnd" label="Rack Number End"></v-text-field>
+                    <v-text-field v-model="editedItem.rackEnd" label="Rack Number End"></v-text-field>
                 </v-col>
                 </v-row>
             </v-container>
@@ -35,14 +35,14 @@ export default {
     inject: ['rackRepository'],
     item: null,
     props: {
-        editedDimensions: Object
+        editedItem: Object
     },
     data () {
         return {
             loading: false
         };
     },
-    editedDimensions: {
+    editedItem: {
           rowStart: '',
           rowEnd: '',
           rackStart: '',
