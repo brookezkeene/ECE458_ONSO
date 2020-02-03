@@ -7,16 +7,16 @@
             <v-col>
                 <v-card>
                     <v-card-title class="justify-center">
-                        <v-icon color="white">mdi-information</v-icon>
+                        <v-icon v-if="admin" color="white">mdi-information</v-icon>
                         <v-spacer></v-spacer>
                         Models
                         <v-spacer></v-spacer>
-                        <v-icon @click="showModelInfo">mdi-information</v-icon>
+                        <v-icon v-if="admin" @click="showModelInfo">mdi-information</v-icon>
                     </v-card-title>
                     <v-card-actions class="justify-center">
                         <v-container>
                             <v-row align="center" justify="center">
-                                <v-btn color="primary" class="mb-2" @click="openFileChooser">Import</v-btn>
+                                <v-btn v-if="admin" color="primary" class="mb-2" @click="openFileChooser">Import</v-btn>
                             </v-row>
                             <v-row align="center" justify="center">
                                 <v-btn color="primary" class="mb-2">Export</v-btn>
@@ -28,16 +28,16 @@
             <v-col>
                 <v-card>
                     <v-card-title class="justify-center">
-                        <v-icon color="white">mdi-information</v-icon>
+                        <v-icon v-if="admin" color="white">mdi-information</v-icon>
                         <v-spacer></v-spacer>
                         Instances
                         <v-spacer></v-spacer>
-                        <v-icon @click="showModelInfo">mdi-information</v-icon>
+                        <v-icon v-if="admin" @click="showModelInfo">mdi-information</v-icon>
                     </v-card-title>
                     <v-card-actions class="justify-center">
                         <v-container>
                             <v-row align="center" justify="center">
-                                <v-btn color="primary" class="mb-2" @click="openFileChooser">Import</v-btn>
+                                <v-btn v-if="admin" color="primary" class="mb-2" @click="openFileChooser">Import</v-btn>
                             </v-row>
                             <v-row align="center" justify="center">
                                 <v-btn color="primary" class="mb-2">Export</v-btn>
@@ -72,13 +72,20 @@ import InstanceImportFormatInfo from "./InstanceImportFormatInfo"
 import FileChooserCard from "./FileChooserCard"
 
 export default {
+    inject: ['auth'],
     data () {
         return {
+            admin: false,
             loading: false,       
             extrainfomodel: false,
             extrainfoinstance: false,
             filechoosercard: false,
         };
+    },
+    computed: {
+        isAdmin() {
+            return this.admin === this.auth.isAdmin()
+        },
     },
     watch: {
         filechoosercard(val) {
