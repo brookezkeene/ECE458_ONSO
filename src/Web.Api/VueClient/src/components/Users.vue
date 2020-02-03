@@ -29,7 +29,7 @@
                     <v-spacer></v-spacer>
                     <v-dialog v-model="dialog" max-width="500px">
                     <template v-slot:activator="{ on }">
-                        <v-btn color="primary" dark class="mb-2" v-on="on">Add User</v-btn>
+                        <v-btn v-if="admin" color="primary" dark class="mb-2" v-on="on">Add User</v-btn>
                     </template>
                         <user-form v-bind:editedItem="editedItem"></user-form>
                         <v-card-actions>
@@ -53,9 +53,10 @@ import UserForm from "./UserForm"
     components: {
       UserForm
     },
-    inject: ['userRepository'],
+    inject: ['userRepository', 'auth'],
     data () {
       return {
+        admin: false,
         dialog: false,
         loading: true,
         isEditing: null,
@@ -81,6 +82,11 @@ import UserForm from "./UserForm"
           password: ''
         }, 
       }
+    },
+    computed: {
+        isAdmin() {
+            return this.admin === this.auth.isAdmin()
+        },
     },
 
     watch: {
