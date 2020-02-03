@@ -26,7 +26,7 @@
                             <v-spacer></v-spacer>
                             <v-dialog v-model="dialog" max-width="500px">
                                 <template v-slot:activator="{ on }">
-                                    <v-btn color="primary" class="mb-2" v-on="on">Add Model</v-btn>
+                                    <v-btn v-if="admin" color="primary" class="mb-2" v-on="on">Add Model</v-btn>
                                 </template>
                                 <v-card>
                                     <model-edit v-bind:editedItem="editedItem" v-bind:models="models"></model-edit>
