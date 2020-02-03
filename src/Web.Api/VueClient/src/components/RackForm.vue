@@ -1,11 +1,9 @@
 <template>
-    <v-container>
-        <v-card flat>
-            <v-card-title>
-                <span class="headline">Range selection</span>
-            </v-card-title>
+    <v-container align="center" justify="center">
+        <v-card max-width="50%">
+            <v-card-title>Rack Range Selection</v-card-title>
 
-            <v-card-text>
+            <v-card-text class="justify-center">
                 <form>
                     <v-text-field v-model="range.start" label="Start"></v-text-field>
                     <v-text-field v-model="range.end" label="End"></v-text-field>

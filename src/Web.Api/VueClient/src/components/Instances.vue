@@ -1,5 +1,6 @@
 <template>
-  <v-card>
+  <v-card flat>
+    <v-card-title>Instances</v-card-title>
     <v-data-table
       :headers="headers"
       :items="instances"
@@ -9,61 +10,54 @@
     > 
       <!-- Links to the models -->
       <template v-slot:item.model.id = "{ value }">
-            <a> {{ value }} </a>     
+            <a>{{ value }}</a>     
       </template>
 
       <template v-slot:top>
-
-          <!-- ADDED AUTOCOMPLETE TO THE MODEL SEARCH -->
-          <v-container fluid>
-              <v-row>
-                  <v-col cols="6">
-                      <v-row class="pa-6">
-                          <v-autocomplete append-icon="mdi-magnify"
-                                          :loading="loading"
-                                          :items="instances"
-                                          :search-input.sync="search"
-                                          cache-items
-                                          class="mx-4"
-                                          flat
-                                          hide-no-data
-                                          hide-details
-                                          item-text="model.vendor"
-                                          label="Search"
-                                          single-line
-                                          solo-inverted></v-autocomplete>
-
-                      </v-row>
-                  </v-col>
-
-                  <!-- Custom filters; sorts between rack ranges -->
-                  <v-col cols="6">
-                      <v-row class="pa-6">
-                          <v-text-field v-model="startRackValue"
-                                        placeholder="Start typing to sort start of racks"
-                                        type="text"
-                                        label="Rack Range ">
-                          </v-text-field>
-
-                          <v-spacer></v-spacer>
-
-                          <v-text-field v-model="endRackValue"
-                                        type="text"
-                                        placeholder="Start typing to search end of racks">
-                          </v-text-field>
-
-                      </v-row>
-                  </v-col>
-              </v-row>
-          </v-container>
-
           <v-toolbar flat>
-              <v-toolbar-title>
-                  Instances
-                  <v-icon @click="showInstructions">
-                      mdi-information
-                  </v-icon>
-              </v-toolbar-title>
+              <!-- ADDED AUTOCOMPLETE TO THE MODEL SEARCH -->
+              <v-container fluid align="left">
+                  <v-row>
+                      <v-col cols="6">
+                          <v-row>
+                              <v-autocomplete append-icon="mdi-magnify"
+                                              :loading="loading"
+                                              :items="instances"
+                                              :search-input.sync="search"
+                                              cache-items
+                                              class="mx-4"
+                                              flat
+                                              hide-no-data
+                                              hide-details
+                                              item-text="model.vendor"
+                                              label="Search"
+                                              single-line
+                                              solo-inverted></v-autocomplete>
+
+                          </v-row>
+                      </v-col>
+                      <v-spacer></v-spacer>
+                      <!-- Custom filters; sorts between rack ranges -->
+                      <v-col cols="4">
+                          <v-row>
+                              <v-text-field v-model="startRackValue"
+                                            placeholder="Start"
+                                            type="text"
+                                            label="Rack Range"
+                                            style="width:0">
+                              </v-text-field>
+
+                              <v-text-field v-model="endRackValue"
+                                            type="text"
+                                            placeholder="End"
+                                            style="width:0">
+                              </v-text-field>
+
+                          </v-row>
+                      </v-col>
+                      <v-spacer></v-spacer>
+                  </v-row>
+              </v-container>
 
               <v-spacer></v-spacer>
 

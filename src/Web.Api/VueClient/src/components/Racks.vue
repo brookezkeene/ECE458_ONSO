@@ -1,12 +1,9 @@
 <template>
-    <v-card>
-        <v-toolbar flat color="white">
-            <v-toolbar-title>Racks</v-toolbar-title>
-            <v-divider class="mx-4"
-                       inset
-                       vertical></v-divider>
-        </v-toolbar>
-        <rack-form />
+    <v-card flat>
+        <v-card-title>Racks</v-card-title>
+        <v-card-content class="center-justify">
+            <rack-form />
+        </v-card-content>
     </v-card>
 </template>
 

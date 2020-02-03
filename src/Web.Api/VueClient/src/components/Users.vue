@@ -1,5 +1,6 @@
 <template>
-    <v-card>
+    <v-card flat>
+        <v-card-title>Users</v-card-title>
         <v-data-table
             :headers="headers"
             :items="users"
@@ -8,14 +9,6 @@
         >
             <template v-slot:top>
             <v-toolbar flat color="white">
-                <v-toolbar-title>Users</v-toolbar-title>
-                <v-divider
-                  class="mx-4"
-                  inset
-                  vertical
-                ></v-divider>
-                <v-spacer></v-spacer>
-
                 <v-autocomplete
                   v-model="select"
                   :loading="loading"
@@ -32,7 +25,7 @@
                   single-line
                   solo-inverted
                 ></v-autocomplete>
-
+                <v-spacer></v-spacer>
                 <v-dialog v-model="dialog" max-width="500px">
                 <template v-slot:activator="{ on }">
                     <v-btn color="primary" dark class="mb-2" v-on="on">Add User</v-btn>

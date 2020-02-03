@@ -1,6 +1,7 @@
 <template>
     <div>
-        <v-card>
+        <v-card flat>
+            <v-card-title>Models</v-card-title>
             <v-data-table :headers="headers"
                           :items="models"
                           :search="search"
@@ -8,18 +9,6 @@
                 <template v-slot:top v-slot:item.action="{ item }">
 
                     <v-toolbar flat color="white">
-                        <v-toolbar-title>
-                            Models
-                            <v-icon @click="showInstructions">
-                                mdi-information
-                            </v-icon>
-                        </v-toolbar-title>
-
-                        <v-divider class="mx-4"
-                                   inset
-                                   vertical></v-divider>
-                        <v-spacer></v-spacer>
-
                         <v-autocomplete append-icon="mdi-magnify"
                                         :loading="loading"
                                         :items="models"
@@ -33,7 +22,7 @@
                                         label="Search"
                                         single-line
                                         solo-inverted></v-autocomplete>
-
+                        <v-spacer></v-spacer>
                         <v-dialog v-model="dialog" max-width="500px">
                             <template v-slot:activator="{ on }">
                                 <v-btn color="primary" class="mb-2" v-on="on">Add Model</v-btn>

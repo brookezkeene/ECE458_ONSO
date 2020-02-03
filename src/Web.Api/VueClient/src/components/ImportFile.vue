@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-card flat>
         <v-card-title>
             Bulk Import & Export
         </v-card-title>
