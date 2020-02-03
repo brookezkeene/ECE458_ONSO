@@ -156,12 +156,10 @@
 
 
 <script>
-    import ModelDetails from "./ModelDetails"
     import ModelEdit from "./ModelEdit"
 
     export default {
         components: {
-            ModelDetails,
             ModelEdit,
         },
         inject: ['modelRepository'],
