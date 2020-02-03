@@ -1,6 +1,28 @@
+<style scoped>
+    @media print {
+
+        body {
+            margin: 0;
+            color: #000;
+            background-color: #fff;
+            -webkit-print-color-adjust: exact !important;
+        }
+    }
+
+    .diagram
+    {
+        break-before: always;
+        break-inside: avoid;
+    }
+    
+</style>
+
+
 <template>
+    <div media="print">
+
     <v-container v-if="!loading">
-        <v-row v-for="row in racksByRow" v-bind:key="row.rowLetter">
+        <v-row v-for="row in racksByRow" v-bind:key="row.rowLetter" class="diagram">
             <v-col v-for="rack in row.racks" v-bind:key="rack.address">
                 <table id="table">
                     <thead>
@@ -27,6 +49,7 @@
             </v-col>
         </v-row>
     </v-container>
+    </div>
 </template>
 
 <style scoped>
