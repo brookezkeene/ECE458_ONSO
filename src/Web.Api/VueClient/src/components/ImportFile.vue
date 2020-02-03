@@ -10,8 +10,10 @@
             <v-col>
                 <v-card center>
                     <span class="group pa-2">
-                        <v-card-text> Models </v-card-text>
-                        <v-icon @click="showModelInfo">mdi-information</v-icon>
+                        <v-row>
+                            <v-card-title> Models </v-card-title>
+                            <v-icon @click="showModelInfo">mdi-information</v-icon>
+                        </v-row>
                     </span>
                     <v-col>
                         <v-btn color = "primary" class="mb-2" @click="openFileChooser">Import</v-btn>
@@ -24,8 +26,10 @@
             <v-col>
                 <v-card center>
                     <span class="group pa-2">
-                        <v-card-text> Instances </v-card-text>
-                        <v-icon @click="showInstanceInfo">mdi-information</v-icon>
+                        <v-row>
+                            <v-card-title> Instances </v-card-title>
+                            <v-icon @click="showInstanceInfo">mdi-information</v-icon>
+                        </v-row>
                     </span>
                     <v-col>
                         <v-btn color = "primary" class="mb-2" @click="openFileChooser">Import</v-btn>
@@ -36,12 +40,12 @@
                 </v-card>
             </v-col>
         </v-container> 
-        <v-dialog v-model="extrainfomodel" max-width="500px">
+        <v-dialog v-model="extrainfomodel">
             <v-card>
               <model-import-format-info></model-import-format-info>
             </v-card>
         </v-dialog>
-        <v-dialog v-model="extrainfoinstance" max-width="500px">
+        <v-dialog v-model="extrainfoinstance">
             <v-card>
               <instance-import-format-info></instance-import-format-info>
             </v-card>
