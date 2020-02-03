@@ -29,7 +29,7 @@
                     <v-spacer></v-spacer>
                     <v-dialog v-model="dialog" max-width="500px">
                     <template v-slot:activator="{ on }">
-                        <v-btn color="primary" dark class="mb-2" v-on="on">Add User</v-btn>
+                        <v-btn v-if="admin" color="primary" dark class="mb-2" v-on="on">Add User</v-btn>
                     </template>
                         <user-form v-bind:editedItem="editedItem"></user-form>
                         <v-card-actions>
@@ -48,6 +48,7 @@
 
 <script>
 import UserForm from "./UserForm"
+import Auth from "../auth"
 
   export default {
     components: {
@@ -81,6 +82,11 @@ import UserForm from "./UserForm"
           password: ''
         }, 
       }
+    },
+    computed: {
+        admin() {
+            return Auth.isAdmin()
+        },
     },
 
     watch: {

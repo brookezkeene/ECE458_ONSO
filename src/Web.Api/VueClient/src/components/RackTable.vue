@@ -1,7 +1,7 @@
 ﻿<template>
     <v-card>
         <v-data-table
-          :headers="headers"
+          :headers="filteredHeaders"
           :items="racks"
           >
             <template v-slot:top>
@@ -36,13 +36,14 @@
 <script>
     export default {
         name: 'rack-table',
-        inject: ['rackRepository'],
+        inject: ['rackRepository','auth'],
         item: null,
         props: {
             editedItem:Object
         },
         data () {
             return {
+                admin: false,
                 loading: true,
                 headers: [
                     { text: 'Address', value: 'address'},
@@ -52,6 +53,14 @@
                 ],
                 racks: [],
             };
+        },
+        computed: {
+            isAdmin() {
+                return this.admin === this.auth.isAdmin()
+            },
+            filteredHeaders() {
+                return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
+            },
         },
         async created () {
             this.initialize()

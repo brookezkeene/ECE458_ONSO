@@ -4,7 +4,7 @@
             <v-card-title>Models</v-card-title>
             <v-container>
             <v-card>
-                <v-data-table :headers="headers"
+                <v-data-table :headers="filteredHeaders"
                               :items="models"
                               :search="search"
                               @click:row="showDetails">
@@ -26,7 +26,7 @@
                             <v-spacer></v-spacer>
                             <v-dialog v-model="dialog" max-width="500px">
                                 <template v-slot:activator="{ on }">
-                                    <v-btn color="primary" class="mb-2" v-on="on">Add Model</v-btn>
+                                    <v-btn v-if="admin" color="primary" class="mb-2" v-on="on">Add Model</v-btn>
                                 </template>
                                 <v-card>
                                     <model-edit v-bind:editedItem="editedItem" v-bind:models="models"></model-edit>
@@ -124,7 +124,7 @@
                         </v-icon>
                     </template>
 
-                    <template v-slot:item.action="{ item }">
+                    <template v-if="admin" v-slot:item.action="{ item }">
                         <v-icon small
                                 class="mr-2"
                                 @click="editItem(item)">
@@ -157,6 +157,7 @@
 
 <script>
     import ModelEdit from "./ModelEdit"
+    import Auth from "../auth"
 
     export default {
         components: {
@@ -233,6 +234,12 @@
         computed: {
             formTitle() {
                 return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+            },
+            admin() {
+                return Auth.isAdmin()
+            },
+            filteredHeaders() {
+                return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
             },
         },
         watch: {
