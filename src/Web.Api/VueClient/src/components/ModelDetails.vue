@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <div v-if="!loading">
-            <v-card-title>Model {{id}} details</v-card-title>
+            <v-card-title>Model Details</v-card-title>
             <!-- Contains the model data-->
             <v-row>
                 <v-col cols="12" sm="6" md="4">

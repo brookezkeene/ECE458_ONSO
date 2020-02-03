@@ -2,7 +2,7 @@
     <div v-if="!loading">
         <v-card flat>
             <v-card-title>
-            <span class="headline">Instance {{id}} Details</span>
+            <span class="headline">Instance Details</span>
             </v-card-title>
             <v-card-text>
                 <v-row>
