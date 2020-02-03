@@ -2,67 +2,70 @@
     <div>
         <v-card flat>
             <v-card-title>Models</v-card-title>
-            <v-data-table :headers="headers"
-                          :items="models"
-                          :search="search"
-                          @click:row="showDetails">
-                <template v-slot:top v-slot:item.action="{ item }">
+            <v-container>
+            <v-card>
+                <v-data-table :headers="headers"
+                              :items="models"
+                              :search="search"
+                              @click:row="showDetails">
+                    <template v-slot:top v-slot:item.action="{ item }">
 
-                    <v-toolbar flat color="white">
-                        <v-autocomplete append-icon="mdi-magnify"
-                                        :loading="loading"
-                                        :items="models"
-                                        :search-input.sync="search"
-                                        cache-items
-                                        class="mx-4"
-                                        flat
-                                        hide-no-data
-                                        hide-details
-                                        item-text="vendor"
-                                        label="Search"
-                                        single-line
-                                        solo-inverted></v-autocomplete>
-                        <v-spacer></v-spacer>
-                        <v-dialog v-model="dialog" max-width="500px">
-                            <template v-slot:activator="{ on }">
-                                <v-btn color="primary" class="mb-2" v-on="on">Add Model</v-btn>
-                            </template>
-                            <v-card>
-                                <model-edit v-bind:editedItem="editedItem" v-bind:models="models"></model-edit>
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn text @click="close">Cancel</v-btn>
-                                    <v-btn text @click="save">Save</v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
-                    </v-toolbar>
+                        <v-toolbar flat color="white">
+                            <v-autocomplete prepend-inner-icon="mdi-magnify"
+                                            :loading="loading"
+                                            :items="models"
+                                            :search-input.sync="search"
+                                            cache-items
+                                            flat
+                                            hide-no-data
+                                            hide-details
+                                            item-text="vendor"
+                                            label="Search"
+                                            single-line
+                                            solo-inverted></v-autocomplete>
+                            <v-spacer></v-spacer>
+                            <v-dialog v-model="dialog" max-width="500px">
+                                <template v-slot:activator="{ on }">
+                                    <v-btn color="primary" class="mb-2" v-on="on">Add Model</v-btn>
+                                </template>
+                                <v-card>
+                                    <model-edit v-bind:editedItem="editedItem" v-bind:models="models"></model-edit>
+                                    <v-card-actions>
+                                        <v-spacer></v-spacer>
+                                        <v-btn text @click="close">Cancel</v-btn>
+                                        <v-btn text @click="save">Save</v-btn>
+                                    </v-card-actions>
+                                </v-card>
+                            </v-dialog>
+                        </v-toolbar>
 
-                </template>
+                    </template>
 
-                <template v-slot:item.coloricon="{ item }">
-                    <v-icon class="mr-2"
-                            :color=item.displayColor>
-                        mdi-circle
-                    </v-icon>
-                </template>
+                    <template v-slot:item.coloricon="{ item }">
+                        <v-icon class="mr-2"
+                                :color=item.displayColor>
+                            mdi-circle
+                        </v-icon>
+                    </template>
 
-                <template v-slot:item.action="{ item }">
-                    <v-icon small
-                            class="mr-2"
-                            @click="editItem(item)">
-                        edit
-                    </v-icon>
-                    <v-icon small
-                            @click="deleteItem(item)">
-                        delete
-                    </v-icon>
-                </template>
-                <template v-slot:no-data>
-                    <v-btn color="primary" @click="initialize">Reset</v-btn>
-                </template>
-                >
-            </v-data-table>
+                    <template v-slot:item.action="{ item }">
+                        <v-icon small
+                                class="mr-2"
+                                @click="editItem(item)">
+                            edit
+                        </v-icon>
+                        <v-icon small
+                                @click="deleteItem(item)">
+                            delete
+                        </v-icon>
+                    </template>
+                    <template v-slot:no-data>
+                        <v-btn color="primary" @click="initialize">Reset</v-btn>
+                    </template>
+                    >
+                </v-data-table>
+            </v-card>
+            </v-container>
 
             <v-dialog v-model="instructionsDialog" max-width="550px">
                 <v-card>
