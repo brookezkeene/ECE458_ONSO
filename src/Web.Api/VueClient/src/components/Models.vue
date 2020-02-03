@@ -279,11 +279,12 @@
             },
             showDetails(item) {
                 this.detailItem = Object.assign({}, item);
-                this.detailsDialog = true;
+                this.$router.push({ name: 'model-details', params: { detailItem: this.detailItem, id: this.detailItem.id } })
+                //this.detailsDialog = true;
             },
-            closeDetail() {
-                this.detailsDialog = false;
-            },
+            //closeDetail() {
+            //    this.detailsDialog = false;
+            //},
           /**
            * Filter code below; TODO: refactor this 
            * end/start values are the filter inputs 
