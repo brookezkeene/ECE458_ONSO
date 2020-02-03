@@ -19,7 +19,7 @@ COPY ["Web.Api.Infrastructure/Web.Api.Infrastructure.csproj", "Web.Api.Infrastru
 RUN dotnet restore "Web.Api/Web.Api.csproj"
 COPY . .
 WORKDIR "/src/Web.Api"
-RUN dotnet build "Web.Api.csproj" -c Release -o /app/build
+#RUN dotnet build "Web.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "Web.Api.csproj" -c Release -o /app/publish

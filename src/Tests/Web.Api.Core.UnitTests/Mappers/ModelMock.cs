@@ -30,9 +30,20 @@ namespace Web.Api.Core.UnitTests.Mappers
             var fakerInstance = new Faker<Instance>()
                 .RuleFor(o => o.Id, f => Guid.NewGuid())
                 .RuleFor(o => o.Hostname, f => f.Internet.DomainName())
-                .RuleFor(o => o.RackPosition, f => f.Random.Number(1, 39));
+                .RuleFor(o => o.RackPosition, f => f.Random.Number(1, 39))
+                .RuleFor(o => o.Rack, f => GetRackFaker().Generate());
 
             return fakerInstance;
+        }
+
+        private static Faker<Rack> GetRackFaker()
+        {
+            var fakerRack = new Faker<Rack>()
+                .RuleFor(o => o.Id, f => Guid.NewGuid())
+                .RuleFor(o => o.Row, f => f.Random.Char('A', 'B').ToString())
+                .RuleFor(o => o.Column, f => f.Random.Number(1, 10));
+
+            return fakerRack;
         }
 
         public static Model GenerateRandomModel()
