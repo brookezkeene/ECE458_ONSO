@@ -59,7 +59,7 @@
         </v-dialog>
         <v-dialog v-model="filechoosercard" max-width="500px">
             <v-card>
-              <file-chooser-card></file-chooser-card>
+              <file-chooser-card v-on:close-file-chooser="closeFileChooser"></file-chooser-card>
             </v-card>
         </v-dialog>
     </v-card>
@@ -80,6 +80,11 @@ export default {
             filechoosercard: false,
         };
     },
+    watch: {
+        filechoosercard(val) {
+            val || this.closeFileChooser()
+        },
+    },
     components: {
       ModelImportFormatInfo,
       InstanceImportFormatInfo,
@@ -92,8 +97,11 @@ export default {
         showInstanceInfo() {
             this.extrainfoinstance = true
         },
-        openFileChooser(){
+        openFileChooser() {
             this.filechoosercard = true
+        },
+        closeFileChooser() {
+            this.filechoosercard = false
         }
     }
     
