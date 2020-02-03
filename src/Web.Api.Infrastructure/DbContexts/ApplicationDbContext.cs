@@ -10,6 +10,18 @@ namespace Web.Api.Infrastructure.DbContexts
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<Model>()
+                .HasIndex(m => new {m.Vendor, m.ModelNumber})
+                .IsUnique();
+
+            builder.Entity<Instance>()
+                .HasIndex(i => i.Hostname)
+                .IsUnique();
+
+            builder.Entity<Rack>()
+                .HasIndex(r => new {r.Row, r.Column})
+                .IsUnique();
         }
 
         public DbSet<Model> Models { get; set; }

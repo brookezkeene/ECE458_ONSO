@@ -5,7 +5,9 @@ namespace Web.Api.Infrastructure.Entities
 {
     public class User : IdentityUser
     {
-        [Required]
-        public string DisplayName { get; set; }
+        [MaxLength(50)]
+        public string FirstName { get; set; }
+        [MaxLength(50)]
+        public string LastName { get; set; }
     }
 }
