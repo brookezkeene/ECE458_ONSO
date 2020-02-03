@@ -5,7 +5,7 @@
     <v-card>
         <v-spacer></v-spacer>
         <v-data-table
-          :headers="headers"
+          :headers="filteredHeaders"
           :items="instances"
           :search="search"
           multi-sort
@@ -62,7 +62,7 @@
                   <!-- Calls for InstanceDetails and InstanceEdit cards -->
                   <v-dialog v-model="dialog" max-width="500px">
                       <template v-slot:activator="{ on }">
-                          <v-btn color="primary" dark class="mb-2" v-on="on">Add Instance</v-btn>
+                          <v-btn v-if="admin" color="primary" dark class="mb-2" v-on="on">Add Instance</v-btn>
                       </template>
                       <v-card>
                           <instance-edit v-bind:editedItem="editedItem"></instance-edit>'
@@ -120,7 +120,7 @@
     components: {
       InstanceEdit,
     },
-    inject: ['instanceRepository','modelRepository'],
+    inject: ['instanceRepository','modelRepository','auth'],
     data() {
       return {
         // Filter values.
@@ -128,6 +128,7 @@
         endRackValue: '',
         modelFilterValue: '',
 
+        admin: false,
         dialog: false,
         instructionsDialog: false,
         loading: true,
@@ -220,10 +221,16 @@
         },
         deleting: false,
       }},
-      computed: {
-      formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-      },
+    computed: {
+        formTitle () {
+            return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+        },
+        isAdmin() {
+            return this.admin === this.auth.isAdmin()
+        },
+        filteredHeaders() {
+            return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
+        },
     },
     watch: {
       dialog (val) {
