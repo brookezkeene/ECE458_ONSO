@@ -278,8 +278,10 @@
                 this.close()
             },
             showDetails(item) {
-                this.detailItem = Object.assign({}, item);
-                this.$router.push({ name: 'model-details', params: { detailItem: this.detailItem, id: this.detailItem.id } })
+                if (this.editedIndex === -1) {
+                    this.detailItem = Object.assign({}, item);
+                    this.$router.push({ name: 'model-details', params: { detailItem: this.detailItem, id: this.detailItem.id } })
+                }
                 //this.detailsDialog = true;
             },
             //closeDetail() {

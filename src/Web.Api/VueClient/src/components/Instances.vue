@@ -275,9 +275,11 @@
         this.close()
       },
       showDetails (item) {
-          this.detailItem = Object.assign({}, item)
-          this.$router.push({ name: 'instance-details', params: { detailItem: this.detailItem, id: this.detailItem.id } })
-        //this.detailsDialog = true
+          if (this.editedIndex === -1) {
+              this.detailItem = Object.assign({}, item)
+              this.$router.push({ name: 'instance-details', params: { detailItem: this.detailItem, id: this.detailItem.id } })
+          }
+          //this.detailsDialog = true
       },
       /**
         Filters for all the model searches 
