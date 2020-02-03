@@ -1,7 +1,7 @@
 <template>
     <v-card>
         <v-card-title>
-          Please sign in to your Object Not So Oriented Account!
+          Please sign in to your account!
         </v-card-title>
         <v-form
             ref="form"

@@ -79,15 +79,18 @@
                       <v-btn color="primary" text @click="save">Save</v-btn>
                   </v-card-actions>'
               </v-dialog>
+
+
+              <v-dialog v-model="instructionsDialog" max-width="550px">
+                  <v-card>
+                      <v-card-title class="justify-center">
+                          Click on row for more information about the instance
+                      </v-card-title>
+                  </v-card>
+              </v-dialog>
+
           </v-toolbar>
 
-          <v-dialog v-model="instructionsDialog" max-width="550px">
-              <v-card>
-                  <v-card-title class="justify-center">
-                      Click on row for more information about the instance
-                  </v-card-title>
-              </v-card>
-          </v-dialog>
 
       </template>
 
