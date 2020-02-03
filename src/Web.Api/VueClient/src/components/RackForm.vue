@@ -9,8 +9,8 @@
                     <v-text-field v-model="range.end" label="End"></v-text-field>
 
                     <v-btn class="mr-4" color="primary" @click="viewDiagram">View</v-btn>
-                    <v-btn class="mr-4" color="primary" @click="createInRange">Create</v-btn>
-                    <v-btn class="mr-4" color="primary" @click="deleteInRange">Delete</v-btn>
+                    <v-btn v-if="admin" class="mr-4" color="primary" @click="createInRange">Create</v-btn>
+                    <v-btn v-if="admin" class="mr-4" color="primary" @click="deleteInRange">Delete</v-btn>
                 </form>
             </v-card-text>
         </v-card>
@@ -20,13 +20,19 @@
 <script>
 export default {
     name: 'rack-form',
-    inject: ['rackRepository'],
+    inject: ['rackRepository', 'auth'],
     data: () => ({
+        admin: false,
         range: {
             start: '',
             end: ''
         }
     }),
+    computed: {
+        isAdmin() {
+            return this.admin === this.auth.isAdmin()
+        }
+    },
     methods: {
         viewDiagram() {
             this.$router.push({ name: "RackDiagram", query: { start: this.range.start, end: this.range.end } });
