@@ -19,10 +19,6 @@
                         <v-card-text> {{instance.rackPosition}} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                        <v-label>Owner ID: </v-label>
-                        <v-card-text> {{instance.owner.id}} </v-card-text>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
                         <v-label>Owner Username: </v-label>
                         <v-card-text> {{instance.owner.username}} </v-card-text>
                     </v-col>
