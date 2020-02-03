@@ -64,12 +64,14 @@
                       <template v-slot:activator="{ on }">
                           <v-btn color="primary" dark class="mb-2" v-on="on">Add Instance</v-btn>
                       </template>
-                      <instance-edit v-bind:editedItem="editedItem"></instance-edit>'
-                      <v-card-actions>
-                          <v-spacer></v-spacer>
-                          <v-btn color="primary" text @click="close">Cancel</v-btn>
-                          <v-btn color="primary" text @click="save">Save</v-btn>
-                      </v-card-actions>'
+                      <v-card>
+                          <instance-edit v-bind:editedItem="editedItem"></instance-edit>'
+                          <v-card-actions>
+                              <v-spacer></v-spacer>
+                              <v-btn text @click="close">Cancel</v-btn>
+                              <v-btn color="primary" text @click="save">Save</v-btn>
+                          </v-card-actions>'
+                      </v-card>
                   </v-dialog>
 
 
