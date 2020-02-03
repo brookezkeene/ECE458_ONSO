@@ -29,7 +29,8 @@ namespace Web.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.ConfigureCoreServices()
-                .ConfigureDbContext();
+                //.ConfigureInMemoryDbContext();
+                .ConfigureSqlDbContext(Configuration);
 
             services.AddSpaStaticFiles(options => options.RootPath = "VueClient/dist");
 
@@ -69,7 +70,7 @@ namespace Web.Api
                 endpoints.MapToVueCliProxy(
                     "{*path}",
                     new SpaOptions { SourcePath = "VueClient" },
-                    npmScript: System.Diagnostics.Debugger.IsAttached ? "serve" : null,
+                    npmScript: /*System.Diagnostics.Debugger.IsAttached ? "serve" :*/ null,
                     regex: "Compiled successfully",
                     forceKill: true
                     );

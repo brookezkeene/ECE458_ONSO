@@ -67,5 +67,10 @@ namespace Web.Api.Infrastructure.Repositories
             _dbContext.Models.Remove(model);
             return await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<bool> CanUpdateModelAsync(Model model)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

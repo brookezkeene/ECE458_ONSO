@@ -14,46 +14,34 @@ namespace Web.Api.Helpers
 {
     public static class DbMigrationHelper
     {
-        public static async Task EnsureSeedData(IHost host)
+        public static void EnsureSeedData(IHost host)
         {
-            using (var serviceScope = host.Services.CreateScope())
-            {
-                var services = serviceScope.ServiceProvider;
-                await EnsureSeedData(services);
-            }
+            using var serviceScope = host.Services.CreateScope();
+            var services = serviceScope.ServiceProvider;
+            EnsureSeedData(services);
         }
 
-        public static async Task EnsureSeedData(IServiceProvider serviceProvider)
+        public static void EnsureSeedData(IServiceProvider serviceProvider)
         {
-            using (var scope = serviceProvider.GetRequiredService<IServiceScopeFactory>()
-                .CreateScope())
-            {
-                var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                    .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                    .Options;
+            using var scope = serviceProvider.GetRequiredService<IServiceScopeFactory>()
+                .CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var modelRepository = scope.ServiceProvider.GetRequiredService<IModelRepository>();
+            var instanceRepository = scope.ServiceProvider.GetRequiredService<IInstanceRepository>();
+            var rackRepository = scope.ServiceProvider.GetRequiredService<IRackRepository>();
 
-                //var context = new ApplicationDbContext(options);
-                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var modelRepository = scope.ServiceProvider.GetRequiredService<IModelRepository>();
-                var instanceRepository = scope.ServiceProvider.GetRequiredService<IInstanceRepository>();
-                var rackRepository = scope.ServiceProvider.GetRequiredService<IRackRepository>();
-
-                await EnsureSeedData(context, modelRepository, instanceRepository, rackRepository);
-
-            }
+            EnsureSeedData(context, modelRepository, instanceRepository, rackRepository);
         }
 
-        public static async Task EnsureSeedData(ApplicationDbContext context, IModelRepository modelRepository,
+        public static void EnsureSeedData(ApplicationDbContext context, IModelRepository modelRepository,
             IInstanceRepository instanceRepository, IRackRepository rackRepository)
         {
             if (!context.Models.Any())
             {
-
-                //Randomizer.Seed = new Random(1337);
+                // TODO: migration failing because racks do not exist; generate them too!
                 var models = ModelMock.GenerateRandomModels(20);
-                await context.Models.AddRangeAsync(models);
-
-                await context.SaveChangesAsync();
+                context.Models.AddRange(models);
+                context.SaveChanges();
             }
         }
     }

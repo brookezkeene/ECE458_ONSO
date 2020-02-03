@@ -6,20 +6,20 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Web.Api.Extensions;
 using Web.Api.Helpers;
+using Web.Api.Infrastructure.DbContexts;
 
 namespace Web.Api
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
-            var host = CreateHostBuilder(args)
-                .Build();
-
-            await DbMigrationHelper.EnsureSeedData(host);
-            
-            host.Run();
+            CreateHostBuilder(args)
+                .Build()
+                .MigrateDatabase<ApplicationDbContext>()
+                .Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

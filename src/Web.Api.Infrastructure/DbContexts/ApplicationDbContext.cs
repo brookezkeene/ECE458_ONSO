@@ -7,6 +7,11 @@ namespace Web.Api.Infrastructure.DbContexts
     {
         public ApplicationDbContext(DbContextOptions options) : base(options) { }
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+        }
+
         public DbSet<Model> Models { get; set; }
         public DbSet<Rack> Racks { get; set; }
         public DbSet<Instance> Instances { get; set; }

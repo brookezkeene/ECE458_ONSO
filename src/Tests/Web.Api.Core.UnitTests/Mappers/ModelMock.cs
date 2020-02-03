@@ -17,7 +17,7 @@ namespace Web.Api.Core.UnitTests.Mappers
                 .RuleFor(o => o.DisplayColor, f => "#" + f.Random.Hash(6))
                 .RuleFor(o => o.EthernetPorts, f => f.Random.Number(1, 2))
                 .RuleFor(o => o.PowerPorts, f => f.Random.Number(1, 2))
-                .RuleFor(o => o.Cpu, f => f.Random.Words(4))
+                .RuleFor(o => o.Cpu, f => f.Random.Words(2))
                 .RuleFor(o => o.Memory, f => f.Random.Number(1, 64))
                 .RuleFor(o => o.Comment, f => f.Random.Words(f.Random.Number(6, 10)))
                 .RuleFor(o => o.Instances, f => GetInstanceFaker().Generate(f.Random.Number(15)));
