@@ -3,8 +3,10 @@
         <v-card>
             <v-data-table :headers="headers"
                           :items="models"
-                          :search="search">
-                <template v-slot:top>
+                          :search="search"
+                          @click:row="showDetails">
+                          item-key="id">
+                <template v-slot:top v-slot:item.action="{ item }">
 
                     <v-toolbar flat color="white">
                         <v-toolbar-title>Models</v-toolbar-title>
@@ -35,26 +37,12 @@
                                 <model-edit v-bind:editedItem="editedItem" v-bind:models="models"></model-edit>
                                 <v-card-actions>
                                     <v-spacer></v-spacer>
-                                    <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                                    <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+                                    <v-btn text @click="close">Cancel</v-btn>
+                                    <v-btn text @click="save">Save</v-btn>
                                 </v-card-actions>
                             </v-card>
                         </v-dialog>
                     </v-toolbar>
-
-                    <div class="text-center">
-                        <v-dialog v-model="detailsDialog" width="500">
-                            <v-card>
-                                <v-card-text>
-                                    <model-details v-bind:id="detailItem.id"></model-details>
-                                </v-card-text>
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn color="orange darken-1" text @click="closeDetail">Close</v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
-                    </div>
 
                 </template>
 
@@ -93,12 +81,10 @@
 
 <script>
 
-import ModelDetails from "./ModelDetails"
 import ModelEdit from "./ModelEdit"
 
   export default {
     components: {
-      ModelDetails,
       ModelEdit,
     },
     inject: ['modelRepository'],
