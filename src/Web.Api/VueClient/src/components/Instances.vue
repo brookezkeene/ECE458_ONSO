@@ -23,19 +23,15 @@
                       <v-row>
                           <v-col cols="6">
                               <v-row>
-                                  <v-autocomplete prepend-inner-icon="mdi-magnify"
-                                                  :loading="loading"
+                                  <v-autocomplete v-model="modelFilterValue"
+                                                  prepend-inner-icon="mdi-magnify"
                                                   :items="instances"
-                                                  :search-input.sync="search"
-                                                  cache-items
+                                                  item-text="model.vendor"
                                                   class="mt-4"
                                                   flat
-                                                  hide-no-data
-                                                  hide-details
-                                                  item-text="model.vendor"
-                                                  label="Search"
-                                                  single-line
-                                                  solo-inverted></v-autocomplete>
+                                                  placeholder="Start typing to Search for Model"
+                                                  label="Model Search">
+                                  </v-autocomplete>
 
                               </v-row>
                           </v-col>
@@ -122,12 +118,13 @@
     components: {
       InstanceEdit,
     },
-    inject: ['instanceRepository'],
+    inject: ['instanceRepository','modelRepository'],
     data() {
       return {
         // Filter values.
         startRackValue: '',
         endRackValue: '',
+        modelFilterValue: '',
 
         dialog: false,
         instructionsDialog: false,
@@ -137,8 +134,18 @@
         // Table data.
         headers: [
           
-          { text: 'Model Link',  value: 'model.id', },
-          {  text: 'Model Vendor', value: 'model.vendor',   },
+          { text: 'Model ID (LINK TO MODEL)',  value: 'model.id', },
+          { text: 'Model Vendor', value: 'model.vendor', filter: this.modelFilter },
+          { text: 'Model Number', value: 'model.modelNumber', },
+          { text: 'Model height', value: 'model.height', },
+          { text: 'Display Color', value: 'model.displayColor', },
+          { text: 'Ethernet ports', value: 'model.ethernetPorts', },
+          { text: 'Power Ports', value: 'model.powerPorts', },
+          { text: 'CPU', value: 'model.cpu', },
+          { text: 'Memory', value: 'model.memory', },
+          { text: 'Storage', value: 'model.storage', }, 
+
+
           { text: 'Hostname', value: 'hostname' },
           { 
             text: 'Rack', 
@@ -150,18 +157,55 @@
           { text: 'Actions', value: 'action', sortable: false },
         ],
         instances: [],
+        models: [],
+
         firstInstance: null,
         editedIndex: -1,
         defaultItem: {
+          model: {
+            id: '',
+            vendor: '',
+            modelNumber: '',
+            height: 0,
+            displayColor: '',
+            ethernetPorts: 0,
+            powerPorts: 0,
+            cpu: '',
+            memory: '',
+            storage: '',
+          },
           hostname: '',
           rack:'',
-          owner:'',
+          owner:{
+            id:'',
+            username:'',
+            displayname:'',
+            email:'',
+          },
           rackPosition:'',
           comment: ''
         },editedItem: {
+          model: {
+            id: '',
+            vendor: '',
+            modelNumber: '',
+            height: 0,
+            displayColor: '',
+            ethernetPorts: 0,
+            powerPorts: 0,
+            cpu: '',
+            memory: '',
+            storage: '',
+          
+          },
           hostname: '',
           rack:'',
-          owner:'',
+          owner:{
+            id:'',
+            username:'',
+            displayname:'',
+            email:'',
+          },
           rackPosition:'',
           comment: ''
         },
@@ -172,6 +216,7 @@
           owner:'',
           comment: ''
         },
+
       }},
       computed: {
       formTitle () {
@@ -194,6 +239,7 @@
       async initialize () {
         this.instances = await this.instanceRepository.list();
         this.firstInstance = await this.instanceRepository.find(1);
+        this.models = await this.modelRepository.list();
         this.loading = false;
       },
      
@@ -233,6 +279,16 @@
           this.$router.push({ name: 'instance-details', params: { detailItem: this.detailItem, id: this.detailItem.id } })
         //this.detailsDialog = true
       },
+      /**
+        Filters for all the model searches 
+       */
+      modelFilter(value) {
+        if (!this.modelFilterValue) {
+          return true;
+        }
+        return value.toLowerCase().includes(this.modelFilterValue.toLowerCase());
+      },
+
 
       /**
        * Filter for calories column.

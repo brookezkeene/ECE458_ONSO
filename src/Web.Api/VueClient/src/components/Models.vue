@@ -39,6 +39,82 @@
                             </v-dialog>
                         </v-toolbar>
 
+                        <v-row>
+                            <v-col cols="10">
+                                <v-row>
+                                    <!-- Custom filters; sorts between height ranges -->
+                                    <v-col cols="2">
+                                        <v-row>
+                                            <v-col cols="6">
+                                                <v-text-field v-model="startHeightValue"
+                                                              placeholder="from"
+                                                              type="number"
+                                                              label="Height">
+                                                </v-text-field>
+                                            </v-col>
+                                            <v-col cols="6">
+                                                <v-text-field v-model="endHeightValue"
+                                                              type="number"
+                                                              placeholder="to">
+                                                </v-text-field>
+                                            </v-col>
+                                        </v-row>
+                                    </v-col>
+                                    <v-col cols="2">
+                                        <v-row>
+                                            <v-col cols="6">
+                                                <v-text-field v-model="startMemoryValue"
+                                                              placeholder="from"
+                                                              type="number"
+                                                              label="Memory">
+                                                </v-text-field>
+                                            </v-col>
+                                            <v-col cols="6">
+                                                <v-text-field v-model="endMemoryValue"
+                                                              type="number"
+                                                              placeholder="to">
+                                                </v-text-field>
+                                            </v-col>
+                                        </v-row>
+                                    </v-col>
+                                    <v-col cols="2">
+                                        <v-row>
+                                            <v-col cols="6">
+                                                <v-text-field v-model="startEthernetValue"
+                                                              placeholder="from"
+                                                              type="number"
+                                                              label="Ethernet Ports">
+                                                </v-text-field>
+                                            </v-col>
+                                            <v-col cols="6">
+                                                <v-text-field v-model="endEthernetValue"
+                                                              type="number"
+                                                              placeholder="to">
+                                                </v-text-field>
+                                            </v-col>
+                                        </v-row>
+                                    </v-col>
+                                    <v-col cols="2">
+                                        <v-row>
+                                            <v-col cols="6">
+                                                <v-text-field v-model="startPowerValue"
+                                                              placeholder="from"
+                                                              type="number"
+                                                              label="Power Ports">
+                                                </v-text-field>
+                                            </v-col>
+                                            <v-col cols="6">
+                                                <v-text-field v-model="endPowerValue"
+                                                              type="number"
+                                                              placeholder="to">
+                                                </v-text-field>
+                                            </v-col>
+                                        </v-row>
+                                    </v-col>
+                                </v-row>
+                            </v-col>
+                        </v-row>
+
                     </template>
 
                     <template v-slot:item.coloricon="{ item }">
@@ -76,129 +152,200 @@
             </v-dialog>
         </v-card>
     </div>
-
 </template>
 
 
 <script>
+    import ModelDetails from "./ModelDetails"
+    import ModelEdit from "./ModelEdit"
 
-import ModelEdit from "./ModelEdit"
+    export default {
+        components: {
+            ModelDetails,
+            ModelEdit,
+        },
+        inject: ['modelRepository'],
+        data() {
+            return {
+                // Filter values.
+                startHeightValue: '',
+                endHeightValue: '',
+                startMemoryValue: '',
+                endMemoryValue: '',
+                startEthernetValue: '',
+                endEthernetValue: '',
+                startPowerValue: '',
+                endPowerValue: '',
 
-  export default {
-    components: {
-      ModelEdit,
-    },
-    inject: ['modelRepository'],
-    data: () => ({
-        dialog: false,
-        instructionsDialog: false,
-        loading: true,
-        search: '',
-        headers: [
-          { text: 'Vendor', 
-          align: 'left',
-          value: 'vendor' },
-          { text: 'Model Number', value: 'modelNumber' },
-          { text: 'Height', value: 'height' },
-          { text: 'Display Color', value: 'coloricon', sortable: false },
-          { text: 'Ethernet Ports', value: 'ethernetPorts' },
-          { text: 'Power Ports', value: 'powerPorts' },
-          { text: 'CPU', value: 'cpu' },
-          { text: 'Memory', value: 'memory' },
-          { text: 'Storage', value: 'storage' },
-          { text: 'Comment', value: 'comment' },
-          { text: 'Actions', value: 'action', sortable: false },
+                dialog: false,
+                detailsDialog: false,
+                loading: true,
+                search: '',
+                headers: [
+                    {
+                        text: 'Vendor',
+                        align: 'left',
+                        value: 'vendor'
+                    },
+                    { text: 'Model Number', value: 'modelNumber', },
+                    { text: 'Height', value: 'height', filter: this.heightFilter },
+                    { text: 'Display Color', value: 'coloricon', sortable: false },
+                    { text: 'Ethernet Ports', value: 'ethernetPorts', filter: this.ethernetFilter },
+                    { text: 'Power Ports', value: 'powerPorts', filter: this.powerFilter },
+                    { text: 'CPU', value: 'cpu' },
+                    { text: 'Memory', value: 'memory', filter: this.memoryFilter },
+                    { text: 'Storage', value: 'storage' },
+                    { text: 'Comment', value: 'comment' },
+                    { text: 'Actions', value: 'action', sortable: false },
 
-        ],
-        models: [],
-        firstModel: null,
-        editedIndex: -1,
-        editedItem: {
-          vendor: '',
-          modelNumber: '',
-          height: 0,
-          displayColor: 0,
-          ethernetPorts: 0,
-          powerPorts: 0,
-          cpu: '',
-          memory: 0,
-          storage: 0,
-          comment: ''
+                ],
+                models: [],
+                firstModel: null,
+                editedIndex: -1,
+                editedItem: {
+                    vendor: '',
+                    modelNumber: '',
+                    height: 0,
+                    displayColor: 0,
+                    ethernetPorts: 0,
+                    powerPorts: 0,
+                    cpu: '',
+                    memory: 0,
+                    storage: 0,
+                    comment: ''
+                },
+                defaultItem: {
+                    vendor: '',
+                    modelNumber: '',
+                    height: 0,
+                    displayColor: 0,
+                    ethernetPorts: 0,
+                    powerPorts: 0,
+                    cpu: '',
+                    memory: 0,
+                    storage: 0,
+                    comment: ''
+                },
+                detailItem: {
+                    comment: ''
+                },
+            }
         },
-        defaultItem: {
-          vendor: '',
-          modelNumber: '',
-          height: 0,
-          displayColor: 0,
-          ethernetPorts: 0,
-          powerPorts: 0,
-          cpu: '',
-          memory: 0,
-          storage: 0,
-          comment: ''
+        computed: {
+            formTitle() {
+                return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+            },
         },
-          detailItem : {
-          comment: ''
+        watch: {
+            dialog(val) {
+                val || this.close()
+            },
+            detailsDialog(val) {
+                val || this.closeDetail()
+            },
         },
-      }),
-      computed: {
-      formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-      },
-    },
-    watch: {
-      dialog (val) {
-        val || this.close()
-      },
-      instructionsDialog (val) {
-        val || this.closeDetail()
-      },
-    },
-    async created () {
-      this.initialize()
-    },
-    methods: {
-      async initialize () {
-        this.models = await this.modelRepository.list();
-        this.firstModel = await this.modelRepository.find(1);
-        this.loading = false;
-      },
-      editItem (item) {
-        this.editedIndex = this.models.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
-      },
-      deleteItem (item) {
-        const index = this.models.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.models.splice(index, 1)
-      },
-      close () {
-        this.dialog = false
-        setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        }, 300)
-      
-      },
-      save () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.models[this.editedIndex], this.editedItem)
-        } else {
-          this.models.push(this.editedItem)
-        }
-        this.close()
-      },
-      showDetails (item) {
-          this.detailItem = Object.assign({}, item);
-          this.$router.push({ name: 'model-details', params: { id: this.detailItem.id } })
-        //this.detailsDialog = true;
+        async created() {
+            this.initialize()
         },
-        showInstructions() {
-            this.instructionsDialog = true;
+
+        methods: {
+            async initialize() {
+                this.models = await this.modelRepository.list();
+                this.firstModel = await this.modelRepository.find(1);
+                this.loading = false;
+            },
+            editItem(item) {
+                this.editedIndex = this.models.indexOf(item)
+                this.editedItem = Object.assign({}, item)
+                this.dialog = true
+            },
+            deleteItem(item) {
+                const index = this.models.indexOf(item)
+                confirm('Are you sure you want to delete this item?') && this.models.splice(index, 1)
+            },
+            close() {
+                this.dialog = false
+                setTimeout(() => {
+                    this.editedItem = Object.assign({}, this.defaultItem)
+                    this.editedIndex = -1
+                }, 300)
+
+            },
+            save() {
+                if (this.editedIndex > -1) {
+                    Object.assign(this.models[this.editedIndex], this.editedItem)
+                } else {
+                    this.models.push(this.editedItem)
+                }
+                this.close()
+            },
+            showDetails(item) {
+                this.detailItem = Object.assign({}, item);
+                this.detailsDialog = true;
+            },
+            closeDetail() {
+                this.detailsDialog = false;
+            },
+          /**
+           * Filter code below; TODO: refactor this 
+           * end/start values are the filter inputs 
+           * @param value is the value of the table entry
+           */
+          heightFilter(value) {
+            // If this filter has no value we just skip the entire filter.
+            if (!this.startHeightValue && !this.endHeightValue) {
+              return true;
+            // If only one filter has a value, leans entirely on that one filter
+            } else if (!this.endHeightValue) {
+              return (value) >= parseInt(this.startHeightValue);
+            } else if (!this.startHeightValue) {
+              return (value) <= parseInt(this.endHeightValue);
+            }  
+ 
+            // Check if the current loop value (The Height value)
+            // is between the Height values inputted
+            return (value) >= parseInt(this.startHeightValue)
+                    && (value) <= parseInt(this.endHeightValue);
+          },
+          memoryFilter(value) {
+            if (!this.startMemoryValue && !this.endMemoryValue) {
+              return true;
+            } else if (!this.endMemoryValue) {
+              return (value) >= parseInt(this.startMemoryValue);
+            } else if (!this.startMemoryValue) {
+              return (value) <= parseInt(this.endMemoryValue);
+            }  
+
+ 
+            return (value) >= parseInt(this.startMemoryValue)
+                    && (value) <= parseInt(this.endMemoryValue);
+            },
+          ethernetFilter(value) {
+            if (!this.startEthernetValue && !this.endEthernetValue) {
+              return true;
+            } else if (!this.endEthernetValue) {
+              return (value) >= parseInt(this.startEthernetValue);
+            } else if (!this.startEthernetValue) {
+              return (value) <= parseInt(this.endEthernetValue);
+            }  
+ 
+            return (value) >= parseInt(this.startEthernetValue)
+                    && (value) <= parseInt(this.endEthernetValue);
+          },
+          powerFilter(value) {
+            if (!this.startPowerValue && !this.endPowerValue) {
+              return true;
+            } else if (!this.endPowerValue) {
+              return (value) >= parseInt(this.startPowerValue);
+            } else if (!this.startPowerValue) {
+              return (value) <= parseInt(this.endPowerValue);
+            }  
+ 
+            return (value) >= parseInt(this.startPowerValue)
+                    && (value) <= parseInt(this.endPowerValue);
+            },
+
+
         },
-      closeDetail() {
-          this.instructionsDialog = false;
-      },
-    },
-  }
+    }
 </script>

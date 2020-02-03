@@ -4,39 +4,46 @@
             Bulk Import & Export
         </v-card-title>
         <v-container fill-height fluid>
-            <v-row align="center"
-                justify="center">
-            </v-row>
             <v-col>
-                <v-card center>
-                    <span class="group pa-2">
-                        <v-row>
-                            <v-card-title> Models </v-card-title>
-                            <v-icon @click="showModelInfo">mdi-information</v-icon>
-                        </v-row>
-                    </span>
-                    <v-col>
-                        <v-btn color = "primary" class="mb-2" @click="openFileChooser">Import</v-btn>
-                    </v-col>
-                    <v-col>
-                        <v-btn color = "primary" class="mb-2">Export</v-btn>
-                    </v-col>
+                <v-card>
+                    <v-card-title class="justify-center">
+                        <v-icon color="white">mdi-information</v-icon>
+                        <v-spacer></v-spacer>
+                        Models
+                        <v-spacer></v-spacer>
+                        <v-icon @click="showModelInfo">mdi-information</v-icon>
+                    </v-card-title>
+                    <v-card-actions class="justify-center">
+                        <v-container>
+                            <v-row align="center" justify="center">
+                                <v-btn color="primary" class="mb-2" @click="openFileChooser">Import</v-btn>
+                            </v-row>
+                            <v-row align="center" justify="center">
+                                <v-btn color="primary" class="mb-2">Export</v-btn>
+                            </v-row>
+                        </v-container>
+                    </v-card-actions>
                 </v-card>
             </v-col> 
             <v-col>
-                <v-card center>
-                    <span class="group pa-2">
-                        <v-row>
-                            <v-card-title> Instances </v-card-title>
-                            <v-icon @click="showInstanceInfo">mdi-information</v-icon>
-                        </v-row>
-                    </span>
-                    <v-col>
-                        <v-btn color = "primary" class="mb-2" @click="openFileChooser">Import</v-btn>
-                    </v-col>
-                    <v-col>
-                        <v-btn color = "primary" class="mb-2">Export</v-btn>
-                    </v-col>
+                <v-card>
+                    <v-card-title class="justify-center">
+                        <v-icon color="white">mdi-information</v-icon>
+                        <v-spacer></v-spacer>
+                        Instances
+                        <v-spacer></v-spacer>
+                        <v-icon @click="showModelInfo">mdi-information</v-icon>
+                    </v-card-title>
+                    <v-card-actions class="justify-center">
+                        <v-container>
+                            <v-row align="center" justify="center">
+                                <v-btn color="primary" class="mb-2" @click="openFileChooser">Import</v-btn>
+                            </v-row>
+                            <v-row align="center" justify="center">
+                                <v-btn color="primary" class="mb-2">Export</v-btn>
+                            </v-row>
+                        </v-container>
+                    </v-card-actions>
                 </v-card>
             </v-col>
         </v-container> 
@@ -52,7 +59,7 @@
         </v-dialog>
         <v-dialog v-model="filechoosercard" max-width="500px">
             <v-card>
-              <file-chooser-card></file-chooser-card>
+              <file-chooser-card v-on:close-file-chooser="closeFileChooser"></file-chooser-card>
             </v-card>
         </v-dialog>
     </v-card>
@@ -73,6 +80,11 @@ export default {
             filechoosercard: false,
         };
     },
+    watch: {
+        filechoosercard(val) {
+            val || this.closeFileChooser()
+        },
+    },
     components: {
       ModelImportFormatInfo,
       InstanceImportFormatInfo,
@@ -85,8 +97,11 @@ export default {
         showInstanceInfo() {
             this.extrainfoinstance = true
         },
-        openFileChooser(){
+        openFileChooser() {
             this.filechoosercard = true
+        },
+        closeFileChooser() {
+            this.filechoosercard = false
         }
     }
     
