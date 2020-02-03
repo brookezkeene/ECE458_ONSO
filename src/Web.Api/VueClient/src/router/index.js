@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/Login'
-import MainPage from '@/components/MainPage'
 import ModelDetails from '@/components/ModelDetails'
 import InstanceDetails from '@/components/InstanceDetails'
 import RackDiagram from '@/components/RackDiagram'
@@ -14,11 +13,6 @@ import Users from '@/components/Users'
 Vue.use(Router)
 
 const routes = [
-    {
-        path: '/Main',
-        name: 'MainPage',
-        component: MainPage
-    },
     {
         path: '/',
         name: 'Welcome',

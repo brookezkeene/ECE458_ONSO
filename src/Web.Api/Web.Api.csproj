@@ -22,6 +22,9 @@
     <ProjectReference Include="..\Web.Api.Core\Web.Api.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="VueClient\src\components\MainPage.vue" />
+  </ItemGroup>
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build">
     <!-- Build Target:  Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">
