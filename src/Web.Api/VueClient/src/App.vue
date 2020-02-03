@@ -1,40 +1,50 @@
 <template>
-
     <v-app>
-        <v-navigation-drawer v-model="sidebar" app>
-            <v-list>
-                <v-list-tile v-for="item in menuItems"
-                             :key="item.title"
-                             :to="item.path">
-                    <v-list-tile-action>
-                        <v-icon>{{ item.icon }}</v-icon>
-                    </v-list-tile-action>
-                    <v-list-tile-content>{{ item.title }}</v-list-tile-content>
-                </v-list-tile>
-            </v-list>
-        </v-navigation-drawer>
+        <v-navigation-drawer v-model="drawer"
+                             :mini-variant.sync="mini"
+                             permanent
+                             app>
 
-        <v-toolbar app>
-            <span class="hidden-sm-and-up">
-                <v-toolbar-side-icon @click="sidebar = !sidebar">
-                </v-toolbar-side-icon>
-            </span>
-            <v-toolbar-title>
-                <router-link to="/" tag="span" style="cursor: pointer">
-                    {{ appTitle }}
-                </router-link>
-            </v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-toolbar-items class="hidden-xs-only">
-                <v-btn flat
-                       v-for="item in menuItems"
-                       :key="item.title"
-                       :to="item.path">
-                    <v-icon left dark>{{ item.icon }}</v-icon>
-                    {{ item.title }}
+            <v-list-item class="px-2">
+                <v-list-item-avatar>
+                    <v-img src="./components/example/hyposoft_logo.png"></v-img>
+                </v-list-item-avatar>
+
+                <v-list-item-title>
+                    <router-link to="/" tag="span" style="cursor: pointer">
+                        {{ appTitle }}
+                    </router-link>
+                </v-list-item-title>
+
+                <v-btn icon
+                       color="primary"
+                       @click.stop="mini = !mini">
+                    <v-icon>mdi-chevron-left</v-icon>
                 </v-btn>
-            </v-toolbar-items>
-        </v-toolbar>
+            </v-list-item>
+
+            <v-list>
+                <v-list-item v-for="item in menuItems"
+                             :key="item.title"
+                             :to="item.path"
+                             color="primary">
+                    <v-list-item-icon>
+                        <v-icon>{{ item.icon }}</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                        <v-list-item-title>
+                            {{ item.title }}
+                        </v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-list>
+
+            <template v-if="!mini" v-slot:append>
+                <div class="pa-2">
+                    <v-btn color="primary" block>Logout</v-btn>
+                </div>
+            </template>
+        </v-navigation-drawer>
 
         <v-content>
             <router-view></router-view>
@@ -60,12 +70,14 @@
             return {
                 appTitle: 'Hyposoft Tool',
                 sidebar: false,
+                drawer: true,
+                mini: true,
                 menuItems: [
-                    { title: 'Models', path: '/models', icon: 'mdi-table' },
-                    { title: 'Instances', path: '/instances', icon: 'mdi-table' },
-                    { title: 'Racks', path: '/racks', icon: 'mdi-table' },
-                    { title: 'Users', path: '/users', icon: 'mdi-face-profile-woman' },
-                    { title: 'Import/Export', path: '/importexport', icon: 'mdi-import' }
+                    { title: 'Models', path: '/models', icon: 'mdi-table-large' },
+                    { title: 'Instances', path: '/instances', icon: 'mdi-server' },
+                    { title: 'Racks', path: '/racks', icon: 'mdi-view-day' },
+                    { title: 'Users', path: '/users', icon: 'mdi-account' },
+                    { title: 'Import/Export', path: '/importexport', icon: 'mdi-file-upload' }
                 ]
             }
         },
@@ -79,4 +91,5 @@
             //Racks,
         },
 
-    }</script>
+    }
+</script>
