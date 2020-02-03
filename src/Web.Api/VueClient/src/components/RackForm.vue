@@ -10,8 +10,9 @@
                     <v-text-field v-model="range.start" label="Start"></v-text-field>
                     <v-text-field v-model="range.end" label="End"></v-text-field>
 
-                    <v-btn class="mr-4" @click="viewDiagram">View</v-btn>
-                    <v-btn @click="createInRange">Create</v-btn>
+                    <v-btn class="mr-4" color="primary" @click="viewDiagram">View</v-btn>
+                    <v-btn class="mr-4" color="primary" @click="createInRange">Create</v-btn>
+                    <v-btn class="mr-4" color="primary" @click="deleteInRange">Delete</v-btn>
                 </form>
             </v-card-text>
         </v-card>
@@ -40,6 +41,15 @@ export default {
                 .catch(() => {
                     // indicate failure
                 });
+        },
+        deleteInRange() {
+            this.rackRepository.deleteInRange(this.range.start, this.range.end)
+                .then(() => {
+                    // indicate success
+                })
+                .catch(() => {
+                    // indicate failure
+                })
         }
     }
 }

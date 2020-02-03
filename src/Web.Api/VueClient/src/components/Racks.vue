@@ -1,21 +1,27 @@
 <template>
     <v-card>
-        <v-toolbar flat color="white">
-            <v-toolbar-title>Racks</v-toolbar-title>
-            <v-divider class="mx-4"
-                       inset
-                       vertical></v-divider>
-        </v-toolbar>
-        <rack-form />
+        <v-card-title>
+            Racks
+        </v-card-title>
+
+        <v-container align="center" justify="center">
+            <rack-form />
+        </v-container>
+
+        <v-container align="center" justify="center">
+            <rack-table />
+        </v-container>
     </v-card>
 </template>
 
 <script>
 import RackForm from "./RackForm"
+import RackTable from "./RackTable"
 
 export default {
     components: {
-      RackForm,
+        RackForm,
+        RackTable
     }
 }
 </script>
