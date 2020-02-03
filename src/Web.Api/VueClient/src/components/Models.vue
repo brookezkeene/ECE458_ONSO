@@ -4,7 +4,7 @@
             <v-card-title>Models</v-card-title>
             <v-container>
             <v-card>
-                <v-data-table :headers="headers"
+                <v-data-table :headers="filteredHeaders"
                               :items="models"
                               :search="search"
                               @click:row="showDetails">
@@ -124,7 +124,7 @@
                         </v-icon>
                     </template>
 
-                    <template v-slot:item.action="{ item }">
+                    <template v-if="admin" v-slot:item.action="{ item }">
                         <v-icon small
                                 class="mr-2"
                                 @click="editItem(item)">
@@ -162,7 +162,7 @@
         components: {
             ModelEdit,
         },
-        inject: ['modelRepository'],
+        inject: ['modelRepository', 'auth'],
         data() {
             return {
                 // Filter values.
@@ -175,6 +175,7 @@
                 startPowerValue: '',
                 endPowerValue: '',
 
+                admin: false,
                 dialog: false,
                 detailsDialog: false,
                 loading: true,
@@ -233,6 +234,12 @@
         computed: {
             formTitle() {
                 return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+            },
+            isAdmin() {
+                return this.admin === this.auth.isAdmin()
+            },
+            filteredHeaders() {
+                return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
             },
         },
         watch: {
