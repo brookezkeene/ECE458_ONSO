@@ -218,7 +218,7 @@
           owner:'',
           comment: ''
         },
-
+        deleting: false,
       }},
       computed: {
       formTitle () {
@@ -251,6 +251,7 @@
         this.dialog = true
       },
       deleteItem (item) {
+        this.deleting = true;
         const index = this.instances.indexOf(item)
         confirm('Are you sure you want to delete this item?') && this.instances.splice(index, 1)
       },
@@ -276,11 +277,12 @@
         }
         this.close()
       },
-      showDetails (item) {
-          if (this.editedIndex === -1) {
+        showDetails(item) {
+          if (this.editedIndex === -1 && !this.deleting) {
               this.detailItem = Object.assign({}, item)
               this.$router.push({ name: 'instance-details', params: { detailItem: this.detailItem, id: this.detailItem.id } })
           }
+          this.deleting = false;
           //this.detailsDialog = true
       },
       /**

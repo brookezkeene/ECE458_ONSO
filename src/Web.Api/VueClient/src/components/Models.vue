@@ -227,6 +227,7 @@
                 detailItem: {
                     comment: ''
                 },
+                deleting: false,
             }
         },
         computed: {
@@ -258,6 +259,7 @@
                 this.dialog = true
             },
             deleteItem(item) {
+                this.deleting = true;
                 const index = this.models.indexOf(item)
                 confirm('Are you sure you want to delete this item?') && this.models.splice(index, 1)
             },
@@ -278,10 +280,11 @@
                 this.close()
             },
             showDetails(item) {
-                if (this.editedIndex === -1) {
+                if (this.editedIndex === -1 && !this.deleting) {
                     this.detailItem = Object.assign({}, item);
                     this.$router.push({ name: 'model-details', params: { detailItem: this.detailItem, id: this.detailItem.id } })
                 }
+                this.deleting = false;
                 //this.detailsDialog = true;
             },
             //closeDetail() {
