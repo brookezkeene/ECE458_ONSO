@@ -113,5 +113,5 @@ export default {
 
         mockInstances.splice(index, 1);
         return Promise.resolve();
-    }
+    } 
 };

@@ -23,22 +23,13 @@
         <v-row>
             <v-col cols="6">
                 <v-row class="pa-6">
-                    <v-autocomplete
-                      append-icon = "mdi-magnify"
-                      :loading="loading"
-                      :items="instances"
-                      :search-input.sync="search"
-                      cache-items
-                      class="mx-4"
-                      flat
-                      hide-no-data
-                      hide-details
-                      item-text="model.vendor"
-                      label="Search"
-                      single-line
-                      solo-inverted
-                    ></v-autocomplete>
-                    
+                    <v-autocomplete 
+                        v-model="modelFilterValue"
+                        :items="instances"
+                        item-text="model.vendor"
+                        placeholder="Start typing to Search for Model"
+                        label="Model Search">
+                    </v-autocomplete>
                 </v-row>
             </v-col>
 
@@ -73,16 +64,18 @@
 
           <!-- Calls for InstanceDetails and InstanceEdit cards -->
           <v-dialog v-model="dialog" max-width="500px">
-            <template v-slot:activator="{ on }">
-              <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
-            </template>
-            <instance-edit v-bind:editedItem="editedItem"></instance-edit>'            
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="primary" text @click="close">Cancel</v-btn>
-              <v-btn color="primary" text @click="save">Save</v-btn>
-            </v-card-actions>'
-          </v-dialog>
+              <template v-slot:activator="{ on }">
+                  <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
+              </template>
+              <v-card>
+                  <instance-edit v-bind:editedItem="editedItem" v-bind:instances="instances" v-bind:models="models"></instance-edit>'
+                  <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn color="primary" text @click="close">Cancel</v-btn>
+                      <v-btn color="primary" text @click="save">Save</v-btn>
+                  </v-card-actions>'
+              </v-card>
+        </v-dialog>
         </v-toolbar>
 
           <v-dialog v-model="detailsDialog" width="500px">
@@ -136,12 +129,13 @@
       InstanceEdit,
       InstanceDetails,
     },
-    inject: ['instanceRepository'],
+    inject: ['instanceRepository','modelRepository'],
     data() {
       return {
         // Filter values.
         startRackValue: '',
         endRackValue: '',
+        modelFilterValue: '',
 
         dialog: false,
         detailsDialog: false,
@@ -151,8 +145,18 @@
         // Table data.
         headers: [
           
-          { text: 'Model Link',  value: 'model.id', },
-          {  text: 'Model Vendor', value: 'model.vendor',   },
+          { text: 'Model ID (LINK TO MODEL)',  value: 'model.id', },
+          { text: 'Model Vendor', value: 'model.vendor', filter: this.modelFilter },
+          { text: 'Model Number', value: 'model.modelNumber', },
+          { text: 'Model height', value: 'model.height', },
+          { text: 'Display Color', value: 'model.displayColor', },
+          { text: 'Ethernet ports', value: 'model.ethernetPorts', },
+          { text: 'Power Ports', value: 'model.powerPorts', },
+          { text: 'CPU', value: 'model.cpu', },
+          { text: 'Memory', value: 'model.memory', },
+          { text: 'Storage', value: 'model.storage', }, 
+
+
           { text: 'Hostname', value: 'hostname' },
           { 
             text: 'Rack', 
@@ -164,18 +168,55 @@
           { text: 'Actions', value: 'action', sortable: false },
         ],
         instances: [],
+        models: [],
+
         firstInstance: null,
         editedIndex: -1,
         defaultItem: {
+          model: {
+            id: '',
+            vendor: '',
+            modelNumber: '',
+            height: 0,
+            displayColor: '',
+            ethernetPorts: 0,
+            powerPorts: 0,
+            cpu: '',
+            memory: '',
+            storage: '',
+          },
           hostname: '',
           rack:'',
-          owner:'',
+          owner:{
+            id:'',
+            username:'',
+            displayname:'',
+            email:'',
+          },
           rackPosition:'',
           comment: ''
         },editedItem: {
+          model: {
+            id: '',
+            vendor: '',
+            modelNumber: '',
+            height: 0,
+            displayColor: '',
+            ethernetPorts: 0,
+            powerPorts: 0,
+            cpu: '',
+            memory: '',
+            storage: '',
+          
+          },
           hostname: '',
           rack:'',
-          owner:'',
+          owner:{
+            id:'',
+            username:'',
+            displayname:'',
+            email:'',
+          },
           rackPosition:'',
           comment: ''
         },
@@ -186,6 +227,7 @@
           owner:'',
           comment: ''
         },
+
       }},
       computed: {
       formTitle () {
@@ -208,6 +250,7 @@
       async initialize () {
         this.instances = await this.instanceRepository.list();
         this.firstInstance = await this.instanceRepository.find(1);
+        this.models = await this.modelRepository.list();
         this.loading = false;
       },
      
@@ -244,6 +287,16 @@
           this.$router.push({ name: 'instance-details', params: { detailItem: this.detailItem, id: this.detailItem.id } })
         //this.detailsDialog = true
       },
+      /**
+        Filters for all the model searches 
+       */
+      modelFilter(value) {
+        if (!this.modelFilterValue) {
+          return true;
+        }
+        return value.toLowerCase().includes(this.modelFilterValue.toLowerCase());
+      },
+
 
       /**
        * Filter for calories column.
