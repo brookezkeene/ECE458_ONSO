@@ -157,12 +157,13 @@
 
 <script>
     import ModelEdit from "./ModelEdit"
+    import Auth from "../auth"
 
     export default {
         components: {
             ModelEdit,
         },
-        inject: ['modelRepository', 'auth'],
+        inject: ['modelRepository'],
         data() {
             return {
                 // Filter values.
@@ -175,7 +176,6 @@
                 startPowerValue: '',
                 endPowerValue: '',
 
-                admin: false,
                 dialog: false,
                 detailsDialog: false,
                 loading: true,
@@ -235,8 +235,8 @@
             formTitle() {
                 return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
             },
-            isAdmin() {
-                return this.admin === this.auth.isAdmin()
+            admin() {
+                return Auth.isAdmin()
             },
             filteredHeaders() {
                 return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")

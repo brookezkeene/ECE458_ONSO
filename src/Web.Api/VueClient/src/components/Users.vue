@@ -48,15 +48,15 @@
 
 <script>
 import UserForm from "./UserForm"
+import Auth from "../auth"
 
   export default {
     components: {
       UserForm
     },
-    inject: ['userRepository', 'auth'],
+    inject: ['userRepository'],
     data () {
       return {
-        admin: false,
         dialog: false,
         loading: true,
         isEditing: null,
@@ -84,8 +84,8 @@ import UserForm from "./UserForm"
       }
     },
     computed: {
-        isAdmin() {
-            return this.admin === this.auth.isAdmin()
+        admin() {
+            return Auth.isAdmin()
         },
     },
 

@@ -70,12 +70,11 @@
 import ModelImportFormatInfo from "./ModelImportFormatInfo"
 import InstanceImportFormatInfo from "./InstanceImportFormatInfo"
 import FileChooserCard from "./FileChooserCard"
+import Auth from "../auth"
 
 export default {
-    inject: ['auth'],
     data () {
         return {
-            admin: false,
             loading: false,       
             extrainfomodel: false,
             extrainfoinstance: false,
@@ -83,8 +82,8 @@ export default {
         };
     },
     computed: {
-        isAdmin() {
-            return this.admin === this.auth.isAdmin()
+        admin() {
+            return Auth.isAdmin()
         },
     },
     watch: {

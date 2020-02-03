@@ -115,12 +115,13 @@
 
 <script>
     import InstanceEdit from "./InstanceEdit"
+    import Auth from "../auth"
 
   export default {
     components: {
       InstanceEdit,
     },
-    inject: ['instanceRepository','modelRepository','auth'],
+    inject: ['instanceRepository','modelRepository'],
     data() {
       return {
         // Filter values.
@@ -128,7 +129,6 @@
         endRackValue: '',
         modelFilterValue: '',
 
-        admin: false,
         dialog: false,
         instructionsDialog: false,
         loading: true,
@@ -225,8 +225,8 @@
         formTitle () {
             return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
         },
-        isAdmin() {
-            return this.admin === this.auth.isAdmin()
+        admin() {
+            return Auth.isAdmin()
         },
         filteredHeaders() {
             return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")

@@ -18,20 +18,21 @@
 </template>
 
 <script>
+import Auth from "../auth"
+
 export default {
     name: 'rack-form',
-    inject: ['rackRepository', 'auth'],
+    inject: ['rackRepository'],
     data: () => ({
-        admin: false,
         range: {
             start: '',
             end: ''
         }
     }),
     computed: {
-        isAdmin() {
-            return this.admin === this.auth.isAdmin()
-        }
+        admin() {
+            return Auth.isAdmin()
+        },
     },
     methods: {
         viewDiagram() {
