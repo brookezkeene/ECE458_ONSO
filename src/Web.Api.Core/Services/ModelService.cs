@@ -29,5 +29,22 @@ namespace Web.Api.Core.Services
             // TODO: handle null result (no model found)
             return model.ToModel();
         }
+
+        public async Task UpdateModelAsync(ModelDto modelDto)
+        {
+            var canUpdate = await CanUpdateModelAsync(modelDto);
+        }
+
+        public async Task<Guid> CreateModelAsync(ModelDto modelDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        private async Task<bool> CanUpdateModelAsync(ModelDto modelDto)
+        {
+            //var entity = modelDto.ToEntity();
+            //return await _modelRepository.CanUpdateModelAsync(entity);
+            throw new NotImplementedException();
+        }
     }
 }

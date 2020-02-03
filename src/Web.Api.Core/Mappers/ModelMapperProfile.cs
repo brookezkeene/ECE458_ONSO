@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using AutoMapper;
+using Microsoft.VisualBasic;
 using Web.Api.Common;
 using Web.Api.Core.Dtos;
 using Web.Api.Infrastructure.Entities;
@@ -10,11 +11,11 @@ namespace Web.Api.Core.Mappers
     {
         public ModelMapperProfile()
         {
+            // entity -> dto
             CreateMap<Model, ModelDto>(MemberList.Destination)
-                .ForMember(x => x.Instances, opts => opts.MapFrom(src => src.Instances.Select(x => x.Hostname)));
+                .ReverseMap();
 
-            //CreateMap<PagedList<Model>, PagedList<ModelDto>>(MemberList.Destination)
-            //    .ForMember(x => x.Data, opt => opt.MapFrom(src => src.Data));
+
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Web.Api.Controllers;
 using Web.Api.Core;
 using Web.Api.Core.Services;
 using Web.Api.Core.Services.Interfaces;
@@ -11,6 +12,7 @@ using Web.Api.Infrastructure;
 using Web.Api.Infrastructure.DbContexts;
 using Web.Api.Infrastructure.Repositories;
 using Web.Api.Infrastructure.Repositories.Interfaces;
+using Web.Api.Resources;
 
 namespace Web.Api.Extensions
 {
@@ -25,6 +27,9 @@ namespace Web.Api.Extensions
 
             // services
             services.AddTransient<IModelService, ModelService>();
+
+            // etc
+            services.AddScoped<IApiErrorResources, ApiErrorResources>();
 
             return services;
         }

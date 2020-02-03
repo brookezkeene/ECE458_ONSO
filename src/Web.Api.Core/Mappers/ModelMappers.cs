@@ -24,5 +24,10 @@ namespace Web.Api.Core.Mappers
         {
             return models == null ? null : Mapper.Map<PagedList<ModelDto>>(models);
         }
+
+        public static Model ToEntity(this ModelDto modelDto)
+        {
+            return modelDto == null ? null : Mapper.Map<Model>(modelDto);
+        }
     }
 }

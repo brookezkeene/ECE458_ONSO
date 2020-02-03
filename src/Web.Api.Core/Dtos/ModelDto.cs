@@ -7,7 +7,7 @@ namespace Web.Api.Core.Dtos
     {
         public ModelDto()
         {
-            Instances = new List<string>();
+            Instances = new List<InstanceDto>();
         }
 
         public Guid Id { get; set; }
@@ -20,6 +20,10 @@ namespace Web.Api.Core.Dtos
         public string Cpu { get; set; }
         public int? Memory { get; set; }
         public string Comment { get; set; }
-        public List<string> Instances { get; set; }
+        public List<InstanceDto> Instances { get; set; }
+    }
+
+    public class InstanceDto
+    {
     }
 }

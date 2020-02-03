@@ -12,5 +12,6 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
         Task<int> AddModelAsync(Model model);
         Task<int> UpdateModelAsync(Model model);
         Task<int> DeleteModelAsync(Model model);
+        Task<bool> CanUpdateModelAsync(Model model);
     }
 }
