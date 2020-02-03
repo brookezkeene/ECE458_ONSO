@@ -1,176 +1,161 @@
-
 <template>
-    <v-card>
+    <div>
+        <v-card flat>
+            <v-card-title>Models</v-card-title>
+            <v-container>
+            <v-card>
+                <v-data-table :headers="headers"
+                              :items="models"
+                              :search="search"
+                              @click:row="showDetails">
+                    <template v-slot:top v-slot:item.action="{ item }">
 
-        <!--</v-container>-->
-        <v-data-table :headers="headers"
-                      :items="models"
-                      :search="search">
-            <template v-slot:top>
-                <!--<v-container>-->
-                <v-row>
-                    <!--<v-toolbar flat color="white">-->
-                    <!--<v-toolbar-title>Models</v-toolbar-title>-->
-                    <!--<v-divider class="mx-4"
-                   inset
-                   vertical></v-divider>
-        <v-spacer></v-spacer>-->
-                    <v-col cols="10">
+                        <v-toolbar flat color="white">
+                            <v-autocomplete prepend-inner-icon="mdi-magnify"
+                                            :loading="loading"
+                                            :items="models"
+                                            :search-input.sync="search"
+                                            cache-items
+                                            flat
+                                            hide-no-data
+                                            hide-details
+                                            item-text="vendor"
+                                            label="Search"
+                                            single-line
+                                            solo-inverted></v-autocomplete>
+                            <v-spacer></v-spacer>
+                            <v-dialog v-model="dialog" max-width="500px">
+                                <template v-slot:activator="{ on }">
+                                    <v-btn color="primary" class="mb-2" v-on="on">Add Model</v-btn>
+                                </template>
+                                <v-card>
+                                    <model-edit v-bind:editedItem="editedItem" v-bind:models="models"></model-edit>
+                                    <v-card-actions>
+                                        <v-spacer></v-spacer>
+                                        <v-btn text @click="close">Cancel</v-btn>
+                                        <v-btn text @click="save">Save</v-btn>
+                                    </v-card-actions>
+                                </v-card>
+                            </v-dialog>
+                        </v-toolbar>
+
                         <v-row>
-                            <v-col cols="4">
-                                <v-autocomplete append-icon="mdi-magnify"
-                                                :loading="loading"
-                                                :items="models"
-                                                :search-input.sync="search"
-                                                cache-items
-                                                class="mx-4"
-                                                flat
-                                                hide-no-data
-                                                hide-details
-                                                item-text="vendor"
-                                                label="Search"
-                                                single-line
-                                                solo-inverted></v-autocomplete>
-                            </v-col>
-                            <!-- Custom filters; sorts between height ranges -->
-                            <v-col cols="2">
+                            <v-col cols="10">
                                 <v-row>
-                                    <v-col cols="6">
-                                        <v-text-field v-model="startHeightValue"
-                                                      placeholder="from"
-                                                      type="number"
-                                                      label="Height">
-                                        </v-text-field>
+                                    <!-- Custom filters; sorts between height ranges -->
+                                    <v-col cols="2">
+                                        <v-row>
+                                            <v-col cols="6">
+                                                <v-text-field v-model="startHeightValue"
+                                                              placeholder="from"
+                                                              type="number"
+                                                              label="Height">
+                                                </v-text-field>
+                                            </v-col>
+                                            <v-col cols="6">
+                                                <v-text-field v-model="endHeightValue"
+                                                              type="number"
+                                                              placeholder="to">
+                                                </v-text-field>
+                                            </v-col>
+                                        </v-row>
                                     </v-col>
-                                    <v-col cols="6">
-                                        <v-text-field v-model="endHeightValue"
-                                                      type="number"
-                                                      placeholder="to">
-                                        </v-text-field>
+                                    <v-col cols="2">
+                                        <v-row>
+                                            <v-col cols="6">
+                                                <v-text-field v-model="startMemoryValue"
+                                                              placeholder="from"
+                                                              type="number"
+                                                              label="Memory">
+                                                </v-text-field>
+                                            </v-col>
+                                            <v-col cols="6">
+                                                <v-text-field v-model="endMemoryValue"
+                                                              type="number"
+                                                              placeholder="to">
+                                                </v-text-field>
+                                            </v-col>
+                                        </v-row>
                                     </v-col>
-                                </v-row>
-                            </v-col>
-                            <v-col cols="2">
-                                <v-row>
-                                    <v-col cols="6">
-                                        <v-text-field v-model="startMemoryValue"
-                                                      placeholder="from"
-                                                      type="number"
-                                                      label="Memory">
-                                        </v-text-field>
+                                    <v-col cols="2">
+                                        <v-row>
+                                            <v-col cols="6">
+                                                <v-text-field v-model="startEthernetValue"
+                                                              placeholder="from"
+                                                              type="number"
+                                                              label="Ethernet Ports">
+                                                </v-text-field>
+                                            </v-col>
+                                            <v-col cols="6">
+                                                <v-text-field v-model="endEthernetValue"
+                                                              type="number"
+                                                              placeholder="to">
+                                                </v-text-field>
+                                            </v-col>
+                                        </v-row>
                                     </v-col>
-                                    <v-col cols="6">
-                                        <v-text-field v-model="endMemoryValue"
-                                                      type="number"
-                                                      placeholder="to">
-                                        </v-text-field>
-                                    </v-col>
-                                </v-row>
-                            </v-col>
-                            <v-col cols="2">
-                                <v-row>
-                                    <v-col cols="6">
-                                        <v-text-field v-model="startEthernetValue"
-                                                      placeholder="from"
-                                                      type="number"
-                                                      label="Ethernet Ports">
-                                        </v-text-field>
-                                    </v-col>
-                                    <v-col cols="6">
-                                        <v-text-field v-model="endEthernetValue"
-                                                      type="number"
-                                                      placeholder="to">
-                                        </v-text-field>
-                                    </v-col>
-                                </v-row>
-                            </v-col>
-                            <v-col cols="2">
-                                <v-row>
-                                    <v-col cols="6">
-                                        <v-text-field v-model="startPowerValue"
-                                                      placeholder="from"
-                                                      type="number"
-                                                      label="Power Ports">
-                                        </v-text-field>
-                                    </v-col>
-                                    <v-col cols="6">
-                                        <v-text-field v-model="endPowerValue"
-                                                      type="number"
-                                                      placeholder="to">
-                                        </v-text-field>
+                                    <v-col cols="2">
+                                        <v-row>
+                                            <v-col cols="6">
+                                                <v-text-field v-model="startPowerValue"
+                                                              placeholder="from"
+                                                              type="number"
+                                                              label="Power Ports">
+                                                </v-text-field>
+                                            </v-col>
+                                            <v-col cols="6">
+                                                <v-text-field v-model="endPowerValue"
+                                                              type="number"
+                                                              placeholder="to">
+                                                </v-text-field>
+                                            </v-col>
+                                        </v-row>
                                     </v-col>
                                 </v-row>
                             </v-col>
                         </v-row>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-btn color="primary" @click.stop="dialog = true">Add Model</v-btn>
-                        <v-dialog v-model="dialog" max-width="500px">
-                            <v-card>
-                                <model-edit v-bind:editedItem="editedItem" v-bind:models="models"></model-edit>
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                                    <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
-                    </v-col>
-                    <!--</v-toolbar>-->
-                </v-row>
 
-                <div class="text-center">
-                    <v-dialog v-model="detailsDialog" width="500">
-                        <v-card>
-                            <v-card-text>
-                                <model-details v-bind:id="detailItem.id"></model-details>
-                            </v-card-text>
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn color="orange darken-1" text @click="closeDetail">Close</v-btn>
-                            </v-card-actions>
-                        </v-card>
-                    </v-dialog>
+                    </template>
 
-                </div>
-            </template>
-            
+                    <template v-slot:item.coloricon="{ item }">
+                        <v-icon class="mr-2"
+                                :color=item.displayColor>
+                            mdi-circle
+                        </v-icon>
+                    </template>
 
+                    <template v-slot:item.action="{ item }">
+                        <v-icon small
+                                class="mr-2"
+                                @click="editItem(item)">
+                            edit
+                        </v-icon>
+                        <v-icon small
+                                @click="deleteItem(item)">
+                            delete
+                        </v-icon>
+                    </template>
+                    <template v-slot:no-data>
+                        <v-btn color="primary" @click="initialize">Reset</v-btn>
+                    </template>
+                    >
+                </v-data-table>
+            </v-card>
+            </v-container>
 
-            <template v-slot:item.coloricon="{ item }">
-                <v-icon class="mr-2"
-                        :color=item.displayColor>
-                    mdi-circle
-                </v-icon>
-            </template>
-
-            <template v-slot:item.action="{ item }">
-                <v-icon small
-                        class="mr-2"
-                        @click="editItem(item)">
-                    edit
-                </v-icon>
-                <v-icon small
-                        @click="deleteItem(item)">
-                    delete
-                </v-icon>
-                <v-icon small
-                        class="mr-2"
-                        @click="showDetails(item)">
-                    details
-                </v-icon>
-            </template>
-            <template v-slot:no-data>
-                <v-btn color="primary" @click="initialize">Reset</v-btn>
-            </template>
-            >
-        </v-data-table>
-    </v-card>
+            <v-dialog v-model="instructionsDialog" max-width="550px">
+                <v-card>
+                    <v-card-title class="justify-center">
+                        Click on row for more information about the model
+                    </v-card-title>
+                </v-card>
+            </v-dialog>
+        </v-card>
+    </div>
 </template>
 
 
 <script>
-
     import ModelDetails from "./ModelDetails"
     import ModelEdit from "./ModelEdit"
 

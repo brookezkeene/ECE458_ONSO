@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-card flat>
         <v-card-title>
             Bulk Import & Export
         </v-card-title>
@@ -47,12 +47,12 @@
                 </v-card>
             </v-col>
         </v-container> 
-        <v-dialog v-model="extrainfomodel" max-width="500px">
+        <v-dialog v-model="extrainfomodel">
             <v-card>
               <model-import-format-info></model-import-format-info>
             </v-card>
         </v-dialog>
-        <v-dialog v-model="extrainfoinstance" max-width="500px">
+        <v-dialog v-model="extrainfoinstance">
             <v-card>
               <instance-import-format-info></instance-import-format-info>
             </v-card>

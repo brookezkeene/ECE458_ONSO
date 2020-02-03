@@ -1,52 +1,48 @@
 <template>
-    <v-card>
-        <v-data-table
-            :headers="headers"
-            :items="users"
-            :search="search"
-            multi-sort
-        >
-            <template v-slot:top>
-            <v-toolbar flat color="white">
-                <v-toolbar-title>Users</v-toolbar-title>
-                <v-divider
-                  class="mx-4"
-                  inset
-                  vertical
-                ></v-divider>
-                <v-spacer></v-spacer>
-
-                <v-autocomplete
-                  v-model="select"
-                  :loading="loading"
-                  :items="users"
-                  :search-input.sync="search"
-                  append-icon="mdi-magnify"
-                  cache-items
-                  class="mx-4"
-                  flat
-                  hide-no-data
-                  hide-details
-                  item-text="displayName"
-                  label="Search"
-                  single-line
-                  solo-inverted
-                ></v-autocomplete>
-
-                <v-dialog v-model="dialog" max-width="500px">
-                <template v-slot:activator="{ on }">
-                    <v-btn color="primary" dark class="mb-2" v-on="on">Add User</v-btn>
-                </template>
-                    <user-form v-bind:editedItem="editedItem"></user-form>
-                    <v-card-actions>
+    <v-card flat>
+        <v-card-title>Users</v-card-title>
+        <v-container>
+        <v-card>
+            <v-data-table
+                :headers="headers"
+                :items="users"
+                :search="search"
+                multi-sort
+            >
+                <template v-slot:top>
+                <v-toolbar flat color="white">
+                    <v-autocomplete
+                      v-model="select"
+                      :loading="loading"
+                      :items="users"
+                      :search-input.sync="search"
+                      prepend-inner-icon="mdi-magnify"
+                      cache-items
+                      flat
+                      hide-no-data
+                      hide-details
+                      item-text="displayName"
+                      label="Search"
+                      single-line
+                      solo-inverted
+                    ></v-autocomplete>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" text @click="close">Cancel</v-btn>
-                    <v-btn color="primary" text @click="save">Creae User</v-btn>
-                    </v-card-actions>
-                </v-dialog>
-            </v-toolbar>
-            </template>
-        </v-data-table>
+                    <v-dialog v-model="dialog" max-width="500px">
+                    <template v-slot:activator="{ on }">
+                        <v-btn color="primary" dark class="mb-2" v-on="on">Add User</v-btn>
+                    </template>
+                        <user-form v-bind:editedItem="editedItem"></user-form>
+                        <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="primary" text @click="close">Cancel</v-btn>
+                        <v-btn color="primary" text @click="save">Creae User</v-btn>
+                        </v-card-actions>
+                    </v-dialog>
+                </v-toolbar>
+                </template>
+            </v-data-table>
+        </v-card>
+        </v-container>
     </v-card>
 </template>
 

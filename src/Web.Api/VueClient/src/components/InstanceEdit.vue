@@ -1,6 +1,6 @@
 <template>
     <div v-if="!loading">
-        <v-card flat>
+        <v-card>
             <v-card-title>
                 <span class="headline">Edit</span>
             </v-card-title>

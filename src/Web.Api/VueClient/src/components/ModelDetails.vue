@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <div v-if="!loading">
-            <v-card-title>Model {{id}} details</v-card-title>
+            <v-card-title>Model Details</v-card-title>
             <!-- Contains the model data-->
             <v-row>
                 <v-col cols="12" sm="6" md="4">
@@ -56,6 +56,7 @@
             <v-spacer />
 
             <!--Back button to return to main page-->
+            <v-spacer></v-spacer>
             <a href="javascript:history.go(-1)"> Go Back</a>
         </div>
     </v-container>

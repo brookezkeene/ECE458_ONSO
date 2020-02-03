@@ -2,7 +2,7 @@
     <div v-if="!loading">
         <v-card flat>
             <v-card-title>
-            <span class="headline">Instance {{id}} Details</span>
+                <span class="headline">Instance Details</span>
             </v-card-title>
             <v-card-text>
                 <v-row>
@@ -17,10 +17,6 @@
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Rack Position: </v-label>
                         <v-card-text> {{instance.rackPosition}} </v-card-text>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                        <v-label>Owner ID: </v-label>
-                        <v-card-text> {{instance.owner.id}} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Owner Username: </v-label>
@@ -48,7 +44,14 @@
                     </v-col>
                 </v-row>
 
-</v-card-text>
+            </v-card-text>
+
+            <v-spacer />
+
+            <!--Back button to return to main page-->
+            <v-spacer></v-spacer>
+            <a href="javascript:history.go(-1)"> Go Back</a>
+
         </v-card>
     </div>
 </template>
