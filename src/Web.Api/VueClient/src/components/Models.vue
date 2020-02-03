@@ -32,8 +32,8 @@
                                     <model-edit v-bind:editedItem="editedItem" v-bind:models="models"></model-edit>
                                     <v-card-actions>
                                         <v-spacer></v-spacer>
-                                        <v-btn text @click="close">Cancel</v-btn>
-                                        <v-btn text @click="save">Save</v-btn>
+                                        <v-btn color="primary" text @click="close">Cancel</v-btn>
+                                        <v-btn color="primary" text @click="save">Save</v-btn>
                                     </v-card-actions>
                                 </v-card>
                             </v-dialog>
@@ -278,12 +278,15 @@
                 this.close()
             },
             showDetails(item) {
-                this.detailItem = Object.assign({}, item);
-                this.detailsDialog = true;
+                if (this.editedIndex === -1) {
+                    this.detailItem = Object.assign({}, item);
+                    this.$router.push({ name: 'model-details', params: { detailItem: this.detailItem, id: this.detailItem.id } })
+                }
+                //this.detailsDialog = true;
             },
-            closeDetail() {
-                this.detailsDialog = false;
-            },
+            //closeDetail() {
+            //    this.detailsDialog = false;
+            //},
           /**
            * Filter code below; TODO: refactor this 
            * end/start values are the filter inputs 
