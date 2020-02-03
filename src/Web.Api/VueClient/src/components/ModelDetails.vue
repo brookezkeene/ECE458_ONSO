@@ -56,6 +56,7 @@
             <v-spacer />
 
             <!--Back button to return to main page-->
+            <v-spacer></v-spacer>
             <a href="javascript:history.go(-1)"> Go Back</a>
         </div>
     </v-container>
