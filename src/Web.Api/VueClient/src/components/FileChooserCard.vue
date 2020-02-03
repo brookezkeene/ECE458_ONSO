@@ -11,7 +11,7 @@
 
             <v-stepper-items>
                 <v-stepper-content step="1">
-                    <v-card flat>
+                    <v-card flat class="overflow-y-auto"  style="height: 300px">
                         <v-card-text>
                             Upload a CSV file matching the specifications outlined in the following
                             <a target="_blank"
@@ -31,7 +31,7 @@
                 </v-stepper-content>
 
                 <v-stepper-content step="2">
-                    <v-card flat>
+                    <v-card flat class="overflow-y-auto" style="height: 300px">
                         <v-card-title>Warnings</v-card-title>
                         <v-card-text v-if="warnings.length">
                             <p v-for="warning in warnings" v-bind:key="warning">{{warning}}</p>
@@ -53,8 +53,14 @@
                 </v-stepper-content>
 
                 <v-stepper-content step="3">
-                    <v-card flat>
-                        
+                    <v-card flat class="overflow-y-auto"  style="height: 300px">
+                        <v-data-table :headers="headers"
+                                      :items="records"
+                                      disable-pagination="true">
+                        </v-data-table>
+                        <v-card-text>
+                            Total Number of Records Added: {{numRecords}}
+                        </v-card-text>
                     </v-card>
                     <v-btn class="mr-4" @click="step = 2" small="true">Previous</v-btn>
                     <v-btn color="primary" @click.prevent="close" small="true">Save</v-btn>
@@ -67,14 +73,26 @@
 <script>
 export default {
     name: 'file-chooser-card',
+    inject: ['modelRepository', 'instanceRepository'],
     props: ['filechoosercard'],
     data () {
         return {
             loading: false,
             step: 1,
             fileChosen: false,
-            warnings: ["warning1", "warning2"],   // array to store all warnings, empty if none
+            warnings: [ "warning1",
+                        "warning2",
+                        "warning3",
+                        "warning4",
+                        "warning5",
+            ],   // array to store all warnings, empty if none
             errors: [],     // array to store all errors, empty if none
+            headers: [
+                { text: 'Record', value: '' },
+                { text: 'Status', value: '' },
+            ],
+            records: [],
+            numRecords: 0,
         };
     },
     methods: {
@@ -86,7 +104,7 @@ export default {
             }
             
         },
-        // API calls to get warnings and errors
+        // API calls to get warnings and errors and records/statuses
         close() {
             alert('Data Successfully Imported.');
             this.$emit('close-file-chooser');
