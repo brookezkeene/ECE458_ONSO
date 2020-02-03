@@ -5,11 +5,16 @@
                           :items="models"
                           :search="search"
                           @click:row="showDetails">
-                          item-key="id">
                 <template v-slot:top v-slot:item.action="{ item }">
 
                     <v-toolbar flat color="white">
-                        <v-toolbar-title>Models</v-toolbar-title>
+                        <v-toolbar-title>
+                            Models
+                            <v-icon @click="showInstructions">
+                                mdi-information
+                            </v-icon>
+                        </v-toolbar-title>
+
                         <v-divider class="mx-4"
                                    inset
                                    vertical></v-divider>
@@ -63,19 +68,23 @@
                             @click="deleteItem(item)">
                         delete
                     </v-icon>
-                    <v-icon small
-                            class="mr-2"
-                            @click="showDetails(item)">
-                        details
-                    </v-icon>
                 </template>
                 <template v-slot:no-data>
                     <v-btn color="primary" @click="initialize">Reset</v-btn>
                 </template>
                 >
             </v-data-table>
+
+            <v-dialog v-model="instructionsDialog" max-width="550px">
+                <v-card>
+                    <v-card-title class="justify-center">
+                        Click on row for more information about the model
+                    </v-card-title>
+                </v-card>
+            </v-dialog>
         </v-card>
     </div>
+
 </template>
 
 
@@ -90,7 +99,7 @@ import ModelEdit from "./ModelEdit"
     inject: ['modelRepository'],
     data: () => ({
         dialog: false,
-        detailsDialog: false,
+        instructionsDialog: false,
         loading: true,
         search: '',
         headers: [
@@ -149,7 +158,7 @@ import ModelEdit from "./ModelEdit"
       dialog (val) {
         val || this.close()
       },
-      detailsDialog (val) {
+      instructionsDialog (val) {
         val || this.closeDetail()
       },
     },
@@ -191,9 +200,12 @@ import ModelEdit from "./ModelEdit"
           this.detailItem = Object.assign({}, item);
           this.$router.push({ name: 'model-details', params: { id: this.detailItem.id } })
         //this.detailsDialog = true;
-      },
-      closeDetail () {
-        //this.detailsDialog = false;
+        },
+        showInstructions() {
+            this.instructionsDialog = true;
+        },
+      closeDetail() {
+          this.instructionsDialog = false;
       },
     },
   }
