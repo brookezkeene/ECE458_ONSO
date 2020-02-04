@@ -27,10 +27,10 @@
                                                   prepend-inner-icon="mdi-magnify"
                                                   :items="instances"
                                                   item-text="model.vendor"
-                                                  class="mt-4"
+                                                  class="mt-4 pt-3"
                                                   flat
-                                                  placeholder="Start typing to Search for Model"
-                                                  label="Model Search">
+                                                  placeholder="Search for a model or hostname"
+                                                  solo-inverted>
                                   </v-autocomplete>
 
                               </v-row>
@@ -38,7 +38,7 @@
                           <v-spacer></v-spacer>
                           <!-- Custom filters; sorts between rack ranges -->
                           <v-col cols="4">
-                              <v-row class="pt-6">
+                              <v-row class="mt-4 pt-6">
                                   <v-text-field v-model="startRackValue"
                                                 placeholder="Start"
                                                 type="text"
