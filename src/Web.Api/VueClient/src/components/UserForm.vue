@@ -1,6 +1,6 @@
 <template>
     <div v-if="!loading">
-        <v-card>
+        <v-card flat>
             <v-card-title>
             <span class="headline">New User</span>
             </v-card-title>

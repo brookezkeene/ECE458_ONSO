@@ -28,15 +28,17 @@
                     ></v-autocomplete>
                     <v-spacer></v-spacer>
                     <v-dialog v-model="dialog" max-width="500px">
-                    <template v-slot:activator="{ on }">
-                        <v-btn v-if="admin" color="primary" dark class="mb-2" v-on="on">Add User</v-btn>
-                    </template>
-                        <user-form v-bind:editedItem="editedItem"></user-form>
-                        <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn color="primary" text @click="close">Cancel</v-btn>
-                        <v-btn color="primary" text @click="save">Creae User</v-btn>
-                        </v-card-actions>
+                        <template v-slot:activator="{ on }">
+                            <v-btn v-if="admin" color="primary" dark class="mb-2" v-on="on">Add User</v-btn>
+                        </template>
+                        <v-card>
+                            <user-form v-bind:editedItem="editedItem"></user-form>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="primary" text @click="close">Cancel</v-btn>
+                                <v-btn color="primary" text @click="save">Creae User</v-btn>
+                            </v-card-actions>
+                        </v-card>
                     </v-dialog>
                 </v-toolbar>
                 </template>
@@ -62,7 +64,8 @@ import Auth from "../auth"
         isEditing: null,
         search: '',
         headers: [
-          { text: 'Display Name', value: 'displayName' },
+        { text: 'First Name', value: 'firstName' },
+        { text: 'Last Name', value: 'lastName' },
           { text: 'Username', value: 'username' },
           { text: 'Email', value: 'email' },
         ],
@@ -111,9 +114,9 @@ import Auth from "../auth"
       },
 
       save () {
-        if (this.editedIndex > -1 && confirm('This will send an email to the new user to set up their account')) {
+        if (this.editedIndex > -1) {
           Object.assign(this.users[this.editedIndex], this.editedItem)
-        } else if(confirm('This will send an email to the new user to set up their account')) {
+        } else {
           this.users.push(this.editedItem)
         }
         this.close()

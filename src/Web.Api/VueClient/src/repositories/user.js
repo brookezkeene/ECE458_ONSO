@@ -2,19 +2,22 @@ const mockUsers = [
 	{
 		"id": 1,
 		"username": "tbletsch",
-		"displayName": "Tyler Bletsch",
+		"firstName": "Tyler",
+		"lastName": "Bletsch",
 		"email": "Tyler.Bletsch@duke.edu"
 	},
 	{
 		"id": 2,
 		"username": "cpalms",
-		"displayName": "Cannon Palms",
+		"firstName": "Cannon",
+        "lastName": "Palms",
 		"email": "Cannon.Palms@duke.edu"
 	},
 	{
 		"id": 3,
 		"username": "bkeene",
-		"displayName": "Brooke Keene",
+		"firstName": "Brooke",
+        "lastName": "Keene",
 		"email": "Brooke.Keene@duke.edu"
 	}
 ];
