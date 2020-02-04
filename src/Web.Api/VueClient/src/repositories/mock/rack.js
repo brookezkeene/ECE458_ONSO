@@ -208,10 +208,6 @@ export default {
         }
         return Promise.resolve();
     },
-    
-
-
-
     validAddress: validAddress,
     splitAddress: splitAddress
 };
