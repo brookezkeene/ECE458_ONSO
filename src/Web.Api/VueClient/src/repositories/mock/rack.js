@@ -83,9 +83,9 @@ const mockRacks = [
                     "storage": "2x500GB SSD RAID1",
                     "comment": "Retired offering, no new purchasing"
                 },
-                "hostname": "server9",
-                "rack": "B13",
-                "rackPosition": 5,
+                "hostname": "server1",
+                "rack": "B12",
+                "rackPosition": 4,
                 "owner": {
                     "id": 1,
                     "username": "tbletsch",
@@ -98,9 +98,9 @@ const mockRacks = [
                 "id": 2,
                 "model": {
                     "id": 2,
-                    "vendor": "Lenovo",
-                    "modelNumber": "Foobar",
-                    "height": 3,
+                    "vendor": "Dell",
+                    "modelNumber": "R710",
+                    "height": 4,
                     "displayColor": "#C39BD3",
                     "ethernetPorts": 2,
                     "powerPorts": 1,
@@ -110,9 +110,9 @@ const mockRacks = [
                     "comment": "This is my personal favorite!",
                     "instances": ["instance3", "instance4", "instance5"]
                 },
-                "hostname": "server10",
-                "rack": "B13",
-                "rackPosition": 9,
+                "hostname": "server2",
+                "rack": "B12",
+                "rackPosition": 12,
                 "owner": {
                     "id": 1,
                     "username": "tbletsch",
@@ -208,7 +208,6 @@ export default {
         }
         return Promise.resolve();
     },
-
     validAddress: validAddress,
     splitAddress: splitAddress
 };
