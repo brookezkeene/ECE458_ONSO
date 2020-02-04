@@ -7,7 +7,7 @@ import RackDiagram from '@/components/RackDiagram'
 import Models from '@/components/Models'
 import Instances from '@/components/Instances'
 import Racks from '@/components/Racks'
-import ImportExport from '@/components/ImportFile'
+import ImportExport from '@/components/Bulk'
 import Users from '@/components/Users'
 
 Vue.use(Router)

@@ -72,9 +72,9 @@
 
 <script>
 export default {
-    name: 'file-chooser-card',
+    name: 'import-wizard',
     inject: ['modelRepository', 'instanceRepository'],
-    props: ['filechoosercard'],
+    props: ['importWizard'],
     data () {
         return {
             loading: false,

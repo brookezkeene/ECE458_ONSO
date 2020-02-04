@@ -59,7 +59,7 @@
     //import Users from '@/components/Users';
     //import Instances from '@/components/Instances';
     //import Models from '@/components/Models';
-    //import ImportFile from '@/components/ImportFile';
+    //import Bulk from '@/components/Bulk';
     //import Racks from '@/components/Racks';
     import Auth from "./auth"
 
@@ -94,7 +94,7 @@
             //Users,
             //Instances,
             //Models,
-            //ImportFile,
+            //Bulk,
             //Racks,
         },
 

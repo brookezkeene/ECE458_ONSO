@@ -57,9 +57,9 @@
               <instance-import-format-info></instance-import-format-info>
             </v-card>
         </v-dialog>
-        <v-dialog v-model="filechoosercard" max-width="500px">
+        <v-dialog v-model="importWizard" max-width="500px">
             <v-card>
-              <file-chooser-card v-on:close-file-chooser="closeFileChooser"></file-chooser-card>
+              <import-wizard v-on:close-file-chooser="closeFileChooser"></import-wizard>
             </v-card>
         </v-dialog>
     </v-card>
@@ -69,7 +69,7 @@
 
 import ModelImportFormatInfo from "./ModelImportFormatInfo"
 import InstanceImportFormatInfo from "./InstanceImportFormatInfo"
-import FileChooserCard from "./FileChooserCard"
+import ImportWizard from "./ImportWizard"
 import Auth from "../auth"
 
 export default {
@@ -78,7 +78,7 @@ export default {
             loading: false,       
             extrainfomodel: false,
             extrainfoinstance: false,
-            filechoosercard: false,
+            importWizard: false,
         };
     },
     computed: {
@@ -87,14 +87,14 @@ export default {
         },
     },
     watch: {
-        filechoosercard(val) {
+        importWizard(val) {
             val || this.closeFileChooser()
         },
     },
     components: {
       ModelImportFormatInfo,
       InstanceImportFormatInfo,
-      FileChooserCard,
+      ImportWizard,
     },
     methods: {
         showModelInfo() {
@@ -104,10 +104,10 @@ export default {
             this.extrainfoinstance = true
         },
         openFileChooser() {
-            this.filechoosercard = true
+            this.importWizard = true
         },
         closeFileChooser() {
-            this.filechoosercard = false
+            this.importWizard = false
         }
     }
     
