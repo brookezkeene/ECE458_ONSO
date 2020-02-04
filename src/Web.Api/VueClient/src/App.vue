@@ -8,7 +8,7 @@
 
             <v-list-item class="px-2">
                 <v-list-item-avatar>
-                    <v-img src="./components/example/hyposoft_logo.png"></v-img>
+                    <v-img src="./assets/hyposoft_logo.png"></v-img>
                 </v-list-item-avatar>
 
                 <v-list-item-title>

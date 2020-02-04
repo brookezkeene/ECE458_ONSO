@@ -1,7 +1,7 @@
 <template>
     <v-container fill-height fluid>
         <v-row justify="center">
-            <v-img src="./example/hyposoft_logo.png"
+            <v-img src="../assets/hyposoft_logo.png"
                    max-width="300px"></v-img>
         </v-row>
         
