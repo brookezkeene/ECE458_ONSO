@@ -1,6 +1,7 @@
 <template>
     <v-app>
         <v-navigation-drawer v-model="drawer"
+                             v-if="loggedIn"
                              :mini-variant.sync="mini"
                              permanent
                              app>
@@ -60,6 +61,7 @@
     //import Models from '@/components/Models';
     //import ImportFile from '@/components/ImportFile';
     //import Racks from '@/components/Racks';
+    import Auth from "./auth"
 
 
     export default {
@@ -82,6 +84,11 @@
             }
         },
 
+        computed: {
+            loggedIn() {
+                return Auth.loggedIn();
+            }
+        },
 
         components: {
             //Users,
