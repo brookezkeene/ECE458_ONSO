@@ -14,7 +14,7 @@ services:
     depends_on:
       - db
   db:
-    image: "mcr.microsoft.com/mssql/server"
+    image: justin2004/mssql_server_tiny
     container_name: "Web.Api.Infrastructure.SqlServer"
     ports:
       - 1433:1433
