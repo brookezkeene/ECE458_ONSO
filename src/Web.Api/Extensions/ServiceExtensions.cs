@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Web.Api.Configuration.Constants;
 using Web.Api.Controllers;
 using Web.Api.Core;
+using Web.Api.Core.Resources;
 using Web.Api.Core.Services;
 using Web.Api.Core.Services.Interfaces;
 using Web.Api.Helpers;
@@ -36,7 +37,15 @@ namespace Web.Api.Extensions
             services.AddTransient<IModelService, ModelService>();
 
             // etc
+            services.ConfigureResources();       
+
+            return services;
+        }
+
+        public static IServiceCollection ConfigureResources(this IServiceCollection services)
+        {
             services.AddScoped<IApiErrorResources, ApiErrorResources>();
+            services.AddScoped<IModelServiceResources, ModelServiceResources>();
 
             return services;
         }

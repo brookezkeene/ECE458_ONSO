@@ -70,7 +70,19 @@ namespace Web.Api.Infrastructure.Repositories
 
         public async Task<bool> CanUpdateModelAsync(Model model)
         {
-            throw new NotImplementedException();
+            if (model.Id != default)
+            {
+                var existingData = await _dbContext.Models.FindAsync(model.Id);
+                // disallow height change if model has instances
+                if (model.Height == existingData.Height) return true;
+
+                var hasInstances = await _dbContext.Instances.Where(x => x.Model == model)
+                    .AnyAsync();
+
+                return !hasInstances;
+            }
+
+            return true;
         }
     }
 }
