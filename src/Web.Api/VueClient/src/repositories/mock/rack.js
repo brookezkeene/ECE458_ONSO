@@ -83,9 +83,9 @@ const mockRacks = [
                     "storage": "2x500GB SSD RAID1",
                     "comment": "Retired offering, no new purchasing"
                 },
-                "hostname": "server1",
-                "rack": "B12",
-                "rackPosition": 4,
+                "hostname": "server9",
+                "rack": "B13",
+                "rackPosition": 5,
                 "owner": {
                     "id": 1,
                     "username": "tbletsch",
@@ -98,9 +98,10 @@ const mockRacks = [
                 "id": 2,
                 "model": {
                     "id": 2,
-                    "vendor": "Dell",
-                    "modelNumber": "R710",
-                    "height": 4,
+
+                    "vendor": "Lenovo",
+                    "modelNumber": "Foobar",
+                    "height": 3,
                     "displayColor": "#C39BD3",
                     "ethernetPorts": 2,
                     "powerPorts": 1,
@@ -110,9 +111,9 @@ const mockRacks = [
                     "comment": "This is my personal favorite!",
                     "instances": ["instance3", "instance4", "instance5"]
                 },
-                "hostname": "server2",
-                "rack": "B12",
-                "rackPosition": 12,
+                "hostname": "server10",
+                "rack": "B13",
+                "rackPosition": 9,
                 "owner": {
                     "id": 1,
                     "username": "tbletsch",
@@ -240,23 +241,18 @@ export default {
             var row = {
                 rackU: i,
                 value: '',
-                style: { color: 'black', backgroundColor: 'white' },
+                style: '',
             };
             rows.push(row);
         }
         //filling the rack diagram with instance data  
         var instances_length = Object.keys(instances).length;
         for (var j = 0; j < instances_length; j++) {
-            //getting root position and color of the current instance
             var rackU = instances[j].rackPosition;
             var color = instances[j].model.displayColor;
-
-            //changing bottom rackU's name and color 
-            rows[rackU].style.backgroundColor = color;
+            rows[rackU].style = { color: 'black', backgroundColor: color};
             rows[rackU].value = instances[j].model.vendor + ' ' + instances[j].model.modelNumber + ' ' + instances[j].hostname;
 
-            //going through the second for loop to fill up the remaining rackU's
-            //which the instance fills 
             var model_height = instances[j].model.height
             for (var k = 1; k < model_height; k++) {
                 var position = rackU + k;
