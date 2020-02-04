@@ -4,7 +4,8 @@ describe('user repository', () => {
     const userToCreate = {
         "id": 99,
         "username": "tbletsch",
-        "displayName": "Tyler Bletsch",
+        "firstName": "Tyler",
+        "lastName": "Bletsch",
         "email": "Tyler.Bletsch@duke.edu"
     }
 
