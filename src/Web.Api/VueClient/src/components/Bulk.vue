@@ -16,15 +16,15 @@
                     <v-card-actions class="justify-center">
                         <v-container>
                             <v-row align="center" justify="center">
-                                <v-btn v-if="admin" color="primary" class="mb-2" @click="openFileChooser">Import</v-btn>
+                                <v-btn v-if="admin" color="primary" class="mb-2" @click="openImportModels">Import</v-btn>
                             </v-row>
                             <v-row align="center" justify="center">
-                                <v-btn color="primary" class="mb-2">Export</v-btn>
+                                <v-btn color="primary" class="mb-2" @click="openExportModels">Export</v-btn>
                             </v-row>
                         </v-container>
                     </v-card-actions>
                 </v-card>
-            </v-col> 
+            </v-col>
             <v-col>
                 <v-card>
                     <v-card-title class="justify-center">
@@ -37,29 +37,50 @@
                     <v-card-actions class="justify-center">
                         <v-container>
                             <v-row align="center" justify="center">
-                                <v-btn v-if="admin" color="primary" class="mb-2" @click="openFileChooser">Import</v-btn>
+                                <v-btn v-if="admin" color="primary" class="mb-2" @click="openImportInstances">Import</v-btn>
                             </v-row>
                             <v-row align="center" justify="center">
-                                <v-btn color="primary" class="mb-2">Export</v-btn>
+                                <v-btn color="primary" class="mb-2" @click="openExportInstances">Export</v-btn>
                             </v-row>
                         </v-container>
                     </v-card-actions>
                 </v-card>
             </v-col>
-        </v-container> 
+        </v-container>
+
         <v-dialog v-model="extrainfomodel">
             <v-card>
-              <model-import-format-info></model-import-format-info>
+                <model-import-format-info></model-import-format-info>
             </v-card>
         </v-dialog>
+
         <v-dialog v-model="extrainfoinstance">
             <v-card>
-              <instance-import-format-info></instance-import-format-info>
+                <instance-import-format-info></instance-import-format-info>
             </v-card>
         </v-dialog>
-        <v-dialog v-model="importWizard" max-width="500px">
+
+        <v-dialog v-model="importModelWizard" max-width="500px">
             <v-card>
-              <import-wizard v-on:close-file-chooser="closeFileChooser"></import-wizard>
+                <import-wizard v-on:close-file-chooser="closeImport" v-bind:type="model"></import-wizard>
+            </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="importInstanceWizard" max-width="500px">
+            <v-card>
+                <import-wizard v-on:close-file-chooser="closeImport" v-bind:type="instance"></import-wizard>
+            </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="exportModelWizard" max-width="500px">
+            <v-card>
+                <export-wizard v-on:close-file-chooser="closeExport" v-bind:type="model"></export-wizard>
+            </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="exportInstanceWizard" max-width="500px">
+            <v-card>
+                <export-wizard v-on:close-file-chooser="closeExport" v-bind:type="instance"></export-wizard>
             </v-card>
         </v-dialog>
     </v-card>
@@ -70,6 +91,7 @@
 import ModelImportFormatInfo from "./ModelImportFormatInfo"
 import InstanceImportFormatInfo from "./InstanceImportFormatInfo"
 import ImportWizard from "./ImportWizard"
+import ExportWizard from "./ExportWizard"
 import Auth from "../auth"
 
 export default {
@@ -78,7 +100,11 @@ export default {
             loading: false,       
             extrainfomodel: false,
             extrainfoinstance: false,
-            importWizard: false,
+            importModelWizard: false,
+            importInstanceWizard: false,
+            exportModelWizard: false,
+            exportInstanceWizard: false,
+            type: true,
         };
     },
     computed: {
@@ -87,14 +113,24 @@ export default {
         },
     },
     watch: {
-        importWizard(val) {
-            val || this.closeFileChooser()
+        importModelWizard(val) {
+            val || this.closeImport("model")
         },
+        importInstanceWizard(val) {
+            val || this.closeImport("instance")
+        },
+        exportModelWizard(val) {
+            val || this.closeExport("model")
+        },
+        exportInstanceWizard(val) {
+            val || this.closeExport("instance")
+        }
     },
     components: {
       ModelImportFormatInfo,
       InstanceImportFormatInfo,
       ImportWizard,
+      ExportWizard
     },
     methods: {
         showModelInfo() {
@@ -103,11 +139,34 @@ export default {
         showInstanceInfo() {
             this.extrainfoinstance = true
         },
-        openFileChooser() {
-            this.importWizard = true
+        openImportModels() {
+            this.importModelWizard = true
         },
-        closeFileChooser() {
-            this.importWizard = false
+        openImportInstances() {
+            this.importInstanceWizard = true
+            
+        },
+        closeImport(type) {
+            if (type === "model") {
+                this.importModelWizard = false
+            }
+            else {
+                this.importInstanceWizard = false
+            }
+        },
+        openExportModels() {
+            this.exportModelWizard = true
+        },
+        openExportInstances() {
+            this.exportInstanceWizard = true
+        },
+        closeExport(type) {
+            if (type === "model") {
+                this.exportModelWizard = false
+            }
+            else {
+                this.exportInstanceWizard = false
+            }
         }
     }
     
