@@ -13,7 +13,7 @@
         > 
           <!-- Links to the models -->
           <template v-slot:item.model.vendor = "{ value }">
-                <a>{{ value }}</a>     
+                {{ value }}
           </template>
 
           <template v-slot:top>
@@ -24,15 +24,15 @@
                           <v-col cols="6">
                               <v-row>
                                   <v-autocomplete prepend-inner-icon="mdi-magnify"
-                                                  :loading="loading"
                                                   :items="instances"
                                                   :search-input.sync="search"
                                                   cache-items
+                                                  class="mt-3 pt-3"
                                                   flat
                                                   hide-no-data
                                                   hide-details
                                                   item-text="model.vendor"
-                                                  label="Search"
+                                                  label="Search by keyword on model and hostname"
                                                   single-line
                                                   solo-inverted></v-autocomplete>
 
@@ -92,20 +92,14 @@
           </template>
 
           <template v-slot:item.action="{ item }">
-            <v-icon
-              small
-              class="mr-2"
-              @click="editItem(item)"
-            >
-              edit
-            </v-icon>
-            <v-icon
-              small
-              class="mr-2"
-              @click="deleteItem(item)"
-            >
-              delete
-            </v-icon>
+              <v-row>
+                      <v-icon medium
+                              class="mr-2"
+                              @click="editItem(item)">mdi-pencil</v-icon>
+                      <v-icon medium
+                              class="mr-2"
+                              @click="deleteItem(item)">mdi-delete</v-icon>
+              </v-row>
           </template>
         <template v-slot:no-data>
           <v-btn color="primary" @click="initialize">Reset</v-btn>
@@ -246,20 +240,18 @@
     methods: {
       async initialize () {
         this.instances = await this.instanceRepository.list();
-        this.firstInstance = await this.instanceRepository.find(1);
         this.models = await this.modelRepository.list();
         this.loading = false;
       },
      
       editItem (item) {
-        this.editedIndex = this.instances.indexOf(item)
+        this.editedIndex = this.instanceRepository.find(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
       deleteItem (item) {
         this.deleting = true;
-        const index = this.instances.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.instances.splice(index, 1)
+        confirm('Are you sure you want to delete this item?') && this.instanceRepository.delete(item)
       },
       close () {
         this.dialog = false
@@ -277,9 +269,10 @@
     
       save () {
         if (this.editedIndex > -1) {
-          Object.assign(this.instances[this.editedIndex], this.editedItem)
+          this.instanceRepository.update(this.editedItem)
+
         } else {
-          this.instances.push(this.editedItem)
+          this.instanceRepository.create(this.editedItem)
         }
         this.close()
       },

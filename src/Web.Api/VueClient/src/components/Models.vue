@@ -124,15 +124,14 @@
                     </template>
 
                     <template v-if="admin" v-slot:item.action="{ item }">
-                        <v-icon small
-                                class="mr-2"
-                                @click="editItem(item)">
-                            edit
-                        </v-icon>
-                        <v-icon small
-                                @click="deleteItem(item)">
-                            delete
-                        </v-icon>
+                        <v-row>
+                            <v-icon medium
+                                    class="mr-2"
+                                    @click="editItem(item)">mdi-pencil</v-icon>
+                            <v-icon medium
+                                    class="mr-2"
+                                    @click="deleteItem(item)">mdi-delete</v-icon>
+                        </v-row>
                     </template>
                     <template v-slot:no-data>
                         <v-btn color="primary" @click="initialize">Reset</v-btn>

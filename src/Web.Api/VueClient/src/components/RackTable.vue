@@ -18,12 +18,10 @@
             </template>
 
             <template v-slot:item.action="{ item }">
-            <v-icon
-                small
-                @click="deleteItem(item)"
-            >
-                delete
-            </v-icon>
+                <v-row class="pl-5">
+                    <v-icon medium
+                            @click="deleteItem(item)">mdi-delete</v-icon>
+                </v-row>
             </template>
 
             <template v-slot:no-data>
@@ -34,9 +32,11 @@
 </template>
 
 <script>
+    import Auth from "../auth"
+
     export default {
         name: 'rack-table',
-        inject: ['rackRepository','auth'],
+        inject: ['rackRepository'],
         item: null,
         props: {
             editedItem:Object
@@ -56,10 +56,10 @@
         },
         computed: {
             isAdmin() {
-                return this.admin === this.auth.isAdmin()
+                return Auth.isAdmin()
             },
             filteredHeaders() {
-                return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
+                return (this.isAdmin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
             },
         },
         async created () {
@@ -68,12 +68,10 @@
         methods: {
             async initialize () {
                 this.racks = await this.rackRepository.list();
-                this.firstRack = await this.rackRepository.find(1);
                 this.loading = false;
             },
             deleteItem (item) {
-                const index = this.racks.indexOf(item)
-                confirm('Are you sure you want to delete this item?') && this.racks.splice(index, 1)
+                confirm('Are you sure you want to delete this item?') && this.rackRepository.deleteInRange(item.address, item.address)
             },
         }
     }
