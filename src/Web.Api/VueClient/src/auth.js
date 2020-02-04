@@ -27,13 +27,13 @@ export default {
     },
 
     loggedIn() {
-        return true;
-        //return !!localStorage.token;
+        //return true;
+        return !!localStorage.token;
     },
 
     isAdmin() {
-        return true;
-        //return localStorage.user && localStorage.user.admin;
+        //return true;
+        return localStorage.user && localStorage.user.admin;
     },
 
 }
