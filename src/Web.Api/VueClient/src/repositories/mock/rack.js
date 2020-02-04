@@ -208,6 +208,66 @@ export default {
         }
         return Promise.resolve();
     },
+    createRacksByRows(start, end) {
+        var racksInRange = this.createInRange(start, end);
+        const { rowLetter: startRow, rackNumber: startCol } = splitAddress(start);
+        const { rowLetter: endRow, rackNumber: endCol } = splitAddress(end);
+        var racksByRows;
+
+        var rackIndex = 0;
+        for (var r = startRow.charCodeAt(0); r <= endRow.charCodeAt(0); r++) {
+            var row = {
+                rowLetter: String.fromCharCode(r),
+                racks: [],
+            };
+            for (var col = startCol; col <= endCol; col++) {
+                var slot = this.createSlot(racksInRange[rackIndex].instances);
+                var rack = {
+                    address: racksInRange[rackIndex].address,
+                    slots: slot
+                };
+                row.racks.push(rack);
+                rackIndex++;
+            }
+            racksByRows.push(row);
+        }
+        return racksByRows;
+    },
+    createSlot(instances) {
+        //creating base rows of a single rack diagram
+        var rows;
+        for (var i = 0; i < 42; i++) {
+            var row = {
+                rackU: i,
+                value: '',
+                style: { color: 'black', backgroundColor: 'white' },
+            };
+            rows.push(row);
+        }
+        //filling the rack diagram with instance data  
+        var instances_length = Object.keys(instances).length;
+        for (var j = 0; j < instances_length; j++) {
+            //getting root position and color of the current instance
+            var rackU = instances[j].rackPosition;
+            var color = instances[j].model.displayColor;
+
+            //changing bottom rackU's name and color 
+            rows[rackU].style.backgroundColor = color;
+            rows[rackU].value = instances[j].model.vendor + ' ' + instances[j].model.modelNumber + ' ' + instances[j].hostname;
+
+            //going through the second for loop to fill up the remaining rackU's
+            //which the instance fills 
+            var model_height = instances[j].model.height
+            for (var k = 1; k < model_height; k++) {
+                var position = rackU + k;
+                rows[position].style.backgroundColor = color;
+            }
+        }
+        return rows;
+    },
+
+
+
     validAddress: validAddress,
     splitAddress: splitAddress
 };
