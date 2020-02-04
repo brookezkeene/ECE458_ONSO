@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   web.api:
-    image: "${CI_REGISTRY-}ece458/app:latest"
+    image: ${CI_REGISTRY_IMAGE-webapi}
     build:
       context: .
       dockerfile: Web.Api/Dockerfile
