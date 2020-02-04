@@ -184,7 +184,7 @@
                     { text: 'Display Color', value: 'coloricon', sortable: false },
                     { text: 'Ethernet Ports', value: 'ethernetPorts', filter: this.ethernetFilter },
                     { text: 'Power Ports', value: 'powerPorts', filter: this.powerFilter },
-                    { text: 'CPU', value: 'cpu' },
+                    { text: 'CPU', value: 'cpu'},
                     { text: 'Memory', value: 'memory', filter: this.memoryFilter },
                     { text: 'Storage', value: 'storage' },
                     { text: 'Comment', value: 'comment' },

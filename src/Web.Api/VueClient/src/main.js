@@ -4,7 +4,7 @@ import App from './App.vue'
 import vuetify from './plugins/vuetify';
 import VuetifyDialog from "vuetify-dialog";
 import axios from 'axios';
-import router from  './router'
+import router from './router';
 import serviceContainer from './service-container';
 
 Vue.config.productionTip = false;
