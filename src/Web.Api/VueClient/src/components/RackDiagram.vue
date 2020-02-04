@@ -70,6 +70,7 @@
 
 <script>
     import rowsOfRacks from '@/repositories/mock/mock-racks-by-rows';
+    //import rackDiagram from '@/rackDiagram';
     export default {
     inject: ['rackRepository'],
     data () {
@@ -90,6 +91,7 @@
                 this.racks = response;
                 this.loading = false;
             });
+            //this.racksByRow = rackDiagram.createRacksByRows(start, end);
         }
     }    
 }
