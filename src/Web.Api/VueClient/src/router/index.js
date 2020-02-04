@@ -18,6 +18,12 @@ const routes = [
         path: '/',
         name: 'Welcome',
         component: Login,
+        beforeEnter(to, from, next) {
+            if (Auth.loggedIn()) {
+                next({ path: '/models' });
+            }
+            else next();
+        }
     },
     {
         path: '/Models',
