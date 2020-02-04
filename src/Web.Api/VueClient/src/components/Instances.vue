@@ -246,20 +246,18 @@
     methods: {
       async initialize () {
         this.instances = await this.instanceRepository.list();
-        this.firstInstance = await this.instanceRepository.find(1);
         this.models = await this.modelRepository.list();
         this.loading = false;
       },
      
       editItem (item) {
-        this.editedIndex = this.instances.indexOf(item)
+        this.editedIndex = this.instanceRepository.find(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
       deleteItem (item) {
         this.deleting = true;
-        const index = this.instances.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.instances.splice(index, 1)
+        confirm('Are you sure you want to delete this item?') && this.instanceRepository.delete(item)
       },
       close () {
         this.dialog = false
@@ -277,9 +275,10 @@
     
       save () {
         if (this.editedIndex > -1) {
-          Object.assign(this.instances[this.editedIndex], this.editedItem)
+          this.instanceRepository.update(this.editedItem)
+
         } else {
-          this.instances.push(this.editedItem)
+          this.instanceRepository.create(this.editedItem)
         }
         this.close()
       },
