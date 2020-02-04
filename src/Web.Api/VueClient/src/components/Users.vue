@@ -36,7 +36,7 @@
                             <v-card-actions>
                                 <v-spacer></v-spacer>
                                 <v-btn color="primary" text @click="close">Cancel</v-btn>
-                                <v-btn color="primary" text @click="save">Creae User</v-btn>
+                                <v-btn color="primary" text @click="save">Create User</v-btn>
                             </v-card-actions>
                         </v-card>
                     </v-dialog>
@@ -61,7 +61,6 @@ import Auth from "../auth"
       return {
         dialog: false,
         loading: true,
-        isEditing: null,
         search: '',
         headers: [
         { text: 'First Name', value: 'firstName' },
@@ -70,7 +69,6 @@ import Auth from "../auth"
           { text: 'Email', value: 'email' },
         ],
         users: [],
-        firstUser: null,
         editedIndex: -1,
         editedItem: {
           displayName: '',
@@ -100,7 +98,6 @@ import Auth from "../auth"
 
     async created() {
       this.users = await this.userRepository.list();
-      this.firstUser = await this.userRepository.find(1);
       this.loading = false;
     },
 
@@ -114,11 +111,7 @@ import Auth from "../auth"
       },
 
       save () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.users[this.editedIndex], this.editedItem)
-        } else {
-          this.users.push(this.editedItem)
-        }
+        this.userRepository.create(this.editedItem)
         this.close()
       },
     },
