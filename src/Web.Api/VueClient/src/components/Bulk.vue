@@ -32,7 +32,7 @@
                         <v-spacer></v-spacer>
                         Instances
                         <v-spacer></v-spacer>
-                        <v-icon v-if="admin" @click="showModelInfo">mdi-information</v-icon>
+                        <v-icon v-if="admin" @click="showInstanceInfo">mdi-information</v-icon>
                     </v-card-title>
                     <v-card-actions class="justify-center">
                         <v-container>
@@ -62,25 +62,25 @@
 
         <v-dialog v-model="importModelWizard" max-width="500px">
             <v-card>
-                <import-wizard v-on:close-file-chooser="closeImport" v-bind:type="model"></import-wizard>
+                <import-wizard v-on:close-file-chooser="closeImport" v-bind:forModel="forModel"></import-wizard>
             </v-card>
         </v-dialog>
 
         <v-dialog v-model="importInstanceWizard" max-width="500px">
             <v-card>
-                <import-wizard v-on:close-file-chooser="closeImport" v-bind:type="instance"></import-wizard>
+                <import-wizard v-on:close-file-chooser="closeImport" v-bind:forModel="forModel"></import-wizard>
             </v-card>
         </v-dialog>
 
         <v-dialog v-model="exportModelWizard" max-width="500px">
             <v-card>
-                <export-wizard v-on:close-file-chooser="closeExport" v-bind:type="model"></export-wizard>
+                <export-wizard v-on:close-file-chooser="closeExport" v-bind:forModel="forModel"></export-wizard>
             </v-card>
         </v-dialog>
 
         <v-dialog v-model="exportInstanceWizard" max-width="500px">
             <v-card>
-                <export-wizard v-on:close-file-chooser="closeExport" v-bind:type="instance"></export-wizard>
+                <export-wizard v-on:close-file-chooser="closeExport" v-bind:forModel="forModel"></export-wizard>
             </v-card>
         </v-dialog>
     </v-card>
@@ -104,7 +104,7 @@ export default {
             importInstanceWizard: false,
             exportModelWizard: false,
             exportInstanceWizard: false,
-            type: true,
+            forModel: false,
         };
     },
     computed: {
@@ -141,9 +141,11 @@ export default {
         },
         openImportModels() {
             this.importModelWizard = true
+            this.forModel = true
         },
         openImportInstances() {
             this.importInstanceWizard = true
+            this.forModel = false
             
         },
         closeImport(type) {
@@ -156,9 +158,11 @@ export default {
         },
         openExportModels() {
             this.exportModelWizard = true
+            this.forModel = true
         },
         openExportInstances() {
             this.exportInstanceWizard = true
+            this.forModel = false
         },
         closeExport(type) {
             if (type === "model") {

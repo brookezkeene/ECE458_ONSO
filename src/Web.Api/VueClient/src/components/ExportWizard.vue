@@ -15,12 +15,12 @@
                         <v-card-text>
                             Select one or more of the following fields you would like to export to a .csv file.
                         </v-card-text>
-                        <v-container v-if="type===model">
+                        <v-container v-if="forModel">
                             <v-checkbox
                                         label="model">
                             </v-checkbox>
                         </v-container>
-                        <v-container v-if="type!==model">
+                        <v-container v-if="!forModel">
                             <v-checkbox
                                         label="instance">
                             </v-checkbox>
@@ -76,7 +76,7 @@
 export default {
     name: 'export-wizard',
     inject: ['modelRepository', 'instanceRepository'],
-    props: ['exportWizard', 'type'],
+    props: ['exportWizard', 'forModel'],
     data () {
         return {
             loading: false,
