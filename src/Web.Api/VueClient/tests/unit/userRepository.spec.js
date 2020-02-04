@@ -1,4 +1,4 @@
-import userRepository from '@/repositories/user';
+import userRepository from '@/repositories/mock/user'
 
 describe('user repository', () => {
     const userToCreate = {
