@@ -83,9 +83,9 @@ const mockRacks = [
                     "storage": "2x500GB SSD RAID1",
                     "comment": "Retired offering, no new purchasing"
                 },
-                "hostname": "server9",
-                "rack": "B13",
-                "rackPosition": 5,
+                "hostname": "server1",
+                "rack": "B12",
+                "rackPosition": 4,
                 "owner": {
                     "id": 1,
                     "username": "tbletsch",
@@ -98,9 +98,9 @@ const mockRacks = [
                 "id": 2,
                 "model": {
                     "id": 2,
-                    "vendor": "Lenovo",
-                    "modelNumber": "Foobar",
-                    "height": 3,
+                    "vendor": "Dell",
+                    "modelNumber": "R710",
+                    "height": 4,
                     "displayColor": "#C39BD3",
                     "ethernetPorts": 2,
                     "powerPorts": 1,
@@ -110,9 +110,9 @@ const mockRacks = [
                     "comment": "This is my personal favorite!",
                     "instances": ["instance3", "instance4", "instance5"]
                 },
-                "hostname": "server10",
-                "rack": "B13",
-                "rackPosition": 9,
+                "hostname": "server2",
+                "rack": "B12",
+                "rackPosition": 12,
                 "owner": {
                     "id": 1,
                     "username": "tbletsch",
@@ -208,63 +208,6 @@ export default {
         }
         return Promise.resolve();
     },
-<<<<<<< HEAD
-=======
-    createRacksByRows(start, end) {
-        var racksInRange = this.createInRange(start, end);
-        const { rowLetter: startRow, rackNumber: startCol } = splitAddress(start);
-        const { rowLetter: endRow, rackNumber: endCol } = splitAddress(end);
-        var racksByRows;
-
-        var rackIndex = 0;
-        for (var r = startRow.charCodeAt(0); r <= endRow.charCodeAt(0); r++) {
-            var row = {
-                rowLetter: String.fromCharCode(r),
-                racks: [],
-            };
-            for (var col = startCol; col <= endCol; col++) {
-                var slot = this.createSlot(racksInRange[rackIndex].instances);
-                var rack = {
-                    address: racksInRange[rackIndex].address,
-                    slots: slot
-                };
-                row.racks.push(rack);
-                rackIndex++;
-            }
-            racksByRows.push(row);
-        }
-        return racksByRows;
-    },
-    createSlot(instances) {
-        //creating base rows of a single rack diagram
-        var rows;
-        for (var i = 0; i < 42; i++) {
-            var row = {
-                rackU: i,
-                value: '',
-                style: '',
-            };
-            rows.push(row);
-        }
-        //filling the rack diagram with instance data  
-        var instances_length = Object.keys(instances).length;
-        for (var j = 0; j < instances_length; j++) {
-            var rackU = instances[j].rackPosition;
-            var color = instances[j].model.displayColor;
-            rows[rackU].style = { color: 'black', backgroundColor: color};
-            rows[rackU].value = instances[j].model.vendor + ' ' + instances[j].model.modelNumber + ' ' + instances[j].hostname;
-
-            var model_height = instances[j].model.height
-            for (var k = 1; k < model_height; k++) {
-                var position = rackU + k;
-                rows[position].style.backgroundColor = color;
-            }
-        }
-        return rows;
-    },
-
-
->>>>>>> added test?
 
     validAddress: validAddress,
     splitAddress: splitAddress
