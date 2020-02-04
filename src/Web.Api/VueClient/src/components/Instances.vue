@@ -12,7 +12,7 @@
           @click:row = "showDetails"
         > 
           <!-- Links to the models -->
-          <template v-slot:item.model.id = "{ value }">
+          <template v-slot:item.model.vendor = "{ value }">
                 <a>{{ value }}</a>     
           </template>
 
@@ -137,27 +137,21 @@
         // Table data.
         headers: [
           
-          { text: 'Model ID (LINK TO MODEL)',  value: 'model.id', },
+
           { text: 'Model Vendor', value: 'model.vendor', filter: this.modelFilter },
           { text: 'Model Number', value: 'model.modelNumber', },
-          { text: 'Model height', value: 'model.height', },
-          { text: 'Display Color', value: 'model.displayColor', },
-          { text: 'Ethernet ports', value: 'model.ethernetPorts', },
-          { text: 'Power Ports', value: 'model.powerPorts', },
-          { text: 'CPU', value: 'model.cpu', },
-          { text: 'Memory', value: 'model.memory', },
-          { text: 'Storage', value: 'model.storage', }, 
-
-
           { text: 'Hostname', value: 'hostname' },
-          { 
-            text: 'Rack', 
-            value: 'rack',
-            filter: this.rackFilter 
-          },
+          { text: 'Rack', value: 'rack', filter: this.rackFilter },
           { text: 'Rack U', value: 'rackPosition', },
+          { text: 'Owner First Name', value: 'owner.firstName', },
+          { text: 'Owner Last Name', value: 'owner.lastName' },
+          { text: 'Owner Username', value: 'owner.username' },
+          { text: 'Owner Email',  value: 'owner.email'},
           { text: 'Comment', value: 'comment' },
+
           { text: 'Actions', value: 'action', sortable: false },
+
+
         ],
         instances: [],
         models: [],
@@ -182,7 +176,8 @@
           owner:{
             id:'',
             username:'',
-            displayname:'',
+            firstName:'',
+            lastName:'',
             email:'',
           },
           rackPosition:'',
@@ -206,7 +201,8 @@
           owner:{
             id:'',
             username:'',
-            displayname:'',
+            firstName:'',
+            lastName:'',
             email:'',
           },
           rackPosition:'',
