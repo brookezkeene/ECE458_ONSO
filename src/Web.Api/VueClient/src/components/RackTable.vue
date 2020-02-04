@@ -18,7 +18,7 @@
             </template>
 
             <template v-slot:item.action="{ item }">
-                <v-row>
+                <v-row class="pl-5">
                     <v-icon medium
                             @click="deleteItem(item)">mdi-delete</v-icon>
                 </v-row>
