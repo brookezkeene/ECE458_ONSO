@@ -24,15 +24,15 @@
                           <v-col cols="6">
                               <v-row>
                                   <v-autocomplete prepend-inner-icon="mdi-magnify"
-                                                  :loading="loading"
                                                   :items="instances"
                                                   :search-input.sync="search"
                                                   cache-items
+                                                  class="mt-3 pt-3"
                                                   flat
                                                   hide-no-data
                                                   hide-details
                                                   item-text="model.vendor"
-                                                  label="Search"
+                                                  label="Search by keyword on model and hostname"
                                                   single-line
                                                   solo-inverted></v-autocomplete>
 
