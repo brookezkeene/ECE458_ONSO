@@ -118,5 +118,4 @@ describe('rack repository', () => {
         await expect(rackRepository.deleteInRange(start, end)).resolves.toBeUndefined();
         await expect(rackRepository.list()).resolves.toHaveLength(originalLength - 4);
     })
-
 })
