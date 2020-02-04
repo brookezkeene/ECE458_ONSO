@@ -48,7 +48,7 @@ export default {
       validate () {
         if (this.$refs.form.validate()) {
           this.snackbar = true
-          this.$router.push('Main')
+          this.$router.push('Models')
         }
       },
     }
