@@ -1,6 +1,8 @@
 <style scoped>
     @media print {
-
+        @page {
+            size: A4 landscape;
+        }
         body {
             margin: 0;
             color: #000;
