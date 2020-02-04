@@ -12,7 +12,6 @@
 
                         <v-toolbar flat color="white">
                             <v-autocomplete prepend-inner-icon="mdi-magnify"
-                                            :loading="loading"
                                             :items="models"
                                             :search-input.sync="search"
                                             cache-items
@@ -39,11 +38,11 @@
                             </v-dialog>
                         </v-toolbar>
 
-                        <v-row>
+                        <v-row class="pl-4">
                             <v-col cols="10">
                                 <v-row>
                                     <!-- Custom filters; sorts between height ranges -->
-                                    <v-col cols="2">
+                                    <v-col cols="3">
                                         <v-row>
                                             <v-col cols="6">
                                                 <v-text-field v-model="startHeightValue"
@@ -60,7 +59,7 @@
                                             </v-col>
                                         </v-row>
                                     </v-col>
-                                    <v-col cols="2">
+                                    <v-col cols="3">
                                         <v-row>
                                             <v-col cols="6">
                                                 <v-text-field v-model="startMemoryValue"
@@ -77,7 +76,7 @@
                                             </v-col>
                                         </v-row>
                                     </v-col>
-                                    <v-col cols="2">
+                                    <v-col cols="3">
                                         <v-row>
                                             <v-col cols="6">
                                                 <v-text-field v-model="startEthernetValue"
@@ -94,7 +93,7 @@
                                             </v-col>
                                         </v-row>
                                     </v-col>
-                                    <v-col cols="2">
+                                    <v-col cols="3">
                                         <v-row>
                                             <v-col cols="6">
                                                 <v-text-field v-model="startPowerValue"
