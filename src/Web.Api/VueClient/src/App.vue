@@ -1,6 +1,7 @@
 <template>
     <v-app>
         <v-navigation-drawer v-model="drawer"
+                             class="noPrint"
                              v-if="loggedIn"
                              :mini-variant.sync="mini"
                              permanent
@@ -54,6 +55,14 @@
     </v-app>
 
 </template>
+
+<style>
+    @media print {
+        .noPrint {
+            display: none;
+        }
+    } 
+</style>
 
 <script>
     //import Users from '@/components/Users';
