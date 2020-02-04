@@ -1,14 +1,18 @@
 import Vue from 'vue'
+import './plugins/axios'
 import App from './App.vue'
 import vuetify from './plugins/vuetify';
 import VuetifyDialog from "vuetify-dialog";
-import router from  './router'
+import axios from 'axios';
+import router from './router';
 import serviceContainer from './service-container';
 
 Vue.config.productionTip = false;
 Vue.use(vuetify);
 Vue.use(VuetifyDialog);
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
+
+axios.defaults.baseURL = '/api';
 
 new Vue({
   el: '#app',

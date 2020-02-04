@@ -143,13 +143,6 @@
             </v-card>
             </v-container>
 
-            <v-dialog v-model="instructionsDialog" max-width="550px">
-                <v-card>
-                    <v-card-title class="justify-center">
-                        Click on row for more information about the model
-                    </v-card-title>
-                </v-card>
-            </v-dialog>
         </v-card>
     </div>
 </template>
@@ -199,7 +192,6 @@
 
                 ],
                 models: [],
-                firstModel: null,
                 editedIndex: -1,
                 editedItem: {
                     vendor: '',
@@ -257,7 +249,6 @@
         methods: {
             async initialize() {
                 this.models = await this.modelRepository.list();
-                this.firstModel = await this.modelRepository.find(1);
                 this.loading = false;
             },
             editItem(item) {

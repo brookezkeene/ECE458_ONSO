@@ -1,4 +1,4 @@
-import modelRepository from '@/repositories/model';
+import modelRepository from '@/repositories/mock/model';
 
 describe('model repository', () => {
     const modelToCreate = {

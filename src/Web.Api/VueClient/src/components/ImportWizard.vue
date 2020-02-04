@@ -16,7 +16,7 @@
                             Upload a CSV file matching the specifications outlined in the following
                             <a target="_blank"
                                rel="noopener noreferrer"
-                               href="https://piazza.com/redirect/s3?bucket=uploads&prefix=attach%2Fk4u27qnccr45oo%2Fis4xdnkb8px4ee%2Fk5zjop579k59%2FECE458__Bulk_Format_Proposal3.pdf">
+                               href="https://drive.google.com/file/d/1UB8J9E_cKlezRtgtk3g10ikO9Iqz5lGN/view?usp=sharing">
                             document</a>.
                         </v-card-text>
                         <v-file-input accept=".csv"
@@ -72,9 +72,9 @@
 
 <script>
 export default {
-    name: 'file-chooser-card',
+    name: 'import-wizard',
     inject: ['modelRepository', 'instanceRepository'],
-    props: ['filechoosercard'],
+    props: ['importWizard'],
     data () {
         return {
             loading: false,

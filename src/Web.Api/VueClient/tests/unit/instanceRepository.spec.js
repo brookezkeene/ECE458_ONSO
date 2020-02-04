@@ -1,4 +1,4 @@
-import instanceRepository from '@/repositories/instance';
+import instanceRepository from '@/repositories/mock/instance'
 
 describe('instance repository', () => {
     const instanceToCreate = {

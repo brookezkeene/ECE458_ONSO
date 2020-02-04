@@ -1,13 +1,14 @@
 <template>
     <v-app>
         <v-navigation-drawer v-model="drawer"
+                             v-if="loggedIn"
                              :mini-variant.sync="mini"
                              permanent
                              app>
 
             <v-list-item class="px-2">
                 <v-list-item-avatar>
-                    <v-img src="./components/example/hyposoft_logo.png"></v-img>
+                    <v-img src="./assets/hyposoft_logo.png"></v-img>
                 </v-list-item-avatar>
 
                 <v-list-item-title>
@@ -58,8 +59,9 @@
     //import Users from '@/components/Users';
     //import Instances from '@/components/Instances';
     //import Models from '@/components/Models';
-    //import ImportFile from '@/components/ImportFile';
+    //import Bulk from '@/components/Bulk';
     //import Racks from '@/components/Racks';
+    import Auth from "./auth"
 
 
     export default {
@@ -82,12 +84,17 @@
             }
         },
 
+        computed: {
+            loggedIn() {
+                return Auth.loggedIn();
+            }
+        },
 
         components: {
             //Users,
             //Instances,
             //Models,
-            //ImportFile,
+            //Bulk,
             //Racks,
         },
 
