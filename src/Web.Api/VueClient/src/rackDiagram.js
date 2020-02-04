@@ -1,4 +1,4 @@
-﻿import rackRepository from '@/repositories/rack';
+﻿import rackRepository from '@/repositories/mock/rack';
 
 export default {
 
