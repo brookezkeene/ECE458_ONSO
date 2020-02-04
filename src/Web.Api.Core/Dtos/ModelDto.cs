@@ -15,6 +15,6 @@ namespace Web.Api.Core.Dtos
         public string Cpu { get; set; }
         public int? Memory { get; set; }
         public string Comment { get; set; }
-        public List<InstanceDto> Instances { get; set; }
+        public List<FlatInstanceDto> Instances { get; set; }
     }
 }
