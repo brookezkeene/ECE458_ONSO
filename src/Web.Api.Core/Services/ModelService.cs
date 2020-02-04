@@ -23,14 +23,14 @@ namespace Web.Api.Core.Services
         public async Task<PagedList<ModelDto>> GetModelsAsync(string search, int page = 1, int pageSize = 10)
         {
             var pagedList = await _repository.GetModelsAsync(search, page, pageSize);
-            return pagedList.ToModel(); // note: ToModel refers to the concept of a model (as opposed to an entity), not the entity "Model"
+            return pagedList.ToDto(); // note: ToModel refers to the concept of a model (as opposed to an entity), not the entity "Model"
         }
 
         public async Task<ModelDto> GetModelAsync(Guid modelId)
         {
             var model = await _repository.GetModelAsync(modelId);
             // TODO: handle null result (no model found)
-            return model.ToModel();
+            return model.ToDto();
         }
 
         public async Task UpdateModelAsync(ModelDto modelDto)

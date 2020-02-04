@@ -12,6 +12,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using VueCliMiddleware;
+using Web.Api.Configuration;
+using Web.Api.Configuration.Constants;
 using Web.Api.Extensions;
 
 namespace Web.Api
@@ -28,6 +30,7 @@ namespace Web.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton(CreateSeedDataConfiguration());
             services.ConfigureCoreServices()
                 //.ConfigureInMemoryDbContext();
                 .ConfigureSqlDbContext(Configuration);
@@ -70,11 +73,19 @@ namespace Web.Api
                 endpoints.MapToVueCliProxy(
                     "{*path}",
                     new SpaOptions { SourcePath = "VueClient" },
-                    npmScript: /*System.Diagnostics.Debugger.IsAttached ? "serve" :*/ null,
+                    npmScript: System.Diagnostics.Debugger.IsAttached ? "serve" : null,
                     regex: "Compiled successfully",
                     forceKill: true
                     );
             });
+        }
+
+        protected SeedDataConfiguration CreateSeedDataConfiguration()
+        {
+            var seedDataConfiguration = new SeedDataConfiguration();
+            Configuration.GetSection(ConfigurationConsts.SeedDataConfigurationKey)
+                .Bind(seedDataConfiguration);
+            return seedDataConfiguration;
         }
 
     }

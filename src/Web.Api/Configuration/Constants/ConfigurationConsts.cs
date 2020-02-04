@@ -8,5 +8,6 @@ namespace Web.Api.Configuration.Constants
     public class ConfigurationConsts
     {
         public const string ApplicationDbConnectionStringKey = "ApplicationDbConnection";
+        public const string SeedDataConfigurationKey = "SeedData";
     }
 }

@@ -6,8 +6,10 @@ using Bogus;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Web.Api.Configuration;
 using Web.Api.Core.UnitTests.Mappers;
 using Web.Api.Infrastructure.DbContexts;
+using Web.Api.Infrastructure.Entities;
 using Web.Api.Infrastructure.Repositories.Interfaces;
 
 namespace Web.Api.Helpers
@@ -26,21 +28,47 @@ namespace Web.Api.Helpers
             using var scope = serviceProvider.GetRequiredService<IServiceScopeFactory>()
                 .CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            var modelRepository = scope.ServiceProvider.GetRequiredService<IModelRepository>();
-            var instanceRepository = scope.ServiceProvider.GetRequiredService<IInstanceRepository>();
-            var rackRepository = scope.ServiceProvider.GetRequiredService<IRackRepository>();
+            var seedDataConfiguration = scope.ServiceProvider.GetRequiredService<SeedDataConfiguration>();
 
-            EnsureSeedData(context, modelRepository, instanceRepository, rackRepository);
+            EnsureSeedData(context, seedDataConfiguration);
         }
 
-        public static void EnsureSeedData(ApplicationDbContext context, IModelRepository modelRepository,
-            IInstanceRepository instanceRepository, IRackRepository rackRepository)
+        public static void EnsureSeedData(ApplicationDbContext context, SeedDataConfiguration seedDataConfiguration)
         {
+            if (!context.Racks.Any())
+            {
+                foreach (var rack in seedDataConfiguration.Racks)
+                {
+                    context.Add(rack);
+                }
+
+                context.SaveChanges();
+            }
+
             if (!context.Models.Any())
             {
-                // TODO: migration failing because racks do not exist; generate them too!
-                var models = ModelMock.GenerateRandomModels(20);
-                context.Models.AddRange(models);
+                foreach (var model in seedDataConfiguration.Models)
+                {
+                    context.Add(model);
+                }
+
+                context.SaveChanges();
+            }
+
+            if (!context.Instances.Any())
+            {
+                foreach (var instance in seedDataConfiguration.Instances)
+                {
+                    // prevent attempts to track entities with the same Id multiple times (causes exceptions)
+                    var model = context.Set<Model>()
+                        .SingleOrDefault(o => o.Id == instance.Model.Id);
+                    if (model != null) instance.Model = model;
+
+                    var rack = context.Set<Rack>()
+                        .SingleOrDefault(o => o.Id == instance.Rack.Id);
+                    if (rack != null) instance.Rack = rack;
+                    context.Add(instance);
+                }
                 context.SaveChanges();
             }
         }
