@@ -4,10 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Web.Api.Common;
 using Web.Api.Core;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
+using Web.Api.Resources;
 
 namespace Web.Api.Controllers
 {
@@ -17,6 +19,7 @@ namespace Web.Api.Controllers
     public class ModelsController : ControllerBase
     {
         private IModelService _modelService;
+        private readonly IApiErrorResources _errorResources;
 
         public ModelsController(IModelService modelService)
         {
@@ -37,13 +40,26 @@ namespace Web.Api.Controllers
 
             return Ok(user);
         }
-    }
 
-    public class ModelsApiDto
-    {
-    }
+        [HttpPut]
+        public async Task<IActionResult> Update(ModelDto modelDto)
+        {
+            await _modelService.UpdateModelAsync(modelDto);
+            return NoContent();
+        }
 
-    public class ModelApiDto
-    {
+        [HttpPost]
+        public async Task<IActionResult> Create(ModelDto modelDto)
+        {
+            if (!modelDto.Id.Equals(default))
+            {
+                return BadRequest(_errorResources.CannotSetId());
+            }
+
+            var modelId = await _modelService.CreateModelAsync(modelDto);
+            modelDto.Id = modelId;
+
+            return CreatedAtAction(nameof(Get), new {id = modelId}, modelDto);
+        }
     }
 }

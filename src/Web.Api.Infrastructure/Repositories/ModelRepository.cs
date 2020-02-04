@@ -67,5 +67,22 @@ namespace Web.Api.Infrastructure.Repositories
             _dbContext.Models.Remove(model);
             return await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<bool> CanUpdateModelAsync(Model model)
+        {
+            if (model.Id != default)
+            {
+                var existingData = await _dbContext.Models.FindAsync(model.Id);
+                // disallow height change if model has instances
+                if (model.Height == existingData.Height) return true;
+
+                var hasInstances = await _dbContext.Instances.Where(x => x.Model == model)
+                    .AnyAsync();
+
+                return !hasInstances;
+            }
+
+            return true;
+        }
     }
 }
