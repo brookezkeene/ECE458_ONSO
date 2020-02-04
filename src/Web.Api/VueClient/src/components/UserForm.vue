@@ -9,17 +9,39 @@
             <v-container>
                 <v-row>
                 <v-col cols="12" sm="6" md="6">
-                    <v-text-field v-model="editedItem.displayName" label="Display Name"></v-text-field>
+                    <v-text-field v-model="editedItem.firstName" label="First Name"></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="6">
+                    <v-text-field v-model="editedItem.lastName" label="Last Name"></v-text-field>
                 </v-col>
                 </v-row>
                 <v-row>
-                <v-col cols="12" sm="6" md="6">
-                    <v-text-field v-model="editedItem.username" label="Username"></v-text-field>
-                </v-col>
+                    <v-col cols="12" sm="6" md="6">
+                        <v-text-field v-model="editedItem.username" label="Username"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="6">
+                        <v-text-field v-model="editedItem.email" label="Email"></v-text-field>
+                    </v-col>
                 </v-row>
                 <v-row>
-                <v-col cols="12" sm="6" md="6">
-                    <v-text-field v-model="editedItem.email" label="Email"></v-text-field>
+
+                <v-col>
+                    <v-text-field v-model="password1"
+                                  :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                                  :rules="[rules.required, passwordConfirmationRule]"
+                                  :type="show ? 'text' : 'password'"
+                                  label="Password"
+                                  required
+                                  @click:append="show = !show"></v-text-field>
+                </v-col>
+                <v-col>
+                    <v-text-field v-model="password2"
+                                  :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                                  :rules="[rules.required, passwordConfirmationRule]"
+                                  :type="show1 ? 'text' : 'password'"
+                                  label="Re-enter Password"
+                                  required
+                                  @click:append="show1 = !show1"></v-text-field>
                 </v-col>
                 </v-row>
             </v-container>
@@ -38,14 +60,43 @@ export default {
     },
     data () {
         return {
+            show: false,
+            show1: false,
+            valid: true,
+            email: '',
+            emailRules: [
+                v => !!v || 'E-mail is required',
+                v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+            ],
+            password1: '',
+            password2: '',
+            rules: {
+                required: value => !!value || "Required.",
+                emailMatch: () => "The email and password you entered don't match"
+            },
             loading: false
         };
+    },
+    methods: {
+        submit() {
+            this.$v.$touch()
+        },
+        checkPassMatch() {
+            if (this.password1 != this.password2) {
+                this.snackbar = false
+            }
+        },
     },
     editedItem: {
           displayName: '',
           email: '',
           username: '',
           password: ''
-    },
+        },
+    computed: {
+        passwordConfirmationRule() {
+            return this.password1 === this.password2 || "Passwords must match";
+        },
+    }
 }
 </script>

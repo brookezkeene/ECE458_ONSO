@@ -31,7 +31,8 @@ export default {
     },
 
     isAdmin() {
-        return localStorage.user && localStorage.user.admin;
+        return true;
+        //return localStorage.user && localStorage.user.admin;
     },
 
 }
