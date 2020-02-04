@@ -67,7 +67,7 @@
 </style>
 
 <script>
-    import rowsOfRacks from '@/repositories/mock-racks-by-rows';
+    import rowsOfRacks from '@/repositories/mock/mock-racks-by-rows';
     export default {
     inject: ['rackRepository'],
     data () {

@@ -1,7 +1,7 @@
-import userRepository from './repositories/user';
-import modelRepository from './repositories/model';
-import instanceRepository from './repositories/instance';
-import rackRepository from './repositories/rack';
+import userRepository from "./repositories/mock/user";
+import modelRepository from "./repositories/model";
+import instanceRepository from "./repositories/mock/instance";
+import rackRepository from "./repositories/mock/rack";
 import auth from './auth';
 
 export default {
