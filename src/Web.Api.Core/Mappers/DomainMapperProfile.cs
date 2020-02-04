@@ -11,6 +11,7 @@ namespace Web.Api.Core.Mappers
     {
         public DomainMapperProfile()
         {
+            // full dtos w/ nested dtos
             CreateMap<Model, ModelDto>(MemberList.Destination)
                 .ReverseMap();
             CreateMap<Instance, InstanceDto>(MemberList.Destination)
@@ -18,6 +19,10 @@ namespace Web.Api.Core.Mappers
             CreateMap<Rack, RackDto>(MemberList.Destination)
                 .ReverseMap();
             CreateMap<User, UserDto>(MemberList.Destination)
+                .ReverseMap();
+
+            // flat dtos
+            CreateMap<Instance, FlatInstanceDto>(MemberList.Destination)
                 .ReverseMap();
         }
     }
