@@ -7,9 +7,9 @@ build_and_test:
   stage: build
   script:
     - cd src
-    - dotnet restore
-    - dotnet build
-    - dotnet test
+    - dotnet restore App.sln
+    - dotnet build App.sln
+    - dotnet test App.sln
     - cd Web.Api/VueClient
     - npm run test:unit
 
@@ -17,12 +17,9 @@ deploy_staging:
   stage: deploy
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $CI_PROJECT_PATH -f ./src/Web.Api/Dockerfile .
-    - docker tag $CI_PROJECT_PATH $CI_REGISTRY_IMAGE:latest
-    - docker push $CI_REGISTRY_IMAGE
-    - ssh -t vcm@vcm-12801.vm.duke.edu sudo docker rm $(ssh vcm@vcm-12801.vm.duke.edu sudo docker stop $(ssh vcm@vcm-12801.vm.duke.edu sudo docker ps -a -q --filter ancestor="$CI_REGISTRY_IMAGE:latest" --format="{{.ID}}"))
-    - ssh -t vcm@vcm-12801.vm.duke.edu sudo docker pull $CI_REGISTRY_IMAGE:latest
-    - ssh -t vcm@vcm-12801.vm.duke.edu sudo docker run -d -p 80:80 $CI_REGISTRY_IMAGE:latest
+    - docker-compose -f ./src/docker-compose.yml build
+    - docker-compose -f ./src/docker-compose.yml push
+    - docker-compose -H "ssh://vcm@vcm-12801.vm.duke.edu" -f ./src/docker-compose.yml up -d
   environment:
     name: staging
     url: http://vcm-12801.vm.duke.edu/
