@@ -20,7 +20,8 @@ const mockInstances = [
 		"owner": {
 			"id": 1,
 			"username": "tbletsch",
-			"displayName": "Tyler Bletsch",
+			"firstName": "Tyler",
+			"lastName":"Bletsch",
 			"email": "Tyler.Bletsch@duke.edu",
 		},
 		"comment": "Reserved for Palaemon project"
@@ -46,8 +47,9 @@ const mockInstances = [
 		"rackPosition": 9,
 		"owner": {
 			"id": 1,
-			"username": "tbletsch",
-			"displayName": "Gaby Rodriguez-Florido",
+			"username": "gabyrfp",
+			"firstName": "Gaby",
+			"lastName": "Rodriguez-Florido",
 			"email": "gr64@duke.edu",
 		},
 		"comment": "Reserved for 458 project"
@@ -73,7 +75,8 @@ const mockInstances = [
 		"owner": {
 			"id": 2,
 			"username": "cpalms",
-			"displayName": "Cannon Palms",
+			"firstName": "Cannon",
+			"lastName": "Palms",
 			"email": "Cannon.Palms@duke.edu",
 		},
 		"comment": "Reserved for Palaemon project"
