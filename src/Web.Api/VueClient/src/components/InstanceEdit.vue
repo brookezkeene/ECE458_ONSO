@@ -22,17 +22,16 @@
                             </v-autocomplete>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-combobox v-model="editedItem.hostname"
-                                        :items="instances"
-                                        item-text="hostname"
-                                        label="Host Name">
-                            </v-combobox>
+                            <v-text-field v-model="editedItem.hostname"
+                                        label="Host Name"
+                                        counter="255">
+                            </v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model="editedItem.rack" label="Rack Number"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model="editedItem.rackPosition" label="Rack Position"></v-text-field>
+                            <v-text-field v-model="editedItem.rackPosition" label="Rack Position" type="number"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model="editedItem.owner.username" label="Owner User Name"></v-text-field>
