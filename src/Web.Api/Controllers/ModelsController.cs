@@ -27,18 +27,18 @@ namespace Web.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedList<ModelDto>>> Get(string searchText, int page = 1, int pageSize = 10)
+        public async Task<ActionResult<PagedList<FlatModelDto>>> Get(string searchText, int page = 1, int pageSize = 10)
         {
-            var users = await _modelService.GetModelsAsync(searchText, page, pageSize);
-            return Ok(users);
+            var models = await _modelService.GetModelsAsync(searchText, page, pageSize);
+            return Ok(models);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ModelDto>> Get(Guid id)
         {
-            var user = await _modelService.GetModelAsync(id);
+            var model = await _modelService.GetModelAsync(id);
 
-            return Ok(user);
+            return Ok(model);
         }
 
         [HttpPut]

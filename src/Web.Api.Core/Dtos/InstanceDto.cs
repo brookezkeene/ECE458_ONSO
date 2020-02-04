@@ -1,19 +1,9 @@
-﻿using System;
-
-namespace Web.Api.Core.Dtos
+﻿namespace Web.Api.Core.Dtos
 {
     public class InstanceDto : FlatInstanceDto
     {
-        public ModelDto Model { get; set; }
-        public RackDto Rack { get; set; }
-        public UserDto Owner { get; set; }
-    }
-
-    public class FlatInstanceDto
-    {
-        public Guid Id { get; set; }
-        public string Hostname { get; set; }
-        public int RackPosition { get; set; }
-        public string Comment { get; set; }
+        public FlatModelDto Model { get; set; }
+        public string Rack { get; set; }
+        public FlatUserDto Owner { get; set; }
     }
 }

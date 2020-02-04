@@ -12,18 +12,21 @@ namespace Web.Api.Core.Mappers
         public DomainMapperProfile()
         {
             // full dtos w/ nested dtos
-            CreateMap<Model, ModelDto>(MemberList.Destination)
+            CreateMap<Model, ModelDto>()
                 .ReverseMap();
-            CreateMap<Instance, InstanceDto>(MemberList.Destination)
+            CreateMap<Instance, InstanceDto>()
+                .ForMember(x => x.Rack, opts => opts.MapFrom(src => $"{src.Rack.Row}{src.Rack.Column}"))
                 .ReverseMap();
-            CreateMap<Rack, RackDto>(MemberList.Destination)
+            CreateMap<Rack, RackDto>()
                 .ReverseMap();
-            CreateMap<User, UserDto>(MemberList.Destination)
+            CreateMap<User, FlatUserDto>()
                 .ReverseMap();
 
             // flat dtos
-            CreateMap<Instance, FlatInstanceDto>(MemberList.Destination)
-                .ReverseMap();
+            CreateMap<Instance, FlatInstanceDto>();
+            // also need to go from full -> flat dto
+            CreateMap<Model, FlatModelDto>();
+            CreateMap<Rack, FlatRackDto>();
         }
     }
 }
