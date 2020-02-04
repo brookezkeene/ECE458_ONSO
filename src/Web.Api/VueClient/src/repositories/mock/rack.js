@@ -1,17 +1,127 @@
 /* eslint-disable no-unused-vars */
 
 const mockRacks = [
-	{
-		"id": 1,
-		"address": "B12",
+    {
+        "id": 1,
+        "address": "B12",
         "rowLetter": "B",
-        "rackNumber": 12
-	},
+        "rackNumber": 12,
+        "instances": [
+            {
+                "id": 1,
+                "model": {
+                    "id": 1,
+                    "vendor": "Dell",
+                    "modelNumber": "R710",
+                    "height": 4,
+                    "displayColor": "#82E0AA",
+                    "ethernetPorts": 2,
+                    "powerPorts": 1,
+                    "cpu": "Intel Xeon E5520 2.2GHz",
+                    "memory": 32,
+                    "storage": "2x500GB SSD RAID1",
+                    "comment": "Retired offering, no new purchasing"
+                },
+                "hostname": "server1",
+                "rack": "B12",
+                "rackPosition": 4,
+                "owner": {
+                    "id": 1,
+                    "username": "tbletsch",
+                    "displayName": "Tyler Bletsch",
+                    "email": "Tyler.Bletsch@duke.edu",
+                },
+                "comment": "Reserved for Palaemon project"
+            },
+            {
+                "id": 2,
+                "model": {
+                    "id": 2,
+                    "vendor": "Dell",
+                    "modelNumber": "R710",
+                    "height": 4,
+                    "displayColor": "#C39BD3",
+                    "ethernetPorts": 2,
+                    "powerPorts": 1,
+                    "cpu": "Intel Xeon E5520 2.2GHz",
+                    "memory": 32,
+                    "storage": "2x500GB SSD RAID1",
+                    "comment": "This is my personal favorite!",
+                    "instances": ["instance3", "instance4", "instance5"]
+                },
+                "hostname": "server2",
+                "rack": "B12",
+                "rackPosition": 12,
+                "owner": {
+                    "id": 1,
+                    "username": "tbletsch",
+                    "displayName": "Gaby Rodriguez-Florido",
+                    "email": "gr64@duke.edu",
+                },
+                "comment": "Reserved for 458 project"
+            },
+        ]
+    },
 	{
 		"id": 2,
 		"address": "B13",
         "rowLetter": "B",
-        "rackNumber": 13
+        "rackNumber": 13,
+        "instances": [
+            {
+                "id": 1,
+                "model": {
+                    "id": 1,
+                    "vendor": "Dell",
+                    "modelNumber": "R710",
+                    "height": 4,
+                    "displayColor": "#82E0AA",
+                    "ethernetPorts": 2,
+                    "powerPorts": 1,
+                    "cpu": "Intel Xeon E5520 2.2GHz",
+                    "memory": 32,
+                    "storage": "2x500GB SSD RAID1",
+                    "comment": "Retired offering, no new purchasing"
+                },
+                "hostname": "server1",
+                "rack": "B12",
+                "rackPosition": 4,
+                "owner": {
+                    "id": 1,
+                    "username": "tbletsch",
+                    "displayName": "Tyler Bletsch",
+                    "email": "Tyler.Bletsch@duke.edu",
+                },
+                "comment": "Reserved for Palaemon project"
+            },
+            {
+                "id": 2,
+                "model": {
+                    "id": 2,
+                    "vendor": "Dell",
+                    "modelNumber": "R710",
+                    "height": 4,
+                    "displayColor": "#C39BD3",
+                    "ethernetPorts": 2,
+                    "powerPorts": 1,
+                    "cpu": "Intel Xeon E5520 2.2GHz",
+                    "memory": 32,
+                    "storage": "2x500GB SSD RAID1",
+                    "comment": "This is my personal favorite!",
+                    "instances": ["instance3", "instance4", "instance5"]
+                },
+                "hostname": "server2",
+                "rack": "B12",
+                "rackPosition": 12,
+                "owner": {
+                    "id": 1,
+                    "username": "tbletsch",
+                    "displayName": "Gaby Rodriguez-Florido",
+                    "email": "gr64@duke.edu",
+                },
+                "comment": "Reserved for 458 project"
+            },
+        ]
 	}
 ];
 
@@ -47,8 +157,10 @@ export default {
         return Promise.resolve(mockRacks);
     },
     findInRange(start, end) {
-        if (!(validAddress(start) && validAddress(end)))
+        if (!(validAddress(start) && validAddress(end))) {
             return Promise.reject();
+        }
+            
         const { rowLetter: startRow, rackNumber: startCol } = splitAddress(start);
         const { rowLetter: endRow, rackNumber: endCol } = splitAddress(end);
         const racksInRange = mockRacks.filter(o => {
@@ -58,7 +170,7 @@ export default {
                 o.rackNumber <= endCol;
         });
         // this array will be populated, so we add the property to the mocked response, at the very least
-        racksInRange.forEach(o => o.instances = []);
+        //racksInRange.forEach(o => o.instances = []);
         return Promise.resolve(racksInRange);
     },
     createInRange(start, end) {
@@ -96,6 +208,7 @@ export default {
         }
         return Promise.resolve();
     },
+
     validAddress: validAddress,
     splitAddress: splitAddress
 };
