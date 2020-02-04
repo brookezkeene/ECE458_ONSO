@@ -19,7 +19,7 @@
                                 <v-btn v-if="admin" color="primary" class="mb-2" @click="openImportModels">Import</v-btn>
                             </v-row>
                             <v-row align="center" justify="center">
-                                <v-btn color="primary" class="mb-2" @click="openExportModels">Export</v-btn>
+                                <v-btn color="primary" class="mb-2" @click="startExportModels">Export</v-btn>
                             </v-row>
                         </v-container>
                     </v-card-actions>
@@ -40,7 +40,7 @@
                                 <v-btn v-if="admin" color="primary" class="mb-2" @click="openImportInstances">Import</v-btn>
                             </v-row>
                             <v-row align="center" justify="center">
-                                <v-btn color="primary" class="mb-2" @click="openExportInstances">Export</v-btn>
+                                <v-btn color="primary" class="mb-2" @click="startExportInstances">Export</v-btn>
                             </v-row>
                         </v-container>
                     </v-card-actions>
@@ -72,15 +72,15 @@
             </v-card>
         </v-dialog>
 
-        <v-dialog v-model="exportModelWizard" max-width="500px">
+        <v-dialog v-model="exportDialog" max-width="300px">
             <v-card>
-                <export-wizard v-on:close-file-chooser="closeExport" v-bind:forModel="forModel"></export-wizard>
-            </v-card>
-        </v-dialog>
-
-        <v-dialog v-model="exportInstanceWizard" max-width="500px">
-            <v-card>
-                <export-wizard v-on:close-file-chooser="closeExport" v-bind:forModel="forModel"></export-wizard>
+                <v-container fill-height fluid>
+                    <v-card-title class="justify-center">
+                        Exporting .csv file... 
+                    </v-card-title>
+                    <v-progress-circular indeterminate
+                                         color="primary"></v-progress-circular>
+                </v-container>
             </v-card>
         </v-dialog>
     </v-card>
@@ -91,7 +91,6 @@
 import ModelImportFormatInfo from "./ModelImportFormatInfo"
 import InstanceImportFormatInfo from "./InstanceImportFormatInfo"
 import ImportWizard from "./ImportWizard"
-import ExportWizard from "./ExportWizard"
 import Auth from "../auth"
 
 export default {
@@ -102,8 +101,7 @@ export default {
             extrainfoinstance: false,
             importModelWizard: false,
             importInstanceWizard: false,
-            exportModelWizard: false,
-            exportInstanceWizard: false,
+            exportDialog: false,
             forModel: false,
         };
     },
@@ -119,18 +117,14 @@ export default {
         importInstanceWizard(val) {
             val || this.closeImport("instance")
         },
-        exportModelWizard(val) {
-            val || this.closeExport("model")
-        },
-        exportInstanceWizard(val) {
-            val || this.closeExport("instance")
+        exportDialog(val) {
+            val || this.closeExport()
         }
     },
     components: {
       ModelImportFormatInfo,
       InstanceImportFormatInfo,
-      ImportWizard,
-      ExportWizard
+      ImportWizard
     },
     methods: {
         showModelInfo() {
@@ -146,7 +140,7 @@ export default {
         openImportInstances() {
             this.importInstanceWizard = true
             this.forModel = false
-            
+
         },
         closeImport(type) {
             if (type === "model") {
@@ -156,23 +150,15 @@ export default {
                 this.importInstanceWizard = false
             }
         },
-        openExportModels() {
-            this.exportModelWizard = true
-            this.forModel = true
+        startExportModels() {
+            this.exportDialog = true
         },
-        openExportInstances() {
-            this.exportInstanceWizard = true
-            this.forModel = false
+        startExportInstances() {
+            this.exportDialog = true
         },
-        closeExport(type) {
-            if (type === "model") {
-                this.exportModelWizard = false
-            }
-            else {
-                this.exportInstanceWizard = false
-            }
+        closeExport() {
+            this.exportDialog = false
         }
     }
-    
 }
 </script>
