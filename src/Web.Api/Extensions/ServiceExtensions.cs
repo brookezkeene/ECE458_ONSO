@@ -1,21 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 using Web.Api.Configuration.Constants;
-using Web.Api.Controllers;
-using Web.Api.Core;
 using Web.Api.Core.Resources;
 using Web.Api.Core.Services;
 using Web.Api.Core.Services.Interfaces;
 using Web.Api.Helpers;
-using Web.Api.Infrastructure;
 using Web.Api.Infrastructure.DbContexts;
 using Web.Api.Infrastructure.Extensions;
 using Web.Api.Infrastructure.Repositories;
@@ -29,15 +22,23 @@ namespace Web.Api.Extensions
         public static IServiceCollection ConfigureCoreServices(this IServiceCollection services)
         {
             // repositories
-            services.AddTransient<IModelRepository, ModelRepository>();
-            services.AddTransient<IRackRepository, RackRepository>();
-            services.AddTransient<IInstanceRepository, InstanceRepository>();
+            services.ConfigureRepositories();
 
             // services
             services.AddTransient<IModelService, ModelService>();
+            services.AddTransient<IInstanceService, InstanceService>();
 
             // etc
-            services.ConfigureResources();       
+            services.ConfigureResources();
+
+            return services;
+        }
+
+        public static IServiceCollection ConfigureRepositories(this IServiceCollection services)
+        {
+            services.AddTransient<IModelRepository, ModelRepository>();
+            services.AddTransient<IRackRepository, RackRepository>();
+            services.AddTransient<IInstanceRepository, InstanceRepository>();
 
             return services;
         }

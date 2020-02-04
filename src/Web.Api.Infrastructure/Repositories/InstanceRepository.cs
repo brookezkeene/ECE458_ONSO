@@ -26,6 +26,9 @@ namespace Web.Api.Infrastructure.Repositories
             Expression<Func<Instance, bool>> searchCondition = x => x.Hostname.Contains(search);
 
             var instances = await _dbContext.Instances
+                .Include(x => x.Model)
+                .Include(x => x.Owner)
+                .Include(x => x.Rack)
                 .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
                 .PageBy(x => x.Hostname, page, pageSize)
                 .AsNoTracking()
@@ -45,6 +48,8 @@ namespace Web.Api.Infrastructure.Repositories
         {
             return await _dbContext.Instances
                 .Include(x => x.Model)
+                .Include(x => x.Owner)
+                .Include(x => x.Rack)
                 .Where(x => x.Id == instanceId)
                 .AsNoTracking()
                 .SingleOrDefaultAsync();

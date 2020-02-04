@@ -15,52 +15,49 @@ namespace Web.Api.Core.Mappers
 
         internal static IMapper Mapper { get; }
 
-        public static RackDto ToDto(this Rack rack)
-        {
-            return rack == null ? null : Mapper.Map<RackDto>(rack);
-        }
-
+        #region Models
         public static ModelDto ToDto(this Model model)
         {
             return model == null ? null : Mapper.Map<ModelDto>(model);
         }
+        public static FlatModelDto ToFlatDto(this Model model)
+        {
+            return model == null ? null : Mapper.Map<FlatModelDto>(model);
+        }
+        public static PagedList<ModelDto> ToDto(this PagedList<Model> models)
+        {
+            return models == null ? null : Mapper.Map<PagedList<ModelDto>>(models);
+        }
+        public static PagedList<FlatModelDto> ToFlatDto(this PagedList<Model> models)
+        {
+            return models == null ? null : Mapper.Map<PagedList<FlatModelDto>>(models);
+        }
+        public static Model ToEntity(this ModelDto modelDto)
+        {
+            return modelDto == null ? null : Mapper.Map<Model>(modelDto);
+        }
+        #endregion
+
+        #region Instances
 
         public static InstanceDto ToDto(this Instance instance)
         {
             return instance == null ? null : Mapper.Map<InstanceDto>(instance);
         }
-        public static UserDto ToDto(this User user)
-        {
-            return user == null ? null : Mapper.Map<UserDto>(user);
-        }
 
-        public static PagedList<RackDto> ToDto(this PagedList<Rack> racks)
+        public static FlatInstanceDto ToFlatDto(this Instance instance)
         {
-            return racks == null ? null : Mapper.Map<PagedList<RackDto>>(racks);
-        }
-
-        public static PagedList<ModelDto> ToDto(this PagedList<Model> models)
-        {
-            return models == null ? null : Mapper.Map<PagedList<ModelDto>>(models);
+            return instance == null ? null : Mapper.Map<FlatInstanceDto>(instance);
         }
 
         public static PagedList<InstanceDto> ToDto(this PagedList<Instance> instances)
         {
             return instances == null ? null : Mapper.Map<PagedList<InstanceDto>>(instances);
         }
-        public static PagedList<UserDto> ToDto(this PagedList<User> users)
-        {
-            return users == null ? null : Mapper.Map<PagedList<UserDto>>(users);
-        }
 
-        public static Rack ToEntity(this RackDto rackDto)
+        public static PagedList<FlatInstanceDto> ToFlatDto(this PagedList<Instance> instances)
         {
-            return rackDto == null ? null : Mapper.Map<Rack>(rackDto);
-        }
-
-        public static Model ToEntity(this ModelDto modelDto)
-        {
-            return modelDto == null ? null : Mapper.Map<Model>(modelDto);
+            return instances == null ? null : Mapper.Map<PagedList<FlatInstanceDto>>(instances);
         }
 
         public static Instance ToEntity(this InstanceDto instanceDto)
@@ -68,9 +65,36 @@ namespace Web.Api.Core.Mappers
             return instanceDto == null ? null : Mapper.Map<Instance>(instanceDto);
         }
 
-        public static User ToEntity(this UserDto userDto)
+        #endregion
+
+        public static RackDto ToDto(this Rack rack)
         {
-            return userDto == null ? null : Mapper.Map<User>(userDto);
+            return rack == null ? null : Mapper.Map<RackDto>(rack);
+        }
+
+        public static PagedList<RackDto> ToDto(this PagedList<Rack> racks)
+        {
+            return racks == null ? null : Mapper.Map<PagedList<RackDto>>(racks);
+        }
+
+        public static PagedList<FlatUserDto> ToFlatDto(this PagedList<User> users)
+        {
+            return users == null ? null : Mapper.Map<PagedList<FlatUserDto>>(users);
+        }
+
+        public static Rack ToEntity(this RackDto rackDto)
+        {
+            return rackDto == null ? null : Mapper.Map<Rack>(rackDto);
+        }
+
+        public static FlatUserDto ToDto(this User user)
+        {
+            return user == null ? null : Mapper.Map<FlatUserDto>(user);
+        }
+
+        public static User ToEntity(this FlatUserDto flatUserDto)
+        {
+            return flatUserDto == null ? null : Mapper.Map<User>(flatUserDto);
         }
     }
 }

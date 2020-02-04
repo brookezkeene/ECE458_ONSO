@@ -20,10 +20,10 @@ namespace Web.Api.Core.Services
             _resources = resources;
         }
 
-        public async Task<PagedList<ModelDto>> GetModelsAsync(string search, int page = 1, int pageSize = 10)
+        public async Task<PagedList<FlatModelDto>> GetModelsAsync(string search, int page = 1, int pageSize = 10)
         {
             var pagedList = await _repository.GetModelsAsync(search, page, pageSize);
-            return pagedList.ToDto(); // note: ToModel refers to the concept of a model (as opposed to an entity), not the entity "Model"
+            return pagedList.ToFlatDto();
         }
 
         public async Task<ModelDto> GetModelAsync(Guid modelId)

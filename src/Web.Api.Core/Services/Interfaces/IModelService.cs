@@ -7,7 +7,7 @@ namespace Web.Api.Core.Services.Interfaces
 {
     public interface IModelService
     {
-        Task<PagedList<ModelDto>> GetModelsAsync(string search, int page = 1, int pageSize = 10);
+        Task<PagedList<FlatModelDto>> GetModelsAsync(string search, int page = 1, int pageSize = 10);
         Task<ModelDto> GetModelAsync(Guid modelId);
         Task UpdateModelAsync(ModelDto modelDto);
         Task<Guid> CreateModelAsync(ModelDto modelDto);
