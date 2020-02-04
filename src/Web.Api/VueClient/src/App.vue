@@ -5,6 +5,7 @@
                              v-if="loggedIn"
                              :mini-variant.sync="mini"
                              permanent
+                             expand-on-hover="true"
                              app>
 
             <v-list-item class="px-2">
@@ -17,12 +18,6 @@
                         {{ appTitle }}
                     </router-link>
                 </v-list-item-title>
-
-                <v-btn icon
-                       color="primary"
-                       @click.stop="mini = !mini">
-                    <v-icon>mdi-chevron-left</v-icon>
-                </v-btn>
             </v-list-item>
 
             <v-list>
