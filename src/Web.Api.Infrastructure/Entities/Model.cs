@@ -34,6 +34,8 @@ namespace Web.Api.Infrastructure.Entities
         public string Cpu { get; set; }
 
         public int? Memory { get; set; }
+        [MaxLength(50)]
+        public string Storage { get; set; }
 
         public string Comment { get; set; }
 

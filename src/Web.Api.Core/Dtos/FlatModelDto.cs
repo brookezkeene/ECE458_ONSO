@@ -13,6 +13,7 @@ namespace Web.Api.Core.Dtos
         public int? PowerPorts { get; set; }
         public string Cpu { get; set; }
         public int? Memory { get; set; }
+        public string Storage { get; set; }
         public string Comment { get; set; }
     }
 }

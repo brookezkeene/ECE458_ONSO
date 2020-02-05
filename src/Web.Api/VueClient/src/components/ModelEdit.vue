@@ -8,42 +8,34 @@
             <v-container>
                 <v-row>
                     <v-col cols="12" sm="6" md="4">
-                        <v-combobox v-model="editedItem.vendor"
-                                    :items="models"
-                                    item-text="vendor"
-                                    label="Vendor"
-                                    counter="50"></v-combobox>
+                        <v-text-field v-model="editedItem.vendor" label="Vendor" counter="50"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-text-field v-model="editedItem.modelNumber" label="Model Number" counter="50"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.height" label="Height" type="number"></v-text-field>
+                        <v-text-field v-model.number="editedItem.height" label="Height" type="number"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.ethernetPorts" label="Ethernet Ports" type="number"></v-text-field>
+                        <v-text-field v-model.number="editedItem.ethernetPorts" label="Ethernet Ports" type="number"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.powerPorts" label="Power Ports" type="number"></v-text-field>
+                        <v-text-field v-model.number="editedItem.powerPorts" label="Power Ports" type="number"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-text-field v-model="editedItem.cpu" label="CPU" counter="50"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.memory" label="Memory" type="number"></v-text-field>
+                        <v-text-field v-model.number="editedItem.memory" label="Memory" type="number"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-text-field v-model="editedItem.storage" label="Storage"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.comment" label="Comment"></v-text-field>
+                        <v-text-field v-model="editedItem.comment" label="Comment" multiLine textarea></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                        <v-label>
-                            Display Color
-                        </v-label>
-                        <v-color-picker v-model="editedItem.displayColor">
-                        </v-color-picker>
+                        <v-text-field v-model="editedItem.displayColor" label="Display Color"></v-text-field>
                     </v-col>
                 </v-row>
             </v-container>

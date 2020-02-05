@@ -16,18 +16,15 @@ export default {
             });
     },
     create(item) {
-        // delete this when it is time
-        // it is here to prevent confusion when certain features stop working
-        alert("model.create(...) is not implemented");
+        return axios.post(`${resource}`, item).then(response => response.data).catch(error => error);
     },
     update(item) {
-        // delete this when it is time
-        // it is here to prevent confusion when certain features stop working
-        alert("model.update(...) is not implemented");
+        return axios.put(`${resource}`, item).then(response => response.data).catch(error => error);
     },
     delete(item) {
-        // delete this when it is time
-        // it is here to prevent confusion when certain features stop working
-        alert("model.delete(...) is not implemented");
+        return axios.delete(`${resource}/${item.id}`)
+            .then(response => {
+                return response.data;
+            }).catch(error => error);
     }
 }

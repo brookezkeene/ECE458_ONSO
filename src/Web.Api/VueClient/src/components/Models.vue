@@ -200,7 +200,7 @@
                     powerPorts: 0,
                     cpu: '',
                     memory: 0,
-                    storage: 0,
+                    storage: '',
                     comment: ''
                 },
                 defaultItem: {
@@ -212,7 +212,7 @@
                     powerPorts: 0,
                     cpu: '',
                     memory: 0,
-                    storage: 0,
+                    storage: '',
                     comment: ''
                 },
                 detailItem: {
@@ -257,6 +257,9 @@
             deleteItem(item) {
                 this.deleting = true;
                 confirm('Are you sure you want to delete this item?') && this.modelRepository.delete(item)
+                      .then(async () => {
+                            await this.initialize();
+                        })
             },
             close() {
                 this.dialog = false
@@ -269,8 +272,14 @@
             save() {
                 if (this.editedIndex > -1) {
                     this.modelRepository.update(this.editedItem)
+                        .then(async () => {
+                            await this.initialize();
+                        })
                 } else {
                     this.modelRepository.create(this.editedItem)
+                        .then(async () => {
+                            await this.initialize();
+                        })
                 }
                 this.close()
             },
