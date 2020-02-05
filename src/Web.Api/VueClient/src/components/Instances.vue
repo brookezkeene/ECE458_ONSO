@@ -182,7 +182,8 @@
       }},
     computed: {
         admin() {
-            return Auth.isAdmin()
+            return true;
+            //return Auth.isAdmin()
         },
         filteredHeaders() {
             return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
