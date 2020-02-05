@@ -256,8 +256,7 @@
             },
             deleteItem(item) {
                 this.deleting = true;
-                const index = this.models.indexOf(item)
-                confirm('Are you sure you want to delete this item?') && this.models.splice(index, 1)
+                confirm('Are you sure you want to delete this item?') && this.modelRepository.delete(item)
             },
             close() {
                 this.dialog = false
@@ -269,9 +268,9 @@
             },
             save() {
                 if (this.editedIndex > -1) {
-                    Object.assign(this.models[this.editedIndex], this.editedItem)
+                    this.modelRepository.update(this.editedItem)
                 } else {
-                    this.models.push(this.editedItem)
+                    this.modelRepository.create(this.editedItem)
                 }
                 this.close()
             },
