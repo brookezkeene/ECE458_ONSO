@@ -37,6 +37,11 @@ namespace Web.Api.Core.Mappers
         {
             return modelDto == null ? null : Mapper.Map<Model>(modelDto);
         }
+
+        public static Model ToEntity(this FlatModelDto dto)
+        {
+            return dto == null ? null : Mapper.Map<Model>(dto);
+        }
         #endregion
 
         #region Instances

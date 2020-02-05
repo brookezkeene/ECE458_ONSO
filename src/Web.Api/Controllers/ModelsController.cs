@@ -18,12 +18,13 @@ namespace Web.Api.Controllers
     [Produces("application/json")]
     public class ModelsController : ControllerBase
     {
-        private IModelService _modelService;
+        private readonly IModelService _modelService;
         private readonly IApiErrorResources _errorResources;
 
-        public ModelsController(IModelService modelService)
+        public ModelsController(IModelService modelService, IApiErrorResources errorResources)
         {
             _modelService = modelService;
+            _errorResources = errorResources;
         }
 
         [HttpGet]
@@ -42,14 +43,14 @@ namespace Web.Api.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(ModelDto modelDto)
+        public async Task<IActionResult> Put(FlatModelDto modelDto)
         {
             await _modelService.UpdateModelAsync(modelDto);
             return NoContent();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(ModelDto modelDto)
+        public async Task<IActionResult> Post([FromBody] FlatModelDto modelDto)
         {
             if (!modelDto.Id.Equals(default))
             {
@@ -59,7 +60,7 @@ namespace Web.Api.Controllers
             var id = await _modelService.CreateModelAsync(modelDto);
             modelDto.Id = id;
 
-            return CreatedAtAction(nameof(Get), new {id = id}, modelDto);
+            return CreatedAtAction(nameof(Get), new {id}, modelDto);
         }
 
         [HttpDelete("{id}")]

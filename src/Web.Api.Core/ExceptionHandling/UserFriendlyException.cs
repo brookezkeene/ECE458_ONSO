@@ -7,16 +7,12 @@ namespace Web.Api.Core.ExceptionHandling
     public class UserFriendlyException : Exception
     {
         public string ErrorKey { get; set; }
+        public object Object { get; set; }
 
-        protected UserFriendlyException(string message, string errorKey) : base(message)
+        public UserFriendlyException(string message, string errorKey, object @object) : base(message)
         {
             ErrorKey = errorKey;
-        }
-
-        protected UserFriendlyException(string message, string errorKey, Exception innerException) : base(message,
-            innerException)
-        {
-            ErrorKey = errorKey;
+            Object = @object;
         }
     }
 }
