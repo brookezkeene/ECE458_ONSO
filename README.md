@@ -9,21 +9,21 @@ stages:
 build_and_test:
   - stage: build
   - script:
-    ```cd src```
-    ```dotnet restore App.sln```
-    ```dotnet build App.sln```
-    ```dotnet test App.sln```
-    ```cd Web.Api/VueClient```
-    ```npm run test:unit ```
+    ```cd src```  
+    ```dotnet restore App.sln```  
+    ```dotnet build App.sln```  
+    ```dotnet test App.sln```  
+    ```cd Web.Api/VueClient```  
+    ```npm run test:unit ```  
 
 deploy_staging:
  - stage: deploy
  - script
-    ```docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY```
-    ```docker-compose -f ./src/docker-compose.yml build```
-    ```docker-compose -f ./src/docker-compose.yml push```
-    ```docker-compose -H "ssh://vcm@vcm-12801.vm.duke.edu" -f ./src/docker-compose.yml pull```
-    ```docker-compose -H "ssh://vcm@vcm-12801.vm.duke.edu" -f ./src/docker-compose.yml up```
+    ```docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY```  
+    ```docker-compose -f ./src/docker-compose.yml build```  
+    ```docker-compose -f ./src/docker-compose.yml push```  
+    ```docker-compose -H "ssh://vcm@vcm-12801.vm.duke.edu" -f ./src/docker-compose.yml pull```  
+    ```docker-compose -H "ssh://vcm@vcm-12801.vm.duke.edu" -f ./src/docker-compose.yml up```  
 
 environment:
    - name: staging
