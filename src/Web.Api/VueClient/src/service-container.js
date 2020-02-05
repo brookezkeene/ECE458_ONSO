@@ -1,4 +1,4 @@
-import userRepository from "./repositories/mock/user";
+import userRepository from "./repositories/user";
 import modelRepository from "./repositories/model";
 import instanceRepository from "./repositories/instance";
 import rackRepository from "./repositories/mock/rack";

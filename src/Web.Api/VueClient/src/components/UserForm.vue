@@ -26,22 +26,13 @@
                 <v-row>
 
                 <v-col>
-                    <v-text-field v-model="password1"
+                    <v-text-field v-model="editedItem.password"
                                   :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-                                  :rules="[rules.required, passwordConfirmationRule]"
+                                  :rules="[rules.required]"
                                   :type="show ? 'text' : 'password'"
                                   label="Password"
                                   required
                                   @click:append="show = !show"></v-text-field>
-                </v-col>
-                <v-col>
-                    <v-text-field v-model="password2"
-                                  :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                                  :rules="[rules.required, passwordConfirmationRule]"
-                                  :type="show1 ? 'text' : 'password'"
-                                  label="Re-enter Password"
-                                  required
-                                  @click:append="show1 = !show1"></v-text-field>
                 </v-col>
                 </v-row>
             </v-container>
@@ -84,15 +75,17 @@ export default {
         checkPassMatch() {
             if (this.password1 != this.password2) {
                 this.snackbar = false
+            } else {
+                this.editedItem.password = this.password1;
             }
         },
     },
-    editedItem: {
-          displayName: '',
-          email: '',
-          username: '',
-          password: ''
-        },
+    //editedItem: {
+    //      displayName: '',
+    //      email: '',
+    //      username: '',
+    //      password: ''
+    //    },
     computed: {
         passwordConfirmationRule() {
             return this.password1 === this.password2 || "Passwords must match";

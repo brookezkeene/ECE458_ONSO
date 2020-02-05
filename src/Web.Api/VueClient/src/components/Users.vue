@@ -70,13 +70,15 @@ import Auth from "../auth"
         users: [],
         editedIndex: -1,
         editedItem: {
-          displayName: '',
+            firstName: '',
+            lastName: '',
           email: '',
           username: '',
           password: ''
         },
         defaultItem: {
-          displayName: '',
+          firstName: '',
+            lastName: '',
           email: '',
           username: '',
           password: ''
@@ -96,11 +98,14 @@ import Auth from "../auth"
     },
 
     async created() {
-      this.users = await this.userRepository.list();
-      this.loading = false;
+        this.initialize()
     },
 
-    methods: {
+        methods: {
+            async initialize() {
+                      this.users = await this.userRepository.list();
+      this.loading = false;
+            },
       close () {
         this.dialog = false
         setTimeout(() => {
@@ -110,7 +115,9 @@ import Auth from "../auth"
       },
 
       save () {
-        this.userRepository.create(this.editedItem)
+        this.userRepository.create(this.editedItem)                      .then(async () => {
+                            await this.initialize();
+                        })
         this.close()
       },
     },
