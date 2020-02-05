@@ -10,134 +10,109 @@ import Racks from '@/components/Racks'
 import ImportExport from '@/components/Bulk'
 import Users from '@/components/Users'
 import InstanceEdit from '@/components/InstanceEdit'
+import Dashboard from '@/components/Dashboard'
 
-//import Auth from '@/auth'
+import auth from '@/auth'
 
 Vue.use(Router)
 
 const routes = [
     {
-        path: '/',
-        name: 'Welcome',
-        component: Login,
-        /*beforeEnter(to, from, next) {
-            if (Auth.loggedIn()) {
-                next({ path: '/models' });
-            }
-            else next();
-        }*/
+        path: '/login',
+        name: 'login',
+        component: Login
     },
     {
-        path: '/Models',
-        name: 'model',
-        component: Models,
-        /*beforeEnter(to, from, next) {
-            if (Auth.loggedIn()) {
-                next();
+        path: '',
+        name: 'dashboard',
+        component: Dashboard,
+        meta: { requiresAuth: true },
+        children: [
+            {
+                path: '',
+                component: Models,
+            },
+            {
+                path: '/models',
+                name: 'model',
+                component: Models,
+            },
+            {
+                path: '/models/:id',
+                name: 'model-details',
+                component: ModelDetails,
+                props: true,
+            },
+            {
+                path: '/instances',
+                name: 'instances',
+                component: Instances,
+            },
+            {
+                path: '/instances/:id',
+                name: 'instance-details',
+                component: InstanceDetails,
+                props: true,
+            },
+            {
+                path: '/instances/edit/:editedItem/:isNew',
+                name: 'instance-edit',
+                component: InstanceEdit,
+                props: true,
+                meta: { admin: true }
+            },
+            {
+                path: '/racks',
+                name: 'racks',
+                component: Racks,
+            },
+            {
+                path: '/importexport',
+                name: 'import-export',
+                component: ImportExport,
+                meta: { admin: true }
+            },
+            {
+                path: '/racks/view',
+                name: 'RackDiagram',
+                component: RackDiagram,
+            },
+            {
+                path: '/users',
+                name: 'users',
+                component: Users,
+                meta: { admin: true }
             }
-            else next({ path: '/' });
-        }*/
-    },
-    {
-        path: '/Models/:id',
-        name: 'model-details',
-        component: ModelDetails,
-        props: true,
-        /*beforeEnter(to, from, next) {
-            if (Auth.loggedIn()) {
-                next();
-            } 
-            else next({ path: '/' });
-        }*/
 
+            ]
     },
-    {
-        path: '/Instances',
-        name: 'instances',
-        component: Instances,
-        /*beforeEnter(to, from, next) {
-            if (Auth.loggedIn()) {
-                next();
-            }
-            else next({ path: '/' });
-        }*/
-    },
-    {
-        path: '/Instances/:id',
-        name: 'instance-details',
-        component: InstanceDetails,
-        props: true,
-        /*beforeEnter(to, from, next) {
-            if (Auth.loggedIn()) {
-                next();
-            }
-            else next({ path: '/' });
-        }*/
-    },
-    {
-        path: '/Instances/edit/:editedItem/:isNew',
-        name: 'instance-edit',
-        component: InstanceEdit,
-        props: true
-        /*beforeEnter(to, from, next) {
-            if (Auth.loggedIn()) {
-                next();
-            }
-            else next({ path: '/' });
-        }*/
-    },
-    {
-        path: '/racks',
-        name: 'racks',
-        component: Racks,
-        /*beforeEnter(to, from, next) {
-            if (Auth.loggedIn()) {
-                next();
-            }
-            else next({ path: '/' });
-        }*/
-    },
-    {
-        path: '/importexport',
-        name: 'import-export',
-        component: ImportExport,
-        /*beforeEnter(to, from, next) {
-            if (Auth.loggedIn()) {
-                next();
-            }
-            else next({ path: '/' });
-        }*/
-    },
-    {
-        path: '/racks/view',
-        name: 'RackDiagram',
-        component: RackDiagram,
-        /*beforeEnter(to, from, next) {
-            if (Auth.loggedIn()) {
-                next();
-            }
-            else next({ path: '/' });
-        }*/
-    },
-    {
-        path: '/users',
-        name: 'users',
-        component: Users,
-        /*beforeEnter(to, from, next) {
-            if (Auth.loggedIn()) {
-                next();
-            }
-            else next({ path: '/' });
-        }*/
-    }
+    
 ]
 
-/*this.Router.beforeEach((to, from, next) => {
-    if (!Auth.loggedIn()) next('/')
-    else next();
-})*/
-
-export default new Router({
+const router = new Router({
     mode: 'history',
     routes: routes
 })
+
+router.beforeEach((to, from, next) => {
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+        if (!auth.loggedIn()) {
+            next({
+                path: '/login',
+                query: { redirect: to.fullPath }
+            })
+        } else if (to.matched.some(record => record.meta.admin)) {
+            if (!auth.isAdmin()) {
+                next(false)
+            } else {
+                next()
+            }
+        } else {
+            next()
+        }
+    } else {
+        next()
+    }
+})
+
+export default router;

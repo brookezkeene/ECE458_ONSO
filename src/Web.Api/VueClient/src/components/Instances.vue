@@ -131,8 +131,6 @@
         ],
         instances: [],
         models: [],
-
-        firstInstance: null,
         defaultItem: {
           model: {
             id: '',
@@ -192,7 +190,6 @@
     methods: {
       async initialize () {
         this.instances = await this.instanceRepository.list();
-        this.firstInstance = await this.instanceRepository.find(1);
         this.models = await this.modelRepository.list();
         this.loading = false;
       },

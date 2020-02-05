@@ -10,21 +10,12 @@ export default {
         }
         return axios.post(`${resource}`, { username: username, password: pass })
             .then((response) => {
-                if (response.authenticated) {
-                    console.log(response);
-
-                    var token = response.token;
-                    var decoded_token = jwt_decode(token);
-                    console.log(decoded_token);
-
-                    localStorage.token = decoded_token;
-                    localStorage.user = response.user;
-                    return true;
-                } else {
-                    return false;
-                }
+                var token = response.data.authToken;
+                var decoded_token = jwt_decode(token);
+                localStorage.token = token;
+                return true;
             }).catch((error) => {
-                    console.error(error.message)
+                console.error(error.message)
             });
     },
 
@@ -43,8 +34,9 @@ export default {
     },
 
     isAdmin() {
-        //return true;
-        return localStorage.user && localStorage.user.admin;
+        const token = localStorage.token;
+        const payload = jwt_decode(token);
+        return payload.rol === 'api_admin';
     },
 
 }
