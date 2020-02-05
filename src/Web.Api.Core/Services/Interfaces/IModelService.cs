@@ -11,5 +11,6 @@ namespace Web.Api.Core.Services.Interfaces
         Task<ModelDto> GetModelAsync(Guid modelId);
         Task UpdateModelAsync(ModelDto modelDto);
         Task<Guid> CreateModelAsync(ModelDto modelDto);
+        Task DeleteModelAsync(Guid modelId);
     }
 }

@@ -40,11 +40,22 @@ namespace Web.Api.Core.Services
             {
                 throw new InvalidOperationException();
             }
+
+            var entity = modelDto.ToEntity();
+            await _repository.UpdateModelAsync(entity);
         }
 
         public async Task<Guid> CreateModelAsync(ModelDto modelDto)
         {
-            throw new NotImplementedException();
+            var entity = modelDto.ToEntity();
+            await _repository.AddModelAsync(entity);
+            return entity.Id;
+        }
+
+        public async Task DeleteModelAsync(Guid modelId)
+        {
+            var entity = await _repository.GetModelAsync(modelId);
+            await _repository.DeleteModelAsync(entity);
         }
 
         private async Task<bool> CanUpdateModelAsync(ModelDto modelDto)

@@ -42,24 +42,31 @@ namespace Web.Api.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(ModelDto modelDto)
+        public async Task<IActionResult> Put(ModelDto modelDto)
         {
             await _modelService.UpdateModelAsync(modelDto);
             return NoContent();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ModelDto modelDto)
+        public async Task<IActionResult> Post(ModelDto modelDto)
         {
             if (!modelDto.Id.Equals(default))
             {
                 return BadRequest(_errorResources.CannotSetId());
             }
 
-            var modelId = await _modelService.CreateModelAsync(modelDto);
-            modelDto.Id = modelId;
+            var id = await _modelService.CreateModelAsync(modelDto);
+            modelDto.Id = id;
 
-            return CreatedAtAction(nameof(Get), new {id = modelId}, modelDto);
+            return CreatedAtAction(nameof(Get), new {id = id}, modelDto);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            await _modelService.DeleteModelAsync(id);
+            return Ok();
         }
     }
 }
