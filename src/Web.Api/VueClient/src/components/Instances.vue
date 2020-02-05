@@ -4,100 +4,90 @@
     <v-container>
     <v-card>
         <v-spacer></v-spacer>
-        <v-data-table
-          :headers="filteredHeaders"
-          :items="instances"
-          :search="search"
-          multi-sort
-          @click:row = "showDetails"
-        > 
-          <!-- Links to the models -->
-          <template v-slot:item.model.vendor = "{ value }">
-                <a>{{ value }}</a>     
-          </template>
+        <v-data-table :headers="filteredHeaders"
+                      :items="instances"
+                      :search="search"
+                      multi-sort
+                      @click:row="showDetails">
 
-          <template v-slot:top>
-              <v-toolbar flat>
-                  <!-- ADDED AUTOCOMPLETE TO THE MODEL SEARCH -->
-                  <v-container fluid align="left">
-                      <v-row>
-                          <v-col cols="6">
-                              <v-row>
-                                  <v-autocomplete prepend-inner-icon="mdi-magnify"
-                                                  :loading="loading"
-                                                  :items="instances"
-                                                  :search-input.sync="search"
-                                                  cache-items
-                                                  class="mt-3 pt-3"
-                                                  flat
-                                                  hide-no-data
-                                                  hide-details
-                                                  item-text="model.vendor"
-                                                  label="Search by keyword on model and hostname"
-                                                  single-line
-                                                  solo-inverted></v-autocomplete>
+            <template v-slot:top>
+                <v-toolbar flat>
+                    <!-- ADDED AUTOCOMPLETE TO THE MODEL SEARCH -->
+                    <v-container fluid align="left">
+                        <v-row>
+                            <v-col cols="6">
+                                <v-row>
+                                    <v-autocomplete prepend-inner-icon="mdi-magnify"
+                                                    :loading="loading"
+                                                    :items="instances"
+                                                    :search-input.sync="search"
+                                                    cache-items
+                                                    class="mt-3 pt-3"
+                                                    flat
+                                                    hide-no-data
+                                                    hide-details
+                                                    item-text="model.vendor"
+                                                    label="Search by keyword on model and hostname"
+                                                    single-line
+                                                    solo-inverted></v-autocomplete>
 
-                              </v-row>
-                          </v-col>
-                          <v-spacer></v-spacer>
-                          <!-- Custom filters; sorts between rack ranges -->
-                          <v-col cols="4">
-                              <v-row class="mt-4 pt-6">
-                                  <v-text-field v-model="startRackValue"
-                                                placeholder="Start"
-                                                type="text"
-                                                label="Rack Range"
-                                                style="width:0">
-                                  </v-text-field>
+                                </v-row>
+                            </v-col>
+                            <v-spacer></v-spacer>
+                            <!-- Custom filters; sorts between rack ranges -->
+                            <v-col cols="4">
+                                <v-row class="mt-4 pt-6">
+                                    <v-text-field v-model="startRackValue"
+                                                  placeholder="Start"
+                                                  type="text"
+                                                  label="Rack Range"
+                                                  style="width:0">
+                                    </v-text-field>
 
-                                  <v-text-field v-model="endRackValue"
-                                                type="text"
-                                                placeholder="End"
-                                                style="width:0">
-                                  </v-text-field>
-                              </v-row>
-                          </v-col>
-                          <v-spacer></v-spacer>
-                      </v-row>
-                  </v-container>
+                                    <v-text-field v-model="endRackValue"
+                                                  type="text"
+                                                  placeholder="End"
+                                                  style="width:0">
+                                    </v-text-field>
+                                </v-row>
+                            </v-col>
+                            <v-spacer></v-spacer>
+                        </v-row>
+                    </v-container>
 
-                  <v-spacer></v-spacer>
+                    <v-spacer></v-spacer>
 
-                  <v-btn v-if="admin" color="primary" dark class="mb-2" @click="addItem">Add Instance</v-btn>
+                    <v-btn v-if="admin" color="primary" dark class="mb-2" @click="addItem">Add Instance</v-btn>
 
-                  <v-dialog v-model="instructionsDialog" max-width="550px">
-                      <v-card>
-                          <v-card-title class="justify-center">
-                              Click on row for more information about the instance
-                          </v-card-title>
-                      </v-card>
-                  </v-dialog>
+                    <v-dialog v-model="instructionsDialog" max-width="550px">
+                        <v-card>
+                            <v-card-title class="justify-center">
+                                Click on row for more information about the instance
+                            </v-card-title>
+                        </v-card>
+                    </v-dialog>
 
-              </v-toolbar>
+                </v-toolbar>
 
 
-          </template>
+            </template>
 
-          <template v-slot:item.action="{ item }">
-            <v-icon
-              small
-              class="mr-2"
-              @click="editItem(item)"
+            <template v-if="admin" v-slot:item.action="{ item }">
+                <v-row>
+                    <v-icon medium
+                            class="mr-2"
+                            @click="editItem(item)">mdi-pencil</v-icon>
+                    <v-icon medium
+                            class="mr-2"
+                            @click="deleteItem(item)">mdi-delete</v-icon>
+                </v-row>
+            </template>
+
+            <template v-slot:no-data>
+                <v-btn color="primary" @click="initialize">Reset</v-btn>
+            </template>
             >
-              edit
-            </v-icon>
-            <v-icon
-              small
-              class="mr-2"
-              @click="deleteItem(item)"
-            >
-              delete
-            </v-icon>
-          </template>
-        <template v-slot:no-data>
-          <v-btn color="primary" @click="initialize">Reset</v-btn>
-        </template>
-        ></v-data-table>
+        </v-data-table>
     </v-card>
     </v-container>
   </v-card>
