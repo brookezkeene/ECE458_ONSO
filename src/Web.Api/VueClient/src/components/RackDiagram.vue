@@ -69,14 +69,14 @@
 </style>
 
 <script>
-    import rowsOfRacks from '@/repositories/mock/mock-racks-by-rows';
-    //import rackDiagram from '@/rackDiagram';
+    //import rowsOfRacks from '@/repositories/mock/mock-racks-by-rows';
+    import rackDiagram from '@/rackDiagram';
     export default {
     inject: ['rackRepository'],
     data () {
         return {
             racks: [],
-            racksByRow: rowsOfRacks,
+            racksByRow: [],
             loading: true,
         }
     },
@@ -89,9 +89,11 @@
             const end = this.$route.query.end;
             this.rackRepository.findInRange(start, end).then((response) => {
                 this.racks = response;
-                this.loading = false;
+                this.loading = false; 
             });
-            //this.racksByRow = rackDiagram.createRacksByRows(start, end);
+            rackDiagram.createRacksByRows(start, end).then((response) => {
+                this.racksByRow = response;
+            });
         }
     }    
 }
