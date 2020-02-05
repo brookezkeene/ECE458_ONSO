@@ -26,9 +26,11 @@ namespace Web.Api.Core.Mappers
             CreateMap<RegisterUserDto, User>();
 
             // flat dtos
-            CreateMap<Instance, FlatInstanceDto>();
+            CreateMap<Instance, FlatInstanceDto>()
+                .ReverseMap();
             // also need to go from full -> flat dto
-            CreateMap<Model, FlatModelDto>();
+            CreateMap<Model, FlatModelDto>()
+                .ReverseMap();
             CreateMap<Rack, FlatRackDto>()
                 .ForMember(o => o.RowLetter, opts => opts.MapFrom(src => src.Row))
                 .ForMember(o => o.RackNumber, opts => opts.MapFrom(src => src.Column));

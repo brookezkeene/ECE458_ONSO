@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Web.Api.Common;
 using Web.Api.Core.Dtos;
+using Web.Api.Core.ExceptionHandling;
 using Web.Api.Core.Mappers;
 using Web.Api.Core.Resources;
 using Web.Api.Core.Services.Interfaces;
@@ -33,19 +34,21 @@ namespace Web.Api.Core.Services
             return model.ToDto();
         }
 
-        public async Task UpdateModelAsync(ModelDto modelDto)
+        public async Task<int> UpdateModelAsync(FlatModelDto modelDto)
         {
-            var canInsert = await CanUpdateModelAsync(modelDto);
-            if (!canInsert)
+            if (!await CanUpdateModelAsync(modelDto))
             {
-                throw new InvalidOperationException();
+                var error = _resources.GeneralConstraintViolation();
+                throw new UserFriendlyException(error.Description, error.Code, modelDto);
             }
 
-            var entity = modelDto.ToEntity();
-            await _repository.UpdateModelAsync(entity);
+            var model = modelDto.ToEntity();
+            var updated = await _repository.UpdateModelAsync(model);
+
+            return updated;
         }
 
-        public async Task<Guid> CreateModelAsync(ModelDto modelDto)
+        public async Task<Guid> CreateModelAsync(FlatModelDto modelDto)
         {
             var entity = modelDto.ToEntity();
             await _repository.AddModelAsync(entity);
@@ -58,7 +61,7 @@ namespace Web.Api.Core.Services
             await _repository.DeleteModelAsync(entity);
         }
 
-        private async Task<bool> CanUpdateModelAsync(ModelDto modelDto)
+        private async Task<bool> CanUpdateModelAsync(FlatModelDto modelDto)
         {
             var entity = modelDto.ToEntity();
             return await _repository.CanUpdateModelAsync(entity);

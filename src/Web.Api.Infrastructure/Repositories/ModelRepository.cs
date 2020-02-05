@@ -47,6 +47,14 @@ namespace Web.Api.Infrastructure.Repositories
                 .Include(x => x.Instances)
                 .Where(x => x.Id == modelId)
                 .AsNoTracking()
+                .SingleAsync();
+        }
+
+        public async Task<Model> FindModel(Expression<Func<Model, bool>> expr)
+        {
+            return await _dbContext.Models
+                .Where(expr)
+                .AsNoTracking()
                 .SingleOrDefaultAsync();
         }
 
@@ -70,11 +78,26 @@ namespace Web.Api.Infrastructure.Repositories
 
         public async Task<bool> CanUpdateModelAsync(Model model)
         {
+            return await HeightChangeConstraint(model) && await UniquenessConstraint(model);
+        }
+
+        private async Task<bool> UniquenessConstraint(Model model)
+        {
+            // models are unique by vendor and model number
+            Expression<Func<Model, bool>> uniquenessViolation = x =>
+                x.Vendor == model.Vendor && x.ModelNumber == model.ModelNumber && x.Id != model.Id;
+            var conflict = await FindModel(uniquenessViolation);
+            return conflict == null;
+        }
+
+        private async Task<bool> HeightChangeConstraint(Model model)
+        {
             if (model.Id != default)
             {
-                var existingData = await _dbContext.Models.FindAsync(model.Id);
+                var currentData = await GetModelAsync(model.Id);
+
                 // disallow height change if model has instances
-                if (model.Height == existingData.Height) return true;
+                if (model.Height == currentData.Height) return true;
 
                 var hasInstances = await _dbContext.Instances.Where(x => x.Model == model)
                     .AnyAsync();
