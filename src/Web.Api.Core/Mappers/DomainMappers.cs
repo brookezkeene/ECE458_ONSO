@@ -77,7 +77,7 @@ namespace Web.Api.Core.Mappers
             return racks == null ? null : Mapper.Map<PagedList<RackDto>>(racks);
         }
 
-        public static PagedList<FlatUserDto> ToFlatDto(this PagedList<User> users)
+        public static PagedList<FlatUserDto> ToDto(this PagedList<User> users)
         {
             return users == null ? null : Mapper.Map<PagedList<FlatUserDto>>(users);
         }
@@ -95,6 +95,11 @@ namespace Web.Api.Core.Mappers
         public static User ToEntity(this FlatUserDto flatUserDto)
         {
             return flatUserDto == null ? null : Mapper.Map<User>(flatUserDto);
+        }
+
+        public static User ToEntity(this RegisterUserDto registerDto)
+        {
+            return registerDto == null ? null : Mapper.Map<User>(registerDto);
         }
     }
 }

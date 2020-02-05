@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Web.Api.Infrastructure.Entities;
 
 namespace Web.Api.Infrastructure.DbContexts
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
         public ApplicationDbContext(DbContextOptions options) : base(options) { }
 
@@ -27,6 +28,5 @@ namespace Web.Api.Infrastructure.DbContexts
         public DbSet<Model> Models { get; set; }
         public DbSet<Rack> Racks { get; set; }
         public DbSet<Instance> Instances { get; set; }
-        public DbSet<User> Users { get; set; }
     }
 }
