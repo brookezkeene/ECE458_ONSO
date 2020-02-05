@@ -35,6 +35,8 @@ namespace Web.Api
                 //.ConfigureInMemoryDbContext();
                 .ConfigureSqlDbContext(Configuration);
 
+            services.AddApiAuthentication(Configuration);
+
             services.AddSpaStaticFiles(options => options.RootPath = "VueClient/dist");
 
             services.AddControllers();

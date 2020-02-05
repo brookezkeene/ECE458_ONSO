@@ -74,12 +74,15 @@ namespace Web.Api.Core.UnitTests.Mappers
         //        .Generate(15);
         //    var instances = InstanceMock.GetInstanceFaker()
         //        .Generate(50);
+        //    var users = UserMock.GetUserFaker()
+        //        .Generate(5);
 
         //    var faker = new Faker();
         //    foreach (var instance in instances)
         //    {
         //        instance.Model = faker.PickRandom(models);
         //        instance.Rack = faker.PickRandom(racks);
+        //        instance.Owner = faker.PickRandom(users);
         //    }
 
         //    foreach (var rack in racks)
@@ -96,9 +99,9 @@ namespace Web.Api.Core.UnitTests.Mappers
         //        }
         //    }
 
-        //    var racksJson = JsonConvert.SerializeObject(racks);
-        //    var modelsJson = JsonConvert.SerializeObject(models);
-        //    var instancesJson = JsonConvert.SerializeObject(instances);
+        //    var config = new {Racks = racks, Models = models, Instances = instances, Users = users};
+
+        //    var json = JsonConvert.SerializeObject(config);
 
         //    Console.WriteLine("done");
         //}

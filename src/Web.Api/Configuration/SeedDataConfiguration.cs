@@ -11,5 +11,6 @@ namespace Web.Api.Configuration
         public List<Rack> Racks { get; set; } = new List<Rack>();
         public List<Model> Models { get; set; } = new List<Model>();
         public List<Instance> Instances { get; set; } = new List<Instance>();
+        public List<User> Users { get; set; } = new List<User>();
     }
 }

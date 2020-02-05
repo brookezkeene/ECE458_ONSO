@@ -6,6 +6,20 @@ using Web.Api.Infrastructure.Entities;
 
 namespace Web.Api.Core.UnitTests.Mappers
 {
+    public static class UserMock
+    {
+        internal static Faker<User> GetUserFaker()
+        {
+            var fakerUser = new Faker<User>()
+                .RuleFor(o => o.Id, f => Guid.NewGuid().ToString())
+                .RuleFor(o => o.FirstName, f => f.Person.FirstName)
+                .RuleFor(o => o.LastName, f => f.Person.LastName)
+                .RuleFor(o => o.Email, f => f.Person.Email)
+                .RuleFor(o => o.UserName, f => f.Person.UserName);
+
+            return fakerUser;
+        }
+    }
     public static class InstanceMock
     {
         internal static Faker<Instance> GetInstanceFaker()

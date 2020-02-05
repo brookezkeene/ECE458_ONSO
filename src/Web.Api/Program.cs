@@ -16,7 +16,7 @@ namespace Web.Api
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args)
+                CreateHostBuilder(args)
                 .Build()
                 .MigrateDatabase<ApplicationDbContext>()
                 .Run();

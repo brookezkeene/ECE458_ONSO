@@ -55,6 +55,16 @@ namespace Web.Api.Helpers
                 context.SaveChanges();
             }
 
+            if (!context.Users.Any())
+            {
+                foreach (var user in seedDataConfiguration.Users)
+                {
+                    context.Add(user);
+                }
+
+                context.SaveChanges();
+            }
+
             if (!context.Instances.Any())
             {
                 foreach (var instance in seedDataConfiguration.Instances)
@@ -67,6 +77,11 @@ namespace Web.Api.Helpers
                     var rack = context.Set<Rack>()
                         .SingleOrDefault(o => o.Id == instance.Rack.Id);
                     if (rack != null) instance.Rack = rack;
+
+                    var user = context.Set<User>()
+                        .SingleOrDefault(o => o.Id == instance.Owner.Id);
+                    if (user != null) instance.Owner = user;
+
                     context.Add(instance);
                 }
                 context.SaveChanges();

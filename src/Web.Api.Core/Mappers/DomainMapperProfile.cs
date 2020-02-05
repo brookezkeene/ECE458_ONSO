@@ -21,6 +21,7 @@ namespace Web.Api.Core.Mappers
                 .ReverseMap();
             CreateMap<User, FlatUserDto>()
                 .ReverseMap();
+            CreateMap<RegisterUserDto, User>();
 
             // flat dtos
             CreateMap<Instance, FlatInstanceDto>();
