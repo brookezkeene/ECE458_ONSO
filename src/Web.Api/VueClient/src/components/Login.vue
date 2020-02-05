@@ -42,10 +42,12 @@
 </template>
 
 <script>
+import Auth from "../auth"
+
 export default {
     data: () => ({
       valid: true,
-      email: '',
+      username: '',
       usernameRules: [
         v => !!v || 'Username is required',
       ],
@@ -55,12 +57,18 @@ export default {
       ]
     }),
     methods: {
-      validate () {
-        if (this.$refs.form.validate()) {
-          this.snackbar = true
-          this.$router.push('Models')
+        validate() {
+            if (this.$refs.form.validate()) {
+                Auth.login(this.username, this.password)
+
+                    //.then(
+                    //    this.$router.push('Models')
+                    //).catch((error) =>
+                    //    alert(error.message)
+                    //);
+            }
         }
-      },
+     
     }
 }
 </script>

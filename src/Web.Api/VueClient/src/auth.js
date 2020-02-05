@@ -1,19 +1,30 @@
-﻿/* globals localStorage */
+﻿/* eslint-disable no-unused-vars, no-console */
+import jwt_decode from 'jwt-decode';
+import axios from 'axios';
+const resource = '/login';
 
 export default {
     login(username, pass) {
         if (localStorage.token) {
             return Promise.resolve(true);
         }
-        return pretendRequest(username, pass).then(
-            (res) => {
-                if (res.authenticated) {
-                    localStorage.token = res.token;
-                    localStorage.user = res.user;
+        return axios.post(`${resource}`, { username: username, password: pass })
+            .then((response) => {
+                if (response.authenticated) {
+                    console.log(response);
+
+                    var token = response.token;
+                    var decoded_token = jwt_decode(token);
+                    console.log(decoded_token);
+
+                    localStorage.token = decoded_token;
+                    localStorage.user = response.user;
                     return true;
                 } else {
                     return false;
                 }
+            }).catch((error) => {
+                    console.error(error.message)
             });
     },
 
@@ -36,14 +47,4 @@ export default {
         return localStorage.user && localStorage.user.admin;
     },
 
-}
-
-function pretendRequest(username) {
-    return Promise.resolve({
-        authenticated: true,
-        token: Math.random().toString(36).substring(7),
-        user: {
-            admin: username === 'admin'
-        }
-    })
 }
