@@ -222,7 +222,7 @@
         },
 
         showDetails(item) {
-          if (this.editedIndex === -1 && !this.deleting) {
+          if (!this.editing && !this.deleting) {
               this.detailItem = Object.assign({}, item)
               this.$router.push({ name: 'instance-details', params: { detailItem: this.detailItem, id: this.detailItem.id } })
           }
