@@ -39,7 +39,6 @@ namespace Web.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<FlatUserDto>> Post([FromBody] RegisterUserDto user)
         {
-            Console.WriteLine($"Received registration request from ${user.Username}");
             var (identityResult, userId) = await _identityService.CreateUserAsync(user);
             var createdUser = await _identityService.GetUserAsync(userId);
             return CreatedAtAction(nameof(Get), new {id = createdUser.Id}, createdUser);

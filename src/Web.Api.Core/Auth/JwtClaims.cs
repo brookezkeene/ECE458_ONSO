@@ -2,6 +2,7 @@
 {
     public static class JwtClaims
     {
-        public const string ApiAccess = "api_access";
+        public const string ApiRead = "api_read";
+        public const string ApiAdmin = "api_admin";
     }
 }
