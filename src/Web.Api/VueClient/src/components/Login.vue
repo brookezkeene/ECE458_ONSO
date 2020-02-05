@@ -12,7 +12,8 @@
                 </v-card-title>
                 <v-card-text class="justify-center">
                     <v-form ref="form"
-                            v-model="valid">
+                            v-model="valid"
+                            @keyup.native.enter="valid && submit($event)">
                         <v-container>
                             <v-row>
                                 <v-text-field v-model="username"
@@ -32,7 +33,8 @@
                     <v-btn :disabled="!valid"
                            color="primary"
                            class="mr-4"
-                           @click="validate">
+                           type="submit"
+                           @click="submit">
                         Sign In
                     </v-btn>
                 </v-card-text>
@@ -42,10 +44,12 @@
 </template>
 
 <script>
+import Auth from "../auth"
+
 export default {
     data: () => ({
       valid: true,
-      email: '',
+      username: '',
       usernameRules: [
         v => !!v || 'Username is required',
       ],
@@ -55,12 +59,18 @@ export default {
       ]
     }),
     methods: {
-      validate () {
-        if (this.$refs.form.validate()) {
-          this.snackbar = true
-          this.$router.push('Models')
+        submit() {
+            //if (this.$refs.form.validate()) {
+                Auth.login(this.username, this.password)
+                    .then(() => {
+                        this.$router.push(this.$route.query.redirect || { name: 'dashboard' } )
+                    })
+                    .catch((error) => {
+                        alert(error.message)
+                    });
+            //}
         }
-      },
+     
     }
 }
 </script>

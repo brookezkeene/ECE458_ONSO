@@ -12,7 +12,6 @@
                 <template v-slot:top>
                 <v-toolbar flat color="white">
                     <v-autocomplete
-                      v-model="select"
                       :loading="loading"
                       :items="users"
                       :search-input.sync="search"
@@ -21,7 +20,7 @@
                       flat
                       hide-no-data
                       hide-details
-                      item-text="displayName"
+                      item-text="username"
                       label="Search"
                       single-line
                       solo-inverted
