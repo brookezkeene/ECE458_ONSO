@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using AutoMapper;
 using Web.Api.Common;
 using Web.Api.Core.Dtos;
 using Web.Api.Infrastructure.Entities;
@@ -76,6 +77,17 @@ namespace Web.Api.Core.Mappers
         {
             return racks == null ? null : Mapper.Map<PagedList<RackDto>>(racks);
         }
+
+        public static PagedList<FlatRackDto> ToFlatDto(this PagedList<Rack> racks)
+        {
+            return racks == null ? null : Mapper.Map<PagedList<FlatRackDto>>(racks);
+        }
+
+        public static List<RackDto> ToDto(this List<Rack> racks)
+        {
+            return racks == null ? null : Mapper.Map<List<RackDto>>(racks);
+        }
+
 
         public static PagedList<FlatUserDto> ToDto(this PagedList<User> users)
         {

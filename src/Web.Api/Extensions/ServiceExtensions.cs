@@ -35,6 +35,7 @@ namespace Web.Api.Extensions
             services.AddTransient<IModelService, ModelService>();
             services.AddTransient<IInstanceService, InstanceService>();
             services.AddTransient<IIdentityService, IdentityService>();
+            services.AddTransient<IRackService, RackService>();
 
             // etc
             services.ConfigureResources();
