@@ -16,6 +16,8 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
         Task<PagedList<User>> GetUsersAsync(string search, int page = 1, int pageSize = 10);
         Task<User> GetUserAsync(Guid userId);
         Task<(IdentityResult identityResult, Guid userId)> CreateUserAsync(User user, string password);
+        Task<User> FindByNameAsync(string username);
+        Task<bool> CheckPassword(User user, string password);
     }
 
     public class IdentityRepository : IIdentityRepository
@@ -57,6 +59,17 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
             var identityResult = await _userManager.CreateAsync(user, password);
 
             return (identityResult, Guid.Parse(user.Id));
+        }
+
+        public async Task<User> FindByNameAsync(string username)
+        {
+            return await _userManager.FindByNameAsync(username);
+
+        }
+
+        public async Task<bool> CheckPassword(User user, string password)
+        {
+            return await _userManager.CheckPasswordAsync(user, password);
         }
     }
 }

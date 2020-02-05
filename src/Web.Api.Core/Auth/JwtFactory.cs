@@ -51,7 +51,7 @@ namespace Web.Api.Core.Auth
             return new ClaimsIdentity(new GenericIdentity(userName, "Token"), new[]
             {
                 new Claim(JwtClaimIdentifiers.Id, id),
-                new Claim(JwtClaimIdentifiers.Rol, JwtClaims.ApiAccess)
+                new Claim(JwtClaimIdentifiers.Rol, userName == "admin" ? JwtClaims.ApiAdmin : JwtClaims.ApiRead)
             });
         }
 
