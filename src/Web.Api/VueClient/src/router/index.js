@@ -9,7 +9,7 @@ import Instances from '@/components/Instances'
 import Racks from '@/components/Racks'
 import ImportExport from '@/components/Bulk'
 import Users from '@/components/Users'
-//import Auth from '@/auth'
+import InstanceEdit from '@/components/InstanceEdit'
 
 Vue.use(Router)
 
@@ -17,111 +17,57 @@ const routes = [
     {
         path: '/',
         name: 'Welcome',
-        component: Login,
-        /*beforeEnter(to, from, next) {
-            if (Auth.loggedIn()) {
-                next({ path: '/models' });
-            }
-            else next();
-        }*/
+        component: Login
     },
     {
         path: '/Models',
         name: 'model',
-        component: Models,
-        /*beforeEnter(to, from, next) {
-            if (Auth.loggedIn()) {
-                next();
-            }
-            else next({ path: '/' });
-        }*/
+        component: Models
     },
     {
         path: '/Models/:id',
         name: 'model-details',
         component: ModelDetails,
-        props: true,
-        /*beforeEnter(to, from, next) {
-            if (Auth.loggedIn()) {
-                next();
-            } 
-            else next({ path: '/' });
-        }*/
-
+        props: true
     },
     {
         path: '/Instances',
         name: 'instances',
-        component: Instances,
-        /*beforeEnter(to, from, next) {
-            if (Auth.loggedIn()) {
-                next();
-            }
-            else next({ path: '/' });
-        }*/
+        component: Instances
     },
     {
         path: '/Instances/:id',
         name: 'instance-details',
         component: InstanceDetails,
-        props: true,
-        /*beforeEnter(to, from, next) {
-            if (Auth.loggedIn()) {
-                next();
-            }
-            else next({ path: '/' });
-        }*/
+        props: true
+    },
+    {
+        path: '/Instances/edit/:editedItem/:isNew',
+        name: 'instance-edit',
+        component: InstanceEdit,
+        props: true
     },
     {
         path: '/racks',
         name: 'racks',
         component: Racks,
-        /*beforeEnter(to, from, next) {
-            if (Auth.loggedIn()) {
-                next();
-            }
-            else next({ path: '/' });
-        }*/
     },
     {
         path: '/importexport',
         name: 'import-export',
         component: ImportExport,
-        /*beforeEnter(to, from, next) {
-            if (Auth.loggedIn()) {
-                next();
-            }
-            else next({ path: '/' });
-        }*/
     },
     {
         path: '/racks/view',
         name: 'RackDiagram',
-        component: RackDiagram,
-        /*beforeEnter(to, from, next) {
-            if (Auth.loggedIn()) {
-                next();
-            }
-            else next({ path: '/' });
-        }*/
+        component: RackDiagram
     },
     {
         path: '/users',
         name: 'users',
         component: Users,
-        /*beforeEnter(to, from, next) {
-            if (Auth.loggedIn()) {
-                next();
-            }
-            else next({ path: '/' });
-        }*/
     }
 ]
-
-/*this.Router.beforeEach((to, from, next) => {
-    if (!Auth.loggedIn()) next('/')
-    else next();
-})*/
 
 export default new Router({
     mode: 'history',

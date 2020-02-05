@@ -13,7 +13,7 @@
         > 
           <!-- Links to the models -->
           <template v-slot:item.model.vendor = "{ value }">
-                {{ value }}
+                <a>{{ value }}</a>     
           </template>
 
           <template v-slot:top>
@@ -24,6 +24,7 @@
                           <v-col cols="6">
                               <v-row>
                                   <v-autocomplete prepend-inner-icon="mdi-magnify"
+                                                  :loading="loading"
                                                   :items="instances"
                                                   :search-input.sync="search"
                                                   cache-items
@@ -62,21 +63,7 @@
 
                   <v-spacer></v-spacer>
 
-                  <!-- Calls for InstanceDetails and InstanceEdit cards -->
-                  <v-dialog v-model="dialog" max-width="500px">
-                      <template v-slot:activator="{ on }">
-                          <v-btn v-if="admin" color="primary" dark class="mb-2" v-on="on">Add Instance</v-btn>
-                      </template>
-                      <v-card>
-                          <instance-edit v-bind:editedItem="editedItem"></instance-edit>'
-                          <v-card-actions>
-                              <v-spacer></v-spacer>
-                              <v-btn text @click="close">Cancel</v-btn>
-                              <v-btn color="primary" text @click="save">Save</v-btn>
-                          </v-card-actions>'
-                      </v-card>
-                  </v-dialog>
-
+                  <v-btn v-if="admin" color="primary" dark class="mb-2" @click="addItem">Add Instance</v-btn>
 
                   <v-dialog v-model="instructionsDialog" max-width="550px">
                       <v-card>
@@ -92,14 +79,20 @@
           </template>
 
           <template v-slot:item.action="{ item }">
-              <v-row>
-                      <v-icon medium
-                              class="mr-2"
-                              @click="editItem(item)">mdi-pencil</v-icon>
-                      <v-icon medium
-                              class="mr-2"
-                              @click="deleteItem(item)">mdi-delete</v-icon>
-              </v-row>
+            <v-icon
+              small
+              class="mr-2"
+              @click="editItem(item)"
+            >
+              edit
+            </v-icon>
+            <v-icon
+              small
+              class="mr-2"
+              @click="deleteItem(item)"
+            >
+              delete
+            </v-icon>
           </template>
         <template v-slot:no-data>
           <v-btn color="primary" @click="initialize">Reset</v-btn>
@@ -111,12 +104,10 @@
 </template>
 
 <script>
-    import InstanceEdit from "./InstanceEdit"
     import Auth from "../auth"
 
   export default {
     components: {
-      InstanceEdit,
     },
     inject: ['instanceRepository','modelRepository'],
     data() {
@@ -154,7 +145,6 @@
         models: [],
 
         firstInstance: null,
-        editedIndex: -1,
         defaultItem: {
           model: {
             id: '',
@@ -179,31 +169,6 @@
           },
           rackPosition:'',
           comment: ''
-        },editedItem: {
-          model: {
-            id: '',
-            vendor: '',
-            modelNumber: '',
-            height: 0,
-            displayColor: '',
-            ethernetPorts: 0,
-            powerPorts: 0,
-            cpu: '',
-            memory: '',
-            storage: '',
-          
-          },
-          hostname: '',
-          rack:'',
-          owner:{
-            id:'',
-            username:'',
-            firstName:'',
-            lastName:'',
-            email:'',
-          },
-          rackPosition:'',
-          comment: ''
         },
         detailItem : {
           hostname:'',
@@ -213,11 +178,9 @@
           comment: ''
         },
         deleting: false,
+        editing: false,
       }},
     computed: {
-        formTitle () {
-            return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-        },
         admin() {
             return Auth.isAdmin()
         },
@@ -240,42 +203,33 @@
     methods: {
       async initialize () {
         this.instances = await this.instanceRepository.list();
+        this.firstInstance = await this.instanceRepository.find(1);
         this.models = await this.modelRepository.list();
         this.loading = false;
       },
-     
-      editItem (item) {
-        this.editedIndex = this.instanceRepository.find(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
-      },
+    
       deleteItem (item) {
         this.deleting = true;
-        confirm('Are you sure you want to delete this item?') && this.instanceRepository.delete(item)
-      },
-      close () {
-        this.dialog = false
-        setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        }, 300)
-      },
+        const index = this.instances.indexOf(item)
+        confirm('Are you sure you want to delete this item?') && this.instances.splice(index, 1)
+        },
+
+        editItem(item) {
+            this.$router.push({ name: 'instance-edit', params: { editedItem: item, isNew: false } })
+        },
+
+        addItem(item) {
+            this.$router.push({ name: 'instance-edit', params: { editedItem: item, isNew: true } })
+        },
+
         showInstructions() {
             this.instructionsDialog = true;
         },
+
         closeDetail() {
             this.instructionsDialog = false;
         },
-    
-      save () {
-        if (this.editedIndex > -1) {
-          this.instanceRepository.update(this.editedItem)
 
-        } else {
-          this.instanceRepository.create(this.editedItem)
-        }
-        this.close()
-      },
         showDetails(item) {
           if (this.editedIndex === -1 && !this.deleting) {
               this.detailItem = Object.assign({}, item)
