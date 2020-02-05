@@ -18,7 +18,6 @@
                             <v-col cols="6">
                                 <v-row>
                                     <v-autocomplete prepend-inner-icon="mdi-magnify"
-                                                    :loading="loading"
                                                     :items="instances"
                                                     :search-input.sync="search"
                                                     cache-items
@@ -105,7 +104,6 @@
         // Filter values.
         startRackValue: '',
         endRackValue: '',
-        modelFilterValue: '',
 
         dialog: false,
         instructionsDialog: false,
@@ -116,7 +114,7 @@
         headers: [
           
 
-          { text: 'Model Vendor', value: 'model.vendor', filter: this.modelFilter },
+          { text: 'Model Vendor', value: 'model.vendor' },
           { text: 'Model Number', value: 'model.modelNumber', },
           { text: 'Hostname', value: 'hostname' },
           { text: 'Rack', value: 'rack', filter: this.rackFilter },
@@ -229,16 +227,6 @@
           this.deleting = false;
           //this.detailsDialog = true
       },
-      /**
-        Filters for all the model searches 
-       */
-      modelFilter(value) {
-        if (!this.modelFilterValue) {
-          return true;
-        }
-        return value.toLowerCase().includes(this.modelFilterValue.toLowerCase());
-      },
-
 
       /**
        * Filter for calories column.
