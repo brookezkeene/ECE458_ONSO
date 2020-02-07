@@ -26,3 +26,18 @@ deploy_production:
     url: http://vcm-12801.vm.duke.edu/
   only:
     - master
+
+deploy_staging:
+  stage: deploy
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker-compose -f ./src/docker-compose.yml build
+    - docker-compose -f ./src/docker-compose.yml push
+    - docker-compose -H "ssh://vcm@vcm-12874.vm.duke.edu" -f ./src/docker-compose.yml pull
+    - docker-compose -H "ssh://vcm@vcm-12874.vm.duke.edu" -f ./src/docker-compose.yml up -d
+  environment:
+    name: staging
+    url: http://vcm-12874.vm.duke.edu/
+  only:
+    - dev
+
