@@ -13,7 +13,7 @@ build_and_test:
     - cd Web.Api/VueClient
     - npm run test:unit
 
-deploy_staging:
+deploy_production:
   stage: deploy
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
@@ -22,8 +22,7 @@ deploy_staging:
     - docker-compose -H "ssh://vcm@vcm-12801.vm.duke.edu" -f ./src/docker-compose.yml pull
     - docker-compose -H "ssh://vcm@vcm-12801.vm.duke.edu" -f ./src/docker-compose.yml up -d
   environment:
-    name: staging
+    name: production
     url: http://vcm-12801.vm.duke.edu/
   only:
-    - dev
-    - feature/model-api
+    - master
