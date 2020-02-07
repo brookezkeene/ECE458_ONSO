@@ -28,7 +28,7 @@
                 <v-col>
                     <v-text-field v-model="editedItem.password"
                                   :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-                                  :rules="[rules.required]"
+                                  :rules="[rules.passwordLengthRules]"
                                   :type="show ? 'text' : 'password'"
                                   label="Password"
                                   required
@@ -63,7 +63,16 @@ export default {
             password2: '',
             rules: {
                 required: value => !!value || "Required.",
-                emailMatch: () => "The email and password you entered don't match"
+                emailMatch: () => "The email and password you entered don't match",
+                passwordLengthRules:
+                    v => {
+                        if (v.length < 6) {
+                            return 'Need stronger password with at least 6 characters';
+                        } else {
+                            return !!v;
+                        }
+                    },
+
             },
             loading: false
         };
@@ -80,12 +89,6 @@ export default {
             }
         },
     },
-    //editedItem: {
-    //      displayName: '',
-    //      email: '',
-    //      username: '',
-    //      password: ''
-    //    },
     computed: {
         passwordConfirmationRule() {
             return this.password1 === this.password2 || "Passwords must match";
