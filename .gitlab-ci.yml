@@ -24,9 +24,9 @@ deploy_production:
   environment:
     name: production
     url: http://vcm-12801.vm.duke.edu/
+  when: manual
   only:
     - master
-
 deploy_staging:
   stage: deploy
   script:
