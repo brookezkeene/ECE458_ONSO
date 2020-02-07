@@ -53,6 +53,5 @@ deploy_dev:
   environment:
     name: dev
     url: http://vcm-13071.vm.duke.edu/
-  except:
-    - master
-    - dev
+  only:
+    - /^ev\d\/sprint\d$/
