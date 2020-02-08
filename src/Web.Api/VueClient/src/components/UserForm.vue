@@ -72,7 +72,6 @@ export default {
                             return !!v;
                         }
                     },
-
             },
             loading: false
         };
