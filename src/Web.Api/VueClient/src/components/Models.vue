@@ -12,13 +12,11 @@
 
                         <v-toolbar flat color="white">
                             <v-autocomplete prepend-inner-icon="mdi-magnify"
-                                            :items="models"
                                             :search-input.sync="search"
                                             cache-items
                                             flat
                                             hide-no-data
                                             hide-details
-                                            item-text="vendor"
                                             label="Search"
                                             single-line
                                             solo-inverted></v-autocomplete>

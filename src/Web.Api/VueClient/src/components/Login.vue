@@ -56,7 +56,7 @@ export default {
       password: '',
       passwordRules: [
           v => !!v || 'Password is required',
-      ]
+      ],
     }),
     methods: {
         submit() {
