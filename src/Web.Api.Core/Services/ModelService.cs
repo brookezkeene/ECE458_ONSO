@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Web.Api.Common;
 using Web.Api.Core.Dtos;
@@ -25,6 +26,13 @@ namespace Web.Api.Core.Services
         {
             var pagedList = await _repository.GetModelsAsync(search, page, pageSize);
             return pagedList.ToFlatDto();
+        }
+
+        public async Task<List<FlatModelDto>> GetModelExportAsync(ExportQuery query)
+        {
+            query = query.ToUpper();
+            var models = await _repository.GetModelExportAsync(query.Search);
+            return models.ToFlatDto();
         }
 
         public async Task<ModelDto> GetModelAsync(Guid modelId)

@@ -25,6 +25,10 @@ namespace Web.Api.Core.Mappers
         {
             return model == null ? null : Mapper.Map<FlatModelDto>(model);
         }
+        public static List<FlatModelDto> ToFlatDto(this List<Model> models)
+        {
+            return models == null ? null : Mapper.Map<List<FlatModelDto>>(models);
+        }
         public static PagedList<ModelDto> ToDto(this PagedList<Model> models)
         {
             return models == null ? null : Mapper.Map<PagedList<ModelDto>>(models);

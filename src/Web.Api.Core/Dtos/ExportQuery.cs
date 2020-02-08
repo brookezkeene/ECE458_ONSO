@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Web.Api.Core.Dtos
 {
-    public class ExportQuery : RackRangeQuery
+    public class ExportQuery
     {
         [Required]
         public string Search { get; set; }
@@ -15,9 +15,9 @@ namespace Web.Api.Core.Dtos
     {
         public static ExportQuery ToUpper(this ExportQuery query)
         {
-            var upperQuery = new ExportQuery { StartCol = query.StartCol, EndCol = query.EndCol };
-            upperQuery.StartRow = query.StartRow.ToUpper();
-            upperQuery.EndRow = query.EndRow.ToUpper();
+            var upperQuery = new ExportQuery { };
+            /*upperQuery.StartRow = query.StartRow.ToUpper();
+            upperQuery.EndRow = query.EndRow.ToUpper();*/
             upperQuery.Search = query.Search.ToUpper();
             return upperQuery;
         }
