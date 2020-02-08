@@ -46,8 +46,9 @@ namespace Web.Api.Infrastructure.Repositories
 
             var racks = await _dbContext.Racks
                 .Include(x => x.Instances)
-                .Include(x => x.Instances.Select(i => i.Model))
-                .Include(x => x.Instances.Select(i => i.Owner))
+                    .ThenInclude(i => i.Model)
+                .Include(x => x.Instances)
+                    .ThenInclude(i => i.Owner)
                 .Where(x => x.Column >= colStart && x.Column <= colEnd)
                 .AsNoTracking()
                 .ToListAsync();
