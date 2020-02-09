@@ -41,7 +41,7 @@ namespace Web.Api.Core.UnitTests
             var result = await sut.GetModelExportAsync(query);
             System.Diagnostics.Debug.WriteLine(result.Count);
             // Assert
-            Assert.Empty(result);
+            Assert.Equal(result[0].Cpu, "storage");
         }
 
         private static IEnumerable<Model> GenerateModels()
@@ -65,6 +65,21 @@ namespace Web.Api.Core.UnitTests
                     Instances = new List<Instance>(),
                 };
             }
+            yield return new Model
+            {
+                Id = Guid.NewGuid(),
+                Vendor = "vendor",
+                ModelNumber = "nu1m1",
+                Height = 2,
+                DisplayColor = "#ffffff",
+                EthernetPorts = 2,
+                PowerPorts = 2,
+                Cpu = "storage",
+                Memory = 43,
+                Storage = "stor",
+                Comment = "",
+                Instances = new List<Instance>(),
+            };
         }
     }
 }
