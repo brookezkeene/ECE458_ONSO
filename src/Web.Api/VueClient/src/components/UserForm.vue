@@ -6,36 +6,36 @@
             </v-card-title>
 
             <v-card-text>
-            <v-container>
-                <v-row>
-                <v-col cols="12" sm="6" md="6">
-                    <v-text-field v-model="editedItem.firstName" label="First Name"></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="6" md="6">
-                    <v-text-field v-model="editedItem.lastName" label="Last Name"></v-text-field>
-                </v-col>
-                </v-row>
-                <v-row>
+                <v-container>
+                    <v-row>
                     <v-col cols="12" sm="6" md="6">
-                        <v-text-field v-model="editedItem.username" label="Username"></v-text-field>
+                        <v-text-field v-model="editedItem.firstName" label="First Name" :rules="[rules.required]"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="6">
-                        <v-text-field v-model="editedItem.email" label="Email"></v-text-field>
+                        <v-text-field v-model="editedItem.lastName" label="Last Name" :rules="[rules.required]"></v-text-field>
                     </v-col>
-                </v-row>
-                <v-row>
+                    </v-row>
+                    <v-row>
+                        <v-col cols="12" sm="6" md="6">
+                            <v-text-field v-model="editedItem.username" label="Username" :rules="[rules.required]"></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="6">
+                            <v-text-field v-model="editedItem.email" label="Email" :rules="[rules.required]"></v-text-field>
+                        </v-col>
+                    </v-row>
+                    <v-row>
 
-                <v-col>
-                    <v-text-field v-model="editedItem.password"
-                                  :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-                                  :rules="[rules.passwordLengthRules]"
-                                  :type="show ? 'text' : 'password'"
-                                  label="Password"
-                                  required
-                                  @click:append="show = !show"></v-text-field>
-                </v-col>
-                </v-row>
-            </v-container>
+                    <v-col>
+                        <v-text-field v-model="editedItem.password"
+                                      :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                                      :rules="[rules.passwordLengthRules]"
+                                      :type="show ? 'text' : 'password'"
+                                      label="Password"
+                                      required
+                                      @click:append="show = !show"></v-text-field>
+                    </v-col>
+                    </v-row>
+                </v-container>
             </v-card-text>
         </v-card>
     </div>
@@ -79,6 +79,8 @@ export default {
     methods: {
         submit() {
             this.$v.$touch()
+            this.$v.reset();
+
         },
         checkPassMatch() {
             if (this.password1 != this.password2) {
