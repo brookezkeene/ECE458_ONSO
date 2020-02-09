@@ -27,7 +27,6 @@ namespace Web.Api.Core.UnitTests
             var allRacks = GenerateRacks("A1", "A2", "A3", "B1", "B2", "B3");
             await context.Racks.AddRangeAsync(allRacks);
             var numAdded = await context.SaveChangesAsync();
-            // StoreProductEntities are saved, the children StoreProductPrice entities are not saving.
             
             var repo = new RackRepository(context);
             var sut = new RackService(repo);
@@ -36,9 +35,9 @@ namespace Web.Api.Core.UnitTests
             // Act
             var query = new RackRangeQuery
             {
-                StartRow = "A",
+                StartRow = "C",
                 StartCol = 1,
-                EndRow = "A",
+                EndRow = "D",
                 EndCol = 3
             };
             var result = await sut.GetRacksAsync(query);

@@ -27,18 +27,19 @@ namespace Web.Api.Core.UnitTests
             await using var context = new ApplicationDbContext(options);
             var allModels = GenerateModels();
             await context.Models.AddRangeAsync(allModels);
+            var numAdded = await context.SaveChangesAsync();
 
             var repo = new ModelRepository(context);
             var res = new ModelServiceResources();
             var sut = new ModelService(repo, res);
 
             // Act
-            var query = new ExportQuery
+            var query = new ModelExportQuery
             {
-                Search = "vendor1"
+                Search = "num"
             };
             var result = await sut.GetModelExportAsync(query);
-
+            System.Diagnostics.Debug.WriteLine(result.Count);
             // Assert
             Assert.Empty(result);
         }
