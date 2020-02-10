@@ -79,7 +79,7 @@ namespace Web.Api.Core.UnitTests
             // Act
             var query = new ModelExportQuery
             {
-                Search = "name2"
+                Search = "vendor"
             };
             var result = await sut.GetModelExportAsync(query);
             System.Diagnostics.Debug.WriteLine(result.Count);
@@ -99,7 +99,7 @@ namespace Web.Api.Core.UnitTests
                     Model = new Model
                     {
                         Id = Guid.NewGuid(),
-                        Vendor = "vendor" + i.ToString(),
+                        Vendor = "vendor",
                         ModelNumber = "num",
                         Height = 2,
                         DisplayColor = "#ffffff",
@@ -126,7 +126,7 @@ namespace Web.Api.Core.UnitTests
                 Model = new Model
                 {
                     Id = Guid.NewGuid(),
-                    Vendor = "vendor2",
+                    Vendor = "ve3ndor2",
                     ModelNumber = "num",
                     Height = 2,
                     DisplayColor = "#ffffff",
@@ -137,7 +137,7 @@ namespace Web.Api.Core.UnitTests
                     Storage = "stor",
 
                 },
-                Hostname = "name2",
+                Hostname = "na2me2",
                 Rack = new Rack
                 {
                     Id = Guid.NewGuid(),
