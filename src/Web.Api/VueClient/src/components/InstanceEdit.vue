@@ -8,12 +8,11 @@
                 <v-container>
                     <v-row>
                         <v-col cols="12" sm="6" md="4">
-                            <v-autocomplete v-model="editedItem.model.vendorModelNo"
+                            <v-autocomplete v-model="editedItem.model.id"
                                             :items="models"
                                             item-text="vendorModelNo"
-                                            item-value="vendorModelNo"
-                                            label="Model"
-                                            :return-object="false">
+                                            item-value="id"
+                                            label="Model">
                             </v-autocomplete>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
@@ -29,13 +28,12 @@
                             <v-text-field v-model="editedItem.rackPosition" label="Rack Position" type="number"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-autocomplete v-model="newOwner"
+                            <v-autocomplete v-model="editedItem.owner.id"
                                             :items="users"
                                             item-text="username"
-                                            item-value="username"
+                                            item-value="id"
                                             label="Owner User Name"
-                                            persistent-hint
-                                            :return-object="false">
+                                            persistent-hint>
                             </v-autocomplete>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
@@ -64,33 +62,6 @@
                 users: [],
                 instances: [],
                 loading: false,
-                newOwner: "",
-                item: {
-                        model: {
-                            id: '',
-                            vendor: '',
-                            modelNumber: '',
-                            height: 0,
-                            displayColor: '',
-                            ethernetPorts: 0,
-                            powerPorts: 0,
-                            cpu: '',
-                            memory: '',
-                            storage: '',
-                            vendorModelNo: ''
-                        },
-                        hostname: '',
-                        rack: '',
-                        owner: {
-                            id: '',
-                            username: '',
-                            firstName: '',
-                            lastName: '',
-                            email: '',
-                        },
-                        rackPosition: '',
-                        comment: ''
-                },
                 editedItem: {
                   model: {
                     id: '',
@@ -124,10 +95,10 @@
             this.models = await this.modelRepository.list();
             this.users = await this.userRepository.list();
             this.instances = await this.instanceRepository.list();
-            if (this.instances.find(o => o.id === this.id) != undefined) {
-                this.editedItem = await this.instances.find(o => o.id === this.id);
-            } else {
-                this.editemItem = Object.assign({}, this.item);
+
+            const existingItem = this.instances.find(o => o.id == this.id);
+            if (typeof existingItem !== 'undefined') {
+                this.editedItem = Object.assign({}, existingItem);
             }
 
             for (const model of this.models) {
@@ -138,55 +109,30 @@
         computed: {
             formTitle() {
                 return this.isNew ? 'New Item' : 'Edit Item'
-            },
+            }
         },
         methods: {
             save() {
 
-                this.updateOwner(this.newOwner, this.editedItem);
-                this.updateModel(this.editedItem.model.vendorModelNo, this.editedItem);
+                this.updateOwner();
+                this.updateModel();
 
                 if (!this.isNew) {
-                    this.instanceRepository.update(this.editedItem);
+                    this.instanceRepository.update(this.editedItem).then(this.close);
                 } else {
-                    this.instanceRepository.create(this.editedItem);
+                    this.instanceRepository.create(this.editedItem).then(this.close);
                 }
-                this.close()
             },
             close() {
-                setTimeout(() => {
-                    this.$router.push({ name: 'instances'})
-                }, 300)
+                this.$router.push({ name: 'instances'})
             },
-            updateOwner(newUser, item) {
-
-                for (const user of this.users) {
-                                    /*eslint-disable*/
-                    console.log(newUser);
-                    if (newUser === user.username) {
-                        console.log(newUser);
-                        item.owner.username = newUser;
-                        item.owner.firstName = user.firstName;
-                        item.owner.lastName = user.lastName;
-                        item.owner.email = user.email;
-                    }
-                }
-                return item;
+            updateOwner() {
+                const userId = this.editedItem.owner.id;
+                this.editedItem.owner = this.users.find(o => o.id === userId);
             },
-            updateModel(newModel, item) {
-
-                for (const model of this.models) {
-                /*eslint-disable*/
-                    console.log(newModel)
-
-                    /*Potential Bug if have a model, modelNo combo with more than one space*/
-                    let val = newModel.split(" ")
-
-                    if (val[0] === model.vendor && val[1] === model.modelNumber) {
-                        item.model = model;
-                    }
-                }
-                return item;
+            updateModel() {
+                const modelId = this.editedItem.model.id;
+                this.editedItem.model = this.models.find(o => o.id == modelId);
             }
         }
     }
