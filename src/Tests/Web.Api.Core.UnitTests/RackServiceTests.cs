@@ -45,11 +45,23 @@ namespace Web.Api.Core.UnitTests
             // Assert
             Assert.Equal(result.Count, 5);
 
-            await sut.DeleteRacksAsync(query);
-            var resultDelete = await sut.GetRacksAsync(query);
-            System.Diagnostics.Debug.WriteLine(resultDelete.Count);
+            var query1 = new RackRangeQuery
+            {
+                StartRow = "A",
+                StartCol = 1,
+                EndRow = "A",
+                EndCol = 3
+            };
 
-            Assert.Equal(resultDelete.Count, 2);
+            await sut.DeleteRacksAsync(query1);
+            var resultDelete = await sut.GetRacksAsync(query1);
+            var resultGet = await sut.GetRacksAsync(query);
+
+            System.Diagnostics.Debug.WriteLine(resultDelete.Count);
+            System.Diagnostics.Debug.WriteLine(resultGet.Count);
+
+            Assert.Equal(resultDelete.Count, 0);
+            Assert.Equal(resultGet.Count, 2);
 
 
         }
