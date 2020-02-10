@@ -137,7 +137,7 @@ namespace Web.Api.Core.UnitTests
                     Storage = "stor",
 
                 },
-                Hostname = "na2me2",
+                Hostname = "name2",
                 Rack = new Rack
                 {
                     Id = Guid.NewGuid(),
