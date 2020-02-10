@@ -17,6 +17,49 @@ namespace Web.Api.Core.UnitTests
     public class ExportServiceTests
     {
         [Fact]
+        public async void GetExportInstances()
+        {
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase("testdb")
+                .Options;
+            await using var context = new ApplicationDbContext(options);
+            
+            var allModels = GenerateModels();
+            await context.Models.AddRangeAsync(allModels);
+            await context.SaveChangesAsync();
+
+            /*var allRacks = GenerateRacks();
+            await context.Racks.AddRangeAsync(allRacks);
+            await context.SaveChangesAsync();*/
+
+            var allInstances = GenerateInstances();
+            await context.Instances.AddRangeAsync(allInstances);
+            await context.SaveChangesAsync();
+
+            var repo = new InstanceRepository(context);
+            var sut = new InstanceService(repo);
+
+            // Act
+            var query = new InstanceExportQuery
+            {
+                StartRow = "a",
+                StartCol = 1,
+                EndRow = "b",
+                EndCol = 3,
+                Search = "name2"
+            };
+
+            var result = await sut.GetInstanceExportAsync(query);
+            System.Diagnostics.Debug.WriteLine(result.Count);
+            System.Diagnostics.Debug.WriteLine(result[0].rack);
+            System.Diagnostics.Debug.WriteLine(result[1].rack);
+            System.Diagnostics.Debug.WriteLine(result[0].vendor);
+            System.Diagnostics.Debug.WriteLine(result[1].vendor);
+
+            // Assert
+            Assert.Equal(result.Count, 2);
+        }
+        [Fact]
         public async void GetExportModels_FromDatabaseWithTwoModels()
         {
             // Arrange
@@ -36,7 +79,7 @@ namespace Web.Api.Core.UnitTests
             // Act
             var query = new ModelExportQuery
             {
-                Search = ""
+                Search = "name2"
             };
             var result = await sut.GetModelExportAsync(query);
             System.Diagnostics.Debug.WriteLine(result.Count);
@@ -45,6 +88,90 @@ namespace Web.Api.Core.UnitTests
             Assert.Equal(result.Count, 4);
         }
 
+        private static IEnumerable<Instance> GenerateInstances()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                // confirm proper address format
+                yield return new Instance
+                {
+                    Id = Guid.NewGuid(),
+                    Model = new Model
+                    {
+                        Id = Guid.NewGuid(),
+                        Vendor = "vendor" + i.ToString(),
+                        ModelNumber = "num",
+                        Height = 2,
+                        DisplayColor = "#ffffff",
+                        EthernetPorts = 2,
+                        PowerPorts = 2,
+                        Cpu = "storage" + i.ToString(),
+                        Memory = 43,
+                        Storage = "stor",
+                        
+                    },
+                    Hostname = "name"+i.ToString(),
+                    Rack = new Rack
+                    {
+                        Id = Guid.NewGuid(),
+                        Row = "A",
+                        Column = i
+                    },
+                RackPosition = 12
+                };
+            }
+            yield return new Instance
+            {
+                Id = Guid.NewGuid(),
+                Model = new Model
+                {
+                    Id = Guid.NewGuid(),
+                    Vendor = "vendor2",
+                    ModelNumber = "num",
+                    Height = 2,
+                    DisplayColor = "#ffffff",
+                    EthernetPorts = 2,
+                    PowerPorts = 2,
+                    Cpu = "storage",
+                    Memory = 43,
+                    Storage = "stor",
+
+                },
+                Hostname = "name2",
+                Rack = new Rack
+                {
+                    Id = Guid.NewGuid(),
+                    Row = "B",
+                    Column = 2
+                },
+                RackPosition = 12
+            };
+        }
+        private static IEnumerable<Rack> GenerateRacks()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                // confirm proper address format
+                yield return new Rack
+                {
+                    Id = Guid.NewGuid(),
+                    Row = "B",
+                    Column = i
+                };
+                yield return new Rack
+                {
+                    Id = Guid.NewGuid(),
+                    Row = "A",
+                    Column = i
+                };
+                yield return new Rack
+                {
+                    Id = Guid.NewGuid(),
+                    Row = "C",
+                    Column = i
+                };
+            }
+        }
         private static IEnumerable<Model> GenerateModels()
         {
             for (int i = 0; i < 3; i++)
