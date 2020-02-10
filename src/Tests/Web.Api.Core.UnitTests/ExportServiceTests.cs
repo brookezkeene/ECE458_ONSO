@@ -36,12 +36,13 @@ namespace Web.Api.Core.UnitTests
             // Act
             var query = new ModelExportQuery
             {
-                Search = "num"
+                Search = "vendor1"
             };
             var result = await sut.GetModelExportAsync(query);
             System.Diagnostics.Debug.WriteLine(result.Count);
             // Assert
-            Assert.Equal(result[0].Cpu, "storage");
+            Assert.Equal(result[0].cpu, "storage1");
+            Assert.Equal(result.Count, 2);
         }
 
         private static IEnumerable<Model> GenerateModels()
@@ -58,7 +59,7 @@ namespace Web.Api.Core.UnitTests
                     DisplayColor = "#ffffff",
                     EthernetPorts = 2,
                     PowerPorts = 2,
-                    Cpu = "storage",
+                    Cpu = "storage" + i.ToString(),
                     Memory = 43,
                     Storage = "stor",
                     Comment = "",
@@ -68,8 +69,8 @@ namespace Web.Api.Core.UnitTests
             yield return new Model
             {
                 Id = Guid.NewGuid(),
-                Vendor = "vendor",
-                ModelNumber = "nu1m1",
+                Vendor = "vendor1",
+                ModelNumber = "num1",
                 Height = 2,
                 DisplayColor = "#ffffff",
                 EthernetPorts = 2,
