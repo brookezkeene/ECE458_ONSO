@@ -13,11 +13,8 @@ namespace Web.Api.Core.Dtos
     public static class InstanceExportQueryExtensions
     {
         public static InstanceExportQuery ToUpper(this InstanceExportQuery query)
-        {
-            var upperQuery = new InstanceExportQuery { };
-            upperQuery.StartRow = query.StartRow.ToUpper();
-            upperQuery.EndRow = query.EndRow.ToUpper();
-            upperQuery.Search = query.Search.ToUpper();
+        {      
+            var upperQuery = ToUpper(query);
             return upperQuery;
         }
     }

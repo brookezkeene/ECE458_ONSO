@@ -43,17 +43,18 @@ namespace Web.Api.Core.UnitTests
             var query = new InstanceExportQuery
             {
                 StartRow = "a",
-                StartCol = 1,
-                EndRow = "b",
-                EndCol = 3,
-                Search = "name2"
+                StartCol = 3,
+                EndRow = "",
+                EndCol = 0,
+                Search = ""
             };
 
             var result = await sut.GetInstanceExportAsync(query);
+            System.Diagnostics.Debug.WriteLine("num of instances in result");
             System.Diagnostics.Debug.WriteLine(result.Count);
 
             // Assert
-            Assert.Equal(result.Count, 1);
+            Assert.Equal(result.Count, 3);
         }
         [Fact]
         public async void GetExportModels_FromDatabaseWithTwoModels()
@@ -138,7 +139,7 @@ namespace Web.Api.Core.UnitTests
                 {
                     Id = Guid.NewGuid(),
                     Row = "B",
-                    Column = 2
+                    Column = 3
                 },
                 RackPosition = 12
             };

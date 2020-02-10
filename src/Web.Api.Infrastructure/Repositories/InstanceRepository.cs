@@ -47,12 +47,31 @@ namespace Web.Api.Infrastructure.Repositories
 
         public async Task<List<Instance>> GetInstanceExportAsync(string rowStart, int colStart, string rowEnd, int colEnd, string search)
         {
+            //not sure if the rows will have any values
+            Expression<Func<Instance, bool>> startRowCondition = null;
+            Expression<Func<Instance, bool>> endRowCondition = null;
+            if (!string.IsNullOrEmpty(rowStart))
+            {
+                startRowCondition = x => (x.Rack.Row[0] >= rowStart[0]);
+            }
+            if (!string.IsNullOrEmpty(rowEnd))
+            {
+                endRowCondition = x => (x.Rack.Row[0] <= rowEnd[0]);
+            }
+            //ints default to zero
+            Expression<Func<Instance, bool>> startColCondition = x => (x.Rack.Column >= colStart);
+            Expression<Func<Instance, bool>> endColCondition = x => (x.Rack.Column <= colEnd);
+            Expression<Func<Instance, bool>> searchCondition = x => x.Hostname.ToUpper().Contains(search);
+
             var instances = await _dbContext.Instances
                 .Include(x => x.Model)
                 .Include(x => x.Owner)
                 .Include(x => x.Rack)
-                .Where(x => (x.Rack.Column >= colStart && x.Rack.Column <= colEnd && x.Rack.Row[0] >= rowStart[0] && x.Rack.Row[0] <= rowEnd[0]))
-                .Where(x => x.Hostname.ToUpper().Contains(search))
+                .WhereIf(!string.IsNullOrEmpty(rowStart), startRowCondition)
+                .WhereIf(colStart != 0, startColCondition)
+                .WhereIf(!string.IsNullOrEmpty(rowEnd), endRowCondition)
+                .WhereIf(colEnd != 0, endColCondition)
+                .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
                 .AsNoTracking()
                 .ToListAsync();
 

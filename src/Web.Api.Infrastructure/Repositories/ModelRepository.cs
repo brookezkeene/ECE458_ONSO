@@ -45,10 +45,10 @@ namespace Web.Api.Infrastructure.Repositories
         }
         public async Task<List<Model>> GetModelExportAsync(string search)
         {
-            //Expression<Func<Model, bool>> searchCondition = x => (x.ModelNumber.Contains(search) || x.Vendor.Contains(search));
+            Expression<Func<Model, bool>> searchCondition = x => (x.ModelNumber.ToUpper().Contains(search) || x.Vendor.ToUpper().Contains(search));
 
             var models = await _dbContext.Models
-                .Where(x => (x.ModelNumber.ToUpper().Contains(search) || x.Vendor.ToUpper().Contains(search)))
+                .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
                 .AsNoTracking()
                 .ToListAsync();
             //models = models.Where(x => x.ModelNumber.Contains(search) || x.Vendor.Contains(search)).ToList();
