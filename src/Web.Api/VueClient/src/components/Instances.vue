@@ -201,11 +201,11 @@
         },
 
         editItem(item) {
-            this.$router.push({ name: 'instance-edit', params: { editedItem: item, isNew: false } })
+            this.$router.push({ name: 'instance-edit', params: { id: item.id, isNew: false } })
         },
 
         addItem(item) {
-            this.$router.push({ name: 'instance-edit', params: { editedItem: item, isNew: true } })
+            this.$router.push({ name: 'instance-edit', params: { id: item.id, isNew: true } })
         },
 
         showInstructions() {

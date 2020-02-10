@@ -13,8 +13,7 @@
                                             item-text="vendorModelNo"
                                             item-value="vendorModelNo"
                                             label="Model"
-                                            persistent-hint
-                                            return-object>
+                                            :return-object="false">
                             </v-autocomplete>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
@@ -36,7 +35,7 @@
                                             item-value="username"
                                             label="Owner User Name"
                                             persistent-hint
-                                            return-object>
+                                            :return-object="false">
                             </v-autocomplete>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
@@ -58,22 +57,78 @@
     export default {
         name: 'instance-edit',
         inject: ['instanceRepository', 'modelRepository', 'userRepository'],
-        props: {
-            editedItem: Object,
-            isNew: Boolean,
-        },
+        props: ['id','isNew'],
         data() {
             return {
                 models: [],
                 users: [],
+                instances: [],
                 loading: false,
                 newOwner: "",
-            };
+                item: {
+                        model: {
+                            id: '',
+                            vendor: '',
+                            modelNumber: '',
+                            height: 0,
+                            displayColor: '',
+                            ethernetPorts: 0,
+                            powerPorts: 0,
+                            cpu: '',
+                            memory: '',
+                            storage: '',
+                            vendorModelNo: ''
+                        },
+                        hostname: '',
+                        rack: '',
+                        owner: {
+                            id: '',
+                            username: '',
+                            firstName: '',
+                            lastName: '',
+                            email: '',
+                        },
+                        rackPosition: '',
+                        comment: ''
+                },
+                editedItem: {
+                  model: {
+                    id: '',
+                    vendor: '',
+                    modelNumber: '',
+                    height: 0,
+                    displayColor: '',
+                    ethernetPorts: 0,
+                    powerPorts: 0,
+                    cpu: '',
+                    memory: '',
+                        storage: '',
+                    vendorModelNo: ''
+                  },
+                  hostname: '',
+                  rack:'',
+                  owner:{
+                    id:'',
+                    username:'',
+                    firstName:'',
+                    lastName:'',
+                    email:'',
+                  },
+                  rackPosition:'',
+                  comment: ''
+                }
+            }
         },
 
         async created() {
             this.models = await this.modelRepository.list();
             this.users = await this.userRepository.list();
+            this.instances = await this.instanceRepository.list();
+            if (this.instances.find(o => o.id === this.id) != undefined) {
+                this.editedItem = await this.instances.find(o => o.id === this.id);
+            } else {
+                this.editemItem = Object.assign({}, this.item);
+            }
 
             for (const model of this.models) {
                 model.vendorModelNo = model.vendor + " " + model.modelNumber;
@@ -87,6 +142,7 @@
         },
         methods: {
             save() {
+
                 this.updateOwner(this.newOwner, this.editedItem);
                 this.updateModel(this.editedItem.model.vendorModelNo, this.editedItem);
 
@@ -105,8 +161,14 @@
             updateOwner(newUser, item) {
 
                 for (const user of this.users) {
-                    if (newUser.username === user.username) {
-                        item.owner = newUser;
+                                    /*eslint-disable*/
+                    console.log(newUser);
+                    if (newUser === user.username) {
+                        console.log(newUser);
+                        item.owner.username = newUser;
+                        item.owner.firstName = user.firstName;
+                        item.owner.lastName = user.lastName;
+                        item.owner.email = user.email;
                     }
                 }
                 return item;
@@ -115,9 +177,10 @@
 
                 for (const model of this.models) {
                 /*eslint-disable*/
-                    console.log(newModel.vendorModelNo)
+                    console.log(newModel)
 
-                    let val = newModel.vendorModelNo.split(" ")
+                    /*Potential Bug if have a model, modelNo combo with more than one space*/
+                    let val = newModel.split(" ")
 
                     if (val[0] === model.vendor && val[1] === model.modelNumber) {
                         item.model = model;
