@@ -36,13 +36,13 @@ namespace Web.Api.Core.UnitTests
             // Act
             var query = new ModelExportQuery
             {
-                Search = "vendor1"
+                Search = ""
             };
             var result = await sut.GetModelExportAsync(query);
             System.Diagnostics.Debug.WriteLine(result.Count);
             // Assert
-            Assert.Equal(result[0].cpu, "storage1");
-            Assert.Equal(result.Count, 2);
+            Assert.Equal(result[0].cpu, "storage0");
+            Assert.Equal(result.Count, 4);
         }
 
         private static IEnumerable<Model> GenerateModels()
