@@ -24,7 +24,7 @@ namespace Web.Api.Core.UnitTests
                 .Options;
 
             await using var context = new ApplicationDbContext(options);
-            var allRacks = GenerateRacks("A1", "A2", "A3", "B1", "B2", "B3");
+            var allRacks = GenerateRacks("A1", "A2", "A3", "A4", "A5", "B1", "B2", "B3");
             await context.Racks.AddRangeAsync(allRacks);
             var numAdded = await context.SaveChangesAsync();
             
@@ -35,15 +35,23 @@ namespace Web.Api.Core.UnitTests
             // Act
             var query = new RackRangeQuery
             {
-                StartRow = "C",
+                StartRow = "A",
                 StartCol = 1,
-                EndRow = "D",
-                EndCol = 3
+                EndRow = "A",
+                EndCol = 5
             };
             var result = await sut.GetRacksAsync(query);
 
             // Assert
-            Assert.Empty(result);
+            Assert.Equal(result.Count, 5);
+
+            await sut.DeleteRacksAsync(query);
+            var resultDelete = await sut.GetRacksAsync(query);
+            System.Diagnostics.Debug.WriteLine(resultDelete.Count);
+
+            Assert.Equal(resultDelete.Count, 2);
+
+
         }
 
         private static IEnumerable<Rack> GenerateRacks(params string[] addresses)
