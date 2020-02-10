@@ -26,5 +26,8 @@ export default {
             .then(response => {
                 return response.data;
             }).catch(error => error);
+    },
+    export(query) {
+        return axios.get(`/export/model/${query}`).then(response => response.data).catch(error => error);
     }
 }

@@ -16,13 +16,19 @@ namespace Web.Api.Controllers
         private readonly IModelService _modelService;
         private readonly IInstanceService _instanceService;
 
-        [HttpGet("exportmodel")]
+        public ExportController(IModelService modelService, IInstanceService instanceService)
+        {
+            _modelService = modelService;
+            _instanceService = instanceService;
+        }
+
+        [HttpGet("{model}")]
         public async Task<ActionResult<List<ExportModelDto>>> Get([FromQuery] ModelExportQuery query)
         {
             var models = await _modelService.GetModelExportAsync(query);
             return Ok(models);
         }
-        [HttpGet("exportinstance")]
+        [HttpGet("{instance}")]
         public async Task<ActionResult<List<ExportModelDto>>> Get([FromQuery] InstanceExportQuery query)
         {
             var instances = await _instanceService.GetInstanceExportAsync(query);
