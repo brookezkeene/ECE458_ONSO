@@ -28,11 +28,11 @@ namespace Web.Api.Core.Services
             return pagedList.ToFlatDto();
         }
 
-        public async Task<List<FlatModelDto>> GetModelExportAsync(ExportQuery query)
+        public async Task<List<ExportModelDto>> GetModelExportAsync(ModelExportQuery query)
         {
             query = query.ToUpper();
             var models = await _repository.GetModelExportAsync(query.Search);
-            return models.ToFlatDto();
+            return models.ToExportDto();
         }
 
         public async Task<ModelDto> GetModelAsync(Guid modelId)

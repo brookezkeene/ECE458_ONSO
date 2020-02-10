@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -42,6 +43,21 @@ namespace Web.Api.Infrastructure.Repositories
             pagedList.CurrentPage = page;
 
             return pagedList;
+        }
+
+        public async Task<List<Instance>> GetInstanceExportAsync(string rowStart, int colStart, string rowEnd, int colEnd, string search)
+        {
+            var instances = await _dbContext.Instances
+                .Include(x => x.Model)
+                .Include(x => x.Owner)
+                .Include(x => x.Rack)
+                .Where(x => (x.Rack.Column >= colStart && x.Rack.Column <= colEnd && x.Rack.Row[0] >= rowStart[0] && x.Rack.Row[0] <= rowEnd[0]))
+                .Where(x => x.Hostname.ToUpper().Contains(search))
+                .AsNoTracking()
+                .ToListAsync();
+
+
+            return instances;
         }
 
         public async Task<Instance> GetInstanceAsync(Guid instanceId)

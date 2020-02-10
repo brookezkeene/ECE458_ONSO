@@ -5,17 +5,17 @@ using System.Text;
 
 namespace Web.Api.Core.Dtos
 {
-    public class ExportQuery
+    public class ModelExportQuery
     {
         [Required]
         public string Search { get; set; }
 
     }
-    public static class ExportQueryExtensions
+    public static class ModelExportQueryExtensions
     {
-        public static ExportQuery ToUpper(this ExportQuery query)
+        public static ModelExportQuery ToUpper(this ModelExportQuery query)
         {
-            var upperQuery = new ExportQuery { };
+            var upperQuery = new ModelExportQuery { };
             /*upperQuery.StartRow = query.StartRow.ToUpper();
             upperQuery.EndRow = query.EndRow.ToUpper();*/
             upperQuery.Search = query.Search.ToUpper();

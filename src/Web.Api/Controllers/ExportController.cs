@@ -14,12 +14,19 @@ namespace Web.Api.Controllers
     public class ExportController : ControllerBase
     {
         private readonly IModelService _modelService;
+        private readonly IInstanceService _instanceService;
 
-        [HttpGet("range")]
-        public async Task<ActionResult<List<FlatModelDto>>> Get([FromQuery] ExportQuery query)
+        [HttpGet("exportmodel")]
+        public async Task<ActionResult<List<ExportModelDto>>> Get([FromQuery] ModelExportQuery query)
         {
             var models = await _modelService.GetModelExportAsync(query);
             return Ok(models);
+        }
+        [HttpGet("exportinstance")]
+        public async Task<ActionResult<List<ExportModelDto>>> Get([FromQuery] InstanceExportQuery query)
+        {
+            var instances = await _instanceService.GetInstanceExportAsync(query);
+            return Ok(instances);
         }
 
     }

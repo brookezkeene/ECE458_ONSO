@@ -9,7 +9,7 @@ namespace Web.Api.Core.Services.Interfaces
     public interface IModelService
     {
         Task<PagedList<FlatModelDto>> GetModelsAsync(string search, int page = 1, int pageSize = 10);
-        Task<List<FlatModelDto>> GetModelExportAsync(ExportQuery query);
+        Task<List<ExportModelDto>> GetModelExportAsync(ModelExportQuery query);
         Task<ModelDto> GetModelAsync(Guid modelId);
         Task<int> UpdateModelAsync(FlatModelDto modelDto);
         Task<Guid> CreateModelAsync(FlatModelDto modelDto);
