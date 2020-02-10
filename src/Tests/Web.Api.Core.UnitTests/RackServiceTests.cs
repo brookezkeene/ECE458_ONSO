@@ -57,8 +57,10 @@ namespace Web.Api.Core.UnitTests
             var resultDelete = await sut.GetRacksAsync(query1);
             var resultGet = await sut.GetRacksAsync(query);
 
+            System.Diagnostics.Debug.WriteLine("printing out rack");
             System.Diagnostics.Debug.WriteLine(resultDelete.Count);
             System.Diagnostics.Debug.WriteLine(resultGet.Count);
+
 
             Assert.Equal(resultDelete.Count, 0);
             Assert.Equal(resultGet.Count, 2);

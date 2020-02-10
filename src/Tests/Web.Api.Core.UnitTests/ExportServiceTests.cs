@@ -51,13 +51,9 @@ namespace Web.Api.Core.UnitTests
 
             var result = await sut.GetInstanceExportAsync(query);
             System.Diagnostics.Debug.WriteLine(result.Count);
-            System.Diagnostics.Debug.WriteLine(result[0].rack);
-            System.Diagnostics.Debug.WriteLine(result[1].rack);
-            System.Diagnostics.Debug.WriteLine(result[0].vendor);
-            System.Diagnostics.Debug.WriteLine(result[1].vendor);
 
             // Assert
-            Assert.Equal(result.Count, 2);
+            Assert.Equal(result.Count, 1);
         }
         [Fact]
         public async void GetExportModels_FromDatabaseWithTwoModels()
@@ -100,7 +96,7 @@ namespace Web.Api.Core.UnitTests
                     {
                         Id = Guid.NewGuid(),
                         Vendor = "vendor",
-                        ModelNumber = "num",
+                        ModelNumber = "num" + i.ToString(),
                         Height = 2,
                         DisplayColor = "#ffffff",
                         EthernetPorts = 2,
@@ -115,7 +111,7 @@ namespace Web.Api.Core.UnitTests
                     {
                         Id = Guid.NewGuid(),
                         Row = "A",
-                        Column = i
+                        Column = i+1
                     },
                 RackPosition = 12
                 };
@@ -137,7 +133,7 @@ namespace Web.Api.Core.UnitTests
                     Storage = "stor",
 
                 },
-                Hostname = "name2",
+                Hostname = "2name",
                 Rack = new Rack
                 {
                     Id = Guid.NewGuid(),
@@ -147,31 +143,7 @@ namespace Web.Api.Core.UnitTests
                 RackPosition = 12
             };
         }
-        private static IEnumerable<Rack> GenerateRacks()
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                // confirm proper address format
-                yield return new Rack
-                {
-                    Id = Guid.NewGuid(),
-                    Row = "B",
-                    Column = i
-                };
-                yield return new Rack
-                {
-                    Id = Guid.NewGuid(),
-                    Row = "A",
-                    Column = i
-                };
-                yield return new Rack
-                {
-                    Id = Guid.NewGuid(),
-                    Row = "C",
-                    Column = i
-                };
-            }
-        }
+ 
         private static IEnumerable<Model> GenerateModels()
         {
             for (int i = 0; i < 3; i++)
