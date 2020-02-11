@@ -16,75 +16,36 @@ namespace Web.Api.Helpers
 {
     public static class DbMigrationHelper
     {
-        public static void EnsureSeedData(IHost host)
+        public static async Task EnsureSeedData(IHost host)
         {
             using var serviceScope = host.Services.CreateScope();
             var services = serviceScope.ServiceProvider;
-            EnsureSeedData(services);
+            await EnsureSeedData(services);
         }
 
-        public static void EnsureSeedData(IServiceProvider serviceProvider)
+        public static async Task EnsureSeedData(IServiceProvider serviceProvider)
         {
             using var scope = serviceProvider.GetRequiredService<IServiceScopeFactory>()
                 .CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var seedDataConfiguration = scope.ServiceProvider.GetRequiredService<SeedDataConfiguration>();
+            var identityRepository = scope.ServiceProvider.GetRequiredService<IIdentityRepository>();
 
-            EnsureSeedData(context, seedDataConfiguration);
+            await EnsureSeedData(context, seedDataConfiguration,identityRepository);
         }
 
-        public static void EnsureSeedData(ApplicationDbContext context, SeedDataConfiguration seedDataConfiguration)
+        public static async Task EnsureSeedData(ApplicationDbContext context, SeedDataConfiguration seedDataConfiguration, IIdentityRepository identityRepository)
         {
-            if (!context.Racks.Any())
+            if (await identityRepository.FindByNameAsync("admin") == null)
             {
-                foreach (var rack in seedDataConfiguration.Racks)
+                var user = new User
                 {
-                    context.Add(rack);
-                }
-
-                context.SaveChanges();
-            }
-
-            if (!context.Models.Any())
-            {
-                foreach (var model in seedDataConfiguration.Models)
-                {
-                    context.Add(model);
-                }
-
-                context.SaveChanges();
-            }
-
-            if (!context.Users.Any())
-            {
-                foreach (var user in seedDataConfiguration.Users)
-                {
-                    context.Add(user);
-                }
-
-                context.SaveChanges();
-            }
-
-            if (!context.Instances.Any())
-            {
-                foreach (var instance in seedDataConfiguration.Instances)
-                {
-                    // prevent attempts to track entities with the same Id multiple times (causes exceptions)
-                    var model = context.Set<Model>()
-                        .SingleOrDefault(o => o.Id == instance.Model.Id);
-                    if (model != null) instance.Model = model;
-
-                    var rack = context.Set<Rack>()
-                        .SingleOrDefault(o => o.Id == instance.Rack.Id);
-                    if (rack != null) instance.Rack = rack;
-
-                    var user = context.Set<User>()
-                        .SingleOrDefault(o => o.Id == instance.Owner.Id);
-                    if (user != null) instance.Owner = user;
-
-                    context.Add(instance);
-                }
-                context.SaveChanges();
+                    FirstName = "Admin",
+                    LastName = "User",
+                    Email = "admin@test.com",
+                    UserName = "admin"
+                };
+                await identityRepository.CreateUserAsync(user, "@$8^5#QqsX8K");
             }
         }
     }
