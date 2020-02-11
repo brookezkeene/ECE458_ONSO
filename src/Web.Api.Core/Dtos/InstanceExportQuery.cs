@@ -16,7 +16,7 @@ namespace Web.Api.Core.Dtos
     }
     public static class InstanceExportQueryExtensions
     {
-        public static InstanceExportQuery ToUpper(this InstanceExportQuery query)
+        public static InstanceExportQuery reformatQuery(this InstanceExportQuery query)
         {
             var upperQuery = new InstanceExportQuery { };
             if (!string.IsNullOrEmpty(query.StartRow))
