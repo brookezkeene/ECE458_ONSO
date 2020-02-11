@@ -21,6 +21,7 @@ using Web.Api.Infrastructure.Extensions;
 using Web.Api.Infrastructure.Repositories;
 using Web.Api.Infrastructure.Repositories.Interfaces;
 using Web.Api.Resources;
+using System.Threading.Tasks;
 
 namespace Web.Api.Extensions
 {
@@ -145,7 +146,7 @@ namespace Web.Api.Extensions
             return services;
         }
 
-        public static IHost MigrateDatabase<T>(this IHost host) where T : DbContext
+        public static async Task<IHost> MigrateDatabase<T>(this IHost host) where T : DbContext
         {
             using (var scope = host.Services.CreateScope())
             {
@@ -154,7 +155,7 @@ namespace Web.Api.Extensions
                 {
                     var db = services.GetRequiredService<T>();
                     db.Database.Migrate();
-                    //DbMigrationHelper.EnsureSeedData(host);
+                    await DbMigrationHelper.EnsureSeedData(host);
                 }
                 catch (Exception ex)
                 {
