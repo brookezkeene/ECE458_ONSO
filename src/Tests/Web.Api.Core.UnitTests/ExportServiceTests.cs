@@ -41,12 +41,13 @@ namespace Web.Api.Core.UnitTests
 
             // Act
             var query = new InstanceExportQuery
-            {
+            {    
                 StartRow = "a",
                 StartCol = 3,
-                EndRow = "",
-                EndCol = 0,
-                Search = ""
+                /*EndRow = "b",
+                EndCol = 5,*/
+                Search = "",
+
             };
 
             var result = await sut.GetInstanceExportAsync(query);

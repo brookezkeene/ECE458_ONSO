@@ -31,12 +31,11 @@ namespace Web.Api.Core.Services
         }
         public async Task<List<ExportInstanceDto>> GetInstanceExportAsync(InstanceExportQuery query)
         {
-            query.StartRow = query.StartRow.ToUpper();
-            query.EndRow = query.EndRow.ToUpper();
-            query.Search = query.Search.ToUpper();
+            query = query.ToUpper();
             System.Diagnostics.Debug.WriteLine(query.StartRow);
-            var instances = await _repository.GetInstanceExportAsync(query.StartRow, query.StartCol, query.EndRow, query.EndCol, query.Search);
+            var instances = await _repository.GetInstanceExportAsync(query.Search, query.StartRow, query.StartCol, query.EndRow, query.EndCol) ;
             return instances.ToExportDto();
+
         }
     }
 }
