@@ -81,15 +81,7 @@
             }
         },
         computed: {
-            activeTabs: function () {
-                return this.menuItems.filter(function (m) {
-                    if (!((m.title === "Users") || (m.title === "Import/Export")) && !auth.isAdmin()) {
-                        return m;
-                    } else if (auth.isAdmin()) {
-                        return m;
-                    }
-                })
-            },
+            activeTabs: this.menuItems.filter(m => auth.isAdmin() || !['Users', 'Import/Export'].includes(m.title))
         },
         methods: {
             logout() {
