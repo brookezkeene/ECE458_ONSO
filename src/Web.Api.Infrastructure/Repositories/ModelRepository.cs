@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -19,11 +20,13 @@ namespace Web.Api.Infrastructure.Repositories
         {
             _dbContext = dbContext;
         }
+        
 
         public async Task<PagedList<Model>> GetModelsAsync(string search, int page = 1, int pageSize = 10)
         {
             var pagedList = new PagedList<Model>();
-            Expression<Func<Model, bool>> searchCondition = x => x.ModelNumber.Contains(search);
+            //if 
+            Expression<Func<Model, bool>> searchCondition = x => (x.ModelNumber.Contains(search) || x.Vendor.Contains(search));
 
             var models = await _dbContext.Models
                 .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
@@ -40,7 +43,18 @@ namespace Web.Api.Infrastructure.Repositories
 
             return pagedList;
         }
+        public async Task<List<Model>> GetModelExportAsync(string search)
+        {
+            Expression<Func<Model, bool>> searchCondition = x => (x.ModelNumber.ToUpper().Contains(search) || x.Vendor.ToUpper().Contains(search));
 
+            var models = await _dbContext.Models
+                .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
+                .AsNoTracking()
+                .ToListAsync();
+            //models = models.Where(x => x.ModelNumber.Contains(search) || x.Vendor.Contains(search)).ToList();
+            return models;
+
+        }
         public async Task<Model> GetModelAsync(Guid modelId)
         {
             return await _dbContext.Models

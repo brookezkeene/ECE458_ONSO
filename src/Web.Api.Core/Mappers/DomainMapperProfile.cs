@@ -34,6 +34,28 @@ namespace Web.Api.Core.Mappers
             CreateMap<Rack, FlatRackDto>()
                 .ForMember(o => o.RowLetter, opts => opts.MapFrom(src => src.Row))
                 .ForMember(o => o.RackNumber, opts => opts.MapFrom(src => src.Column));
+
+            // need to get from full -> export ready DTOs for models and instances 
+            CreateMap<Model, ExportModelDto>()
+                .ForMember(o => o.vendor, opts => opts.MapFrom(src => src.Vendor))
+                .ForMember(o => o.model_number, opts => opts.MapFrom(src => src.ModelNumber))
+                .ForMember(o => o.height, opts => opts.MapFrom(src => src.Height))
+                .ForMember(o => o.display_color, opts => opts.MapFrom(src => src.DisplayColor))
+                .ForMember(o => o.ethernet_ports, opts => opts.MapFrom(src => src.EthernetPorts))
+                .ForMember(o => o.power_ports, opts => opts.MapFrom(src => src.PowerPorts))
+                .ForMember(o => o.cpu, opts => opts.MapFrom(src => src.Cpu))
+                .ForMember(o => o.memory, opts => opts.MapFrom(src => src.Memory))
+                .ForMember(o => o.storage, opts => opts.MapFrom(src => src.Storage))
+                .ForMember(o => o.comment, opts => opts.MapFrom(src => src.Comment));
+            CreateMap<Instance, ExportInstanceDto>()
+                .ForMember(o => o.hostname, opts => opts.MapFrom(src => src.Hostname))
+                .ForMember(o => o.rack, opts => opts.MapFrom(src => $"{src.Rack.Row}{src.Rack.Column}"))
+                .ForMember(o => o.rack_position, opts => opts.MapFrom(src => src.RackPosition))
+                .ForMember(o => o.vendor, opts => opts.MapFrom(src => src.Model.Vendor))
+                .ForMember(o => o.model_number, opts => opts.MapFrom(src => src.Model.ModelNumber))
+                .ForMember(o => o.owner, opts => opts.MapFrom(src => src.Owner.UserName))
+                .ForMember(o => o.comment, opts => opts.MapFrom(src => src.Comment));
+
         }
     }
 }

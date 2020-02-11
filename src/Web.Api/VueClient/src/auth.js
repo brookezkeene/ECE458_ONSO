@@ -5,7 +5,7 @@ const resource = '/login';
 
 export default {
     login(username, pass) {
-        if (localStorage.token) {
+        /*if (localStorage.token) {
             return Promise.resolve(true);
         }
         return axios.post(`${resource}`, { username: username, password: pass })
@@ -16,7 +16,7 @@ export default {
                 return true;
             }).catch((error) => {
                 console.error(error.message)
-            });
+            });*/
     },
 
     getToken() {
@@ -29,14 +29,15 @@ export default {
     },
 
     loggedIn() {
-        //return true;
-        return !!localStorage.token;
+        return true;
+        //return !!localStorage.token;
     },
 
     isAdmin() {
-        const token = localStorage.token;
+/*        const token = localStorage.token;
         const payload = jwt_decode(token);
-        return payload.rol === 'api_admin';
+        return payload.rol === 'api_admin';*/
+        return true;
     },
 
 }

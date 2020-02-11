@@ -27,6 +27,7 @@ deploy_production:
   when: manual
   only:
     - master
+
 deploy_staging:
   stage: deploy
   script:
@@ -53,6 +54,4 @@ deploy_dev:
     name: dev
     url: http://vcm-13071.vm.duke.edu/
   only:
-    - hotfix/instance-mock
-
-
+    - /^ev\d\/sprint\d$/
