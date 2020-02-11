@@ -20,7 +20,7 @@
             </v-list-item>
 
             <v-list>
-                <v-list-item v-for="item in menuItems"
+                <v-list-item v-for="item in activeTabs"
                              :key="item.title"
                              :to="item.path"
                              color="primary">
@@ -80,11 +80,22 @@
                 ]
             }
         },
+        computed: {
+            activeTabs: function () {
+                return this.menuItems.filter(function (m) {
+                    if (!((m.title === "Users") || (m.title === "Import/Export")) && !auth.isAdmin()) {
+                        return m;
+                    } else if (auth.isAdmin()) {
+                        return m;
+                    }
+                })
+            },
+        },
         methods: {
             logout() {
                 auth.logout();
                 this.$router.push({ name: 'login' });
-            }
+            },
         }
     }
 </script>
