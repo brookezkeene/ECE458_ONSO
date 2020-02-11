@@ -14,6 +14,7 @@ namespace Web.Api.Core.Services.Interfaces
         Task<List<ExportInstanceDto>> GetInstanceExportAsync(InstanceExportQuery query);
         Task<Guid> CreateInstanceAsync(InstanceDto instanceDto);
         Task DeleteInstanceAsync(Guid instanceId);
+        Task<int> UpdateInstanceAsync(InstanceDto instanceDto);
 
     }
 }

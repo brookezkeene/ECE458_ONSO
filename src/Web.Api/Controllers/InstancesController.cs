@@ -51,12 +51,18 @@ namespace Web.Api.Controllers
 
             return CreatedAtAction(nameof(Get), new { id }, instanceDto);
         }
-        /*[HttpDelete("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             await _instanceService.DeleteInstanceAsync(id);
             return Ok();
-        }*/
+        }
+        [HttpPut]
+        public async Task<IActionResult> Put(InstanceDto instanceDto)
+        {
+            await _instanceService.UpdateInstanceAsync(instanceDto);
+            return NoContent();
+        }
 
     }
 }
