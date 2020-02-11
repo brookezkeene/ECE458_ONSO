@@ -38,5 +38,19 @@ namespace Web.Api.Controllers
             var instance = await _instanceService.GetInstanceAsync(id);
             return Ok(instance);
         }
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] InstanceDto instanceDto)
+        {
+            if (!instanceDto.Id.Equals(default))
+            {
+                return BadRequest(_errorResources.CannotSetId());
+            }
+
+            var id = await _instanceService.CreateInstanceAsync(instanceDto);
+            instanceDto.Id = id;
+
+            return CreatedAtAction(nameof(Get), new { id }, instanceDto);
+        }
+
     }
 }

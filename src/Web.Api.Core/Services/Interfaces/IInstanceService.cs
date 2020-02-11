@@ -12,6 +12,8 @@ namespace Web.Api.Core.Services.Interfaces
         Task<PagedList<InstanceDto>> GetInstancesAsync(string search, int page = 1, int pageSize = 10);
         Task<InstanceDto> GetInstanceAsync(Guid instanceId);
         Task<List<ExportInstanceDto>> GetInstanceExportAsync(InstanceExportQuery query);
+        Task<Guid> CreateInstanceAsync(InstanceDto instanceDto);
+
 
     }
 }

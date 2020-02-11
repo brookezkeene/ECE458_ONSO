@@ -37,5 +37,11 @@ namespace Web.Api.Core.Services
             return instances.ToExportDto();
 
         }
+        public async Task<Guid> CreateInstanceAsync(InstanceDto instanceDto)
+        {
+            var entity = instanceDto.ToEntity();
+            await _repository.AddInstanceAsync(entity);
+            return entity.Id;
+        }
     }
 }
