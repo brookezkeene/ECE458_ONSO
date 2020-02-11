@@ -7,7 +7,6 @@ namespace Web.Api.Core.Dtos
 {
     public class InstanceExportQuery
     {
-        [Required]
         public string Search { get; set; }
         public string Hostname { get; set; }
         public string StartRow { get; set; }
