@@ -55,3 +55,4 @@ deploy_dev:
     url: http://vcm-13071.vm.duke.edu/
   only:
     - /^ev\d\/sprint\d$/
+  when: manual
