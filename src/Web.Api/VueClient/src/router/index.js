@@ -10,6 +10,7 @@ import Racks from '@/components/Racks'
 import ImportExport from '@/components/Bulk'
 import Users from '@/components/Users'
 import InstanceEdit from '@/components/InstanceEdit'
+import Reports from '@/components/Reports'
 import Dashboard from '@/components/Dashboard'
 
 import auth from '@/auth'
@@ -82,6 +83,11 @@ const routes = [
                 name: 'users',
                 component: Users,
                 meta: { admin: true }
+            },
+            {
+                path: '/reports',
+                name: 'reports',
+                component: Reports,
             }
 
             ]

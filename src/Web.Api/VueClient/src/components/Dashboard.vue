@@ -20,7 +20,7 @@
             </v-list-item>
 
             <v-list>
-                <v-list-item v-for="item in menuItems"
+                <v-list-item v-for="item in activeTabs"
                              :key="item.title"
                              :to="item.path"
                              color="primary">
@@ -75,15 +75,19 @@
                     { title: 'Instances', path: '/instances', icon: 'mdi-server' },
                     { title: 'Racks', path: '/racks', icon: 'mdi-view-day' },
                     { title: 'Users', path: '/users', icon: 'mdi-account' },
+                    { title: 'Reports', path: '/reports', icon: 'mdi-chart-pie' },
                     { title: 'Import/Export', path: '/importexport', icon: 'mdi-file-upload' }
                 ]
             }
+        },
+        computed: {
+            activeTabs: this.menuItems.filter(m => auth.isAdmin() || !['Users', 'Import/Export'].includes(m.title))
         },
         methods: {
             logout() {
                 auth.logout();
                 this.$router.push({ name: 'login' });
-            }
+            },
         }
     }
 </script>
