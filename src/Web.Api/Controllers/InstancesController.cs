@@ -51,6 +51,12 @@ namespace Web.Api.Controllers
 
             return CreatedAtAction(nameof(Get), new { id }, instanceDto);
         }
+        /*[HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            await _instanceService.DeleteInstanceAsync(id);
+            return Ok();
+        }*/
 
     }
 }

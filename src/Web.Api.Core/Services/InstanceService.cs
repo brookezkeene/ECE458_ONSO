@@ -43,5 +43,10 @@ namespace Web.Api.Core.Services
             await _repository.AddInstanceAsync(entity);
             return entity.Id;
         }
+        public async Task DeleteInstanceAsync(Guid instanceId)
+        {
+            var entity = await _repository.GetInstanceAsync(instanceId);
+            await _repository.DeleteInstanceAsync(entity);
+        }
     }
 }
