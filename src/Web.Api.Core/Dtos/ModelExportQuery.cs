@@ -7,7 +7,6 @@ namespace Web.Api.Core.Dtos
 {
     public class ModelExportQuery
     {
-        [Required]
         public string Search { get; set; }
 
     }
