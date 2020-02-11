@@ -93,7 +93,7 @@
 </template>
 
 <script>
-    //import Auth from "../auth"
+    import Auth from "../auth"
 
   export default {
     components: {
@@ -168,8 +168,7 @@
       }},
     computed: {
         admin() {
-            return true;
-            //return Auth.isAdmin()
+            return Auth.isAdmin()
         },
         filteredHeaders() {
             return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")

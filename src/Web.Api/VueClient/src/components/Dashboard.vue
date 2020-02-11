@@ -20,7 +20,7 @@
             </v-list-item>
 
             <v-list>
-                <v-list-item v-for="item in menuItems"
+                <v-list-item v-for="item in activeTabs"
                              :key="item.title"
                              :to="item.path"
                              color="primary">
@@ -80,11 +80,14 @@
                 ]
             }
         },
+        computed: {
+            activeTabs: this.menuItems.filter(m => auth.isAdmin() || !['Users', 'Import/Export'].includes(m.title))
+        },
         methods: {
             logout() {
                 auth.logout();
                 this.$router.push({ name: 'login' });
-            }
+            },
         }
     }
 </script>
