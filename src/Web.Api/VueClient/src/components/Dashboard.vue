@@ -37,7 +37,7 @@
 
             <template v-if="!mini" v-slot:append>
                 <div class="pa-2">
-                    <v-btn color="primary" block>Logout</v-btn>
+                    <v-btn color="primary" block @click="logout">Logout</v-btn>
                 </div>
             </template>
         </v-navigation-drawer>
@@ -59,7 +59,10 @@
 </style>
 
 <script>
+
+    import auth from "../auth"
     export default {
+
         name: 'Dashboard',
         data() {
             return {
@@ -74,6 +77,12 @@
                     { title: 'Users', path: '/users', icon: 'mdi-account' },
                     { title: 'Import/Export', path: '/importexport', icon: 'mdi-file-upload' }
                 ]
+            }
+        },
+        methods: {
+            logout() {
+                auth.logout();
+                this.$router.push({ name: 'login' });
             }
         }
     }
