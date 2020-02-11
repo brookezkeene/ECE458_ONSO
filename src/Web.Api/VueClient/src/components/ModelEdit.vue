@@ -109,14 +109,9 @@
         },
         methods: {
             save() {
-                /*eslint-disable no-console */
                 if (!this.isNew) {
-                    console.log(this.newItem.vendor);
-                    console.log(this.newItem.displayColor);
                     this.modelRepository.update(this.newItem);
                 } else {
-                    console.log(this.newItem.vendor);
-                    console.log(this.newItem.displayColor);
                     this.modelRepository.create(this.newItem);
                 }
                 this.close()
