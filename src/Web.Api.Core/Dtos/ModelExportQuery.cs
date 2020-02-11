@@ -15,8 +15,6 @@ namespace Web.Api.Core.Dtos
         public static ModelExportQuery ToUpper(this ModelExportQuery query)
         {
             var upperQuery = new ModelExportQuery { };
-            /*upperQuery.StartRow = query.StartRow.ToUpper();
-            upperQuery.EndRow = query.EndRow.ToUpper();*/
             upperQuery.Search = query.Search.ToUpper();
             return upperQuery;
         }
