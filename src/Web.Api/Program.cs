@@ -14,12 +14,11 @@ namespace Web.Api
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-                CreateHostBuilder(args)
-                .Build()
-                .MigrateDatabase<ApplicationDbContext>()
-                .Run();
+            var build = CreateHostBuilder(args).Build();
+            var migrate = await build.MigrateDatabase<ApplicationDbContext>();
+            await migrate.RunAsync();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
