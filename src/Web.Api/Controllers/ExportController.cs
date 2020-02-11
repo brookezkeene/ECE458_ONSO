@@ -22,13 +22,13 @@ namespace Web.Api.Controllers
             _instanceService = instanceService;
         }
 
-        [HttpGet("{model}")]
+        [HttpGet("model")]
         public async Task<ActionResult<List<ExportModelDto>>> Get([FromQuery] ModelExportQuery query)
         {
             var models = await _modelService.GetModelExportAsync(query);
             return Ok(models);
         }
-        [HttpGet("{instance}")]
+        [HttpGet("instance")]
         public async Task<ActionResult<List<ExportModelDto>>> Get([FromQuery] InstanceExportQuery query)
         {
             var instances = await _instanceService.GetInstanceExportAsync(query);
