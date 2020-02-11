@@ -45,7 +45,7 @@ namespace Web.Api.Infrastructure.Repositories
             return pagedList;
         }
 
-        public async Task<List<Instance>> GetInstanceExportAsync(string search, string rowStart = "A", int colStart = 1, string rowEnd = "Z", int colEnd = int.MaxValue)
+        public async Task<List<Instance>> GetInstanceExportAsync(string search, string rowStart, int colStart, string rowEnd, int colEnd)
         {
 
             Expression<Func<Instance, bool>> searchCondition = x => x.Hostname.ToUpper().Contains(search);

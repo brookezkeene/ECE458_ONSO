@@ -31,7 +31,7 @@ namespace Web.Api.Core.Services
         }
         public async Task<List<ExportInstanceDto>> GetInstanceExportAsync(InstanceExportQuery query)
         {
-            query = query.ToUpper();
+            query = query.reformatQuery();
             System.Diagnostics.Debug.WriteLine(query.StartRow);
             var instances = await _repository.GetInstanceExportAsync(query.Search, query.StartRow, query.StartCol, query.EndRow, query.EndCol) ;
             return instances.ToExportDto();
