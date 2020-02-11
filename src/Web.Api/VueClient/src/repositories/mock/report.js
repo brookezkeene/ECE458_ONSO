@@ -60,6 +60,84 @@ const mockRacks = [
                 },
                 "comment": "Reserved for 458 project"
             },
+            {
+                "id": 3,
+                "model": {
+                    "id": 1,
+                    "vendor": "Dell",
+                    "modelNumber": "R710",
+                    "height": 4,
+                    "displayColor": "#82E0AA",
+                    "ethernetPorts": 2,
+                    "powerPorts": 1,
+                    "cpu": "Intel Xeon E5520 2.2GHz",
+                    "memory": 32,
+                    "storage": "2x500GB SSD RAID1",
+                    "comment": "Retired offering, no new purchasing"
+                },
+                "hostname": "server1",
+                "rack": "B12",
+                "rackPosition": 4,
+                "owner": {
+                    "id": 1,
+                    "username": "jzhou",
+                    "displayName": "Joyce Zhou",
+                    "email": "Joyce.Zhou@duke.edu",
+                },
+                "comment": "Reserved for Duke project"
+            },
+            {
+                "id": 4,
+                "model": {
+                    "id": 1,
+                    "vendor": "Dell",
+                    "modelNumber": "R710",
+                    "height": 4,
+                    "displayColor": "#82E0AA",
+                    "ethernetPorts": 2,
+                    "powerPorts": 1,
+                    "cpu": "Intel Xeon E5520 2.2GHz",
+                    "memory": 32,
+                    "storage": "2x500GB SSD RAID1",
+                    "comment": "Retired offering, no new purchasing"
+                },
+                "hostname": "server1",
+                "rack": "B12",
+                "rackPosition": 4,
+                "owner": {
+                    "id": 1,
+                    "username": "lcollier",
+                    "displayName": "Lauren Collier",
+                    "email": "Lauren.Collier@duke.edu",
+                },
+                "comment": "Reserved for Duke project"
+            },
+            {
+                "id": 5,
+                "model": {
+                    "id": 1,
+                    "vendor": "Dell",
+                    "modelNumber": "R710",
+                    "height": 4,
+                    "displayColor": "#82E0AA",
+                    "ethernetPorts": 2,
+                    "powerPorts": 1,
+                    "cpu": "Intel Xeon E5520 2.2GHz",
+                    "memory": 32,
+                    "storage": "2x500GB SSD RAID1",
+                    "comment": "Retired offering, no new purchasing"
+                },
+                "hostname": "server1",
+                "rack": "B12",
+                "rackPosition": 4,
+                "owner": {
+                    "id": 1,
+                    "username": "adillon",
+                    "displayName": "Alex Dillon",
+                    "email": "Alex.Dillon@duke.edu",
+                },
+                "comment": "Reserved for Palaemon project"
+            },
         ]
     },
     {
