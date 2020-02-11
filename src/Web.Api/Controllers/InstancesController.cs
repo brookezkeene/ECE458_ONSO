@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Web.Api.Common;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
+using Web.Api.Resources;
 
 namespace Web.Api.Controllers
 {
@@ -16,10 +17,12 @@ namespace Web.Api.Controllers
     public class InstancesController : ControllerBase
     {
         private readonly IInstanceService _instanceService;
+        private readonly IApiErrorResources _errorResources;
 
-        public InstancesController(IInstanceService instanceService)
+        public InstancesController(IInstanceService instanceService, IApiErrorResources errorResources)
         {
             _instanceService = instanceService;
+            _errorResources = errorResources;
         }
 
         [HttpGet]
