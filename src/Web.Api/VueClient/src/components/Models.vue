@@ -7,6 +7,7 @@
                 <v-data-table :headers="filteredHeaders"
                               :items="models"
                               :search="search"
+                              multi-sort
                               @click:row="showDetails">
                     <template v-slot:top v-slot:item.action="{ item }">
 
@@ -132,7 +133,7 @@
                         </v-row>
                     </template>
                     <template v-slot:no-data>
-                        <v-btn color="primary" @click="initialize">Reset</v-btn>
+                        <v-btn color="primary" @click="initialize">Refresh</v-btn>
                     </template>
                     >
                 </v-data-table>
