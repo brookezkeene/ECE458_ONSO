@@ -4,24 +4,16 @@ import axios from 'axios';
 const resource = '/reports';
 export default {
     generate() {
-        var racks = axios.get(`${resource}/usage`)
-            .then(response => response.data)
-            .catch(error => {
-                console.log(error)
-            });
-
         // calculate statistics for report
         var numRacks = 0;
-        var rackHeight = 42;
         var usedSpace = 0; // freeSpace = 42 - usedSpace
         var vendors = {};
         var models = {};
         var owners = {};
 
-        racks.forEach(rack => {
+        mockRacks.forEach(rack => {
             numRacks++;
             rack.instances.forEach(asset => {
-                console.log(asset)
                 var model = asset.model;
                 // calculate free vs. used space
                 usedSpace += model.height;
@@ -47,12 +39,41 @@ export default {
         });
 
         // make new object and return
+        var rackHeight = 42;
+        var totalSpace = rackHeight * numRacks;
         var res = {};
-        res["usedSpace"] = usedSpace;
-        res["freeSpace"] = rackHeight * numRacks - usedSpace;
+        res["usedSpace"] = Math.round(usedSpace / totalSpace * 100);
+        res["freeSpace"] = Math.round((totalSpace - usedSpace) / totalSpace * 100);
+
+        // calculate percentages for all fields
+        var vendorsPercent = {};
+        Object.keys(vendors).map(function (key, index) {
+            vendorsPercent[key] = Math.round(vendors[key] / totalSpace * 100);
+        });
+        vendorsPercent = sortProperties(vendorsPercent);
+
+        var modelsPercent = {};
+        Object.keys(models).map(function (key, index) {
+            modelsPercent[key] = Math.round(models[key] / totalSpace * 100);
+        });
+        modelsPercent = sortProperties(modelsPercent);
+
+        var ownersPercent = {};
+        Object.keys(owners).map(function (key, index) {
+            ownersPercent[key] = Math.round(owners[key] / totalSpace * 100);
+        });
+        ownersPercent = sortProperties(ownersPercent);
+
+        vendors = sortProperties(vendors);
+        models = sortProperties(models);
+        owners = sortProperties(owners);
+
         res["vendors"] = vendors;
+        res["vendorsPercent"] = vendorsPercent;
         res["models"] = models;
+        res["modelsPercent"] = modelsPercent;
         res["owners"] = owners;
+        res["ownersPercent"] = ownersPercent;
 
         return res;
     }

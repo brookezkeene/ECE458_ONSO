@@ -18,13 +18,13 @@
 
                     <v-card flat v-if="index===1">
                         <div align="center">
-                            <v-progress-circular v-for="(vendor, index) in vendorsP" :key="vendor"
+                            <v-progress-circular v-for="vendor in vendorsP" :key="vendor"
                                                  :rotate="rotate"
                                                  :size="sizeMed"
-                                                 :value="vendor"
+                                                 :value="vendor[1]"
                                                  :width="widthMed"
                                                  :color="primary">
-                                {{index}}
+                                {{vendor[0]}}
                             </v-progress-circular>
                         </div>
 
@@ -39,10 +39,10 @@
                                 </thead>
 
                                 <tbody>
-                                    <tr v-for="(vendor, index) in vendors" :key="vendor">
-                                        <td>{{index}}</td>
-                                        <td>{{vendors[index]}}</td>
-                                        <td>{{vendorsP[index]}}</td>
+                                    <tr v-for="(vendor, index) in vendors" :key="vendor[0]">
+                                        <td>{{vendor[0]}}</td>
+                                        <td>{{vendor[1]}}</td>
+                                        <td>{{vendorsP[index][1]}}</td>
                                     </tr>
                                 </tbody>
                             </template>
@@ -51,13 +51,13 @@
 
                     <v-card flat v-if="index===2">
                         <div align="center">
-                            <v-progress-circular v-for="(model, index) in modelsP" :key="model"
+                            <v-progress-circular v-for="model in modelsP" :key="model"
                                                  :rotate="rotate"
                                                  :size="sizeMed"
-                                                 :value="model"
+                                                 :value="model[1]"
                                                  :width="widthMed"
                                                  :color="primary">
-                                {{index}}
+                                {{model[0]}}
                             </v-progress-circular>
                         </div>
                         <v-simple-table y-slot:default>
@@ -71,10 +71,10 @@
                                 </thead>
 
                                 <tbody>
-                                    <tr v-for="(model, index) in models" :key="model">
-                                        <td>{{index}}</td>
-                                        <td>{{models[index]}}</td>
-                                        <td>{{modelsP[index]}}</td>
+                                    <tr v-for="(model, index) in models" :key="model[0]">
+                                        <td>{{model[0]}}</td>
+                                        <td>{{model[1]}}</td>
+                                        <td>{{modelsP[index][1]}}</td>
                                     </tr>
                                 </tbody>
                             </template>
@@ -83,13 +83,13 @@
 
                     <v-card flat v-if="index===3">
                         <div align="center">
-                            <v-progress-circular v-for="(owner, index) in ownersP" :key="owner"
+                            <v-progress-circular v-for="owner in ownersP" :key="owner"
                                                  :rotate="rotate"
                                                  :size="sizeMed"
-                                                 :value="owner"
+                                                 :value="owner[1]"
                                                  :width="widthMed"
                                                  :color="primary">
-                                {{index}}
+                                {{owner[0]}}
                             </v-progress-circular>
                         </div>
                         <v-simple-table y-slot:default>
@@ -103,10 +103,10 @@
                                 </thead>
 
                                 <tbody>
-                                    <tr v-for="(owner, index) in owners" :key="owner">
-                                        <td>{{index}}</td>
-                                        <td>{{owners[index]}}</td>
-                                        <td>{{ownersP[index]}}</td>
+                                    <tr v-for="(owner, index) in owners" :key="owner[0]">
+                                        <td>{{owner[0]}}</td>
+                                        <td>{{owner[1]}}</td>
+                                        <td>{{ownersP[index][1]}}</td>
                                     </tr>
                                 </tbody>
                             </template>

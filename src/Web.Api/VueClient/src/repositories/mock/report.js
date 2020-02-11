@@ -203,6 +203,18 @@ const mockRacks = [
     }
 ];
 
+function sortProperties(obj) {
+    var sortable = [];
+    for (var key in obj)
+        if (obj.hasOwnProperty(key))
+            sortable.push([key, obj[key]]);
+
+    sortable.sort(function (a, b) {
+        return b[1] - a[1];
+    });
+    return sortable; // array in format [ [ key1, val1 ], [ key2, val2 ], ... ]
+}
+
 export default {
     generate() {
         // calculate statistics for report
@@ -251,16 +263,23 @@ export default {
         Object.keys(vendors).map(function (key, index) {
             vendorsPercent[key] = Math.round(vendors[key] / totalSpace * 100);
         });
+        vendorsPercent = sortProperties(vendorsPercent);
 
         var modelsPercent = {};
         Object.keys(models).map(function (key, index) {
             modelsPercent[key] = Math.round(models[key] / totalSpace * 100);
         });
+        modelsPercent = sortProperties(modelsPercent);
 
         var ownersPercent = {};
         Object.keys(owners).map(function (key, index) {
             ownersPercent[key] = Math.round(owners[key] / totalSpace * 100);
         });
+        ownersPercent = sortProperties(ownersPercent);
+
+        vendors = sortProperties(vendors);
+        models = sortProperties(models);
+        owners = sortProperties(owners);
 
         res["vendors"] = vendors;
         res["vendorsPercent"] = vendorsPercent;
