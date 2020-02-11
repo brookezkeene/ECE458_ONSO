@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-card flat>
         <v-card-title>
             Racks
         </v-card-title>
@@ -19,7 +19,7 @@ import RackForm from "./RackForm"
 import RackTable from "./RackTable"
 
 export default {
-    components: {
+        components: {
         RackForm,
         RackTable
     }

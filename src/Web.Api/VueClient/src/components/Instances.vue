@@ -83,7 +83,7 @@
             </template>
 
             <template v-slot:no-data>
-                <v-btn color="primary" @click="initialize">Reset</v-btn>
+                <v-btn color="primary" @click="initialize">Refresh</v-btn>
             </template>
             >
         </v-data-table>
@@ -93,7 +93,7 @@
 </template>
 
 <script>
-    //import Auth from "../auth"
+    import Auth from "../auth"
 
   export default {
     components: {
@@ -168,8 +168,7 @@
       }},
     computed: {
         admin() {
-            return true;
-            //return Auth.isAdmin()
+            return Auth.isAdmin()
         },
         filteredHeaders() {
             return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
@@ -201,11 +200,11 @@
         },
 
         editItem(item) {
-            this.$router.push({ name: 'instance-edit', params: { editedItem: item, isNew: false } })
+            this.$router.push({ name: 'instance-edit', params: { id: item.id, isNew: false } })
         },
 
         addItem(item) {
-            this.$router.push({ name: 'instance-edit', params: { editedItem: item, isNew: true } })
+            this.$router.push({ name: 'instance-edit', params: { id: item.id, isNew: true } })
         },
 
         showInstructions() {
