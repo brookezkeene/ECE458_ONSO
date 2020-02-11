@@ -43,11 +43,11 @@ namespace Web.Api.Core.UnitTests
             var query = new InstanceExportQuery
             {    
                 StartRow = "a",
-                StartCol = 3,
+                StartCol = 1,
                 /*EndRow = "b",
                 EndCol = 5,*/
-                Search = "",
-
+                Hostname = "name2",
+                Search = "num2"
             };
 
             var result = await sut.GetInstanceExportAsync(query);
@@ -55,7 +55,7 @@ namespace Web.Api.Core.UnitTests
             System.Diagnostics.Debug.WriteLine(result.Count);
 
             // Assert
-            Assert.Equal(result.Count, 3);
+            Assert.Equal(result.Count, 1);
         }
         [Fact]
         public async void GetExportModels_FromDatabaseWithTwoModels()
@@ -124,8 +124,8 @@ namespace Web.Api.Core.UnitTests
                 Model = new Model
                 {
                     Id = Guid.NewGuid(),
-                    Vendor = "ve3ndor2",
-                    ModelNumber = "num",
+                    Vendor = "ve2ndor2",
+                    ModelNumber = "num2",
                     Height = 2,
                     DisplayColor = "#ffffff",
                     EthernetPorts = 2,
@@ -135,7 +135,7 @@ namespace Web.Api.Core.UnitTests
                     Storage = "stor",
 
                 },
-                Hostname = "2name",
+                Hostname = "name",
                 Rack = new Rack
                 {
                     Id = Guid.NewGuid(),
@@ -144,6 +144,7 @@ namespace Web.Api.Core.UnitTests
                 },
                 RackPosition = 12
             };
+           
         }
  
         private static IEnumerable<Model> GenerateModels()

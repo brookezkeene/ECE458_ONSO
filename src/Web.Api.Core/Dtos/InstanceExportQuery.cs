@@ -9,6 +9,7 @@ namespace Web.Api.Core.Dtos
     {
         [Required]
         public string Search { get; set; }
+        public string Hostname { get; set; }
         public string StartRow { get; set; }
         public int StartCol { get; set; }
         public string EndRow { get; set; }
@@ -16,7 +17,7 @@ namespace Web.Api.Core.Dtos
     }
     public static class InstanceExportQueryExtensions
     {
-        public static InstanceExportQuery reformatQuery(this InstanceExportQuery query)
+        public static InstanceExportQuery ReformatQuery(this InstanceExportQuery query)
         {
             var upperQuery = new InstanceExportQuery { };
             if (!string.IsNullOrEmpty(query.StartRow))
@@ -44,7 +45,11 @@ namespace Web.Api.Core.Dtos
             {
                 upperQuery.Search = query.Search.ToUpper();
             }
-            
+            if (!string.IsNullOrEmpty(query.Hostname))
+            {
+                upperQuery.Hostname = query.Hostname.ToUpper();
+            }
+
             return upperQuery;
         }
     }
