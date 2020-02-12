@@ -109,6 +109,7 @@
         methods: {
             save() {
                 if (typeof this.id !== 'undefined') {
+                    this.newItem.displayColor = this.color.substring(0, 7);
                     this.modelRepository.update(this.newItem);
                 } else {
                     this.newItem.displayColor = this.color.substring(0, 7);
