@@ -47,9 +47,6 @@ namespace Web.Api.Core.Services
         public async Task DeleteInstanceAsync(Guid instanceId)
         {
             var entity = await _repository.GetInstanceAsync(instanceId);
-            System.Diagnostics.Debug.WriteLine("deleting the instance");
-            System.Diagnostics.Debug.WriteLine(entity.Id);
-
             await _repository.DeleteInstanceAsync(entity);
         }
         public async Task<int> UpdateInstanceAsync(InstanceDto instanceDto)

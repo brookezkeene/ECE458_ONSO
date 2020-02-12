@@ -56,7 +56,7 @@ const routes = [
                 props: true,
             },
             {
-                path: '/instances/edit/:id/:isNew',
+                path: '/instances/edit/:id',
                 name: 'instance-edit',
                 component: InstanceEdit,
                 props: true,

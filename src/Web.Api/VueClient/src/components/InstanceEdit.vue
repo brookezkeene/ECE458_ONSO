@@ -25,7 +25,7 @@
                             <v-text-field v-model="editedItem.rack" label="Rack Number"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model="editedItem.rackPosition" label="Rack Position" type="number"></v-text-field>
+                            <v-text-field v-number="editedItem.rackPosition" label="Rack Position" type="number"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-autocomplete v-model="editedItem.owner.id"
@@ -85,7 +85,7 @@
                     lastName:'',
                     email:'',
                   },
-                  rackPosition:'',
+                  rackPosition:0,
                   comment: ''
                 }
             }

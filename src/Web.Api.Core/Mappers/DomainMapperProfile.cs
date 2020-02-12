@@ -17,6 +17,7 @@ namespace Web.Api.Core.Mappers
                 .ReverseMap();
             CreateMap<Instance, InstanceDto>()
                 .ForMember(x => x.Rack, opts => opts.MapFrom(src => $"{src.Rack.Row}{src.Rack.Column}"));
+
             CreateMap<InstanceDto, Instance >()
                 .ForPath(x => x.Rack.Row, opts => opts.MapFrom(src => src.Rack[0]))
                 .ForPath(x => x.Rack.Column, opts => opts.MapFrom(src => int.Parse(src.Rack.Substring(1))));
