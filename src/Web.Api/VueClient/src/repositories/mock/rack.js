@@ -60,6 +60,33 @@ const mockRacks = [
                 },
                 "comment": "Reserved for 458 project"
             },
+            {
+                "id": 3,
+                "model": {
+                    "id": 3,
+                    "vendor": "Cisco",
+                    "modelNumber": "R500",
+                    "height": 4,
+                    "displayColor": "#0059B3",
+                    "ethernetPorts": 2,
+                    "powerPorts": 1,
+                    "cpu": "Intel Xeon E5520 2.2GHz",
+                    "memory": 32,
+                    "storage": "2x500GB SSD RAID1",
+                    "comment": "This is my personal favorite!",
+                    "instances": ["instance3", "instance4", "instance5"]
+                },
+                "hostname": "server2",
+                "rack": "B12",
+                "rackPosition": 30,
+                "owner": {
+                    "id": 1,
+                    "username": "tbletsch",
+                    "displayName": "Gaby Rodriguez-Florido",
+                    "email": "gr64@duke.edu",
+                },
+                "comment": "Reserved for 458 project"
+            },
         ]
     },
 	{
