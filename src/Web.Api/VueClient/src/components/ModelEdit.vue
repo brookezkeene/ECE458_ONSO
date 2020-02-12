@@ -2,7 +2,7 @@
     <div v-if="!loading">
         <v-card flat>
             <v-card-title>
-            <span class="headline">Edit</span>
+                <span class="headline">{{formTitle}}</span>
             </v-card-title>
 
             <v-card-text>
@@ -47,7 +47,7 @@
                             <v-label>
                                 Display Color
                             </v-label>
-                            <v-color-picker v-model="newItem.displayColor">
+                            <v-color-picker v-model="color">
                             </v-color-picker>
                         </v-col>
                     </v-row>
@@ -74,6 +74,7 @@
         data() {
             return {
                 models: [],
+                color: '',
                 loading: false,
                 newItem: {
                     vendor: '',
@@ -87,8 +88,6 @@
                     storage: '',
                     comment: ''
                 },
-                isNew: 'false',
-
             };
         },
         editedIndex: -1,
@@ -104,19 +103,16 @@
 
         computed: {
             formTitle() {
-                return this.isNew ? 'New Item' : 'Edit Item'
+                return typeof this.id === 'undefined' ? 'New Item' : 'Edit Item'
             },
         },
         methods: {
             save() {
-                /*eslint-disable no-console */
-                if (!this.isNew) {
-                    console.log(this.newItem.vendor);
-                    console.log(this.newItem.displayColor);
+                if (typeof this.id !== 'undefined') {
+                    this.newItem.displayColor = this.color.substring(0, 7);
                     this.modelRepository.update(this.newItem);
                 } else {
-                    console.log(this.newItem.vendor);
-                    console.log(this.newItem.displayColor);
+                    this.newItem.displayColor = this.color.substring(0, 7);
                     this.modelRepository.create(this.newItem);
                 }
                 this.close()
