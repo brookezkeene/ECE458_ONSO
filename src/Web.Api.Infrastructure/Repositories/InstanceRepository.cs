@@ -91,8 +91,10 @@ namespace Web.Api.Infrastructure.Repositories
 
         public async Task<int> DeleteInstanceAsync(Instance instance)
         {
+
             _dbContext.Instances.Remove(instance);
             return await _dbContext.SaveChangesAsync();
+
         }
     }
 }
