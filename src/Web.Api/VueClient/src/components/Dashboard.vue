@@ -81,8 +81,8 @@
             }
         },
         computed: {
-            activeTabs: function() {
-                return this.menuItems.filter(m => auth.isAdmin() || !['Users', 'Import/Export'].includes(m.title))
+            activeTabs : function() {
+                return this.menuItems.filter(m => auth.isAdmin() || !['Users', 'Import/Export'].includes(m.title));
             }
         },
         methods: {

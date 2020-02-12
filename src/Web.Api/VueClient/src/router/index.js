@@ -4,6 +4,7 @@ import Login from '@/components/Login'
 import ModelDetails from '@/components/ModelDetails'
 import InstanceDetails from '@/components/InstanceDetails'
 import RackDiagram from '@/components/RackDiagram'
+import ModelEdit from '@/components/ModelEdit'
 import Models from '@/components/Models'
 import Instances from '@/components/Instances'
 import Racks from '@/components/Racks'
@@ -37,6 +38,18 @@ const routes = [
                 path: '/models',
                 name: 'model',
                 component: Models,
+            },
+            {
+                path: '/models/edit/:id',
+                name: 'model-edit',
+                component: ModelEdit,
+                props: true,
+            },
+            {
+                path: '/models/new',
+                name: 'model-create',
+                component: ModelEdit,
+                props: true,
             },
             {
                 path: '/models/:id',
