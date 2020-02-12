@@ -44,12 +44,14 @@ const routes = [
                 name: 'model-edit',
                 component: ModelEdit,
                 props: true,
+                meta: { admin: true }
             },
             {
                 path: '/models/new',
                 name: 'model-create',
                 component: ModelEdit,
                 props: true,
+                meta: { admin: true }
             },
             {
                 path: '/models/:id',

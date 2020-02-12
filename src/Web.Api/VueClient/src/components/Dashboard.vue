@@ -20,7 +20,7 @@
             </v-list-item>
 
             <v-list>
-                <v-list-item v-for="item in activeTabs"
+                <v-list-item v-for="item in menuItems"
                              :key="item.title"
                              :to="item.path"
                              color="primary">
@@ -78,11 +78,6 @@
                     { title: 'Reports', path: '/reports', icon: 'mdi-chart-pie' },
                     { title: 'Import/Export', path: '/importexport', icon: 'mdi-file-upload' }
                 ]
-            }
-        },
-        computed: {
-            activeTabs : function() {
-                return this.menuItems.filter(m => auth.isAdmin() || !['Users', 'Import/Export'].includes(m.title));
             }
         },
         methods: {
