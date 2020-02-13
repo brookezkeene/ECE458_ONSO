@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Web.Api.Common;
 using Web.Api.Core.Dtos;
@@ -27,6 +28,14 @@ namespace Web.Api.Core.Services
         {
             var instance = await _repository.GetInstanceAsync(instanceId);
             return instance.ToDto();
+        }
+        public async Task<List<ExportInstanceDto>> GetInstanceExportAsync(InstanceExportQuery query)
+        {
+            query = query.ReformatQuery();
+            System.Diagnostics.Debug.WriteLine(query.StartRow);
+            var instances = await _repository.GetInstanceExportAsync(query.Search, query.Hostname, query.StartRow, query.StartCol, query.EndRow, query.EndCol) ;
+            return instances.ToExportDto();
+
         }
     }
 }
