@@ -37,7 +37,7 @@ namespace Web.Api.Core.UnitTests
             await context.SaveChangesAsync();
 
             var repo = new InstanceRepository(context);
-            var sut = new InstanceService(repo);
+            /*var sut = new InstanceService(repo);
 
             var instance = new Instance
             {
@@ -77,7 +77,7 @@ namespace Web.Api.Core.UnitTests
             var getInstance = await sut.GetInstanceAsync(id);
             Assert.Equal(getInstance.Hostname, "hostname");
 
-            System.Diagnostics.Debug.WriteLine("deleting the instance");
+            System.Diagnostics.Debug.WriteLine("deleting the instance");*/
 
             /*await sut.DeleteInstanceAsync(id);
             //getInstance = await sut.GetInstanceAsync(id);

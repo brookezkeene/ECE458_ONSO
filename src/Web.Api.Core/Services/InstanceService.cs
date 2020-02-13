@@ -12,10 +12,17 @@ namespace Web.Api.Core.Services
     public class InstanceService : IInstanceService
     {
         private readonly IInstanceRepository _repository;
+        private readonly IModelRepository _modelRepository;
+        private readonly IRackRepository _rackRepository;
+        private readonly IIdentityRepository _userRepository;
 
-        public InstanceService(IInstanceRepository repository)
+
+        public InstanceService(IInstanceRepository repository, IModelRepository modelRepository, IRackRepository rackRepository, IIdentityRepository userRepository)
         {
             _repository = repository;
+            _modelRepository = modelRepository;
+            _rackRepository = rackRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<PagedList<InstanceDto>> GetInstancesAsync(string search, int page = 1, int pageSize = 10)
@@ -39,8 +46,22 @@ namespace Web.Api.Core.Services
         }
         public async Task<Guid> CreateInstanceAsync(InstanceDto instanceDto)
         {
+            //changing instance entity's newly created duplicate Model/User/Rack entities to
+            //point to entities that already exist in the database
             var entity = instanceDto.ToEntity();
 
+            entity.Model = null;
+            entity.Model = await _modelRepository.GetModelAsync(instanceDto.Model.Id);
+            if (instanceDto.Owner != null)
+            {
+                entity.Owner = null;
+                entity.Owner = await _userRepository.GetUserAsync(instanceDto.Owner.Id);
+            }
+            //entity.Rack = null;
+            //var rack = await _rackRepository.GetRackAsync(entity.Rack.Id);
+            //entity.Rack = rack;
+
+            //adding the entity to repository
             await _repository.AddInstanceAsync(entity);
             return entity.Id;
         }
