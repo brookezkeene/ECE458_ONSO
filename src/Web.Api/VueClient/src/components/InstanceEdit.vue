@@ -28,7 +28,7 @@
                             <v-text-field v-model.number="editedItem.rackPosition" label="Rack Position" type="number"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-autocomplete v-model="editedItem.owner.id"
+                            <v-autocomplete v-model=ownerId
                                             :items="users"
                                             item-text="username"
                                             item-value="id"
@@ -60,6 +60,8 @@
         },
         data() {
             return {
+                ownerId: '',
+
                 models: [],
                 users: [],
                 instances: [],
@@ -101,6 +103,7 @@
             const existingItem = this.instances.find(o => o.id == this.id);
             if (typeof existingItem !== 'undefined') {
                 this.editedItem = Object.assign({}, existingItem);
+                this.getOwnerId(existingItem);
             }
 
             for (const model of this.models) {
@@ -114,6 +117,13 @@
             }
         },
         methods: {
+            getOwnerId(instance) {
+                if (instance.owner == null) {
+                    this.ownerId = '';
+                } else {
+                    this.ownerId = instance.owner.id;
+                }
+            },
             save() {
 
                 this.updateOwner();
@@ -130,8 +140,11 @@
                 this.$router.push({ name: 'instances'})
             },
             updateOwner() {
-                const userId = this.editedItem.owner.id;
-                this.editedItem.owner = this.users.find(o => o.id === userId);
+
+                if (this.ownerId != null) {
+                    const userId = this.ownerId;
+                    this.editedItem.owner = this.users.find(o => o.id === userId);
+                }
             },
             updateModel() {
                 const modelId = this.editedItem.model.id;
