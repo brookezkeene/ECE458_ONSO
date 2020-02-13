@@ -198,8 +198,10 @@
     
       deleteItem (item) {
         this.deleting = true;
-        const index = this.instances.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.instances.splice(index, 1)
+        confirm('Are you sure you want to delete this item?') && this.instanceRepository.delete(item)
+                    .then(async () => {
+                        await this.initialize();
+                    })
         },
 
         editItem(item) {
