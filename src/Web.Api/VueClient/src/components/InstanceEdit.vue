@@ -55,7 +55,9 @@
     export default {
         name: 'instance-edit',
         inject: ['instanceRepository', 'modelRepository', 'userRepository'],
-        props: ['id'],
+        props: {
+            id: String,
+        },
         data() {
             return {
                 models: [],
