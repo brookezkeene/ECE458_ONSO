@@ -44,12 +44,14 @@ const routes = [
                 name: 'model-edit',
                 component: ModelEdit,
                 props: true,
+                meta: { admin: true }
             },
             {
                 path: '/models/new',
                 name: 'model-create',
                 component: ModelEdit,
                 props: true,
+                meta: { admin: true }
             },
             {
                 path: '/models/:id',
@@ -91,7 +93,6 @@ const routes = [
                 path: '/importexport',
                 name: 'import-export',
                 component: ImportExport,
-                meta: { admin: true }
             },
             {
                 path: '/racks/view',
@@ -102,7 +103,6 @@ const routes = [
                 path: '/users',
                 name: 'users',
                 component: Users,
-                meta: { admin: true }
             },
             {
                 path: '/reports',
