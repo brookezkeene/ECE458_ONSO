@@ -133,6 +133,7 @@
         ],
         instances: [],
         models: [],
+
         defaultItem: {
           model: {
             id: '',
@@ -205,8 +206,8 @@
             this.$router.push({ name: 'instance-edit', params: { id: item.id } })
         },
 
-        addItem(item) {
-            this.$router.push({ name: 'instance-edit' })
+        addItem() {
+            this.$router.push({ name: 'instance-new' })
         },
 
         showInstructions() {

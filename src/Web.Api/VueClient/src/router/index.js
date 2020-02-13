@@ -76,6 +76,13 @@ const routes = [
                 meta: { admin: true }
             },
             {
+                path: '/instances/new',
+                name: 'instance-new',
+                component: InstanceEdit,
+                props: true,
+                meta: { admin: true }
+            },
+            {
                 path: '/racks',
                 name: 'racks',
                 component: Racks,
