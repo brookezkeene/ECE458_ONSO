@@ -86,7 +86,6 @@ const routes = [
                 path: '/importexport',
                 name: 'import-export',
                 component: ImportExport,
-                meta: { admin: true }
             },
             {
                 path: '/racks/view',
@@ -97,7 +96,6 @@ const routes = [
                 path: '/users',
                 name: 'users',
                 component: Users,
-                meta: { admin: true }
             },
             {
                 path: '/reports',
