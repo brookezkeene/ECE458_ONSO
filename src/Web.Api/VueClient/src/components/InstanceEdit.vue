@@ -85,7 +85,7 @@
                     lastName:'',
                     email:'',
                   },
-                  rackPosition: 0,
+                  rackPosition:0,
                   comment: ''
                 }
             }
