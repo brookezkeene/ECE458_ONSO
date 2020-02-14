@@ -22,7 +22,6 @@ namespace Web.Api.Core.Mappers
                 .ForPath(x => x.Rack.Row, opts => opts.MapFrom(src => src.Rack[0]))
                 .ForPath(x => x.Rack.Column, opts => opts.MapFrom(src => int.Parse(src.Rack.Substring(1))));
 
-
             CreateMap<Rack, RackDto>()
                 .ForMember(o => o.RowLetter, opts => opts.MapFrom(src => src.Row))
                 .ForMember(o => o.RackNumber, opts => opts.MapFrom(src => src.Column));

@@ -12,17 +12,12 @@ namespace Web.Api.Core.Services
     public class InstanceService : IInstanceService
     {
         private readonly IInstanceRepository _repository;
-        private readonly IModelRepository _modelRepository;
         private readonly IRackRepository _rackRepository;
-        private readonly IIdentityRepository _userRepository;
 
-
-        public InstanceService(IInstanceRepository repository, IModelRepository modelRepository, IRackRepository rackRepository, IIdentityRepository userRepository)
+        public InstanceService(IInstanceRepository repository, IRackRepository rackRepository)
         {
             _repository = repository;
-            _modelRepository = modelRepository;
             _rackRepository = rackRepository;
-            _userRepository = userRepository;
         }
 
         public async Task<PagedList<InstanceDto>> GetInstancesAsync(string search, int page = 1, int pageSize = 10)
@@ -50,13 +45,12 @@ namespace Web.Api.Core.Services
             //point to entities that already exist in the database
             var entity = instanceDto.ToEntity();
 
-            entity.Model = null;
-            entity.Model = await _modelRepository.GetModelAsync(instanceDto.Model.Id);
-            if (instanceDto.Owner != null)
-            {
-                entity.Owner = null;
-                entity.Owner = await _userRepository.GetUserAsync(instanceDto.Owner.Id);
-            }
+            var rack = instanceDto.Rack;
+            var row = rack[0].ToString();
+            var col = int.Parse(rack.Substring(1));
+            var rackEntity = await _rackRepository.GetRackAsync(row, col);
+            var rackId = rackEntity.Id;
+            entity.Rack.Id = rackId;
             //entity.Rack = null;
             //var rack = await _rackRepository.GetRackAsync(entity.Rack.Id);
             //entity.Rack = rack;
