@@ -49,8 +49,7 @@ namespace Web.Api.Core.Services
             var row = rack[0].ToString();
             var col = int.Parse(rack.Substring(1));
             var rackEntity = await _rackRepository.GetRackAsync(row, col);
-            var rackId = rackEntity.Id;
-            entity.Rack.Id = rackId;
+            entity.Rack = rackEntity;
             //entity.Rack = null;
             //var rack = await _rackRepository.GetRackAsync(entity.Rack.Id);
             //entity.Rack = rack;
@@ -67,6 +66,13 @@ namespace Web.Api.Core.Services
         public async Task<int> UpdateInstanceAsync(InstanceDto instanceDto)
         {
             var entity = instanceDto.ToEntity();
+
+            var rack = instanceDto.Rack;
+            var row = rack[0].ToString();
+            var col = int.Parse(rack.Substring(1));
+            var rackEntity = await _rackRepository.GetRackAsync(row, col);
+            entity.Rack = rackEntity;
+
             return await _repository.UpdateInstanceAsync(entity);
         }
     }
