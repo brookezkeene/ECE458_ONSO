@@ -94,5 +94,13 @@ namespace Web.Api.Infrastructure.Repositories
             _dbContext.Instances.Remove(instance);
             return await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<bool> InstanceIsUniqueAsync(string hostname, Guid id = default)
+        {
+            return !await _dbContext.Instances
+                .Where(x => x.Hostname == hostname)
+                .WhereIf(id != default, x => x.Id != id)
+                .AnyAsync();
+        }
     }
 }
