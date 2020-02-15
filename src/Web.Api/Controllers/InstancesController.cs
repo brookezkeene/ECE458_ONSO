@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Web.Api.Common;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
-using Web.Api.Resources;
 
 namespace Web.Api.Controllers
 {
@@ -17,12 +16,10 @@ namespace Web.Api.Controllers
     public class InstancesController : ControllerBase
     {
         private readonly IInstanceService _instanceService;
-        private readonly IApiErrorResources _errorResources;
 
-        public InstancesController(IInstanceService instanceService, IApiErrorResources errorResources)
+        public InstancesController(IInstanceService instanceService)
         {
             _instanceService = instanceService;
-            _errorResources = errorResources;
         }
 
         [HttpGet]
@@ -38,31 +35,5 @@ namespace Web.Api.Controllers
             var instance = await _instanceService.GetInstanceAsync(id);
             return Ok(instance);
         }
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] InstanceDto instanceDto)
-        {
-            if (!instanceDto.Id.Equals(default))
-            {
-                return BadRequest(_errorResources.CannotSetId());
-            }
-
-            var id = await _instanceService.CreateInstanceAsync(instanceDto);
-            instanceDto.Id = id;
-
-            return CreatedAtAction(nameof(Get), new { id }, instanceDto);
-        }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            await _instanceService.DeleteInstanceAsync(id);
-            return Ok();
-        }
-        [HttpPut]
-        public async Task<IActionResult> Put(InstanceDto instanceDto)
-        {
-            await _instanceService.UpdateInstanceAsync(instanceDto);
-            return NoContent();
-        }
-
     }
 }

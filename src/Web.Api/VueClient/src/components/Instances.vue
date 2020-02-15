@@ -94,11 +94,9 @@
 
 <script>
     import Auth from "../auth"
-    //import InstanceEdit from "./InstaceEdit"
 
   export default {
     components: {
-        //InstanceEdit
     },
     inject: ['instanceRepository','modelRepository'],
     data() {
@@ -133,7 +131,6 @@
         ],
         instances: [],
         models: [],
-
         defaultItem: {
           model: {
             id: '',
@@ -156,13 +153,13 @@
             lastName:'',
             email:'',
           },
-          rackPosition:0,
+          rackPosition:'',
           comment: ''
         },
         detailItem : {
           hostname:'',
           rack:'',
-          rackPosition:0,
+          rackPosition:'',
           owner:'',
           comment: ''
         },
@@ -198,18 +195,16 @@
     
       deleteItem (item) {
         this.deleting = true;
-        confirm('Are you sure you want to delete this item?') && this.instanceRepository.delete(item)
-                    .then(async () => {
-                        await this.initialize();
-                    })
+        const index = this.instances.indexOf(item)
+        confirm('Are you sure you want to delete this item?') && this.instances.splice(index, 1)
         },
 
         editItem(item) {
-            this.$router.push({ name: 'instance-edit', params: { id: item.id } })
+            this.$router.push({ name: 'instance-edit', params: { id: item.id, isNew: false } })
         },
 
-        addItem() {
-            this.$router.push({ name: 'instance-new' })
+        addItem(item) {
+            this.$router.push({ name: 'instance-edit', params: { id: item.id, isNew: true } })
         },
 
         showInstructions() {
@@ -244,6 +239,7 @@
         } else if (!this.startRackValue) {
           return value.toLowerCase() <= this.endRackValue.toLowerCase();
         }  
+ 
         // Check if the current loop value (The rack value)
         // is between the rack values inputted
         return value.toLowerCase() >= this.startRackValue.toLowerCase()

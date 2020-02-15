@@ -71,15 +71,8 @@ const routes = [
                 props: true,
             },
             {
-                path: '/instances/edit/:id',
+                path: '/instances/edit/:id/:isNew',
                 name: 'instance-edit',
-                component: InstanceEdit,
-                props: true,
-                meta: { admin: true }
-            },
-            {
-                path: '/instances/new',
-                name: 'instance-new',
                 component: InstanceEdit,
                 props: true,
                 meta: { admin: true }
