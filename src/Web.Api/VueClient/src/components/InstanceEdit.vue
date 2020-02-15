@@ -25,10 +25,10 @@
                             <v-text-field v-model="editedItem.rack" label="Rack Number"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model="editedItem.rackPosition" label="Rack Position" type="number"></v-text-field>
+                            <v-text-field v-model.number="editedItem.rackPosition" label="Rack Position" type="number"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-autocomplete v-model="editedItem.owner.id"
+                            <v-autocomplete v-model=ownerId
                                             :items="users"
                                             item-text="username"
                                             item-value="id"
@@ -55,9 +55,13 @@
     export default {
         name: 'instance-edit',
         inject: ['instanceRepository', 'modelRepository', 'userRepository'],
-        props: ['id','isNew'],
+        props: {
+            id: String,
+        },
         data() {
             return {
+                ownerId: '',
+
                 models: [],
                 users: [],
                 instances: [],
@@ -85,7 +89,7 @@
                     lastName:'',
                     email:'',
                   },
-                  rackPosition:'',
+                  rackPosition:0,
                   comment: ''
                 }
             }
@@ -99,6 +103,7 @@
             const existingItem = this.instances.find(o => o.id == this.id);
             if (typeof existingItem !== 'undefined') {
                 this.editedItem = Object.assign({}, existingItem);
+                this.getOwnerId(existingItem);
             }
 
             for (const model of this.models) {
@@ -108,27 +113,38 @@
 
         computed: {
             formTitle() {
-                return this.isNew ? 'New Item' : 'Edit Item'
+                 return typeof this.id === 'undefined' ? 'New Item' : 'Edit Item'
             }
         },
         methods: {
+            getOwnerId(instance) {
+                if (instance.owner == null) {
+                    this.ownerId = '';
+                } else {
+                    this.ownerId = instance.owner.id;
+                }
+            },
             save() {
 
                 this.updateOwner();
                 this.updateModel();
 
-                if (!this.isNew) {
+                if (typeof this.id !== 'undefined') {
                     this.instanceRepository.update(this.editedItem).then(this.close);
                 } else {
                     this.instanceRepository.create(this.editedItem).then(this.close);
                 }
+                this.close();
             },
             close() {
                 this.$router.push({ name: 'instances'})
             },
             updateOwner() {
-                const userId = this.editedItem.owner.id;
-                this.editedItem.owner = this.users.find(o => o.id === userId);
+
+                if (this.ownerId != null) {
+                    const userId = this.ownerId;
+                    this.editedItem.owner = this.users.find(o => o.id === userId);
+                }
             },
             updateModel() {
                 const modelId = this.editedItem.model.id;

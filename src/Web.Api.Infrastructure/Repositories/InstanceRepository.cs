@@ -79,20 +79,44 @@ namespace Web.Api.Infrastructure.Repositories
 
         public async Task<int> AddInstanceAsync(Instance instance)
         {
+            var model = instance.Model;
+            _dbContext.Entry(model).State = EntityState.Unchanged;
+
+            if (instance.Owner != null)
+            {
+                var owner = instance.Owner;
+                _dbContext.Entry(owner).State = EntityState.Unchanged;
+            }
+            var rack = instance.Rack;
+            _dbContext.Entry(rack).State = EntityState.Unchanged;
+
             _dbContext.Instances.Add(instance);
             return await _dbContext.SaveChangesAsync();
         }
 
         public async Task<int> UpdateInstanceAsync(Instance instance)
         {
+            var model = instance.Model;
+            _dbContext.Entry(model).State = EntityState.Unchanged;
+
+            if (instance.Owner != null)
+            {
+                var owner = instance.Owner;
+                _dbContext.Entry(owner).State = EntityState.Unchanged;
+            }
+            var rack = instance.Rack;
+            _dbContext.Entry(rack).State = EntityState.Unchanged;
+
             _dbContext.Instances.Update(instance);
             return await _dbContext.SaveChangesAsync();
         }
 
         public async Task<int> DeleteInstanceAsync(Instance instance)
         {
+
             _dbContext.Instances.Remove(instance);
             return await _dbContext.SaveChangesAsync();
+
         }
 
         public async Task<bool> InstanceIsUniqueAsync(string hostname, Guid id = default)
