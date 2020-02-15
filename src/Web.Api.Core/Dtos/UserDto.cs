@@ -2,7 +2,7 @@
 
 namespace Web.Api.Core.Dtos
 {
-    public class FlatUserDto
+    public class UserDto
     {
         public Guid Id { get; set; }
         public string Username { get; set; }

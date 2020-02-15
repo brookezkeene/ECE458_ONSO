@@ -1,8 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Web.Api.Core.Dtos
+namespace Web.Api.Dtos
 {
-    public class FlatModelDto
+    public class GetModelApiDto : GetModelsApiDto
+    {
+        public List<GetModelAssetApiDto> Assets;
+        public string Comment { get; set; }
+    }
+
+    public class GetModelAssetApiDto
+    {
+        public Guid Id { get; set; }
+        public string Hostname { get; set; }
+    }
+
+    public class GetModelsApiDto
     {
         public Guid Id { get; set; }
         public string Vendor { get; set; }
@@ -14,6 +29,5 @@ namespace Web.Api.Core.Dtos
         public string Cpu { get; set; }
         public int? Memory { get; set; }
         public string Storage { get; set; }
-        public string Comment { get; set; }
     }
 }

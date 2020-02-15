@@ -20,42 +20,32 @@ namespace Web.Api.Core.Services
             _rackRepository = rackRepository;
         }
 
-        public async Task<PagedList<InstanceDto>> GetInstancesAsync(string search, int page = 1, int pageSize = 10)
+        public async Task<PagedList<AssetDto>> GetInstancesAsync(string search, int page = 1, int pageSize = 10)
         {
             var pagedList = await _repository.GetInstancesAsync(search, page, pageSize);
             return pagedList.ToDto();
         }
 
-        public async Task<InstanceDto> GetInstanceAsync(Guid instanceId)
+        public async Task<AssetDto> GetInstanceAsync(Guid instanceId)
         {
             var instance = await _repository.GetInstanceAsync(instanceId);
             return instance.ToDto();
         }
-        public async Task<List<ExportInstanceDto>> GetInstanceExportAsync(InstanceExportQuery query)
+        public async Task<List<AssetDto>> GetInstanceExportAsync(InstanceExportQuery query)
         {
             query = query.ReformatQuery();
             System.Diagnostics.Debug.WriteLine(query.StartRow);
             var instances = await _repository.GetInstanceExportAsync(query.Search, query.Hostname, query.StartRow, query.StartCol, query.EndRow, query.EndCol) ;
-            return instances.ToExportDto();
+            return instances.ToDto();
 
         }
-        public async Task<Guid> CreateInstanceAsync(InstanceDto instanceDto)
+        public async Task<Guid> CreateInstanceAsync(AssetDto instanceDto)
         {
             //changing instance entity's newly created duplicate Model/User/Rack entities to
             //point to entities that already exist in the database
             var entity = instanceDto.ToEntity();
+            entity.Rack = await _rackRepository.GetRackAsync(entity.Rack.Row, entity.Rack.Column); // TODO: review rack ID references
 
-            var rack = instanceDto.Rack;
-            var row = rack[0].ToString();
-            var col = int.Parse(rack.Substring(1));
-            var rackEntity = await _rackRepository.GetRackAsync(row, col);
-            entity.Rack = rackEntity;
-
-            //entity.Rack = null;
-            //var rack = await _rackRepository.GetRackAsync(entity.Rack.Id);
-            //entity.Rack = rack;
-
-            //adding the entity to repository
             await _repository.AddInstanceAsync(entity);
             return entity.Id;
         }
@@ -64,15 +54,10 @@ namespace Web.Api.Core.Services
             var entity = await _repository.GetInstanceAsync(instanceId);
             await _repository.DeleteInstanceAsync(entity);
         }
-        public async Task<int> UpdateInstanceAsync(InstanceDto instanceDto)
+        public async Task<int> UpdateInstanceAsync(AssetDto instanceDto)
         {
             var entity = instanceDto.ToEntity();
-
-            var rack = instanceDto.Rack;
-            var row = rack[0].ToString();
-            var col = int.Parse(rack.Substring(1));
-            var rackEntity = await _rackRepository.GetRackAsync(row, col);
-            entity.Rack = rackEntity;
+            entity.Rack = await _rackRepository.GetRackAsync(entity.Rack.Row, entity.Rack.Column); // TODO: review rack ID references
 
             return await _repository.UpdateInstanceAsync(entity);
         }

@@ -24,10 +24,10 @@ namespace Web.Api.Core.Services
             return racks.ToDto();
         }
 
-        public async Task<PagedList<FlatRackDto>> GetRacksAsync(string search, int page = 1, int pageSize = 10)
+        public async Task<PagedList<RackDto>> GetRacksAsync(string search, int page = 1, int pageSize = 10)
         {
             var racks = await _rackRepository.GetRacksAsync(search, page, pageSize);
-            return racks.ToFlatDto();
+            return racks.ToDto();
         }
 
         public async Task CreateRacksAsync(RackRangeQuery query)

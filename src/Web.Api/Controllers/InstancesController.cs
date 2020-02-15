@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Web.Api.Common;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
+using Web.Api.Dtos;
+using Web.Api.Mappers;
 using Web.Api.Resources;
 
 namespace Web.Api.Controllers
@@ -26,30 +28,26 @@ namespace Web.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedList<InstanceDto>>> Get(string searchText, int page = 1, int pageSize = 10)
+        public async Task<ActionResult<PagedList<GetAssetApiDto>>> GetMany(string searchText, int page = 1, int pageSize = 10)
         {
             var instances = await _instanceService.GetInstancesAsync(searchText, page, pageSize);
             return Ok(instances);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<InstanceDto>> Get(Guid id)
+        public async Task<ActionResult<GetAssetApiDto>> Get(Guid id)
         {
             var instance = await _instanceService.GetInstanceAsync(id);
             return Ok(instance);
         }
+
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] InstanceDto instanceDto)
+        public async Task<IActionResult> Post([FromBody] CreateAssetApiDto assetApiDto)
         {
-            if (!instanceDto.Id.Equals(default))
-            {
-                return BadRequest(_errorResources.CannotSetId());
-            }
+            var assetDto = assetApiDto.MapTo<AssetDto>();
+            await _instanceService.CreateInstanceAsync(assetDto);
 
-            var id = await _instanceService.CreateInstanceAsync(instanceDto);
-            instanceDto.Id = id;
-
-            return CreatedAtAction(nameof(Get), new { id }, instanceDto);
+            return Ok();
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
@@ -58,9 +56,10 @@ namespace Web.Api.Controllers
             return Ok();
         }
         [HttpPut]
-        public async Task<IActionResult> Put(InstanceDto instanceDto)
+        public async Task<IActionResult> Put(UpdateAssetApiDto assetApiDto)
         {
-            await _instanceService.UpdateInstanceAsync(instanceDto);
+            var assetDto = assetApiDto.MapTo<AssetDto>();
+            await _instanceService.UpdateInstanceAsync(assetDto);
             return NoContent();
         }
 

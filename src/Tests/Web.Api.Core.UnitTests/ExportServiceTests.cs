@@ -8,6 +8,7 @@ using Web.Api.Core.UnitTests.Mappers;
 using Web.Api.Infrastructure.DbContexts;
 using Web.Api.Infrastructure.Entities;
 using Web.Api.Infrastructure.Repositories;
+using Web.Api.Mappers;
 using Xunit;
 using Xunit.Sdk;
 
@@ -77,8 +78,7 @@ namespace Web.Api.Core.UnitTests
             {
                 Search = "vendor"
             };
-            var result = await sut.GetModelExportAsync(query);
-            System.Diagnostics.Debug.WriteLine(result.Count);
+            var result = (await sut.GetModelExportAsync(query)).MapTo<List<ExportModelDto>>();
             // Assert
             Assert.Equal(result[0].cpu, "storage0");
             Assert.Equal(result.Count, 4);

@@ -9,12 +9,12 @@ namespace Web.Api.Core.Services.Interfaces
 {
     public interface IInstanceService
     {
-        Task<PagedList<InstanceDto>> GetInstancesAsync(string search, int page = 1, int pageSize = 10);
-        Task<InstanceDto> GetInstanceAsync(Guid instanceId);
-        Task<List<ExportInstanceDto>> GetInstanceExportAsync(InstanceExportQuery query);
-        Task<Guid> CreateInstanceAsync(InstanceDto instanceDto);
+        Task<PagedList<AssetDto>> GetInstancesAsync(string search, int page = 1, int pageSize = 10);
+        Task<AssetDto> GetInstanceAsync(Guid instanceId);
+        Task<List<AssetDto>> GetInstanceExportAsync(InstanceExportQuery query);
+        Task<Guid> CreateInstanceAsync(AssetDto assetDto);
         Task DeleteInstanceAsync(Guid instanceId);
-        Task<int> UpdateInstanceAsync(InstanceDto instanceDto);
+        Task<int> UpdateInstanceAsync(AssetDto assetDto);
 
     }
 }
