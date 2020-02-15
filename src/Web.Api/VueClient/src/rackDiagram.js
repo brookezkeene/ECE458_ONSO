@@ -1,4 +1,16 @@
-﻿import rackRepository from '@/repositories/mock/rack';
+﻿/* eslint-disable no-unused-vars, no-console */
+import rackRepository from '@/repositories/rack';
+
+const splitAddress = (address) => {
+    if (!validAddress(address))
+        return {};
+    const groups = address.match(/^([a-zA-Z])(\d+)$/);
+    return { rowLetter: groups[1].toUpperCase(), rackNumber: parseInt(groups[2]) }
+}
+
+const validAddress = (address) => {
+    return /^[a-zA-Z]\d+$/.test(address);
+}
 
 export default {
 
@@ -7,9 +19,10 @@ export default {
         var racksInRange;
         
         racksInRange = await rackRepository.findInRange(start, end);
+        console.log(racksInRange)
        
-        const { rowLetter: startRow, rackNumber: startCol } = rackRepository.splitAddress(start);
-        const { rowLetter: endRow, rackNumber: endCol } = rackRepository.splitAddress(end);
+        const { rowLetter: startRow, rackNumber: startCol } = splitAddress(start);
+        const { rowLetter: endRow, rackNumber: endCol } = splitAddress(end);
         var racksByRows = [];
 
         var rackIndex = 0;
