@@ -17,6 +17,16 @@
                                href="https://drive.google.com/file/d/1UB8J9E_cKlezRtgtk3g10ikO9Iqz5lGN/view?usp=sharing">
                                 document
                             </a>.
+                                <download-excel :fetch="fetchData"
+                                                type="csv"
+                                                name="modelexport.csv"
+                                                :fields = "json_fields"
+                                                :before-generate="startDownload"
+                                                :before-finish="finishDownload"
+                                                class="btn btn-default">
+                                    Download Data
+                                    <img src="download_icon.png">
+                                </download-excel>
                         </v-card-text>
        
                     </v-card>
@@ -71,17 +81,29 @@
             records: [],
             numRecords: 0,
             exportRaw: '',
+            json_fields: {
+                'Vendor': 'name',
+            },
         };
     },
     methods: {
         async fileDownload() { // not working
-            this.exportRaw = await this.exportRepository.exportModel('');   
+            this.exportRaw = await this.exportRepository.exportModel('');
+            /*eslint-disable*/
+            print(this.exportRaw);
+            return this.exportRaw;
         },
         // API calls to get warnings and errors and records/statuses
         close() {
             alert('Data Successfully Imported.');
             this.$emit('close-file-chooser');
             this.step = 1;
+        },
+        startDownload(){
+            alert('starting download...');
+        },
+        finishDownload(){
+            alert('finished download!');
         }
     }
 }</script>
