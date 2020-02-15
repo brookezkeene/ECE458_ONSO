@@ -73,15 +73,7 @@
         </v-dialog>
 
         <v-dialog v-model="exportDialog" max-width="300px">
-            <v-card>
-                <v-container fill-height fluid>
-                    <v-card-title class="justify-center">
-                        Exporting .csv file... 
-                    </v-card-title>
-                    <v-progress-circular indeterminate
-                                         color="primary"></v-progress-circular>
-                </v-container>
-            </v-card>
+            <export-wizard></export-wizard>
         </v-dialog>
     </v-card>
 </template>
@@ -91,6 +83,7 @@
 import ModelImportFormatInfo from "./ModelImportFormatInfo"
 import InstanceImportFormatInfo from "./InstanceImportFormatInfo"
 import ImportWizard from "./ImportWizard"
+import ExportWizard from "./ExportWizard"
 import Auth from "../auth"
 
 export default {
@@ -124,7 +117,8 @@ export default {
     components: {
       ModelImportFormatInfo,
       InstanceImportFormatInfo,
-      ImportWizard
+      ImportWizard,
+      ExportWizard
     },
     methods: {
         showModelInfo() {
