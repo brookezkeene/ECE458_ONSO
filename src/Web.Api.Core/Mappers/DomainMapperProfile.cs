@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using AutoMapper;
 using Microsoft.VisualBasic;
 using Web.Api.Common;
@@ -15,8 +16,12 @@ namespace Web.Api.Core.Mappers
             CreateMap<Model, ModelDto>()
                 .ReverseMap();
             CreateMap<Instance, InstanceDto>()
-                .ForMember(x => x.Rack, opts => opts.MapFrom(src => $"{src.Rack.Row}{src.Rack.Column}"))
-                .ReverseMap();
+                .ForMember(x => x.Rack, opts => opts.MapFrom(src => $"{src.Rack.Row}{src.Rack.Column}"));
+
+            CreateMap<InstanceDto, Instance >()
+                .ForPath(x => x.Rack.Row, opts => opts.MapFrom(src => src.Rack[0]))
+                .ForPath(x => x.Rack.Column, opts => opts.MapFrom(src => int.Parse(src.Rack.Substring(1))));
+
             CreateMap<Rack, RackDto>()
                 .ForMember(o => o.RowLetter, opts => opts.MapFrom(src => src.Row))
                 .ForMember(o => o.RackNumber, opts => opts.MapFrom(src => src.Column));
