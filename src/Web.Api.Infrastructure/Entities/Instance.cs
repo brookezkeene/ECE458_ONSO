@@ -9,22 +9,23 @@ namespace Web.Api.Infrastructure.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
-        [Required]
-        public Model Model { get; set; }
+        public Guid ModelId { get; set; }
+        public virtual Model Model { get; set; }
 
-        [Required]
         [MaxLength(63)]
         public string Hostname { get; set; }
 
-        [Required]
-        public Rack Rack { get; set; }
+        public Guid RackId { get; set; }
+        public virtual Rack Rack { get; set; }
 
-        [Required]
         [Range(1, int.MaxValue)]
         public int RackPosition { get; set; }
 
-        public User Owner { get; set; }
+        public string OwnerId { get; set; }
+        public virtual User Owner { get; set; }
 
         public string Comment { get; set; }
+
+        public int AssetNumber { get; set; }
     }
 }

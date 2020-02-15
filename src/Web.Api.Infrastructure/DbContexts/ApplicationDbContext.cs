@@ -6,6 +6,7 @@ namespace Web.Api.Infrastructure.DbContexts
 {
     public class ApplicationDbContext : IdentityDbContext<User>
     {
+        private const string AssetNumberSequenceName = "AssetNumberSequence";
         public ApplicationDbContext(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -16,8 +17,18 @@ namespace Web.Api.Infrastructure.DbContexts
                 .HasIndex(m => new {m.Vendor, m.ModelNumber})
                 .IsUnique();
 
+            // auto-generate asset number
+            builder.HasSequence<int>(AssetNumberSequenceName)
+                .StartsAt(100000)
+                .HasMax(999999)
+                .IncrementsBy(1);
+
             builder.Entity<Instance>()
-                .HasIndex(i => i.Hostname)
+                .Property(i => i.AssetNumber)
+                .HasDefaultValueSql($"NEXT VALUE FOR {AssetNumberSequenceName}");
+
+            builder.Entity<Instance>()
+                .HasIndex(i => i.AssetNumber)
                 .IsUnique();
 
             builder.Entity<Rack>()
