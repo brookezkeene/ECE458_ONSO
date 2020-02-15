@@ -13,7 +13,7 @@ import Users from '@/components/Users'
 import InstanceEdit from '@/components/InstanceEdit'
 import Reports from '@/components/Reports'
 import Dashboard from '@/components/Dashboard'
-
+import UsersCreate from '@/components/UserForm'
 import auth from '@/auth'
 
 Vue.use(Router)
@@ -103,6 +103,11 @@ const routes = [
                 path: '/users',
                 name: 'users',
                 component: Users,
+            },
+            {
+                path: '/users/new',
+                name: 'users-create',
+                component: UsersCreate,
             },
             {
                 path: '/reports',

@@ -13,7 +13,7 @@ namespace Web.Api.Infrastructure.Entities
         public Model Model { get; set; }
 
         [Required]
-        [MaxLength(255)]
+        [MaxLength(63)]
         public string Hostname { get; set; }
 
         [Required]

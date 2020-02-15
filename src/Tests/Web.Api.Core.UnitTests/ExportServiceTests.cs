@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Web.Api.Core.Dtos;
-using Web.Api.Core.Resources;
 using Web.Api.Core.Services;
 using Web.Api.Core.UnitTests.Mappers;
 using Web.Api.Infrastructure.DbContexts;
@@ -71,8 +70,7 @@ namespace Web.Api.Core.UnitTests
             var numAdded = await context.SaveChangesAsync();
 
             var repo = new ModelRepository(context);
-            var res = new ModelServiceResources();
-            var sut = new ModelService(repo, res);
+            var sut = new ModelService(repo);
 
             // Act
             var query = new ModelExportQuery

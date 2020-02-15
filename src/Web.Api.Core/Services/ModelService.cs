@@ -5,7 +5,6 @@ using Web.Api.Common;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.ExceptionHandling;
 using Web.Api.Core.Mappers;
-using Web.Api.Core.Resources;
 using Web.Api.Core.Services.Interfaces;
 using Web.Api.Infrastructure.Repositories.Interfaces;
 
@@ -14,12 +13,10 @@ namespace Web.Api.Core.Services
     public class ModelService : IModelService
     {
         private readonly IModelRepository _repository;
-        private readonly IModelServiceResources _resources;
 
-        public ModelService(IModelRepository repository, IModelServiceResources resources)
+        public ModelService(IModelRepository repository)
         {
             _repository = repository;
-            _resources = resources;
         }
 
         public async Task<PagedList<FlatModelDto>> GetModelsAsync(string search, int page = 1, int pageSize = 10)
@@ -46,8 +43,7 @@ namespace Web.Api.Core.Services
         {
             if (!await CanUpdateModelAsync(modelDto))
             {
-                var error = _resources.GeneralConstraintViolation();
-                throw new UserFriendlyException(error.Description, error.Code, modelDto);
+                throw new UserFriendlyException("Cannot save model with information given.", "GeneralConstraintViolation", modelDto);
             }
 
             var model = modelDto.ToEntity();

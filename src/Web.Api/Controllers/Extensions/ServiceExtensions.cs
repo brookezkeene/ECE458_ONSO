@@ -11,7 +11,6 @@ using Microsoft.IdentityModel.Tokens;
 using Web.Api.Configuration.Constants;
 using Web.Api.Core.Auth;
 using Web.Api.Core.Auth.Interfaces;
-using Web.Api.Core.Resources;
 using Web.Api.Core.Services;
 using Web.Api.Core.Services.Interfaces;
 using Web.Api.Helpers;
@@ -57,7 +56,6 @@ namespace Web.Api.Extensions
         public static IServiceCollection ConfigureResources(this IServiceCollection services)
         {
             services.AddScoped<IApiErrorResources, ApiErrorResources>();
-            services.AddScoped<IModelServiceResources, ModelServiceResources>();
 
             return services;
         }

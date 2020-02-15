@@ -14,5 +14,6 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
         Task<int> UpdateInstanceAsync(Instance instance);
         Task<int> DeleteInstanceAsync(Instance instance);
         Task<List<Instance>> GetInstanceExportAsync(string search, string hostname, string rowStart, int colStart, string rowEnd, int colEnd);
+        Task<bool> InstanceIsUniqueAsync(string hostname, Guid id = default);
     }
 }

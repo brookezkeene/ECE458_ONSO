@@ -40,7 +40,23 @@
                                 {{ slot.rackU }}
                             </td>
                             <td v-bind:style="slot.style">
-                                {{ slot.value }}
+                                <div style="slot.style">
+                                    <v-btn v-if="!slot.value.text==''"
+                                           :color="slot.style.backgroundColor"
+                                           :depressed=true
+                                           :tile=true
+                                           :to="{ name: 'instance-details', params: { id: slot.value.id } }">
+                                        {{ slot.value.text }}
+                                    </v-btn>
+                                    <v-btn v-else
+                                           :class="{'disable-events':slot.value.text==''}"
+                                           :color="slot.style.backgroundColor"
+                                           :depressed=true
+                                           :disabled=true
+                                           :tile=true>
+                                        {{ slot.value }}
+                                    </v-btn>
+                                </div>
                             </td>
                             <td class="rack">
                                 {{ slot.rackU }}
@@ -65,6 +81,13 @@
     table {
         font-size: 10px;
         border-collapse: collapse;
+    }
+    .v-btn {
+        width: 200px;
+        max-height: 15px;
+    }
+    .v-btn[disabled] {
+        opacity:.05;
     }
 </style>
 

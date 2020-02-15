@@ -6,14 +6,15 @@
             </v-card-title>
 
             <v-card-text>
-                <v-container>
+                <v-form ref="form"
+                        v-model="valid">
                     <v-row>
-                    <v-col cols="12" sm="6" md="6">
-                        <v-text-field v-model="editedItem.firstName" label="First Name" :rules="[rules.required]"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="6">
-                        <v-text-field v-model="editedItem.lastName" label="Last Name" :rules="[rules.required]"></v-text-field>
-                    </v-col>
+                        <v-col cols="12" sm="6" md="6">
+                            <v-text-field v-model="editedItem.firstName" label="First Name" :rules="[rules.required]"></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="6">
+                            <v-text-field v-model="editedItem.lastName" label="Last Name" :rules="[rules.required]"></v-text-field>
+                        </v-col>
                     </v-row>
                     <v-row>
                         <v-col cols="12" sm="6" md="6">
@@ -25,17 +26,24 @@
                     </v-row>
                     <v-row>
 
-                    <v-col>
-                        <v-text-field v-model="editedItem.password"
-                                      :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-                                      :rules="[rules.passwordLengthRules]"
-                                      :type="show ? 'text' : 'password'"
-                                      label="Password"
-                                      required
-                                      @click:append="show = !show"></v-text-field>
-                    </v-col>
+                        <v-col>
+                            <v-text-field v-model="editedItem.password"
+                                          :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                                          :rules="[rules.passwordLengthRules]"
+                                          :type="show ? 'text' : 'password'"
+                                          label="Password"
+                                          required
+                                          @click:append="show = !show"></v-text-field>
+                        </v-col>
                     </v-row>
-                </v-container>
+                </v-form>
+
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="primary" text @click="close">Cancel</v-btn>
+                    <v-btn color="primary" text @click="save" :disabled="!valid">Create User</v-btn>
+                </v-card-actions>
+
             </v-card-text>
         </v-card>
     </div>
@@ -47,7 +55,6 @@ export default {
     inject: ['userRepository'],
     item: null,
     props: {
-        editedItem: Object
     },
     data () {
         return {
@@ -73,15 +80,29 @@ export default {
                         }
                     },
             },
-            loading: false
+            loading: false,
+            editedItem: {
+                firstName: '',
+                lastName: '',
+                username: '',
+                email: '',
+                password: ''
+            },
+            users: [],
         };
-    },
-    methods: {
-        submit() {
-            this.$v.$touch()
-            this.$v.reset();
+        },
+
+    
+        async created() {
+            this.users = await this.userRepository.list();
+
+            this.editedItem = typeof this.id === 'undefined'
+                ? this.editedItem
+                : this.users.find(o => o.id === this.id);
 
         },
+
+    methods: {
         checkPassMatch() {
             if (this.password1 != this.password2) {
                 this.snackbar = false
@@ -89,6 +110,16 @@ export default {
                 this.editedItem.password = this.password1;
             }
         },
+        save () {
+            this.userRepository.create(this.editedItem)
+                .then(async () => {
+                            await this.initialize();
+                        })
+        this.close()
+        },
+        close() {
+            this.$router.push({name: 'users'})
+        }
     },
     computed: {
         passwordConfirmationRule() {

@@ -50,7 +50,7 @@ export default {
             var rackU = instances[j].rackPosition - 1;
             var color = instances[j].model.displayColor;
             rows[rackU].style = { color: 'black', backgroundColor: color };
-            rows[rackU].value = instances[j].model.vendor + ' ' + instances[j].model.modelNumber + ' ' + instances[j].hostname;
+            rows[rackU].value = { text: instances[j].model.vendor + ' ' + instances[j].model.modelNumber + ' ' + instances[j].hostname, id: instances[j].id };
 
             var model_height = instances[j].model.height
             for (var k = 1; k < model_height; k++) {

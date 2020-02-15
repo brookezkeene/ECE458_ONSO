@@ -26,19 +26,9 @@
                       solo-inverted
                     ></v-autocomplete>
                     <v-spacer></v-spacer>
-                    <v-dialog v-model="dialog" max-width="500px">
-                        <template v-slot:activator="{ on }">
-                            <v-btn v-if="admin" color="primary" dark class="mb-2" v-on="on">Add User</v-btn>
-                        </template>
-                        <v-card>
-                            <user-form v-bind:editedItem="editedItem"></user-form>
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn color="primary" text @click="close">Cancel</v-btn>
-                                <v-btn color="primary" text @click="save">Create User</v-btn>
-                            </v-card-actions>
-                        </v-card>
-                    </v-dialog>
+
+                    <v-btn v-if="admin" color="primary" dark class="mb-2" v-on="on" @click="openCreateUser">Add User</v-btn>
+
                 </v-toolbar>
                 </template>
             </v-data-table>
@@ -48,12 +38,10 @@
 </template>
 
 <script>
-import UserForm from "./UserForm"
 import Auth from "../auth"
 
   export default {
     components: {
-      UserForm
     },
     inject: ['userRepository'],
     data () {
@@ -101,25 +89,14 @@ import Auth from "../auth"
         this.initialize()
     },
 
-        methods: {
-            async initialize() {
-                      this.users = await this.userRepository.list();
-      this.loading = false;
-            },
-      close () {
-        this.dialog = false
-        setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        }, 300)
-      },
-
-      save () {
-        this.userRepository.create(this.editedItem)                      .then(async () => {
-                            await this.initialize();
-                        })
-        this.close()
-      },
+    methods: {
+        async initialize() {
+            this.users = await this.userRepository.list();
+            this.loading = false;
+        },
+        openCreateUser() {
+            this.$router.push({ name: 'users-create' });
+        }
     },
   }
 </script>
