@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -42,6 +43,27 @@ namespace Web.Api.Infrastructure.Repositories
             pagedList.CurrentPage = page;
 
             return pagedList;
+        }
+
+        public async Task<List<Instance>> GetInstanceExportAsync(string search, string hostname, string rowStart, int colStart, string rowEnd, int colEnd)
+        {
+
+            Expression<Func<Instance, bool>> modelCondition = x => x.Model.ModelNumber.ToUpper().Contains(search) || x.Model.Vendor.ToUpper().Contains(search);
+            Expression<Func<Instance, bool>> hostnameCondition = x => x.Hostname.ToUpper().Contains(hostname);
+            
+
+            var instances = await _dbContext.Instances
+                .Include(x => x.Model)
+                .Include(x => x.Owner)
+                .Include(x => x.Rack)
+                .Where(x => x.Rack.Row[0] >= rowStart[0] && x.Rack.Column >= colStart && x.Rack.Row[0] <= rowEnd[0] && x.Rack.Column <= colEnd)
+                .WhereIf(!string.IsNullOrEmpty(search), modelCondition)
+                .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
+                .AsNoTracking()
+                .ToListAsync();
+
+
+            return instances;
         }
 
         public async Task<Instance> GetInstanceAsync(Guid instanceId)
