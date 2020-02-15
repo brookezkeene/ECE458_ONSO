@@ -60,12 +60,11 @@
         },
         data() {
             return {
-                ownerId: '',
-
                 models: [],
                 users: [],
                 instances: [],
                 loading: false,
+                ownerId: '',
                 editedItem: {
                   model: {
                     id: '',
