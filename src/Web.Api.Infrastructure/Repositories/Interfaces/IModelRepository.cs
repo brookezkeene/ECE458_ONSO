@@ -15,5 +15,9 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
         Task<int> UpdateModelAsync(Model model);
         Task<int> DeleteModelAsync(Model model);
         Task<bool> CanUpdateModelAsync(Model model);
+        Task<bool> InstancesOfModelExistAsync(Model model);
+        Task<bool> ModelIsUniqueAsync(string vendor, string modelNumber, Guid id = default);
+        Task<bool> MeetsHeightChangeCriteriaAsync(Model model);
+        Task<bool> ModelExistsAsync(string vendor, string modelNumber, Guid id);
     }
 }

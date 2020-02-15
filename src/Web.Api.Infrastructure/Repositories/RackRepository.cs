@@ -117,5 +117,10 @@ namespace Web.Api.Infrastructure.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task<bool> AddressExistsAsync(string rackRow, int rackColumn)
+        {
+            return await _dbContext.Racks.Where(x => x.Row == rackRow && x.Column == rackColumn)
+                .AnyAsync();
+        }
     }
 }
