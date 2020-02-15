@@ -81,7 +81,7 @@
                     modelNumber: '',
                     height: 0,
                     displayColor: '',
-                    ethernetPorts: 0,
+                    ehternetPorts: 0,
                     powerPorts: 0,
                     cpu: '',
                     memory: undefined,

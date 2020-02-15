@@ -66,15 +66,6 @@ namespace Web.Api.Infrastructure.Repositories
                 .SingleOrDefaultAsync();
         }
 
-        public async Task<Rack> GetRackAsync(string row, int col)
-        {
-            return await _dbContext.Racks
-                .Include(x => x.Instances)
-                .Where(x => x.Row == row && x.Column == col)
-                .AsNoTracking()
-                .SingleOrDefaultAsync();
-        }
-
         public async Task<int> AddRackAsync(Rack rack)
         {
             _dbContext.Racks.Add(rack);

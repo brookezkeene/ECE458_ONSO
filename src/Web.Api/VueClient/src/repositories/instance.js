@@ -16,12 +16,18 @@ export default {
             });
     },
     create(item) {
-        return axios.post(`${resource}`, item).then(response => response.data).catch(error => error);
+        // delete this when it is time
+        // it is here to prevent confusion when certain features stop working
+        alert("instance.create(...) is not implemented");
     },
     update(item) {
-        return axios.put(`${resource}`, item).then(response => response.data).catch(error => error);
+        // delete this when it is time
+        // it is here to prevent confusion when certain features stop working
+        alert("instance.update(...) is not implemented");
     },
     delete(item) {
-        return axios.delete(`${resource}/${item.id}`).then(response => { return response.data; }).catch(error => error);
+        // delete this when it is time
+        // it is here to prevent confusion when certain features stop working
+        alert("instance.delete(...) is not implemented");
     }
 }
