@@ -17,7 +17,7 @@
                                href="https://drive.google.com/file/d/1UB8J9E_cKlezRtgtk3g10ikO9Iqz5lGN/view?usp=sharing">
                                 document
                             </a>.
-                                <download-excel :fetch="fetchData"
+                                <download-excel :fetch="fileDownload"
                                                 type="csv"
                                                 name="modelexport.csv"
                                                 :fields = "json_fields"
