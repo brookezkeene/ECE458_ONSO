@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Authentication;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Web.Api.Authentification;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
 
@@ -34,6 +36,14 @@ namespace Web.Api.Controllers
                 return Problem(ex.Message, statusCode: 401);
             }
 
+        }
+
+        [HttpPost("test")]
+        public IActionResult Test()
+        {
+            
+            // Note: the authenticationScheme parameter must match the value configured in Startup.cs
+            return Challenge(new AuthenticationProperties() { RedirectUri = "/" }, "Duke");
         }
     }
 }

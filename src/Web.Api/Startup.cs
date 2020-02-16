@@ -23,6 +23,8 @@ using Web.Api.Configuration;
 using Web.Api.Configuration.Constants;
 using Web.Api.Extensions;
 using Web.Api.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Web.Api
 {
@@ -43,6 +45,23 @@ namespace Web.Api
                 .ConfigureSqlDbContext(Configuration);
 
             services.AddApiAuthentication(Configuration);
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+                
+                .AddOAuth("Duke", "Duke", options =>
+                {
+                    options.AuthorizationEndpoint = "https://oauth.oit.duke.edu/oauth/authorize.php";
+                    options.TokenEndpoint = "https://oauth.oit.duke.edu/oauth/token.php";
+                    options.UserInformationEndpoint = "https://oauth.oit.duke.edu/oauth/resource.php";
+                    options.CallbackPath = "/signin-duke";
+                    options.ClientId = "determined-shannon";
+                     options.ClientSecret = "nAMi1*c6pF26mJFrBf3QY+IQU7crZCXaWxu=rmYFbAkT$dFWez";
+
+                })
+                .AddCookie();
 
             services.AddSpaStaticFiles(options => options.RootPath = "VueClient/dist");
 
@@ -89,7 +108,6 @@ namespace Web.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-
             app.UseSpaStaticFiles();
 
             app.UseSwagger(c =>
@@ -110,15 +128,13 @@ namespace Web.Api
             });
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-
                 endpoints.MapToVueCliProxy(
                     "{*path}",
                     new SpaOptions { SourcePath = "VueClient" },
