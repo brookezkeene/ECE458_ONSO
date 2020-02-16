@@ -88,6 +88,8 @@
     }
     .v-btn[disabled] {
         opacity:.05;
+        width: 200px;
+        max-height: 15px;
     }
 </style>
 
