@@ -50,18 +50,19 @@ namespace Web.Api
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
-                
-                .AddOAuth("Duke", "Duke", options =>
+                .AddCookie(options =>
                 {
-                    options.AuthorizationEndpoint = "https://oauth.oit.duke.edu/oauth/authorize.php";
-                    options.TokenEndpoint = "https://oauth.oit.duke.edu/oauth/token.php";
-                    options.UserInformationEndpoint = "https://oauth.oit.duke.edu/oauth/resource.php";
-                    options.CallbackPath = "/signin-duke";
-                    options.ClientId = "determined-shannon";
-                     options.ClientSecret = "nAMi1*c6pF26mJFrBf3QY+IQU7crZCXaWxu=rmYFbAkT$dFWez";
-
+                    options.LoginPath = "/signin";
+                    options.LogoutPath = "/signout";
                 })
-                .AddCookie();
+                .AddDuke("Duke", "Duke", options =>
+                {
+
+                    options.ClientId = "determined-shannon";
+                    options.ClientSecret = "nAMi1*c6pF26mJFrBf3QY+IQU7crZCXaWxu=rmYFbAkT$dFWez";
+
+                });
+                
 
             services.AddSpaStaticFiles(options => options.RootPath = "VueClient/dist");
 

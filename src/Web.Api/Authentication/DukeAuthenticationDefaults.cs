@@ -1,18 +1,12 @@
-﻿/*
- * Licensed under the Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
- * See https://github.com/aspnet-contrib/AspNet.Security.OAuth.Providers
- * for more information concerning the license and the contributors participating to this project.
- */
-
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OAuth;
 
 namespace AspNet.Security.OAuth.Duke
 {
     /// <summary>
-    /// Default values used by the GitHub authentication middleware.
+    /// Default values used by the Duke authentication middleware.
     /// </summary>
-    public static class GitHubAuthenticationDefaults
+    public static class DukeAuthenticationDefaults
     {
         /// <summary>
         /// Default value for <see cref="AuthenticationScheme.Name"/>.
@@ -48,10 +42,6 @@ namespace AspNet.Security.OAuth.Duke
         /// Default value for <see cref="OAuthOptions.UserInformationEndpoint"/>.
         /// </summary>
         public const string UserInformationEndpoint = "https://oauth.oit.duke.edu/oauth/resource.php";
-
-        /// <summary>
-        /// Default value for <see cref="GitHubAuthenticationOptions.UserEmailsEndpoint"/>.
-        /// </summary>
-        public const string UserEmailsEndpoint = "https://api.github.com/user/emails";
+      
     }
 }

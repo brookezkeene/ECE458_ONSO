@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Web.Api.Authentification;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
 
@@ -43,7 +42,23 @@ namespace Web.Api.Controllers
         {
             
             // Note: the authenticationScheme parameter must match the value configured in Startup.cs
-            return Challenge(new AuthenticationProperties() { RedirectUri = "/" }, "Duke");
+            return Challenge(new AuthenticationProperties() { RedirectUri = "./" }, "Duke");
+        }
+
+        [HttpGet("external")]
+        public IActionResult ExternalLogin()
+        {
+            try
+            {
+                //here get the credentials of the user
+                //do i need a token here?
+            }
+            catch (InvalidCredentialException ex)
+            {
+                return Problem(ex.Message, statusCode: 401);
+            }
+            // Note: the authenticationScheme parameter must match the value configured in Startup.cs
+            return Challenge(new AuthenticationProperties() { RedirectUri = "./" }, "Duke");
         }
     }
 }
