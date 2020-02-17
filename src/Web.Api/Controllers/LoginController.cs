@@ -42,7 +42,7 @@ namespace Web.Api.Controllers
         {
             
             // Note: the authenticationScheme parameter must match the value configured in Startup.cs
-            return Challenge(new AuthenticationProperties() { RedirectUri = "./" }, "Duke");
+            return Challenge(new AuthenticationProperties() { RedirectUri = "./external" }, "Duke");
         }
 
         [HttpGet("external")]
