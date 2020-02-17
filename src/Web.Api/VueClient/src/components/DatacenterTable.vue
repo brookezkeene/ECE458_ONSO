@@ -89,10 +89,10 @@
                 this.loading = false;
             },
             openCreate() {
-
+                this.$router.push({ name: 'datacenter-create' })
             },
             editItem(item) {
-                this.datacenterRepository.update(item);
+                this.$router.push({ name: 'datacenter-edit', params: { id: item.id } })
             },
             deleteItem (item) {
                 confirm('Are you sure you want to delete this item?') && this.datacenterRepository.delete(item)
