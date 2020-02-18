@@ -22,7 +22,7 @@
                             </v-container>
                         </v-card>
                     </v-card>
-                    <v-btn color="primary" @click="setStep2" small="true">Continue</v-btn>
+                    <v-btn color="primary" @click="setStep2" small=true>Continue</v-btn>
                 </v-stepper-content>
 
                 <v-stepper-content step="2">
@@ -45,8 +45,8 @@
                         </v-card-text>
 
                     </v-card>
-                    <v-btn class="mr-4" @click.native="step = 1" small="true">Previous</v-btn>
-                    <v-btn color="primary" @click.prevent="close" small="true">Close</v-btn>
+                    <v-btn class="mr-4" @click.native="step = 1" small=true>Previous</v-btn>
+                    <v-btn color="primary" @click.prevent="close" small=true>Close</v-btn>
                 </v-stepper-content>
 
             </v-stepper-items>
