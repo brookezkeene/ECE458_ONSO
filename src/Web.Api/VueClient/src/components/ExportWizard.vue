@@ -36,7 +36,7 @@
                             </a>.
                             <downloadCsv :data="exportRaw"
                                          name="models.csv"
-                                         @error="handleError">
+                                         type    = "csv">
                                 <v-spacer></v-spacer>
                                 <v-btn>
                                     <b>Download</b>
