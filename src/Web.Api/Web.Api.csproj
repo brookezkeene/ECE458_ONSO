@@ -66,7 +66,7 @@
   </Target>
 
   <Target Name="EnsureNodeModulesInstalled" BeforeTargets="Build" Inputs="package.json" Outputs="packages-lock.json">
-     Build Target: Restore NPM packages using npm 
+     <!--Build Target: Restore NPM packages using npm--> 
     <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
 
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
