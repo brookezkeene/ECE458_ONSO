@@ -38,27 +38,25 @@ namespace Web.Api.Controllers
         }
 
         [HttpPost("test")]
-        public IActionResult Test()
+        public IActionResult ExternalLogin()
         {
-            
             // Note: the authenticationScheme parameter must match the value configured in Startup.cs
             return Challenge(new AuthenticationProperties() { RedirectUri = "./external" }, "Duke");
         }
 
         [HttpGet("external")]
-        public IActionResult ExternalLogin()
+        public IActionResult ExternalLoginCallback(string returnUrl)
         {
             try
             {
                 //here get the credentials of the user
                 //do i need a token here?
+                return Challenge(new AuthenticationProperties() { RedirectUri = "./" }, "Duke");
             }
             catch (InvalidCredentialException ex)
             {
                 return Problem(ex.Message, statusCode: 401);
-            }
-            // Note: the authenticationScheme parameter must match the value configured in Startup.cs
-            return Challenge(new AuthenticationProperties() { RedirectUri = "./" }, "Duke");
+            } 
         }
     }
 }

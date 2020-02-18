@@ -45,25 +45,7 @@ namespace Web.Api
                 .ConfigureSqlDbContext(Configuration);
 
             services.AddApiAuthentication(Configuration);
-
-            services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            })
-                .AddCookie(options =>
-                {
-                    options.LoginPath = "/signin";
-                    options.LogoutPath = "/signout";
-                })
-                .AddDuke("Duke", "Duke", options =>
-                {
-
-                    options.ClientId = "determined-shannon";
-                    options.ClientSecret = "nAMi1*c6pF26mJFrBf3QY+IQU7crZCXaWxu=rmYFbAkT$dFWez";
-
-                });
-                
-
+              
             services.AddSpaStaticFiles(options => options.RootPath = "VueClient/dist");
 
             services.AddControllers();

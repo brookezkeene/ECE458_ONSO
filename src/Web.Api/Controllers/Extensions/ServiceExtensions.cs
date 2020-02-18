@@ -21,6 +21,7 @@ using Web.Api.Infrastructure.Repositories;
 using Web.Api.Infrastructure.Repositories.Interfaces;
 using Web.Api.Resources;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Web.Api.Extensions
 {
@@ -100,11 +101,20 @@ namespace Web.Api.Extensions
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             }).AddJwtBearer(configureOptions =>
             {
                 configureOptions.ClaimsIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
                 configureOptions.TokenValidationParameters = tokenValidationParameters;
                 configureOptions.SaveToken = true;
+            }).AddCookie(options =>
+            {
+                    options.LoginPath = "/signin";
+                    options.LogoutPath = "/signout";
+            }).AddDuke("Duke", "Duke", options =>
+            {
+                options.ClientId = "determined-shannon";
+                options.ClientSecret = "nAMi1*c6pF26mJFrBf3QY+IQU7crZCXaWxu=rmYFbAkT$dFWez";
             });
 
             // add identity

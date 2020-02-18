@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
@@ -15,6 +16,7 @@ using Web.Api.Infrastructure.Entities;
 namespace Web.Api.Authentication
 {
     //TODO: does this have to be a pagemodel
+    //TODO: where does the signinManager and UserManager come from
     public class ExternalLoginModel : PageModel
     {
         private readonly SignInManager<User> _signInManager;
@@ -32,6 +34,7 @@ namespace Web.Api.Authentication
         }
 
         public RegisterUserDto Input { get; set; }
+        public string LoginProvider { get; set; }
 
         //TODO: do i need the remoteError input string?
         public async Task<IActionResult> OnGetCallbackAsync(string remoteError = null)
@@ -66,13 +69,16 @@ namespace Web.Api.Authentication
                 //TODO: should I do anything special here
                 return RedirectToPage("./Models");
             }
-            if (result.IsLockedOut)
-            {
-                //TODO: what does this do
-                return RedirectToPage("./");
-            }
+            
             else
             {
+                if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
+                {
+                    Input = new RegisterUserDto
+                    {
+                        Email = info.Principal.FindFirstValue(ClaimTypes.Email),
+                    };
+                }
                 // TODO: if the user doesn't have an account, create it here for them 
                 return RedirectToPage("./");
             }
@@ -87,14 +93,14 @@ namespace Web.Api.Authentication
                 {
                     throw new ApplicationException("Error loading external login information during confirmation.");
                 }
-                var user = new User { UserName = Input.Email, Email = Input.Email };
+                var user = new User { UserName = Input.Username, FirstName = Input.FirstName, LastName = Input.LastName, Email = Input.Email };
                 var result = await _userManager.CreateAsync(user);
+                //TODO: should I add this user into the database? Where is the usermanager storing this user
                 if (result.Succeeded)
                 {
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {
-                        // TODO: need to copy netid and name
 
                         // Include the access token in the properties
                         var props = new AuthenticationProperties();

@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace AspNet.Security.OAuth.Duke
 {
@@ -30,8 +32,10 @@ namespace AspNet.Security.OAuth.Duke
             [NotNull] AuthenticationProperties properties,
             [NotNull] OAuthTokenResponse tokens)
         {
-            using var request = new HttpRequestMessage(HttpMethod.Get, Options.UserInformationEndpoint);
+            //using var request = new HttpRequestMessage(HttpMethod.Get, Options.UserInformationEndpoint);
+            using var request = new HttpRequestMessage(HttpMethod.Get, "https://api.colab.duke.edu/identity/v1/");
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            request.Headers.Add("x-api-key", "determined-shannon");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokens.AccessToken);
 
             using var response = await Backchannel.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, Context.RequestAborted);
@@ -47,14 +51,60 @@ namespace AspNet.Security.OAuth.Duke
             }
 
             using var payload = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
-
             var principal = new ClaimsPrincipal(identity);
             var context = new OAuthCreatingTicketContext(principal, properties, Context, Scheme, Options, Backchannel, tokens, payload.RootElement);
             context.RunClaimActions();
+
+            var dukeInfo = JsonConvert.DeserializeObject<DukeOAthInfo>(await response.Content.ReadAsStringAsync());
+            identity.AddClaim(new Claim(ClaimTypes.Email, dukeInfo.mail));
+            identity.AddClaim(new Claim(ClaimTypes.GivenName, dukeInfo.firstName));
+            identity.AddClaim(new Claim(ClaimTypes.Name, dukeInfo.lastName));
+            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, dukeInfo.netid));
 
             await Options.Events.CreatingTicket(context);
             var what = new AuthenticationTicket(context.Principal, context.Properties, Scheme.Name);
             return what;
         }
+    }
+    public class LDAP
+    {
+        public string dn { get; set; }
+        public string key { get; set; }
+        public List<string> objectClass { get; set; }
+        public string duSponsor { get; set; }
+    }
+
+    public class Settings
+    {
+        public string homeDirectory { get; set; }
+        public string remoteHomeDirectory { get; set; }
+        public string loginShell { get; set; }
+        public string uidNumber { get; set; }
+        public string gidNumber { get; set; }
+    }
+
+    public class DukeOAthInfo
+    {
+        public string duPSAcadCareerC1 { get; set; }
+        public string duPSAcadCareerDescC1 { get; set; }
+        public string duPSAcadProgC1 { get; set; }
+        public string duDukeidHistory { get; set; }
+        public string duDukeID { get; set; }
+        public string eduPersonPrimaryAffiliation { get; set; }
+        public string displayName { get; set; }
+        public string duMiddleName1 { get; set; }
+        public string eduPersonPrincipalName { get; set; }
+        public string mail { get; set; }
+        public string duSAPOrgUnit { get; set; }
+        public string duSAPCompany { get; set; }
+        public string duSAPCompanyDesc { get; set; }
+        public string netid { get; set; }
+        public string lastName { get; set; }
+        public string firstName { get; set; }
+        public string nickname { get; set; }
+        public string gradYear { get; set; }
+        public List<string> affiliations { get; set; }
+        public LDAP LDAP { get; set; }
+        public Settings settings { get; set; }
     }
 }

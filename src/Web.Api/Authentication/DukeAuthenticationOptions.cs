@@ -21,7 +21,6 @@ namespace AspNet.Security.OAuth.Duke
             TokenEndpoint = DukeAuthenticationDefaults.TokenEndpoint;
             UserInformationEndpoint = DukeAuthenticationDefaults.UserInformationEndpoint;
 
-            ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "firstName");
             ClaimActions.MapJsonKey(ClaimTypes.Name, "displayName");
             ClaimActions.MapJsonKey(ClaimTypes.Email, "mail");
             ClaimActions.MapJsonKey(Claims.Name, "netid");
