@@ -14,7 +14,7 @@ namespace Web.Api.Core.UnitTests.Mappers
         [Fact]
         public void AssetMapperConfigIsValid()
         {
-            AssetApiMappers.AssertConfigurationIsValid<AssetApiMapperProfile>();
+            ApiMappers.AssertConfigurationIsValid<AssetApiMapperProfile>();
         }
 
         [Fact]

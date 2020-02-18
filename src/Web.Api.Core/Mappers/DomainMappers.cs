@@ -36,24 +36,24 @@ namespace Web.Api.Core.Mappers
             return modelDto == null ? null : Mapper.Map<Model>(modelDto);
         }
 
-        public static AssetDto ToDto(this Instance instance)
+        public static AssetDto ToDto(this Asset asset)
         {
-            return instance == null ? null : Mapper.Map<AssetDto>(instance);
+            return asset == null ? null : Mapper.Map<AssetDto>(asset);
         }
 
-        public static PagedList<AssetDto> ToDto(this PagedList<Instance> instances)
+        public static PagedList<AssetDto> ToDto(this PagedList<Asset> assets)
         {
-            return instances == null ? null : Mapper.Map<PagedList<AssetDto>>(instances);
+            return assets == null ? null : Mapper.Map<PagedList<AssetDto>>(assets);
         }
 
-        public static List<AssetDto> ToDto(this List<Instance> instances)
+        public static List<AssetDto> ToDto(this List<Asset> assets)
         {
-            return instances == null ? null : Mapper.Map<List<AssetDto>>(instances);
+            return assets == null ? null : Mapper.Map<List<AssetDto>>(assets);
         }
 
-        public static Instance ToEntity(this AssetDto assetDto)
+        public static Asset ToEntity(this AssetDto assetDto)
         {
-            return assetDto == null ? null : Mapper.Map<Instance>(assetDto);
+            return assetDto == null ? null : Mapper.Map<Asset>(assetDto);
         }
 
 

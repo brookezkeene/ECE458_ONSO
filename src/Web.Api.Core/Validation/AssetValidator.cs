@@ -11,61 +11,61 @@ using Web.Api.Infrastructure.Repositories.Interfaces;
 
 namespace Web.Api.Core.Validation
 {
-    public class InstanceValidator : AbstractValidator<Instance>
+    public class AssetValidator : AbstractValidator<Asset>
     {
-        private readonly IInstanceRepository _instanceRepository;
+        private readonly IAssetRepository _assetRepository;
         private readonly IRackRepository _rackRepository;
         private readonly IModelRepository _modelRepository;
         private readonly IIdentityRepository _identityRepository;
 
-        public InstanceValidator(IInstanceRepository instanceRepository, IRackRepository rackRepository, IModelRepository modelRepository, IIdentityRepository identityRepository)
+        public AssetValidator(IAssetRepository assetRepository, IRackRepository rackRepository, IModelRepository modelRepository, IIdentityRepository identityRepository)
         {
-            _instanceRepository = instanceRepository;
+            _assetRepository = assetRepository;
             _rackRepository = rackRepository;
             _modelRepository = modelRepository;
             _identityRepository = identityRepository;
 
             // default rules
-            RuleFor(instance => instance.Hostname)
+            RuleFor(asset => asset.Hostname)
                 .NotEmpty()
                 .MaximumLength(63)
                 .Matches("^[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]$")
                 .MustAsync(HaveUniqueHostname);
-            RuleFor(instance => instance.Rack)
+            RuleFor(asset => asset.Rack)
                 .NotNull()
                 .MustAsync(RackExists)
-                .When(instance => instance.Rack != null);
-            RuleFor(instance => instance.Model)
+                .When(asset => asset.Rack != null);
+            RuleFor(asset => asset.Model)
                 .NotNull()
                 .MustAsync(ModelExists)
-                .When(instance => instance.Model != null);
-            RuleFor(instance => instance.RackPosition)
+                .When(asset => asset.Model != null);
+            RuleFor(asset => asset.RackPosition)
                 .NotEmpty()
                 .GreaterThanOrEqualTo(1);
-            RuleFor(instance => instance.Owner)
+            RuleFor(asset => asset.Owner)
                 .MustAsync(UserExists)
-                .When(instance => instance.Owner != null);
-            RuleFor(instance => instance)
-                .Must(NotConflictWithInstalledInstances)
+                .When(asset => asset.Owner != null);
+            RuleFor(asset => asset)
+                .Must(NotConflictWithInstalledAssets)
                 .WithErrorCode("Conflict")
-                .WithMessage(instance => $"Instance (hostname: {instance.Hostname}) conflicts with other installed instances.");
-            RuleFor(instance => instance)
+                .WithMessage(asset => $"Asset (hostname: {asset.Hostname}) conflicts with other installed assets.");
+            RuleFor(asset => asset)
                 .Must(FitWithinRack)
                 .WithErrorCode("DoesNotFit")
-                .WithMessage(instance =>
-                    $"Instance (hostname: {instance.Hostname}) does not fit within confines of its rack.");
+                .WithMessage(asset =>
+                    $"Asset (hostname: {asset.Hostname}) does not fit within confines of its rack.");
         }
 
-        private static bool NotConflictWithInstalledInstances(Instance instance)
+        private static bool NotConflictWithInstalledAssets(Asset asset)
         {
-            return !instance.Rack.Instances
-                .Where(o => o != instance)
-                .Any(instance.ConflictsWith);
+            return !asset.Rack.Assets
+                .Where(o => o != asset)
+                .Any(asset.ConflictsWith);
         }
 
-        private static bool FitWithinRack(Instance instance)
+        private static bool FitWithinRack(Asset asset)
         {
-            return !instance.SlotsOccupied()
+            return !asset.SlotsOccupied()
                 .Any(u => u > 42);
         }
 
@@ -79,9 +79,9 @@ namespace Web.Api.Core.Validation
             return await _modelRepository.ModelExistsAsync(arg1.Vendor, arg1.ModelNumber, arg1.Id);
         }
 
-        private async Task<bool> HaveUniqueHostname(Instance instance, string hostname, CancellationToken cancellationToken)
+        private async Task<bool> HaveUniqueHostname(Asset asset, string hostname, CancellationToken cancellationToken)
         {
-            return await _instanceRepository.InstanceIsUniqueAsync(instance.Hostname, instance.Id);
+            return await _assetRepository.AssetIsUniqueAsync(asset.Hostname, asset.Id);
         }
 
         private async Task<bool> RackExists(Rack rack, CancellationToken cancellationToken)

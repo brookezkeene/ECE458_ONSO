@@ -16,6 +16,6 @@ namespace Web.Api.Infrastructure.Entities
         [Required]
         public int Column { get; set; }
 
-        public List<Instance> Instances { get; set; }
+        public List<Asset> Assets { get; set; }
     }
 }

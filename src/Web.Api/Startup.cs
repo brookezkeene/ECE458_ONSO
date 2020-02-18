@@ -31,7 +31,6 @@ namespace Web.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(CreateSeedDataConfiguration());
             services.ConfigureCoreServices()
                 //.ConfigureInMemoryDbContext();
                 .ConfigureSqlDbContext(Configuration);
@@ -103,14 +102,6 @@ namespace Web.Api
                     forceKill: true
                     );
             });
-        }
-
-        protected SeedDataConfiguration CreateSeedDataConfiguration()
-        {
-            var seedDataConfiguration = new SeedDataConfiguration();
-            Configuration.GetSection(ConfigurationConsts.SeedDataConfigurationKey)
-                .Bind(seedDataConfiguration);
-            return seedDataConfiguration;
         }
 
     }

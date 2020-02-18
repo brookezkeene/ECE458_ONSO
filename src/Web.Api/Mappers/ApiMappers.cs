@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using Web.Api.Dtos;
+﻿using AutoMapper;
 
 namespace Web.Api.Mappers
 {
-    public static class AssetApiMappers
+    public static class ApiMappers
     {
-        static AssetApiMappers()
+        static ApiMappers()
         {
             Mapper = new MapperConfiguration(cfg =>
                 {
                     cfg.AddProfile<AssetApiMapperProfile>();
+                    cfg.AddProfile<ModelApiMapperProfile>();
                     cfg.AddProfile<ExportMapperProfile>();
                 })
                 .CreateMapper();

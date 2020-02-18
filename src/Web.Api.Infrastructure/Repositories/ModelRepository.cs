@@ -58,7 +58,7 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<Model> GetModelAsync(Guid modelId)
         {
             return await _dbContext.Models
-                .Include(x => x.Instances)
+                .Include(x => x.Assets)
                 .Where(x => x.Id == modelId)
                 .AsNoTracking()
                 .SingleAsync();
@@ -95,9 +95,9 @@ namespace Web.Api.Infrastructure.Repositories
             return await MeetsHeightChangeCriteriaAsync(model) && await UniquenessConstraint(model);
         }
 
-        public async Task<bool> InstancesOfModelExistAsync(Model model)
+        public async Task<bool> AssetsOfModelExistAsync(Model model)
         {
-            return await _dbContext.Instances.Where(x => x.Model == model)
+            return await _dbContext.Assets.Where(x => x.Model == model)
                 .AnyAsync();
         }
 
@@ -124,13 +124,13 @@ namespace Web.Api.Infrastructure.Repositories
             {
                 var currentData = await GetModelAsync(model.Id);
 
-                // disallow height change if model has instances
+                // disallow height change if model has assets
                 if (model.Height == currentData.Height) return true;
 
-                var hasInstances = await _dbContext.Instances.Where(x => x.Model == model)
+                var hasAssets = await _dbContext.Assets.Where(x => x.Model == model)
                     .AnyAsync();
 
-                return !hasInstances;
+                return !hasAssets;
             }
 
             return true;

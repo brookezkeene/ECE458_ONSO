@@ -11,7 +11,7 @@ namespace Web.Api.Mappers
     {
         public ExportMapperProfile()
         {
-                        // need to get from full -> export ready DTOs for models and instances 
+                        // need to get from full -> export ready DTOs for models and assets 
             CreateMap<ModelDto, ExportModelDto>()
                 .ForMember(o => o.vendor, opts => opts.MapFrom(src => src.Vendor))
                 .ForMember(o => o.model_number, opts => opts.MapFrom(src => src.ModelNumber))
@@ -23,7 +23,7 @@ namespace Web.Api.Mappers
                 .ForMember(o => o.memory, opts => opts.MapFrom(src => src.Memory))
                 .ForMember(o => o.storage, opts => opts.MapFrom(src => src.Storage))
                 .ForMember(o => o.comment, opts => opts.MapFrom(src => src.Comment));
-            CreateMap<AssetDto, ExportInstanceDto>()
+            CreateMap<AssetDto, ExportAssetDto>()
                 .ForMember(o => o.hostname, opts => opts.MapFrom(src => src.Hostname))
                 .ForMember(o => o.rack, opts => opts.MapFrom(src => src.Rack.Address))
                 .ForMember(o => o.rack_position, opts => opts.MapFrom(src => src.RackPosition))

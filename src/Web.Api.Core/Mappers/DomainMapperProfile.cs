@@ -15,7 +15,7 @@ namespace Web.Api.Core.Mappers
             // full dtos w/ nested dtos
             CreateMap<Model, ModelDto>()
                 .ReverseMap();
-            CreateMap<Instance, AssetDto>()
+            CreateMap<Asset, AssetDto>()
                 .ReverseMap();
 
             CreateMap<Rack, RackDto>()

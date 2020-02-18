@@ -14,12 +14,12 @@ namespace Web.Api.Controllers
     public class ExportController : ControllerBase
     {
         private readonly IModelService _modelService;
-        private readonly IInstanceService _instanceService;
+        private readonly IAssetService _assetService;
 
-        public ExportController(IModelService modelService, IInstanceService instanceService)
+        public ExportController(IModelService modelService, IAssetService assetService)
         {
             _modelService = modelService;
-            _instanceService = instanceService;
+            _assetService = assetService;
         }
 
         [HttpGet("model")]
@@ -28,11 +28,11 @@ namespace Web.Api.Controllers
             var models = await _modelService.GetModelExportAsync(query);
             return Ok(models);
         }
-        [HttpGet("instance")]
-        public async Task<ActionResult<List<ExportModelDto>>> Get([FromQuery] InstanceExportQuery query)
+        [HttpGet("asset")]
+        public async Task<ActionResult<List<ExportModelDto>>> Get([FromQuery] AssetExportQuery query)
         {
-            var instances = await _instanceService.GetInstanceExportAsync(query);
-            return Ok(instances);
+            var assets = await _assetService.GetAssetExportAsync(query);
+            return Ok(assets);
         }
 
     }

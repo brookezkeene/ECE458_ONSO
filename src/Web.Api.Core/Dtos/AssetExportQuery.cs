@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Web.Api.Core.Dtos
 {
-    public class InstanceExportQuery
+    public class AssetExportQuery
     {
         public string Search { get; set; }
         public string Hostname { get; set; }
@@ -14,11 +14,11 @@ namespace Web.Api.Core.Dtos
         public string EndRow { get; set; }
         public int EndCol { get; set; }
     }
-    public static class InstanceExportQueryExtensions
+    public static class AssetExportQueryExtensions
     {
-        public static InstanceExportQuery ReformatQuery(this InstanceExportQuery query)
+        public static AssetExportQuery ReformatQuery(this AssetExportQuery query)
         {
-            var upperQuery = new InstanceExportQuery { };
+            var upperQuery = new AssetExportQuery { };
             if (!string.IsNullOrEmpty(query.StartRow))
             {
                 upperQuery.StartRow = query.StartRow.ToUpper();

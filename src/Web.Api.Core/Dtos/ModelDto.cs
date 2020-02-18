@@ -7,14 +7,14 @@ namespace Web.Api.Core.Dtos
     {
         public ModelDto()
         {
-            Instances = new List<AssetDto>();
+            Assets = new List<AssetDto>();
         }
         public ModelDto(Guid id)
         {
             Id = id;
-            Instances = new List<AssetDto>();
+            Assets = new List<AssetDto>();
         }
-        public List<AssetDto> Instances { get; set; }
+        public List<AssetDto> Assets { get; set; }
         public Guid Id { get; set; }
         public string Vendor { get; set; }
         public string ModelNumber { get; set; }

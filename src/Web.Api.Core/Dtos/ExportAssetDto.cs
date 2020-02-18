@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Web.Api.Core.Dtos
 {
-    public class ExportInstanceDto
+    public class ExportAssetDto
     {
         public string hostname { get; set; }
         public string rack { get; set; }

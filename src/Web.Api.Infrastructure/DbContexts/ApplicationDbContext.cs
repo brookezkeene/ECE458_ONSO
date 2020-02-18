@@ -23,11 +23,11 @@ namespace Web.Api.Infrastructure.DbContexts
                 .HasMax(999999)
                 .IncrementsBy(1);
 
-            builder.Entity<Instance>()
+            builder.Entity<Asset>()
                 .Property(i => i.AssetNumber)
                 .HasDefaultValueSql($"NEXT VALUE FOR {AssetNumberSequenceName}");
 
-            builder.Entity<Instance>()
+            builder.Entity<Asset>()
                 .HasIndex(i => i.AssetNumber)
                 .IsUnique();
 
@@ -38,6 +38,6 @@ namespace Web.Api.Infrastructure.DbContexts
 
         public DbSet<Model> Models { get; set; }
         public DbSet<Rack> Racks { get; set; }
-        public DbSet<Instance> Instances { get; set; }
+        public DbSet<Asset> Assets { get; set; }
     }
 }

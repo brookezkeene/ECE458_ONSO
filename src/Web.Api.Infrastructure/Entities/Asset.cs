@@ -4,7 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Web.Api.Infrastructure.Entities
 {
-    public class Instance
+    [Table("Assets")]
+    public class Asset
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }

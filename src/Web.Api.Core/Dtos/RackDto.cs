@@ -6,7 +6,7 @@ namespace Web.Api.Core.Dtos
 {
     public class RackDto
     {
-        public List<AssetDto> Instances { get; set; }
+        public List<AssetDto> Assets { get; set; }
         public Guid Id { get; set; }
         public string RowLetter { get; set; }
         public int RackNumber { get; set; }

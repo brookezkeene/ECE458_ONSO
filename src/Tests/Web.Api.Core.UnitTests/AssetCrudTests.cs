@@ -14,12 +14,10 @@ using Xunit.Sdk;
 
 namespace Web.Api.Core.UnitTests
 {
-    public class InstanceCRUDTests
+    public class AssetCrudTests
     {
-        Guid myID = Guid.NewGuid();
-
         [Fact]
-        public async void AddingInstance()
+        public async void AddingAsset() // TODO: Why does this test have no asserts?
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                .UseInMemoryDatabase(Guid.NewGuid().ToString())
@@ -30,71 +28,19 @@ namespace Web.Api.Core.UnitTests
             await context.Racks.AddRangeAsync(allRacks);
             var numAdded = await context.SaveChangesAsync();
 
-            //creating and saving instances into the database 
-            var allInstances = GenerateInstances();
-            await context.Instances.AddRangeAsync(allInstances);
+            //creating and saving assets into the database 
+            var allAssets = GenerateAssets();
+            await context.Assets.AddRangeAsync(allAssets);
             await context.SaveChangesAsync();
 
-            var repo = new InstanceRepository(context);
-            /*var sut = new InstanceService(repo);
-
-            var instance = new Instance
-            {
-                Id = Guid.NewGuid(),
-                Model = new Model
-                {
-                    Id = Guid.NewGuid(),
-                    Vendor = "ve2ndor2",
-                    ModelNumber = "num2",
-                    Height = 2,
-                    DisplayColor = "#ffffff",
-                    EthernetPorts = 2,
-                    PowerPorts = 2,
-                    Cpu = "storage",
-                    Memory = 43,
-                    Storage = "stor",
-
-                },
-                Hostname = "hostname",
-                Rack = new Rack
-                {
-                    Id = Guid.NewGuid(),
-                    Row = "B",
-                    Column = 3
-                },
-                RackPosition = 12
-            };
-            var instanceDto = instance.ToDto();
-            
-            var id = instanceDto.Id;
-            var result = await sut.CreateInstanceAsync(instanceDto);
-
-            // Assert that the result and the id are the same
-            Assert.Equal(result, id);
-
-            //Assert that the created instance exists within the database 
-            var getInstance = await sut.GetInstanceAsync(id);
-            Assert.Equal(getInstance.Hostname, "hostname");
-
-            System.Diagnostics.Debug.WriteLine("deleting the instance");*/
-
-            /*await sut.DeleteInstanceAsync(id);
-            //getInstance = await sut.GetInstanceAsync(id);
-
-            System.Diagnostics.Debug.WriteLine("deleting the instance");
-
-            System.Diagnostics.Debug.WriteLine(getInstance.Id);
-
-            Assert.Equal(getInstance, null);*/
-
-
+            var repo = new AssetRepository(context);
         }
-        private static IEnumerable<Instance> GenerateInstances()
+        private static IEnumerable<Asset> GenerateAssets()
         {
             for (int i = 0; i < 4; i++)
             {
                 // confirm proper address format
-                yield return new Instance
+                yield return new Asset
                 {
                     Id = Guid.NewGuid(),
                     Model = new Model
@@ -121,7 +67,7 @@ namespace Web.Api.Core.UnitTests
                     RackPosition = 12
                 };
             }
-            yield return new Instance
+            yield return new Asset
             {
                 Id = Guid.NewGuid(),
                 Model = new Model

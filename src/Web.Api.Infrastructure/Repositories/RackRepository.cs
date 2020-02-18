@@ -45,9 +45,9 @@ namespace Web.Api.Infrastructure.Repositories
             Func<Rack, bool> searchCondition = x => x.Row.BetweenIgnoreCase(rowStart, rowEnd) && x.Column.Between(colStart, colEnd);
 
             var racks = await _dbContext.Racks
-                .Include(x => x.Instances)
+                .Include(x => x.Assets)
                     .ThenInclude(i => i.Model)
-                .Include(x => x.Instances)
+                .Include(x => x.Assets)
                     .ThenInclude(i => i.Owner)
                 .Where(x => x.Column >= colStart && x.Column <= colEnd)
                 .AsNoTracking()
@@ -60,7 +60,7 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<Rack> GetRackAsync(Guid rackId)
         {
             return await _dbContext.Racks
-                .Include(x => x.Instances)
+                .Include(x => x.Assets)
                 .Where(x => x.Id == rackId)
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
@@ -69,7 +69,7 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<Rack> GetRackAsync(string row, int col)
         {
             return await _dbContext.Racks
-                .Include(x => x.Instances)
+                .Include(x => x.Assets)
                 .Where(x => x.Row == row && x.Column == col)
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
@@ -118,7 +118,7 @@ namespace Web.Api.Infrastructure.Repositories
                 for (var col = colStart; col <= colEnd; col++)
                 {
                     var eligibleForDeletion =
-                        await _dbContext.Racks.Where(o => o.Row == row && o.Column == col && !o.Instances.Any())
+                        await _dbContext.Racks.Where(o => o.Row == row && o.Column == col && !o.Assets.Any())
                             .ToListAsync();
                     eligibleForDeletion.ForEach(rack => _dbContext.Remove(rack));
                 }

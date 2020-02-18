@@ -17,7 +17,7 @@ namespace Web.Api.Core.UnitTests
     public class ExportServiceTests
     {
         [Fact]
-        public async void GetExportInstances()
+        public async void GetExportAssets() // TODO: Why does this test have no asserts?
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
@@ -28,35 +28,11 @@ namespace Web.Api.Core.UnitTests
             await context.Models.AddRangeAsync(allModels);
             await context.SaveChangesAsync();
 
-            /*var allRacks = GenerateRacks();
-            await context.Racks.AddRangeAsync(allRacks);
-            await context.SaveChangesAsync();*/
-
-            var allInstances = GenerateInstances();
-            await context.Instances.AddRangeAsync(allInstances);
+            var allAssets = GenerateAssets();
+            await context.Assets.AddRangeAsync(allAssets);
             await context.SaveChangesAsync();
-
-            /*var repo = new InstanceRepository(context);
-            var sut = new InstanceService(repo);
-
-            // Act
-            var query = new InstanceExportQuery
-            {    
-                StartRow = "a",
-                StartCol = 1,
-                *//*EndRow = "b",
-                EndCol = 5,*//*
-                Hostname = "name2",
-                Search = "num2"
-            };
-
-            var result = await sut.GetInstanceExportAsync(query);
-            System.Diagnostics.Debug.WriteLine("num of instances in result");
-            System.Diagnostics.Debug.WriteLine(result.Count);
-
-            // Assert
-            Assert.Equal(result.Count, 1);*/
         }
+
         [Fact]
         public async void GetExportModels_FromDatabaseWithTwoModels()
         {
@@ -84,12 +60,12 @@ namespace Web.Api.Core.UnitTests
             Assert.Equal(result.Count, 4);
         }
 
-        private static IEnumerable<Instance> GenerateInstances()
+        private static IEnumerable<Asset> GenerateAssets()
         {
             for (int i = 0; i < 4; i++)
             {
                 // confirm proper address format
-                yield return new Instance
+                yield return new Asset
                 {
                     Id = Guid.NewGuid(),
                     Model = new Model
@@ -116,7 +92,7 @@ namespace Web.Api.Core.UnitTests
                 RackPosition = 12
                 };
             }
-            yield return new Instance
+            yield return new Asset
             {
                 Id = Guid.NewGuid(),
                 Model = new Model
@@ -163,7 +139,7 @@ namespace Web.Api.Core.UnitTests
                     Memory = 43,
                     Storage = "stor",
                     Comment = "",
-                    Instances = new List<Instance>(),
+                    Assets = new List<Asset>(),
                 };
             }
             yield return new Model
@@ -179,7 +155,7 @@ namespace Web.Api.Core.UnitTests
                 Memory = 43,
                 Storage = "stor",
                 Comment = "",
-                Instances = new List<Instance>(),
+                Assets = new List<Asset>(),
             };
         }
     }

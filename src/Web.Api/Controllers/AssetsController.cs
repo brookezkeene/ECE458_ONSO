@@ -16,32 +16,32 @@ namespace Web.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Produces("application/json")]
-    public class InstancesController : ControllerBase
+    public class AssetsController : ControllerBase
     {
-        private readonly IInstanceService _instanceService;
+        private readonly IAssetService _assetService;
         private readonly IApiErrorResources _errorResources;
 
-        public InstancesController(IInstanceService instanceService, IApiErrorResources errorResources)
+        public AssetsController(IAssetService assetService, IApiErrorResources errorResources)
         {
-            _instanceService = instanceService;
+            _assetService = assetService;
             _errorResources = errorResources;
         }
 
         [HttpGet]
         public async Task<ActionResult<PagedList<GetAssetApiDto>>> GetMany(string searchText, int page = 1, int pageSize = 10)
         {
-            var instances = await _instanceService.GetInstancesAsync(searchText, page, pageSize);
+            var assets = await _assetService.GetAssetsAsync(searchText, page, pageSize);
 
-            var response = instances.MapTo<PagedList<GetAssetApiDto>>();
+            var response = assets.MapTo<PagedList<GetAssetApiDto>>();
             return Ok(response);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<GetAssetApiDto>> Get(Guid id)
         {
-            var instance = await _instanceService.GetInstanceAsync(id);
+            var asset = await _assetService.GetAssetAsync(id);
 
-            var response = instance.MapTo<GetAssetApiDto>();
+            var response = asset.MapTo<GetAssetApiDto>();
             return Ok(response);
         }
 
@@ -49,21 +49,21 @@ namespace Web.Api.Controllers
         public async Task<IActionResult> Post([FromBody] CreateAssetApiDto assetApiDto)
         {
             var assetDto = assetApiDto.MapTo<AssetDto>();
-            await _instanceService.CreateInstanceAsync(assetDto);
+            await _assetService.CreateAssetAsync(assetDto);
 
             return Ok();
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _instanceService.DeleteInstanceAsync(id);
+            await _assetService.DeleteAssetAsync(id);
             return Ok();
         }
         [HttpPut]
         public async Task<IActionResult> Put(UpdateAssetApiDto assetApiDto)
         {
             var assetDto = assetApiDto.MapTo<AssetDto>();
-            await _instanceService.UpdateInstanceAsync(assetDto);
+            await _assetService.UpdateAssetAsync(assetDto);
             return NoContent();
         }
 
