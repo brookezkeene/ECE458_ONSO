@@ -44,7 +44,7 @@ namespace Web.Api.Core.Services
             //changing instance entity's newly created duplicate Model/User/Rack entities to
             //point to entities that already exist in the database
             var entity = instanceDto.ToEntity();
-            entity.Rack = await _rackRepository.GetRackAsync(entity.Rack.Row, entity.Rack.Column); // TODO: review rack ID references
+            //entity.Rack = await _rackRepository.GetRackAsync(entity.Rack.Row, entity.Rack.Column); // TODO: review rack ID references
 
             await _repository.AddInstanceAsync(entity);
             return entity.Id;
@@ -57,7 +57,7 @@ namespace Web.Api.Core.Services
         public async Task<int> UpdateInstanceAsync(AssetDto instanceDto)
         {
             var entity = instanceDto.ToEntity();
-            entity.Rack = await _rackRepository.GetRackAsync(entity.Rack.Row, entity.Rack.Column); // TODO: review rack ID references
+            //entity.Rack = await _rackRepository.GetRackAsync(entity.Rack.Row, entity.Rack.Column); // TODO: review rack ID references
 
             return await _repository.UpdateInstanceAsync(entity);
         }

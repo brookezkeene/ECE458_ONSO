@@ -1,15 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Web.Api.Core.Dtos
 {
     public class AssetDto
     {
+        public Guid ModelId { get; set; }
         public ModelDto Model { get; set; }
+        public Guid RackId { get; set; }
         public RackDto Rack { get; set; }
+        public Guid OwnerId { get; set; }
         public UserDto Owner { get; set; }
         public Guid Id { get; set; }
         public string Hostname { get; set; }
         public int RackPosition { get; set; }
         public string Comment { get; set; }
+        public IEnumerable<int> SlotsOccupied => Enumerable.Range(RackPosition, Model.Height);
     }
 }

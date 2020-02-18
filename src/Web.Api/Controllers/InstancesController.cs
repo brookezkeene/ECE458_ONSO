@@ -31,14 +31,18 @@ namespace Web.Api.Controllers
         public async Task<ActionResult<PagedList<GetAssetApiDto>>> GetMany(string searchText, int page = 1, int pageSize = 10)
         {
             var instances = await _instanceService.GetInstancesAsync(searchText, page, pageSize);
-            return Ok(instances);
+
+            var response = instances.MapTo<PagedList<GetAssetApiDto>>();
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<GetAssetApiDto>> Get(Guid id)
         {
             var instance = await _instanceService.GetInstanceAsync(id);
-            return Ok(instance);
+
+            var response = instance.MapTo<GetAssetApiDto>();
+            return Ok(response);
         }
 
         [HttpPost]

@@ -9,8 +9,11 @@ namespace Web.Api.Dtos
     {
         public Guid Id { get; set; }
         public string Hostname { get; set; }
+        public Guid RackId { get; set; }
         public string Rack { get; set; }
         public int RackPosition { get; set; }
+        public int Height { get; set; }
+        public IEnumerable<int> SlotsOccupied { get; set; }
         public string Comment { get; set; }
         public string Vendor { get; set; }
         public string ModelNumber { get; set; }

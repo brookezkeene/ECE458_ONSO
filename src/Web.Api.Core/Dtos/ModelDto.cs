@@ -5,6 +5,15 @@ namespace Web.Api.Core.Dtos
 {
     public class ModelDto
     {
+        public ModelDto()
+        {
+            Instances = new List<AssetDto>();
+        }
+        public ModelDto(Guid id)
+        {
+            Id = id;
+            Instances = new List<AssetDto>();
+        }
         public List<AssetDto> Instances { get; set; }
         public Guid Id { get; set; }
         public string Vendor { get; set; }

@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using VueCliMiddleware;
 using Web.Api.Configuration;
 using Web.Api.Configuration.Constants;
@@ -50,6 +51,11 @@ namespace Web.Api
                         .AllowAnyHeader();
                 });
             });
+
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo {Title = "Hyposoft API", Version = "v1"});
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,6 +67,23 @@ namespace Web.Api
             }
 
             app.UseSpaStaticFiles();
+
+            app.UseSwagger(c =>
+            {
+                c.PreSerializeFilters.Add((document, request) =>
+                {
+                    var paths = document.Paths.ToDictionary(item => item.Key.ToLowerInvariant(), item => item.Value);
+                    document.Paths.Clear();
+                    foreach (var (key, value) in paths)
+                    {
+                        document.Paths.Add(key, value);
+                    }
+                });
+            });
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hyposoft API v1");
+            });
 
             app.UseHttpsRedirection();
 

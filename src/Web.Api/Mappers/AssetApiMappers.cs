@@ -25,5 +25,10 @@ namespace Web.Api.Mappers
         {
             return Mapper.Map<T>(source);
         }
+
+        public static void AssertConfigurationIsValid<TProfile>() where TProfile : Profile, new()
+        {
+            Mapper.ConfigurationProvider.AssertConfigurationIsValid<TProfile>();
+        }
     }
 }
