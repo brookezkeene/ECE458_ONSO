@@ -33,17 +33,11 @@ namespace Web.Api.Authentication
             _logger = logger;
         }
 
-        public RegisterUserDto Input { get; set; }
         public string LoginProvider { get; set; }
 
         //TODO: do i need the remoteError input string?
-        public async Task<IActionResult> OnGetCallbackAsync(string remoteError = null)
+        public async Task<IActionResult> OnGetCallbackAsync()
         {
-            if (remoteError != null)
-            {
-                return RedirectToPage("./");
-            }
-
             //gets the info of the current login page: duke
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
@@ -52,8 +46,6 @@ namespace Web.Api.Authentication
             }
 
             // Sign in the user with this external login provider if the user already has a login.
-            // TODO: do i need to check in with the user repository, to see if there's already a user?
-            // don't have the id; can i just check by the username?
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
 
             if (result.Succeeded)
@@ -61,7 +53,7 @@ namespace Web.Api.Authentication
                 // Store the access token and resign in so the token is included in the cookie
                 var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
                 var props = new AuthenticationProperties();
-                //TODO: I'm storing the token, but when am i returning it (like what the logincontroller does with a login call)
+
                 props.StoreTokens(info.AuthenticationTokens);
                 await _signInManager.SignInAsync(user, props, info.LoginProvider);
 
@@ -69,37 +61,34 @@ namespace Web.Api.Authentication
                 //TODO: should I do anything special here
                 return RedirectToPage("./Models");
             }
-            
+
             else
             {
+                //adding the new user into the database 
+                var user = new User { };
                 if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
                 {
-                    Input = new RegisterUserDto
-                    {
-                        Email = info.Principal.FindFirstValue(ClaimTypes.Email),
-                    };
+                    user.Email = info.Principal.FindFirstValue(ClaimTypes.Email);
                 }
-                // TODO: if the user doesn't have an account, create it here for them 
-                return RedirectToPage("./");
-            }
-        }
-        public async Task<IActionResult> OnPostConfirmationAsync()
-        {
-            if (ModelState.IsValid)
-            {
-                // Get the information about the user from the external login provider
-                var info = await _signInManager.GetExternalLoginInfoAsync();
-                if (info == null)
+                if (info.Principal.HasClaim(c => c.Type == ClaimTypes.NameIdentifier))
                 {
-                    throw new ApplicationException("Error loading external login information during confirmation.");
+                    user.UserName = info.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
                 }
-                var user = new User { UserName = Input.Username, FirstName = Input.FirstName, LastName = Input.LastName, Email = Input.Email };
-                var result = await _userManager.CreateAsync(user);
-                //TODO: should I add this user into the database? Where is the usermanager storing this user
-                if (result.Succeeded)
+                if (info.Principal.HasClaim(c => c.Type == ClaimTypes.GivenName))
                 {
-                    result = await _userManager.AddLoginAsync(user, info);
-                    if (result.Succeeded)
+                    user.FirstName = info.Principal.FindFirstValue(ClaimTypes.GivenName);
+                }
+                if(info.Principal.HasClaim(c=> c.Type == ClaimTypes.Surname))
+                {
+                    user.LastName = info.Principal.FindFirstValue(ClaimTypes.Surname);
+                }
+               
+                //putting the new user into the database 
+                var addUser = await _userManager.CreateAsync(user);
+                if (addUser.Succeeded)
+                {
+                    addUser = await _userManager.AddLoginAsync(user, info);
+                    if (addUser.Succeeded)
                     {
 
                         // Include the access token in the properties
@@ -111,13 +100,9 @@ namespace Web.Api.Authentication
                         return RedirectToPage("./");
                     }
                 }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            }
 
-            return RedirectToPage("./");
+                return RedirectToPage("./");
+            }
         }
     }
 }

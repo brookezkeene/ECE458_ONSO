@@ -118,7 +118,7 @@ namespace Web.Api.Extensions
             });
 
             // add identity
-            var identityBuilder = services.AddIdentityCore<User>(o =>
+            var identityBuilder = services.AddIdentity<User, IdentityRole>(o =>
             {
                 // configure identity options
                 o.Password.RequireDigit = false;

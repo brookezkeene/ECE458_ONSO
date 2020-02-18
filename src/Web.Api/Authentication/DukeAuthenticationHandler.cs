@@ -58,7 +58,7 @@ namespace AspNet.Security.OAuth.Duke
             var dukeInfo = JsonConvert.DeserializeObject<DukeOAthInfo>(await response.Content.ReadAsStringAsync());
             identity.AddClaim(new Claim(ClaimTypes.Email, dukeInfo.mail));
             identity.AddClaim(new Claim(ClaimTypes.GivenName, dukeInfo.firstName));
-            identity.AddClaim(new Claim(ClaimTypes.Name, dukeInfo.lastName));
+            identity.AddClaim(new Claim(ClaimTypes.Surname, dukeInfo.lastName));
             identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, dukeInfo.netid));
 
             await Options.Events.CreatingTicket(context);
