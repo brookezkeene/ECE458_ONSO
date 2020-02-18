@@ -52,7 +52,7 @@
             </v-stepper-items>
         </v-stepper>
 
-        <v-dialog v-model="modelImportErrorDialog">
+        <v-dialog v-model="modelErrorDialog">
             <v-card>
                 <v-title>No Models found with this Vendor/Model Number!</v-title>
                 <v-btn @click.native="step = 1">Try Again</v-btn>
@@ -86,7 +86,7 @@
                 query: {
                     Search: ''
                 },
-                modelImportErrorDialog: false
+                modelErrorDialog: false
             };
         },
         methods: {
@@ -100,7 +100,7 @@
                 this.$emit('close-model-export');
             },
             handleError() {
-                this.modelImportErrorDialog = true;
+                this.modelErrorDialog = true;
             },
         }
     }

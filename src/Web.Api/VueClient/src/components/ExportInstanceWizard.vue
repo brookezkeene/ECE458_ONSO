@@ -15,9 +15,9 @@
                         <v-card flat>
                             <v-container fill-height fluid>
                                 <v-label>
-                                    Input a vendor or model number to filter output
+                                    Input a host name to filter result by
                                 </v-label>
-                                <v-text-field v-model="query.search">
+                                <v-text-field v-model="query.hostName">
                                 </v-text-field>
                             </v-container>
                         </v-card>
@@ -52,9 +52,9 @@
             </v-stepper-items>
         </v-stepper>
 
-        <v-dialog v-model="modelImportErrorDialog">
+        <v-dialog v-model="instanceErrorDialog">
             <v-card>
-                <v-title>No Models found with this Vendor/Model Number!</v-title>
+                <v-title>No Instances found with these filters!</v-title>
                 <v-btn @click.native="step = 1">Try Again</v-btn>
             </v-card>
         </v-dialog>
@@ -91,7 +91,7 @@
                     EndRow: '',
                     EndCol: '',
                 },
-                modelImportErrorDialog: false
+                instanceErrorDialog: false
             };
         },
         methods: {
@@ -104,7 +104,7 @@
                 this.$emit('close-model-export');
             },
             handleError() {
-                this.modelImportErrorDialog = true;
+                this.instanceErrorDialog = true;
             },
         }
     }
