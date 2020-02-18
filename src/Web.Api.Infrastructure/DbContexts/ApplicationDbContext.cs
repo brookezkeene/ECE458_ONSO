@@ -34,10 +34,15 @@ namespace Web.Api.Infrastructure.DbContexts
             builder.Entity<Rack>()
                 .HasIndex(r => new {r.Row, r.Column})
                 .IsUnique();
+
+            builder.Entity<Datacenter>()
+                .HasIndex(dc => dc.Name)
+                .IsUnique();
         }
 
         public DbSet<Model> Models { get; set; }
         public DbSet<Rack> Racks { get; set; }
         public DbSet<Asset> Assets { get; set; }
+        public DbSet<Datacenter> Datacenters { get; set; }
     }
 }

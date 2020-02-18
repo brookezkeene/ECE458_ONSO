@@ -2,23 +2,24 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
 
 namespace Web.Api.Infrastructure.Entities
 {
-    public class Rack
+    public class Datacenter
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
         [Required]
-        public string Row { get; set; }
+        [MaxLength(6)]
+        public string Name { get; set; }
 
         [Required]
-        public int Column { get; set; }
+        public string Description { get; set; }
 
-        public virtual List<Asset> Assets { get; set; }
+        public bool HasNetworkManagedPower { get; set; }
 
-        public Guid DatacenterId { get; set; }
-        public virtual Datacenter Datacenter { get; set; }
+        public virtual List<Rack> Racks { get; set; }
     }
 }
