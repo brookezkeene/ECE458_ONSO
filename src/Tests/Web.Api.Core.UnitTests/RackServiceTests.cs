@@ -20,7 +20,7 @@ namespace Web.Api.Core.UnitTests
         {
             // Arrange
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase("testdb")
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
 
             await using var context = new ApplicationDbContext(options);
