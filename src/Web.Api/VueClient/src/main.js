@@ -6,9 +6,9 @@ import VuetifyDialog from "vuetify-dialog";
 import axios from 'axios';
 import router from './router';
 import serviceContainer from './service-container';
-import JsonExcel from 'vue-json-excel'
+import JsonCSV from 'vue-json-csv'
 
-Vue.component('downloadExcel', JsonExcel)
+Vue.component('downloadCsv', JsonCSV)
 Vue.config.productionTip = false;
 Vue.use(vuetify);
 Vue.use(VuetifyDialog);

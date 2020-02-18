@@ -72,8 +72,8 @@
             </v-card>
         </v-dialog>
 
-        <v-dialog v-model="exportDialog" max-width="300px">
-            <export-wizard></export-wizard>
+        <v-dialog v-model="exportModelDialog" max-width="300px">
+            <export-wizard v-on:close-model-export="closeExport"></export-wizard>
         </v-dialog>
     </v-card>
 </template>
@@ -94,7 +94,7 @@ export default {
             extrainfoinstance: false,
             importModelWizard: false,
             importInstanceWizard: false,
-            exportDialog: false,
+            exportModelDialog: false,
             forModel: false,
         };
     },
@@ -144,15 +144,20 @@ export default {
                 this.importInstanceWizard = false
             }
         },
+        closeExport(type) {
+            if (type === "model") {
+                this.exportModelDialog = false
+            }
+            else {
+                this.exportModelDialog = false
+            }
+        },
         startExportModels() {
-            this.exportDialog = true
+            this.exportModelDialog = true
         },
         startExportInstances() {
             this.exportDialog = true
         },
-        closeExport() {
-            this.exportDialog = false
-        }
     }
 }
 </script>

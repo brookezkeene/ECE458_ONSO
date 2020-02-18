@@ -10,6 +10,23 @@
             <v-stepper-items>
                 <v-stepper-content step="1">
                     <v-card flat class="overflow-y-auto" style="height: 300px">
+
+                        <v-card-title>Export</v-card-title>
+                        <v-card flat>
+                            <v-container fill-height fluid>
+                                <v-label>
+                                    Input a vendor or model number to filter output
+                                </v-label>
+                                <v-text-field v-model="model_filter">
+                                </v-text-field>
+                            </v-container>
+                        </v-card>
+                    </v-card>
+                    <v-btn color="primary" @click="setStep2" small="true">Continue</v-btn>
+                </v-stepper-content>
+
+                <v-stepper-content step="2">
+                    <v-card flat class="overflow-y-auto" style="height: 300px">
                         <v-card-text>
                             Download a CSV file matching the specifications outlined in the following
                             <a target="_blank"
@@ -17,93 +34,74 @@
                                href="https://drive.google.com/file/d/1UB8J9E_cKlezRtgtk3g10ikO9Iqz5lGN/view?usp=sharing">
                                 document
                             </a>.
-                                <download-excel :fetch="fileDownload"
-                                                type="csv"
-                                                name="modelexport.csv"
-                                                :fields = "json_fields"
-                                                :before-generate="startDownload"
-                                                :before-finish="finishDownload"
-                                                class="btn btn-default">
-                                    Download Data
-                                    <img src="download_icon.png">
-                                </download-excel>
+                            <downloadCsv :data="exportRaw"
+                                         name="models.csv"
+                                         @error="handleError">
+                                <v-spacer></v-spacer>
+                                <v-btn>
+                                    <b>Download</b>
+                                </v-btn>
+                            </downloadCsv>
                         </v-card-text>
-       
-                    </v-card>
-                    <v-btn color="primary"
-                           small="true"
-                           @click="step = 2">Continue</v-btn>
-                </v-stepper-content>
 
-                <v-stepper-content step="2">
-                    <v-card flat class="overflow-y-auto" style="height: 300px">
-
-                        <v-card-title>Export</v-card-title>
-                        <v-card>
-                            <v-container fill-height fluid>
-                                <v-card-title class="justify-center">
-                                    Exporting .csv file...
-                                </v-card-title>
-                                <v-progress-circular indeterminate
-                                                     color="primary"></v-progress-circular>
-                            </v-container>
-                        </v-card>
                     </v-card>
                     <v-btn class="mr-4" @click.native="step = 1" small="true">Previous</v-btn>
-                    <v-btn color="primary" @click="step = 3" small="true">Continue</v-btn>
+                    <v-btn color="primary" @click.prevent="close" small="true">Close</v-btn>
                 </v-stepper-content>
 
             </v-stepper-items>
         </v-stepper>
+
+        <v-dialog v-model="modelImportErrorDialog">
+            <v-card>
+                <v-title>No Models found with this Vendor/Model Number!</v-title>
+                <v-btn @click.native="step = 1">Try Again</v-btn>
+            </v-card>
+        </v-dialog>
     </div>
 </template>
 
-<script>export default {
-    name: 'export-wizard',
-    inject: ['exportRepository'],
-    props: ['exportWizard'],
-    data () {
-        return {
-            loading: false,
-            step: 1,
-            fileChosen: false,
-            warnings: [ "warning1",
-                        "warning2",
-                        "warning3",
-                        "warning4",
-                        "warning5",
-            ],   // array to store all warnings, empty if none
-            errors: [],     // array to store all errors, empty if none
-            headers: [
-                { text: 'Record', value: '' },
-                { text: 'Status', value: '' },
-            ],
-            records: [],
-            numRecords: 0,
-            exportRaw: '',
-            json_fields: {
-                'Vendor': 'name',
+<script>
+    export default {
+        name: 'export-wizard',
+        inject: ['exportRepository'],
+        props: ['exportWizard'],
+        data () {
+            return {
+                loading: false,
+                step: 1,
+                fileChosen: false,
+                errors: [],     // array to store all errors, empty if none
+                headers: [
+                    { text: 'Record', value: '' },
+                    { text: 'Status', value: '' },
+                ],
+                records: [],
+                numRecords: 0,
+                exportRaw: '',
+                model_filter: '',
+                json_fields: {
+                    'Vendor': 'name',
+                },
+                query: {
+                    Search: ''
+                },
+                modelImportErrorDialog: false
+            };
+        },
+        methods: {
+            async setStep2() {
+                this.query.Search = this.model_filter;
+                this.exportRaw = await this.exportRepository.exportModel(this.query);
+                this.step = 2
             },
-        };
-    },
-    methods: {
-        async fileDownload() { // not working
-            this.exportRaw = await this.exportRepository.exportModel('');
-            /*eslint-disable*/
-            print(this.exportRaw);
-            return this.exportRaw;
-        },
-        // API calls to get warnings and errors and records/statuses
-        close() {
-            alert('Data Successfully Imported.');
-            this.$emit('close-file-chooser');
-            this.step = 1;
-        },
-        startDownload(){
-            alert('starting download...');
-        },
-        finishDownload(){
-            alert('finished download!');
+            close() {
+                this.step = 1;
+                this.$emit('close-model-export');
+            },
+            handleError() {
+                this.modelImportErrorDialog = true;
+            },
         }
     }
-}</script>
+</script>
