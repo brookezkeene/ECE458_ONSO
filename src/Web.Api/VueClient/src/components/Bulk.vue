@@ -73,11 +73,11 @@
         </v-dialog>
 
         <v-dialog v-model="exportModelDialog" max-width="300px">
-            <export-wizard v-on:close-model-export="closeExport"></export-wizard>
+            <export-model-wizard v-on:close-model-export="closeExport('model')"></export-model-wizard>
         </v-dialog>
 
         <v-dialog v-model="exportInstanceDialog" max-width="300px">
-            <export-wizard v-on:close-model-export="closeExport"></export-wizard>
+            <export-instance-wizard v-on:close-instance-export="closeExport('instance')"></export-instance-wizard>
         </v-dialog>
     </v-card>
 </template>
@@ -87,7 +87,8 @@
 import ModelImportFormatInfo from "./ModelImportFormatInfo"
 import InstanceImportFormatInfo from "./InstanceImportFormatInfo"
 import ImportWizard from "./ImportWizard"
-import ExportWizard from "./ExportWizard"
+import ExportModelWizard from "./ExportModelWizard"
+import ExportInstanceWizard from "./ExportInstanceWizard"
 import Auth from "../auth"
 
 export default {
@@ -99,6 +100,7 @@ export default {
             importModelWizard: false,
             importInstanceWizard: false,
             exportModelDialog: false,
+            exportInstanceDialog: false,
             forModel: false,
         };
     },
@@ -122,7 +124,8 @@ export default {
       ModelImportFormatInfo,
       InstanceImportFormatInfo,
       ImportWizard,
-      ExportWizard
+      ExportModelWizard,
+      ExportInstanceWizard
     },
     methods: {
         showModelInfo() {

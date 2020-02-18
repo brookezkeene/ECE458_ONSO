@@ -63,7 +63,7 @@
 
 <script>
     export default {
-        name: 'export-wizard',
+        name: 'export-model-wizard',
         inject: ['exportRepository'],
         props: ['exportWizard'],
         data () {
