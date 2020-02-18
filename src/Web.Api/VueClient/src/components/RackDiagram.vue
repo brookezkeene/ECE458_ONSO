@@ -88,6 +88,8 @@
     }
     .v-btn[disabled] {
         opacity:.05;
+        width: 200px;
+        max-height: 15px;
     }
 </style>
 
@@ -107,16 +109,16 @@
         this.fetchRacks();
     },
     methods: {
-        fetchRacks() {
+        async fetchRacks() {
             const start = this.$route.query.start;
             const end = this.$route.query.end;
-            this.rackRepository.findInRange(start, end).then((response) => {
-                this.racks = response;
-                this.loading = false; 
-            });
+            this.racks = await this.rackRepository.findInRange(start, end)
+            
             rackDiagram.createRacksByRows(start, end).then((response) => {
                 this.racksByRow = response;
             });
+
+            this.loading = false;
         }
     }    
 }
