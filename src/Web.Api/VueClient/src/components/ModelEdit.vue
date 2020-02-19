@@ -27,6 +27,7 @@
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model.number="newItem.ethernetPorts" label="Network Ports" type="number"></v-text-field> <!--networkPorts-->
+                            <a v-if="!newItem.ethernetPorts==0" href="#" @click="openNamesDialog">Add Network Port Names</a>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model.number="newItem.powerPorts" label="Power Ports" type="number"></v-text-field>
@@ -60,6 +61,32 @@
 
                 </v-container>
             </v-card-text>
+
+            <template>
+                <div class="text-center">
+                    <v-dialog v-model="namesDialog" width="400">
+                        <v-card>
+                            <v-card-title>
+                                Edit Network Port Names
+                            </v-card-title>
+                            <v-card-text>
+                                <v-container fluid>
+                                    <div v-for="n in newItem.ethernetPorts" :key="n">
+                                        <v-text-field v-model="networkPortNames[n]" 
+                                                      label="Network Port" 
+                                                      :placeholder="n.toString()"></v-text-field>
+                                    </div>
+                                </v-container>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="primary" text @click="saveNames">Save</v-btn>
+                                <v-btn color="primary" text @click="closeNamesDialog">Close</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+                </div>
+            </template>
         </v-card>
     </div>
 </template>
@@ -71,7 +98,7 @@
         props: {
             id: String,
         },
-        data() {
+        data: () => {
             return {
                 models: [],
                 color: '',
@@ -88,9 +115,11 @@
                     storage: '',
                     comment: ''
                 },
+                namesDialog: false,
+                networkPortNames: [],
+                editedIndex: -1,
             };
         },
-        editedIndex: -1,
 
         async created() {
             this.models = await this.modelRepository.list();
@@ -100,7 +129,6 @@
                 : this.models.find(o => o.id === this.id);
 
         },
-
         computed: {
             formTitle() {
                 return typeof this.id === 'undefined' ? 'New Item' : 'Edit Item'
@@ -122,6 +150,26 @@
                     this.$router.push({ name: 'model' })
                 }, 300)
             },
+            openNamesDialog() {
+                this.namesDialog = true;
+            },
+            saveNames() {
+                /* eslint-disable no-unused-vars, no-console */
+                console.log(this.networkPortNames);
+                var i = 1;
+                for (i; i <= this.networkPortNames.length; i++) {
+                    if (this.networkPortNames[i] === null) {
+                        this.networkPortNames[i] = i.toString();
+                    } else {
+                        this.networkPortNames[i] = this.networkPortNames[i];
+                    }
+                }
+                console.log(this.networkPortNames);
+                this.namesDialog = false;
+            },
+            closeNamesDialog() {
+                this.namesDialog = false;
+            }
         }
     }
 </script>
