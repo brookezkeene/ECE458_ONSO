@@ -131,6 +131,7 @@
         ],
         instances: [],
         models: [],
+
         defaultItem: {
           model: {
             id: '',
@@ -153,13 +154,13 @@
             lastName:'',
             email:'',
           },
-          rackPosition:'',
+          rackPosition:0,
           comment: ''
         },
         detailItem : {
           hostname:'',
           rack:'',
-          rackPosition:'',
+          rackPosition:0,
           owner:'',
           comment: ''
         },
@@ -195,16 +196,18 @@
     
       deleteItem (item) {
         this.deleting = true;
-        const index = this.instances.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.instances.splice(index, 1)
+        confirm('Are you sure you want to delete this item?') && this.instanceRepository.delete(item)
+                    .then(async () => {
+                        await this.initialize();
+                    })
         },
 
         editItem(item) {
-            this.$router.push({ name: 'instance-edit', params: { id: item.id, isNew: false } })
+            this.$router.push({ name: 'instance-edit', params: { id: item.id } })
         },
 
-        addItem(item) {
-            this.$router.push({ name: 'instance-edit', params: { id: item.id, isNew: true } })
+        addItem() {
+            this.$router.push({ name: 'instance-new' })
         },
 
         showInstructions() {
@@ -239,7 +242,6 @@
         } else if (!this.startRackValue) {
           return value.toLowerCase() <= this.endRackValue.toLowerCase();
         }  
- 
         // Check if the current loop value (The rack value)
         // is between the rack values inputted
         return value.toLowerCase() >= this.startRackValue.toLowerCase()

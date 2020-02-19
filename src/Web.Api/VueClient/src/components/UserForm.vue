@@ -25,6 +25,11 @@
                         </v-col>
                     </v-row>
                     <v-row>
+                        <v-col cols="12" sm="6" md="6">
+                            <v-select v-model="editedItem.permission" label="Permission Level" :items="permissions"></v-select> <!--Add permissions field to v-model-->
+                        </v-col>
+                    </v-row>
+                    <v-row>
 
                         <v-col>
                             <v-text-field v-model="editedItem.password"
@@ -68,6 +73,7 @@ export default {
             ],
             password1: '',
             password2: '',
+            permissions: ['Regular', 'Administrator'],
             rules: {
                 required: value => !!value || "Required.",
                 emailMatch: () => "The email and password you entered don't match",

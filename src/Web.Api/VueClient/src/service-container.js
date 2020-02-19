@@ -1,9 +1,10 @@
 import userRepository from "./repositories/user";
 import modelRepository from "./repositories/model";
-import instanceRepository from "./repositories/mock/instance";
 import exportRepository from "./repositories/export";
-import rackRepository from "./repositories/mock/rack";
+import instanceRepository from "./repositories/instance";
+import rackRepository from "./repositories/rack";
 import reportRepository from "./repositories/mock/report";
+import datacenterRepository from "./repositories/mock/datacenter"
 import auth from './auth';
 
 export default {
@@ -13,5 +14,6 @@ export default {
 	reportRepository: reportRepository,
 	instanceRepository: instanceRepository,
 	exportRepository: exportRepository,
+	datacenterRepository: datacenterRepository,
 	auth: auth
 };

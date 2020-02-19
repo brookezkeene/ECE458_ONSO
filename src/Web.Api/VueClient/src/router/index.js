@@ -8,6 +8,7 @@ import ModelEdit from '@/components/ModelEdit'
 import Models from '@/components/Models'
 import Instances from '@/components/Instances'
 import Racks from '@/components/Racks'
+import DatacenterEdit from '@/components/DatacenterEdit'
 import ImportExport from '@/components/Bulk'
 import Users from '@/components/Users'
 import InstanceEdit from '@/components/InstanceEdit'
@@ -71,8 +72,15 @@ const routes = [
                 props: true,
             },
             {
-                path: '/instances/edit/:id/:isNew',
+                path: '/instances/edit/:id',
                 name: 'instance-edit',
+                component: InstanceEdit,
+                props: true,
+                meta: { admin: true }
+            },
+            {
+                path: '/instances/new',
+                name: 'instance-new',
                 component: InstanceEdit,
                 props: true,
                 meta: { admin: true }
@@ -81,6 +89,20 @@ const routes = [
                 path: '/racks',
                 name: 'racks',
                 component: Racks,
+            },
+            {
+                path: '/datacenters/edit/:id',
+                name: 'datacenter-edit',
+                component: DatacenterEdit,
+                props: true,
+                meta: { admin: true }
+            },
+            {
+                path: '/datacenters/new',
+                name: 'datacenter-create',
+                component: DatacenterEdit,
+                props: true,
+                meta: { admin: true }
             },
             {
                 path: '/importexport',

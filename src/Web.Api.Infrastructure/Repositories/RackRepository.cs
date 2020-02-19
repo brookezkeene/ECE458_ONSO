@@ -66,6 +66,15 @@ namespace Web.Api.Infrastructure.Repositories
                 .SingleOrDefaultAsync();
         }
 
+        public async Task<Rack> GetRackAsync(string row, int col)
+        {
+            return await _dbContext.Racks
+                .Include(x => x.Instances)
+                .Where(x => x.Row == row && x.Column == col)
+                .AsNoTracking()
+                .SingleOrDefaultAsync();
+        }
+
         public async Task<int> AddRackAsync(Rack rack)
         {
             _dbContext.Racks.Add(rack);
@@ -117,5 +126,10 @@ namespace Web.Api.Infrastructure.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task<bool> AddressExistsAsync(string rackRow, int rackColumn)
+        {
+            return await _dbContext.Racks.Where(x => x.Row == rackRow && x.Column == rackColumn)
+                .AnyAsync();
+        }
     }
 }

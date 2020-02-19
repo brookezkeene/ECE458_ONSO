@@ -43,7 +43,6 @@
         },
         data () {
             return {
-                admin: false,
                 loading: true,
                 headers: [
                     { text: 'Address', value: 'address'},
@@ -55,11 +54,11 @@
             };
         },
         computed: {
-            isAdmin() {
+            admin() {
                 return Auth.isAdmin()
             },
             filteredHeaders() {
-                return (this.isAdmin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
+                return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
             },
         },
         async created () {

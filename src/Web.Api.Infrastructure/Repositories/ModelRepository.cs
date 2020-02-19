@@ -92,7 +92,21 @@ namespace Web.Api.Infrastructure.Repositories
 
         public async Task<bool> CanUpdateModelAsync(Model model)
         {
-            return await HeightChangeConstraint(model) && await UniquenessConstraint(model);
+            return await MeetsHeightChangeCriteriaAsync(model) && await UniquenessConstraint(model);
+        }
+
+        public async Task<bool> InstancesOfModelExistAsync(Model model)
+        {
+            return await _dbContext.Instances.Where(x => x.Model == model)
+                .AnyAsync();
+        }
+
+        public async Task<bool> ModelIsUniqueAsync(string vendor, string modelNumber, Guid id = default)
+        {
+            return !await _dbContext.Models
+                .Where(x => x.Vendor == vendor && x.ModelNumber == modelNumber)
+                .WhereIf(id != default, x => x.Id != id)
+                .AnyAsync();
         }
 
         private async Task<bool> UniquenessConstraint(Model model)
@@ -104,7 +118,7 @@ namespace Web.Api.Infrastructure.Repositories
             return conflict == null;
         }
 
-        private async Task<bool> HeightChangeConstraint(Model model)
+        public async Task<bool> MeetsHeightChangeCriteriaAsync(Model model)
         {
             if (model.Id != default)
             {
@@ -120,6 +134,16 @@ namespace Web.Api.Infrastructure.Repositories
             }
 
             return true;
+        }
+
+        public async Task<bool> ModelExistsAsync(string vendor, string modelNumber, Guid id)
+        {
+            return await _dbContext.Models
+                // lookup by id if we were given one
+                .WhereIf(id != default, x => x.Id == id)
+                // otherwise lookup by vendor & model number
+                .WhereIf(id == default, x => x.Vendor == vendor && x.ModelNumber == modelNumber)
+                .AnyAsync();
         }
     }
 }
