@@ -43,27 +43,21 @@ namespace Web.Api.Controllers
         {
             var (identityResult, userId) = await _identityService.CreateUserAsync(user);
             var createdUser = await _identityService.GetUserAsync(userId);
-            return CreatedAtAction(nameof(Get), new {id = createdUser.Id}, createdUser);
+            return CreatedAtAction(nameof(Get), new { id = createdUser.Id }, createdUser);
         }
 
         [HttpGet("{id}/roles")]
-<<<<<<< HEAD
         public async Task<ActionResult<PagedList<GetUserRolesApiDto>>> GetUserRoles(Guid id)
-=======
-        public async Task<ActionResult<PagedList<IdentityRole>>> GetUserRoles(Guid userId)
->>>>>>> add roles endpoints
         {
             return Ok(null);
         }
 
         [HttpPost("{id}/roles")]
-<<<<<<< HEAD
         public async Task<IActionResult> PostUserRoles(Guid id, [FromBody] CreateUserRolesApiDto roles)
-=======
-        public async Task<IActionResult> PostUserRoles(Guid userId, [FromBody] CreateUserRolesApiDto roles)
->>>>>>> add roles endpoints
         {
             return Ok();
         }
     }
+}
+
 }
