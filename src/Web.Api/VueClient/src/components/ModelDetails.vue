@@ -23,6 +23,13 @@
                 <v-col cols="12" sm="6" md="4">
                     <v-label>Network Ports: </v-label>
                     <v-card-text> {{model.ethernetPorts}} </v-card-text> <!--networkPorts-->
+                    <a v-if="!viewNames" href="#" @click="showNames">View Network Port Names</a>
+                    <a v-else href="#" @click="hideNames">Hide Network Port Names</a>
+                    <div v-if="viewNames">
+                        <v-card max-height="300px" class="overflow-y-auto">
+                            <v-card-text v-for="(name, index) in networkPorts" :key="name"> Network Port {{index}}: {{name}} </v-card-text>
+                        </v-card>
+                    </div>
                 </v-col>
                 <v-col cols="12" sm="6" md="4">
                     <v-label>Power Ports: </v-label>
@@ -74,7 +81,12 @@
                 model: {
                     vendor: '',
                     modelNumber: 'foo',
-                }
+                },
+                networkPorts: ['a', 'b', 'c', '4', 'e', 'f', 'g',
+                    'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+                    'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+                    ],
+                viewNames: false,
             };
         },
         created() {
@@ -90,6 +102,12 @@
                 if (!this.loading) this.loading = true;
                 this.model = await this.modelRepository.find(this.id);
                 this.loading = false;
+            },
+            showNames() {
+                this.viewNames = true;
+            },
+            hideNames() {
+                this.viewNames = false;
             }
         }
     }</script>
