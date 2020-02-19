@@ -15,7 +15,7 @@ namespace Web.Api.Controllers
     public class DatacentersController : ControllerBase
     {
         [HttpGet]
-        public async Task<ActionResult<PagedList<GetDatacenterApiDto>>> GetMany()
+        public async Task<ActionResult<PagedList<GetDatacenterApiDto>>> GetMany(string searchText, int page = 1, int pageSize = 10)
         {
             return Ok(null);
         }
