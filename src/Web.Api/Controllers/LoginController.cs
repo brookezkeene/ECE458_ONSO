@@ -45,7 +45,7 @@ namespace Web.Api.Controllers
 
         }
 
-        [HttpPost("test")]
+        [HttpPost("external")]
         public IActionResult ExternalLogin()
         {
             var properties = _signInManager.ConfigureExternalAuthenticationProperties("Duke", "/api/login/external");
