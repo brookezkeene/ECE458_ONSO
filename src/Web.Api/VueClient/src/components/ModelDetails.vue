@@ -21,8 +21,8 @@
                     <v-card-text> {{model.displayColor}} </v-card-text>
                 </v-col>
                 <v-col cols="12" sm="6" md="4">
-                    <v-label>Ethernet Ports: </v-label>
-                    <v-card-text> {{model.ethernetPorts}} </v-card-text>
+                    <v-label>Network Ports: </v-label>
+                    <v-card-text> {{model.ethernetPorts}} </v-card-text> <!--networkPorts-->
                 </v-col>
                 <v-col cols="12" sm="6" md="4">
                     <v-label>Power Ports: </v-label>

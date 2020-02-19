@@ -26,7 +26,7 @@
                             <v-text-field v-model.number="newItem.height" label="Height" type="number"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model.number="newItem.ethernetPorts" label="Ethernet Ports" type="number"></v-text-field>
+                            <v-text-field v-model.number="newItem.ethernetPorts" label="Network Ports" type="number"></v-text-field> <!--networkPorts-->
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model.number="newItem.powerPorts" label="Power Ports" type="number"></v-text-field>
@@ -81,7 +81,7 @@
                     modelNumber: '',
                     height: 0,
                     displayColor: '',
-                    ethernetPorts: 0,
+                    ethernetPorts: 0, // networkPorts: 0,
                     powerPorts: 0,
                     cpu: '',
                     memory: undefined,
