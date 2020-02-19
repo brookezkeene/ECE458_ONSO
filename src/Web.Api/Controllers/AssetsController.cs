@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Web.Api.Common;
 using Web.Api.Core.Dtos;
+using Web.Api.Core.Dtos.Power;
 using Web.Api.Core.Services.Interfaces;
 using Web.Api.Dtos;
 using Web.Api.Mappers;
@@ -65,6 +67,42 @@ namespace Web.Api.Controllers
             var assetDto = assetApiDto.MapTo<AssetDto>();
             await _assetService.UpdateAssetAsync(assetDto);
             return NoContent();
+        }
+
+        [HttpGet("{id}/power")]
+        public async Task<ActionResult<GetAssetPowerStateApiDto>> GetPowerState(Guid id)
+        {
+            var example = new GetAssetPowerStateApiDto()
+            {
+                Id = id,
+                PowerPorts = new List<GetAssetPowerPortStateApiDto>()
+                {
+                    new GetAssetPowerPortStateApiDto()
+                    {
+                        Id = Guid.NewGuid(),
+                        Number = 1,
+                        PduPort = "L1",
+                        PduPortId = Guid.NewGuid(),
+                        Status = PowerState.On
+                    },
+                    new GetAssetPowerPortStateApiDto()
+                    {
+                        Id = Guid.NewGuid(),
+                        Number = 2,
+                        PduPort = "R1",
+                        PduPortId = Guid.NewGuid(),
+                        Status = PowerState.Off
+                    }
+                }
+            };
+            return Ok(example);
+        }
+
+        [HttpPut("{id}/power")]
+        public async Task<ActionResult<GetAssetPowerStateApiDto>> PostPowerState(Guid id,
+            [FromBody] UpdateAssetPowerStateApiDto powerState)
+        {
+            return Ok(null);
         }
 
     }
