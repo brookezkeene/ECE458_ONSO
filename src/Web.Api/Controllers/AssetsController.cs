@@ -28,11 +28,11 @@ namespace Web.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedList<GetAssetApiDto>>> GetMany(string searchText, int page = 1, int pageSize = 10)
+        public async Task<ActionResult<PagedList<GetAssetsApiDto>>> GetMany(string searchText, int page = 1, int pageSize = 10)
         {
             var assets = await _assetService.GetAssetsAsync(searchText, page, pageSize);
 
-            var response = assets.MapTo<PagedList<GetAssetApiDto>>();
+            var response = assets.MapTo<PagedList<GetAssetsApiDto>>();
             return Ok(response);
         }
 
