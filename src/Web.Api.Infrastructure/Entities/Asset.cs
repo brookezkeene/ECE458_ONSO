@@ -31,5 +31,6 @@ namespace Web.Api.Infrastructure.Entities
         public int AssetNumber { get; set; }
 
         public virtual List<AssetPowerPort> PowerPorts { get; set; }
+        public virtual List<AssetNetworkPort> NetworkPorts { get; set; }
     }
 }
