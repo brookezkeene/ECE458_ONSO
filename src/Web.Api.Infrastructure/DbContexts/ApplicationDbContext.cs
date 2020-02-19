@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using System;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Web.Api.Infrastructure.Entities;
 
@@ -38,11 +39,17 @@ namespace Web.Api.Infrastructure.DbContexts
             builder.Entity<Datacenter>()
                 .HasIndex(dc => dc.Name)
                 .IsUnique();
+
+            builder.Entity<AssetPowerPort>()
+                .HasOne(o => o.PduPort)
+                .WithOne(o => o.AssetPowerPort)
+                .HasForeignKey<PduPort>(o => o.AssetPowerPortId);
         }
 
         public DbSet<Model> Models { get; set; }
         public DbSet<Rack> Racks { get; set; }
         public DbSet<Asset> Assets { get; set; }
         public DbSet<Datacenter> Datacenters { get; set; }
+        public DbSet<Pdu> Pdus { get; set; }
     }
 }

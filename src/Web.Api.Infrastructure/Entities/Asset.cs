@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -28,5 +29,7 @@ namespace Web.Api.Infrastructure.Entities
         public string Comment { get; set; }
 
         public int AssetNumber { get; set; }
+
+        public virtual List<AssetPowerPort> PowerPorts { get; set; }
     }
 }
