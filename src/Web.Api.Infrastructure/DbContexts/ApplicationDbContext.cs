@@ -8,7 +8,7 @@ namespace Web.Api.Infrastructure.DbContexts
     public class ApplicationDbContext : IdentityDbContext<User>
     {
         private const string AssetNumberSequenceName = "AssetNumberSequence";
-        public ApplicationDbContext(DbContextOptions options) : base(options) { }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
