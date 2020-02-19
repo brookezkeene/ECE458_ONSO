@@ -1,0 +1,71 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Web.Api.Common;
+using Web.Api.Core.Dtos;
+using Web.Api.Core.Services.Interfaces;
+using Web.Api.Dtos;
+using Web.Api.Mappers;
+using Web.Api.Resources;
+
+namespace Web.Api.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    [Produces("application/json")]
+    public class AssetsController : ControllerBase
+    {
+        private readonly IAssetService _assetService;
+        private readonly IApiErrorResources _errorResources;
+
+        public AssetsController(IAssetService assetService, IApiErrorResources errorResources)
+        {
+            _assetService = assetService;
+            _errorResources = errorResources;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<PagedList<GetAssetApiDto>>> GetMany(string searchText, int page = 1, int pageSize = 10)
+        {
+            var assets = await _assetService.GetAssetsAsync(searchText, page, pageSize);
+
+            var response = assets.MapTo<PagedList<GetAssetApiDto>>();
+            return Ok(response);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<GetAssetApiDto>> Get(Guid id)
+        {
+            var asset = await _assetService.GetAssetAsync(id);
+
+            var response = asset.MapTo<GetAssetApiDto>();
+            return Ok(response);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] CreateAssetApiDto assetApiDto)
+        {
+            var assetDto = assetApiDto.MapTo<AssetDto>();
+            await _assetService.CreateAssetAsync(assetDto);
+
+            return Ok();
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            await _assetService.DeleteAssetAsync(id);
+            return Ok();
+        }
+        [HttpPut]
+        public async Task<IActionResult> Put(UpdateAssetApiDto assetApiDto)
+        {
+            var assetDto = assetApiDto.MapTo<AssetDto>();
+            await _assetService.UpdateAssetAsync(assetDto);
+            return NoContent();
+        }
+
+    }
+}

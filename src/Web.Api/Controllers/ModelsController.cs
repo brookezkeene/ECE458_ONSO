@@ -9,6 +9,8 @@ using Web.Api.Common;
 using Web.Api.Core;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
+using Web.Api.Dtos;
+using Web.Api.Mappers;
 using Web.Api.Resources;
 
 namespace Web.Api.Controllers
@@ -28,14 +30,14 @@ namespace Web.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedList<FlatModelDto>>> Get(string searchText, int page = 1, int pageSize = 10)
+        public async Task<ActionResult<PagedList<GetModelsApiDto>>> Get(string searchText, int page = 1, int pageSize = 10)
         {
             var models = await _modelService.GetModelsAsync(searchText, page, pageSize);
             return Ok(models);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ModelDto>> Get(Guid id)
+        public async Task<ActionResult<GetModelApiDto>> Get(Guid id)
         {
             var model = await _modelService.GetModelAsync(id);
 
@@ -43,24 +45,19 @@ namespace Web.Api.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(FlatModelDto modelDto)
+        public async Task<IActionResult> Put(UpdateModelApiDto modelApiDto)
         {
+            var modelDto = modelApiDto.MapTo<ModelDto>();
             await _modelService.UpdateModelAsync(modelDto);
             return NoContent();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] FlatModelDto modelDto)
+        public async Task<IActionResult> Post([FromBody] CreateModelApiDto modelApiDto)
         {
-            if (!modelDto.Id.Equals(default))
-            {
-                return BadRequest(_errorResources.CannotSetId());
-            }
-
-            var id = await _modelService.CreateModelAsync(modelDto);
-            modelDto.Id = id;
-
-            return CreatedAtAction(nameof(Get), new {id}, modelDto);
+            var modelDto = modelApiDto.MapTo<ModelDto>();
+            await _modelService.CreateModelAsync(modelDto);
+            return Ok();
         }
 
         [HttpDelete("{id}")]

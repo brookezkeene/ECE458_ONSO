@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Skoruba.AuditLogging.EntityFramework.DbContexts.Default;
 using Web.Api.Extensions;
 using Web.Api.Helpers;
 using Web.Api.Infrastructure.DbContexts;
@@ -16,17 +17,14 @@ namespace Web.Api
     {
         public static async Task Main(string[] args)
         {
-            var build = CreateHostBuilder(args).Build();
-            var migrate = await build.MigrateDatabase<ApplicationDbContext>();
-            await migrate.RunAsync();
+            var host = CreateHostBuilder(args).Build();
+            await host.MigrateDatabase<ApplicationDbContext>();
+            await host.MigrateDatabase<DefaultAuditLoggingDbContext>();
+            await host.RunAsync();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((hostContext, config) =>
-                {
-                    config.AddJsonFile("seeddata.json", optional: true);
-                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

@@ -23,21 +23,21 @@ namespace Web.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedList<FlatUserDto>>> Get(string searchText, int page = 1, int pageSize = 10)
+        public async Task<ActionResult<PagedList<UserDto>>> Get(string searchText, int page = 1, int pageSize = 10)
         {
             var users = await _identityService.GetUsersAsync(searchText, page, pageSize);
             return Ok(users);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<FlatUserDto>> Get(Guid id)
+        public async Task<ActionResult<UserDto>> Get(Guid id)
         {
             var user = await _identityService.GetUserAsync(id);
             return Ok(user);
         }
 
         [HttpPost]
-        public async Task<ActionResult<FlatUserDto>> Post([FromBody] RegisterUserDto user)
+        public async Task<ActionResult<UserDto>> Post([FromBody] RegisterUserDto user)
         {
             var (identityResult, userId) = await _identityService.CreateUserAsync(user);
             var createdUser = await _identityService.GetUserAsync(userId);

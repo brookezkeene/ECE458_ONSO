@@ -46,13 +46,13 @@ namespace Web.Api.Core.Validation
             {
                 RuleFor(model => model.Height)
                     .MustAsync(MeetHeightChangeCriteria)
-                    .WithMessage("Cannot change the height of a model with existing instances.");
+                    .WithMessage("Cannot change the height of a model with existing assets.");
             });
 
             RuleSet("delete", () =>
             {
-                // cannot have any existing instances
-                RuleFor(model => model.Instances)
+                // cannot have any existing assets
+                RuleFor(model => model.Assets)
                     .Empty();
             });
         }

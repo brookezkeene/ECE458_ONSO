@@ -19,7 +19,7 @@ namespace Web.Api.Core.Validation
 
             RuleSet("delete", () =>
             {
-                RuleFor(rack => rack.Instances)
+                RuleFor(rack => rack.Assets)
                     .Empty();
             });
             RuleSet("create", () =>

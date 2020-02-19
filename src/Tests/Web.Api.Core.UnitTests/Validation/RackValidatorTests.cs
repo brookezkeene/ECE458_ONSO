@@ -15,27 +15,27 @@ namespace Web.Api.Core.UnitTests.Validation
     public class RackValidatorTests
     {
         [Fact]
-        public async void RackValidator_Delete_FailsIfContainsInstances()
+        public async void RackValidator_Delete_FailsIfContainsAssets()
         {
             var mockRepo = new Mock<IRackRepository>();
             var sut = new RackValidator(mockRepo.Object);
 
-            var rack = GetValidRackWithInstances();
+            var rack = GetValidRackWithAssets();
 
             var result = await sut.ValidateAsync(rack, ruleSet: "delete");
 
             Assert.False(result.IsValid);
             Assert.Contains(result.Errors,
-                validationFailure => validationFailure.PropertyName == nameof(rack.Instances));
+                validationFailure => validationFailure.PropertyName == nameof(rack.Assets));
         }
 
         [Fact]
-        public void RackValidator_Delete_PassesIfNoInstances()
+        public void RackValidator_Delete_PassesIfNoAssets()
         {
             var mockRepo = new Mock<IRackRepository>();
             var sut = new RackValidator(mockRepo.Object);
             
-            sut.ShouldNotHaveValidationErrorFor(x => x.Instances, null as List<Instance>);
+            sut.ShouldNotHaveValidationErrorFor(x => x.Assets, null as List<Asset>);
         }
 
         [Fact]
@@ -46,31 +46,31 @@ namespace Web.Api.Core.UnitTests.Validation
                 .ReturnsAsync(true);
             var sut = new RackValidator(mockRepo.Object);
 
-            var rack = GetValidRackWithInstances();
+            var rack = GetValidRackWithAssets();
 
             var result = await sut.ValidateAsync(rack, ruleSet: "create");
 
             Assert.False(result.IsValid);
         }
 
-        private static Rack GetValidRackWithInstances()
+        private static Rack GetValidRackWithAssets()
         {
-            var rack = GetValidRackWithoutInstances();
+            var rack = GetValidRackWithoutAssets();
             var model = new Model() { Height = 4};
-            var instances = new List<Instance>
+            var assets = new List<Asset>
             {
-                new Instance() {Rack = rack, Model = model, RackPosition = 1},
-                new Instance() {Rack = rack, Model = model, RackPosition = 5},
-                new Instance() {Rack = rack, Model = model, RackPosition = 9},
-                new Instance() {Rack = rack, Model = model, RackPosition = 13}
+                new Asset() {Rack = rack, Model = model, RackPosition = 1},
+                new Asset() {Rack = rack, Model = model, RackPosition = 5},
+                new Asset() {Rack = rack, Model = model, RackPosition = 9},
+                new Asset() {Rack = rack, Model = model, RackPosition = 13}
             };
-            model.Instances = instances;
-            rack.Instances = instances;
+            model.Assets = assets;
+            rack.Assets = assets;
 
             return rack;
         }
 
-        private static Rack GetValidRackWithoutInstances()
+        private static Rack GetValidRackWithoutAssets()
         {
             var rack = new Rack() {Row = "A", Column = 1};
             return rack;

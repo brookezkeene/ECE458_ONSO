@@ -23,7 +23,7 @@ namespace Web.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedList<FlatRackDto>>> Get(string searchText, int page = 1, int pageSize = 10)
+        public async Task<ActionResult<PagedList<RackDto>>> Get(string searchText, int page = 1, int pageSize = 10)
         {
             var racks = await _rackService.GetRacksAsync(searchText, page, pageSize);
             return Ok(racks);

@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Bogus;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Web.Api.Configuration;
-using Web.Api.Core.UnitTests.Mappers;
 using Web.Api.Infrastructure.DbContexts;
 using Web.Api.Infrastructure.Entities;
 using Web.Api.Infrastructure.Repositories.Interfaces;
@@ -28,13 +26,12 @@ namespace Web.Api.Helpers
             using var scope = serviceProvider.GetRequiredService<IServiceScopeFactory>()
                 .CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            var seedDataConfiguration = scope.ServiceProvider.GetRequiredService<SeedDataConfiguration>();
             var identityRepository = scope.ServiceProvider.GetRequiredService<IIdentityRepository>();
 
-            await EnsureSeedData(context, seedDataConfiguration,identityRepository);
+            await EnsureSeedData(context, identityRepository);
         }
 
-        public static async Task EnsureSeedData(ApplicationDbContext context, SeedDataConfiguration seedDataConfiguration, IIdentityRepository identityRepository)
+        public static async Task EnsureSeedData(ApplicationDbContext context, IIdentityRepository identityRepository)
         {
             if (await identityRepository.FindByNameAsync("admin") == null)
             {
