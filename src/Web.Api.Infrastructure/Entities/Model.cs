@@ -39,6 +39,7 @@ namespace Web.Api.Infrastructure.Entities
 
         public string Comment { get; set; }
 
-        public List<Asset> Assets { get; set; }
+        public virtual List<Asset> Assets { get; set; }
+        public virtual List<ModelNetworkPort> NetworkPorts { get; set; }
     }
 }
