@@ -15,11 +15,7 @@ namespace Web.Api.Controllers
     public class DatacentersController : ControllerBase
     {
         [HttpGet]
-<<<<<<< HEAD
         public async Task<ActionResult<PagedList<GetDatacenterApiDto>>> GetMany(string searchText, int page = 1, int pageSize = 10)
-=======
-        public async Task<ActionResult<PagedList<GetDatacenterApiDto>>> GetMany()
->>>>>>> add datacenter endpoints
         {
             return Ok(null);
         }
