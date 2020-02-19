@@ -26,7 +26,7 @@
                     <a v-if="!viewNames" href="#" @click="showNames">View Network Port Names</a>
                     <a v-else href="#" @click="hideNames">Hide Network Port Names</a>
                     <div v-if="viewNames">
-                        <v-card max-height="300px" class="overflow-y-auto">
+                        <v-card max-height="300px" class="overflow-y-auto" outlined=true flat>
                             <v-card-text v-for="port in networkPorts" :key="port"> Port {{port.number}}: {{port.name}} </v-card-text>
                         </v-card>
                     </div>
@@ -86,7 +86,19 @@
                     { name: 'a', number: 1 },
                     { name: 'b', number: 2 },
                     { name: 'c', number: 3 },
-                    { name: 'd', number: 4 }
+                    { name: 'd', number: 4 },
+                    { name: 'e', number: 5 },
+                    { name: 'f', number: 6 },
+                    { name: 'g', number: 7 },
+                    { name: 'h', number: 8 },
+                    { name: 'i', number: 9 },
+                    { name: 'j', number: 10 },
+                    { name: 'k', number: 11 },
+                    { name: 'l', number: 12 },
+                    { name: 'm', number: 13 },
+                    { name: 'n', number: 14 },
+                    { name: 'o', number: 15 },
+                    { name: 'p', number: 16 },
                 ],
                 viewNames: false,
             };
