@@ -62,19 +62,20 @@
                 </v-container>
             </v-card-text>
 
-            <template>
+            <template> <!-- dialog to set network port names -->
                 <div class="text-center">
                     <v-dialog v-model="namesDialog" width="400">
-                        <v-card>
+                        <v-card class="overflow-y-auto" max-height="500px">
                             <v-card-title>
                                 Edit Network Port Names
                             </v-card-title>
                             <v-card-text>
                                 <v-container fluid>
-                                    <div v-for="n in newItem.ethernetPorts" :key="n">
-                                        <v-text-field v-model="networkPortNames[n]" 
+                                    <div v-for="(n, index) in this.networkPortNames" :key="n">
+                                        <v-text-field v-model="networkPortNames[index]" 
                                                       label="Network Port" 
-                                                      :placeholder="n.toString()"></v-text-field>
+                                                      placeholder="port name"
+                                                      :value="n"></v-text-field>
                                     </div>
                                 </v-container>
                             </v-card-text>
@@ -116,7 +117,7 @@
                     comment: ''
                 },
                 namesDialog: false,
-                networkPortNames: [],
+                networkPorts: [],
                 editedIndex: -1,
             };
         },
@@ -133,6 +134,14 @@
             formTitle() {
                 return typeof this.id === 'undefined' ? 'New Item' : 'Edit Item'
             },
+            networkPortNames() {
+                var arr = [];
+                var j;
+                for (j = 0; j < this.newItem.ethernetPorts; j++) {
+                    arr[j] = j+1;
+                }
+                return arr
+            }
         },
         methods: {
             save() {
@@ -156,15 +165,17 @@
             saveNames() {
                 /* eslint-disable no-unused-vars, no-console */
                 console.log(this.networkPortNames);
-                var i = 1;
-                for (i; i <= this.networkPortNames.length; i++) {
+                var i;
+                for (i = 0; i < this.networkPortNames.length; i++) {
                     if (this.networkPortNames[i] === null) {
-                        this.networkPortNames[i] = i.toString();
+                        var portObjDefault = Object.assign({}, { name: (i+1).toString(), number: i+1 })
+                        this.networkPorts[i] = portObjDefault;
                     } else {
-                        this.networkPortNames[i] = this.networkPortNames[i];
+                        var portObj = Object.assign({}, { name: this.networkPortNames[i], number: i+1 })
+                        this.networkPorts[i] = portObj;
                     }
                 }
-                console.log(this.networkPortNames);
+                console.log(this.networkPorts);
                 this.namesDialog = false;
             },
             closeNamesDialog() {
