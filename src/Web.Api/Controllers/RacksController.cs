@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Web.Api.Common;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
+using Web.Api.Dtos;
 
 namespace Web.Api.Controllers
 {
@@ -48,6 +49,12 @@ namespace Web.Api.Controllers
         {
             await _rackService.DeleteRacksAsync(query);
             return Ok();
+        }
+
+        [HttpGet("{id}/pdus")]
+        public async Task<ActionResult<List<GetRackPdusApiDto>>> GetRackPdus(Guid id)
+        {
+            return Ok(null);
         }
     }
 }
