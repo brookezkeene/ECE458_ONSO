@@ -27,7 +27,7 @@
                     <a v-else href="#" @click="hideNames">Hide Network Port Names</a>
                     <div v-if="viewNames">
                         <v-card max-height="300px" class="overflow-y-auto">
-                            <v-card-text v-for="(name, index) in networkPorts" :key="name"> Network Port {{index}}: {{name}} </v-card-text>
+                            <v-card-text v-for="port in networkPorts" :key="port"> Port {{port.number}}: {{port.name}} </v-card-text>
                         </v-card>
                     </div>
                 </v-col>
@@ -82,10 +82,12 @@
                     vendor: '',
                     modelNumber: 'foo',
                 },
-                networkPorts: ['a', 'b', 'c', '4', 'e', 'f', 'g',
-                    'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
-                    'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
-                    ],
+                networkPorts: [ // remove hardcoded networkPort data
+                    { name: 'a', number: 1 },
+                    { name: 'b', number: 2 },
+                    { name: 'c', number: 3 },
+                    { name: 'd', number: 4 }
+                ],
                 viewNames: false,
             };
         },
