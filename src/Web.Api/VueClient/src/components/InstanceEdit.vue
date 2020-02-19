@@ -22,7 +22,16 @@
                             </v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-autocomplete v-model="editedItem.rackId" 
+                            <v-autocomplete v-model="editedItem.dataCenter"
+                                            label="Data Center"
+                                            :items="datacenters"
+                                            item-text="name"
+                                            item-value="id">
+                            </v-autocomplete>
+                        </v-col>
+                        <!-- Will need to update to show only racks from the selected datacenter -->
+                        <v-col cols="12" sm="6" md="4">
+                            <v-autocomplete v-model="editedItem.rackId"
                                             label="Rack Number"
                                             :items="racks"
                                             item-text="address"
@@ -59,7 +68,7 @@
 <script>
     export default {
         name: 'instance-edit',
-        inject: ['instanceRepository', 'modelRepository', 'userRepository', 'rackRepository'],
+        inject: ['instanceRepository', 'modelRepository', 'userRepository', 'rackRepository', 'datacenterRepository'],
         props: {
             id: String,
         },
@@ -68,10 +77,12 @@
                 models: [],
                 users: [],
                 instances: [],
-                racks:[],
+                racks: [],
+                datacenters: [],
                 loading: false,
                 ownerId: '',
                 editedItem: {
+                    datacenter: '',
                     modelId: '',
                     hostname: '',
                     rackId: '',
@@ -88,6 +99,7 @@
             this.users = await this.userRepository.list();
             this.instances = await this.instanceRepository.list();
             this.racks = await this.rackRepository.list();
+            this.datacenters = await this.datacenterRepository.list();
 
             /*eslint-disable*/
             console.log(this.racks);
