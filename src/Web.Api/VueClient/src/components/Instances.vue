@@ -5,7 +5,7 @@
     <v-card>
         <v-spacer></v-spacer>
         <v-data-table :headers="filteredHeaders"
-                      :items="instances"
+                      :items="table"
                       :search="search"
                       multi-sort
                       @click:row="showDetails">
@@ -98,7 +98,7 @@
   export default {
     components: {
     },
-    inject: ['instanceRepository','modelRepository'],
+    inject: ['instanceRepository','modelRepository','userRepository'],
     data() {
       return {
         // Filter values.
@@ -113,7 +113,6 @@
         // Table data.
         headers: [
           
-
           { text: 'Model Vendor', value: 'model.vendor' },
           { text: 'Model Number', value: 'model.modelNumber', },
           { text: 'Hostname', value: 'hostname' },
@@ -124,38 +123,21 @@
           { text: 'Owner Username', value: 'owner.username' },
           { text: 'Owner Email',  value: 'owner.email'},
           { text: 'Comment', value: 'comment' },
-
           { text: 'Actions', value: 'action', sortable: false },
 
 
         ],
         instances: [],
         models: [],
-
+        table: [],
         defaultItem: {
-          model: {
-            id: '',
-            vendor: '',
-            modelNumber: '',
-            height: 0,
-            displayColor: '',
-            ethernetPorts: 0,
-            powerPorts: 0,
-            cpu: '',
-            memory: '',
-            storage: '',
-          },
-          hostname: '',
-          rack:'',
-          owner:{
-            id:'',
-            username:'',
-            firstName:'',
-            lastName:'',
-            email:'',
-          },
-          rackPosition:0,
-          comment: ''
+            datacenter: '',
+            modelId: '',
+            hostname: '',
+            rackId: '',
+            rackPosition: '',
+            ownerId: '',
+            comment: '',
         },
         detailItem : {
           hostname:'',
@@ -183,6 +165,7 @@
         val || this.closeDetail()
       },
     },
+
     async created() {
       this.initialize()
     },
@@ -191,8 +174,39 @@
       async initialize () {
         this.instances = await this.instanceRepository.list();
         this.models = await this.modelRepository.list();
+        this.users = await this.userRepository.list();
+
+            for (const instance of this.instances) {
+                this.table.push({
+                    model: this.findModel(instance.modelId),
+                    rack: instance.rack,
+                    rackPosition: instance.rackPosition,
+                    comment: instance.comment,
+                    hostname: instance.hostname,
+                    owner: this.findOwner(instance.ownerId),
+                })
+            }
+
+            /*eslint-disable*/
+            console.log(JSON.parse(JSON.stringify(this.table)));
+
         this.loading = false;
-      },
+
+        },
+
+        findModel(id) {
+            for (const model of this.models) {
+                if (model.id === id)
+                    return model;
+            }
+        },
+
+        findOwner(id) {
+            for (const user of this.users) {
+                if (user.id === id)
+                    return user;
+            } 
+        },
     
       deleteItem (item) {
         this.deleting = true;

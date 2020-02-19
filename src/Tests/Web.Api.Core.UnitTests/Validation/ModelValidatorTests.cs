@@ -114,7 +114,7 @@ namespace Web.Api.Core.UnitTests.Validation
 
             var sut = new ModelValidator(mockRepo.Object);
 
-            var model = GetValidModelWithInstances();
+            var model = GetValidModelWithAssets();
 
             var result = await sut.ValidateAsync(model);
 
@@ -130,7 +130,7 @@ namespace Web.Api.Core.UnitTests.Validation
 
             var sut = new ModelValidator(mockRepo.Object);
 
-            var model = GetValidModelWithInstances();
+            var model = GetValidModelWithAssets();
 
             var result = await sut.ValidateAsync(model, ruleSet: "default, update");
 
@@ -138,15 +138,15 @@ namespace Web.Api.Core.UnitTests.Validation
         }
 
         [Fact]
-        public async void ModelValidator_Delete_FailsIfInstancesExist()
+        public async void ModelValidator_Delete_FailsIfAssetsExist()
         {
             var sut = GetDefaultValidator();
-            var model = GetValidModelWithInstances();
+            var model = GetValidModelWithAssets();
 
             var result = await sut.ValidateAsync(model, ruleSet: "delete");
 
             Assert.False(result.IsValid);
-            Assert.Contains(result.Errors, error => error.PropertyName == nameof(model.Instances));
+            Assert.Contains(result.Errors, error => error.PropertyName == nameof(model.Assets));
         }
 
         private static ModelValidator GetDefaultValidator()
@@ -155,17 +155,17 @@ namespace Web.Api.Core.UnitTests.Validation
             return new ModelValidator(mockRepo.Object);
         }
 
-        private static Model GetValidModelWithInstances()
+        private static Model GetValidModelWithAssets()
         {
             var model = new Model() { Vendor = "vendor", ModelNumber = "modelno", Height = 4 };
-            var instances = new List<Instance>
+            var assets = new List<Asset>
             {
-                new Instance() {Model = model, RackPosition = 1},
-                new Instance() {Model = model, RackPosition = 5},
-                new Instance() {Model = model, RackPosition = 9},
-                new Instance() {Model = model, RackPosition = 13}
+                new Asset() {Model = model, RackPosition = 1},
+                new Asset() {Model = model, RackPosition = 5},
+                new Asset() {Model = model, RackPosition = 9},
+                new Asset() {Model = model, RackPosition = 13}
             };
-            model.Instances = instances;
+            model.Assets = assets;
 
             return model;
         }

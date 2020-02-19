@@ -19,17 +19,17 @@ namespace Web.Api.Core.Services
             _repository = repository;
         }
 
-        public async Task<PagedList<FlatModelDto>> GetModelsAsync(string search, int page = 1, int pageSize = 10)
+        public async Task<PagedList<ModelDto>> GetModelsAsync(string search, int page = 1, int pageSize = 10)
         {
             var pagedList = await _repository.GetModelsAsync(search, page, pageSize);
-            return pagedList.ToFlatDto();
+            return pagedList.ToDto();
         }
 
-        public async Task<List<ExportModelDto>> GetModelExportAsync(ModelExportQuery query)
+        public async Task<List<ModelDto>> GetModelExportAsync(ModelExportQuery query)
         {
             query = query.ToUpper();
             var models = await _repository.GetModelExportAsync(query.Search);
-            return models.ToExportDto();
+            return models.ToDto();
         }
 
         public async Task<ModelDto> GetModelAsync(Guid modelId)
@@ -39,20 +39,15 @@ namespace Web.Api.Core.Services
             return model.ToDto();
         }
 
-        public async Task<int> UpdateModelAsync(FlatModelDto modelDto)
+        public async Task<int> UpdateModelAsync(ModelDto modelDto)
         {
-            if (!await CanUpdateModelAsync(modelDto))
-            {
-                throw new UserFriendlyException("Cannot save model with information given.", "GeneralConstraintViolation", modelDto);
-            }
-
             var model = modelDto.ToEntity();
             var updated = await _repository.UpdateModelAsync(model);
 
             return updated;
         }
 
-        public async Task<Guid> CreateModelAsync(FlatModelDto modelDto)
+        public async Task<Guid> CreateModelAsync(ModelDto modelDto)
         {
             var entity = modelDto.ToEntity();
             await _repository.AddModelAsync(entity);
@@ -63,12 +58,6 @@ namespace Web.Api.Core.Services
         {
             var entity = await _repository.GetModelAsync(modelId);
             await _repository.DeleteModelAsync(entity);
-        }
-
-        private async Task<bool> CanUpdateModelAsync(FlatModelDto modelDto)
-        {
-            var entity = modelDto.ToEntity();
-            return await _repository.CanUpdateModelAsync(entity);
         }
     }
 }

@@ -8,11 +8,11 @@ namespace Web.Api.Core.Services.Interfaces
 {
     public interface IModelService
     {
-        Task<PagedList<FlatModelDto>> GetModelsAsync(string search, int page = 1, int pageSize = 10);
-        Task<List<ExportModelDto>> GetModelExportAsync(ModelExportQuery query);
+        Task<PagedList<ModelDto>> GetModelsAsync(string search, int page = 1, int pageSize = 10);
+        Task<List<ModelDto>> GetModelExportAsync(ModelExportQuery query);
         Task<ModelDto> GetModelAsync(Guid modelId);
-        Task<int> UpdateModelAsync(FlatModelDto modelDto);
-        Task<Guid> CreateModelAsync(FlatModelDto modelDto);
+        Task<int> UpdateModelAsync(ModelDto modelDto);
+        Task<Guid> CreateModelAsync(ModelDto modelDto);
         Task DeleteModelAsync(Guid modelId);
     }
 }

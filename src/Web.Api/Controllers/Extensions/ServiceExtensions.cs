@@ -21,6 +21,7 @@ using Web.Api.Infrastructure.Repositories;
 using Web.Api.Infrastructure.Repositories.Interfaces;
 using Web.Api.Resources;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Web.Api.Extensions
 {
@@ -33,7 +34,7 @@ namespace Web.Api.Extensions
 
             // services
             services.AddTransient<IModelService, ModelService>();
-            services.AddTransient<IInstanceService, InstanceService>();
+            services.AddTransient<IAssetService, AssetService>();
             services.AddTransient<IIdentityService, IdentityService>();
             services.AddTransient<IRackService, RackService>();
 
@@ -47,7 +48,7 @@ namespace Web.Api.Extensions
         {
             services.AddTransient<IModelRepository, ModelRepository>();
             services.AddTransient<IRackRepository, RackRepository>();
-            services.AddTransient<IInstanceRepository, InstanceRepository>();
+            services.AddTransient<IAssetRepository, AssetRepository>();
             services.AddTransient<IIdentityRepository, IdentityRepository>();
 
             return services;
@@ -100,15 +101,24 @@ namespace Web.Api.Extensions
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             }).AddJwtBearer(configureOptions =>
             {
                 configureOptions.ClaimsIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
                 configureOptions.TokenValidationParameters = tokenValidationParameters;
                 configureOptions.SaveToken = true;
+            }).AddCookie(options =>
+            {
+                    options.LoginPath = "/signin";
+                    options.LogoutPath = "/signout";
+            }).AddDuke("Duke", "Duke", options =>
+            {
+                options.ClientId = "determined-shannon";
+                options.ClientSecret = "nAMi1*c6pF26mJFrBf3QY+IQU7crZCXaWxu=rmYFbAkT$dFWez";
             });
 
             // add identity
-            var identityBuilder = services.AddIdentityCore<User>(o =>
+            var identityBuilder = services.AddIdentity<User, IdentityRole>(o =>
             {
                 // configure identity options
                 o.Password.RequireDigit = false;
