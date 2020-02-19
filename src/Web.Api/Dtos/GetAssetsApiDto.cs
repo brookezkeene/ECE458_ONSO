@@ -25,6 +25,7 @@ namespace Web.Api.Dtos
         public Guid DatacenterId { get; set; }
         public string Datacenter { get; set; }
         public bool HasNetworkManagedPower { get; set; }
+
     }
 
     public class GetAssetApiDto : GetAssetsApiDto
