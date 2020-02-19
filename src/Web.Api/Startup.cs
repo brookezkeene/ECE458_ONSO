@@ -23,6 +23,8 @@ using Web.Api.Configuration;
 using Web.Api.Configuration.Constants;
 using Web.Api.Extensions;
 using Web.Api.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Web.Api
 {
@@ -43,7 +45,7 @@ namespace Web.Api
                 .ConfigureSqlDbContext(Configuration);
 
             services.AddApiAuthentication(Configuration);
-
+              
             services.AddSpaStaticFiles(options => options.RootPath = "VueClient/dist");
 
             services.AddControllers();
@@ -89,7 +91,6 @@ namespace Web.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-
             app.UseSpaStaticFiles();
 
             app.UseSwagger(c =>
@@ -110,15 +111,13 @@ namespace Web.Api
             });
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-
                 endpoints.MapToVueCliProxy(
                     "{*path}",
                     new SpaOptions { SourcePath = "VueClient" },
