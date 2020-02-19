@@ -47,13 +47,13 @@ namespace Web.Api.Controllers
         }
 
         [HttpGet("{id}/roles")]
-        public async Task<ActionResult<PagedList<GetUserRolesApiDto>>> GetUserRoles(Guid userId)
+        public async Task<ActionResult<PagedList<GetUserRolesApiDto>>> GetUserRoles(Guid id)
         {
             return Ok(null);
         }
 
         [HttpPost("{id}/roles")]
-        public async Task<IActionResult> PostUserRoles(Guid userId, [FromBody] CreateUserRolesApiDto roles)
+        public async Task<IActionResult> PostUserRoles(Guid id, [FromBody] CreateUserRolesApiDto roles)
         {
             return Ok();
         }
