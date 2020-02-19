@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Web.Api.Common;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
+using Web.Api.Dtos;
 
 namespace Web.Api.Controllers
 {
@@ -42,6 +44,18 @@ namespace Web.Api.Controllers
             var (identityResult, userId) = await _identityService.CreateUserAsync(user);
             var createdUser = await _identityService.GetUserAsync(userId);
             return CreatedAtAction(nameof(Get), new {id = createdUser.Id}, createdUser);
+        }
+
+        [HttpGet("{id}/roles")]
+        public async Task<ActionResult<PagedList<IdentityRole>>> GetUserRoles(Guid userId)
+        {
+            return Ok(null);
+        }
+
+        [HttpPost("{id}/roles")]
+        public async Task<IActionResult> PostUserRoles(Guid userId, [FromBody] CreateUserRolesApiDto roles)
+        {
+            return Ok();
         }
     }
 }
