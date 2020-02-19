@@ -47,6 +47,7 @@
     export default {
         name: 'rack-table',
         inject: ['rackRepository', 'datacenterRepository'],
+        props: ['updateData'],
         item: null,
         data () {
             return {
@@ -62,6 +63,11 @@
                 datacenters: [],
                 selectedDatacenter: ''
             };
+        },
+        watch: { // This might slow things down if we have a lot of racks to get from the backend !!!
+            updateData(val) {
+                this.updateRacks() || val;
+            },
         },
         computed: {
             admin() {
@@ -92,10 +98,14 @@
                 if (this.selectedDatacenter === "All Datacenters") {
                     // make special request for all datacenter racks
                 } else {
-                    this.racks = await this.rackRepository.list() // re-call based on new datacenter Name
+                    this.racks = await this.rackRepository.list() // re-call based on new datacenter name
 
                 }
             },
+            async updateRacks() { // This might slow things down if we have a lot of racks to get from the backend !!!
+                this.$emit('updated');
+                this.racks = await this.rackRepository.list(); // re-call with same datacenter name if racks were added or deleted
+            }
         }
     }
 </script>
