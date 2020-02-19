@@ -47,7 +47,7 @@ namespace Web.Api.Controllers
         }
 
         [HttpGet("{id}/roles")]
-        public async Task<ActionResult<PagedList<IdentityRole>>> GetUserRoles(Guid userId)
+        public async Task<ActionResult<PagedList<GetUserRolesApiDto>>> GetUserRoles(Guid userId)
         {
             return Ok(null);
         }
