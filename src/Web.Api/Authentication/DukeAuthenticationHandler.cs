@@ -50,12 +50,14 @@ namespace AspNet.Security.OAuth.Duke
                 throw new HttpRequestException("An error occurred while retrieving the user profile.");
             }
 
-            using var payload = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+            var payload = await response.Content.ReadAsStringAsync();
+
+            using var jsonDocument = JsonDocument.Parse(payload);
             var principal = new ClaimsPrincipal(identity);
-            var context = new OAuthCreatingTicketContext(principal, properties, Context, Scheme, Options, Backchannel, tokens, payload.RootElement);
+            var context = new OAuthCreatingTicketContext(principal, properties, Context, Scheme, Options, Backchannel, tokens, jsonDocument.RootElement);
             context.RunClaimActions();
 
-            var dukeInfo = JsonConvert.DeserializeObject<DukeOAthInfo>(await response.Content.ReadAsStringAsync());
+            var dukeInfo = JsonConvert.DeserializeObject<DukeOAthInfo>(payload);
             identity.AddClaim(new Claim(ClaimTypes.Email, dukeInfo.mail));
             identity.AddClaim(new Claim(ClaimTypes.GivenName, dukeInfo.firstName));
             identity.AddClaim(new Claim(ClaimTypes.Surname, dukeInfo.lastName));
@@ -103,7 +105,6 @@ namespace AspNet.Security.OAuth.Duke
         public string firstName { get; set; }
         public string nickname { get; set; }
         public string gradYear { get; set; }
-        public List<string> affiliations { get; set; }
         public LDAP LDAP { get; set; }
         public Settings settings { get; set; }
     }
