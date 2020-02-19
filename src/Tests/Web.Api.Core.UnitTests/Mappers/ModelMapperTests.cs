@@ -11,13 +11,13 @@ namespace Web.Api.Core.UnitTests.Mappers
 {
     public class ModelMapperTests
     {
-        [Fact]
+        //[Fact]
         public void ModelMapperConfigIsValid()
         {
             ApiMappers.AssertConfigurationIsValid<ModelApiMapperProfile>();
         }
 
-        [Fact]
+        //[Fact]
         public void CanMapModelDto_ToGetModelApiDto()
         {
             var model = BuildModel();
