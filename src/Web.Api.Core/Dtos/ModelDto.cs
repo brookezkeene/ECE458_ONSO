@@ -26,5 +26,14 @@ namespace Web.Api.Core.Dtos
         public int? Memory { get; set; }
         public string Storage { get; set; }
         public string Comment { get; set; }
+        public List<ModelNetworkPortDto> NetworkPorts { get; set; }
+    }
+
+    public class ModelNetworkPortDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public Guid ModelId { get; set; }
+        public ModelDto Model { get; set; }
     }
 }
