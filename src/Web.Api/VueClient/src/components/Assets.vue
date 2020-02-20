@@ -82,6 +82,30 @@
                 </v-row>
             </template>
 
+            <template v-slot:item.power="{ item }">
+                <v-row>
+                    <v-btn-toggle dense
+                                  mandatory
+                                  light>
+                        <v-btn outlined color ="green" 
+                               @click="changePower"
+                               small=true>
+                            ON
+                        </v-btn>
+                        <v-btn outlined color ="red" 
+                               @click="changePower"
+                               small=true>
+                            OFF
+                        </v-btn>
+                        <v-btn outlined color ="black"
+                               small=true
+                               @click="changePower">
+                            Cycle
+                        </v-btn>
+                    </v-btn-toggle>
+                </v-row>
+            </template>
+
             <template v-slot:no-data>
                 <v-btn color="primary" @click="initialize">Refresh</v-btn>
             </template>
@@ -120,6 +144,7 @@
           { text: 'Rack U', value: 'rackPosition', },
           { text: 'Owner Username', value: 'owner' },
           { text: 'Comment', value: 'comment' },
+          { text: 'Power', value: 'power', sortable: false },
           { text: 'Actions', value: 'action', sortable: false },
 
 
@@ -135,6 +160,7 @@
             rackPosition: '',
             ownerId: '',
             comment: '',
+            poweredOn: false,
         },
           detailItem: {
             id: '',
@@ -148,6 +174,7 @@
         },
         deleting: false,
         editing: false,
+        powering: false,
       }},
     computed: {
         admin() {
@@ -179,22 +206,7 @@
         this.loading = false;
 
         },
-
-        findModel(id) {
-            for (const model of this.models) {
-                if (model.id === id)
-                    return model;
-            }
-        },
-
-        findOwner(id) {
-            for (const user of this.users) {
-                if (user.id === id)
-                    return user;
-            } 
-        },
-    
-      deleteItem (item) {
+        deleteItem (item) {
         this.deleting = true;
         confirm('Are you sure you want to delete this item?') && this.assetRepository.delete(item)
                     .then(async () => {
@@ -202,10 +214,14 @@
                     })
         },
         editItem(item) {
+            this.editing = true;
             this.$router.push({ name: 'asset-edit', params: { id: item.id } })
         },
         addItem() {
             this.$router.push({ name: 'asset-new' })
+        },
+        changePower() {
+            this.powering = true;
         },
         showInstructions() {
             this.instructionsDialog = true;
@@ -214,7 +230,7 @@
             this.instructionsDialog = false;
         },
         showDetails(item) {
-            if (!this.editing && !this.deleting) {
+            if (!this.editing && !this.deleting && !this.powering) {
             /*eslint-disable*/
                 console.log(item);
               this.$router.push({ name: 'asset-details', params: {id: item.id } })
