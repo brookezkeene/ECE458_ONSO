@@ -1,7 +1,7 @@
 ﻿/* eslint-disable no-unused-vars, no-console */
 
 import axios from 'axios';
-const resource = '/instances';
+const resource = '/assets';
 export default {
     find(id) {
         return axios.get(`${resource}/${id}`)

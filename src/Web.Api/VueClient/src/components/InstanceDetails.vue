@@ -20,15 +20,7 @@
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Owner Username: </v-label>
-                        <v-card-text v-if = "ownerPresent"> {{instance.owner.username}} </v-card-text>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                        <v-label>Owner Display Name: </v-label>
-                        <v-card-text v-if = "ownerPresent"> {{instance.owner.displayName}} </v-card-text>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                        <v-label>Owner Email: </v-label>
-                        <v-card-text v-if = "ownerPresent"> {{instance.owner.email}} </v-card-text>
+                        <v-card-text v-if = "ownerPresent"> {{instance.owner}} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Comment: </v-label>
@@ -36,11 +28,11 @@
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Model Vendor: </v-label>
-                        <v-card-text> {{instance.model.vendor}} </v-card-text>
+                        <v-card-text> {{instance.vendor}} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Model: </v-label>
-                        <router-link :to="{ name: 'model-details', params: { id: instance.model.id } }"> {{ instance.model.vendor }} </router-link>
+                        <router-link :to="{ name: 'model-details', params: { id: instance.modelId } }"> {{ instance.modelNumber }} </router-link>
                     </v-col>
                 </v-row>
 
@@ -61,38 +53,34 @@
         name: 'instance-details',
         inject: ['instanceRepository'],
         item: null,
-        id: 0,
-        ownerPresent: true,
         props: ['id'],
         data() {
             return {
                 loading: false,
                 instance: {
+                    id:'',
                     hostname: '',
                     rack: '',
                     rackPosition: '',
-                    owner: {
-                        id: 0, username: '', displayName: '', email: ''
-                    },
+                    owner: '',
                     comment: '',
-                    model: { id: 0 }
+                    vendor: '',
+                    modelNumber: '',
                 },
+                ownerPresent: true, // in case the instance does not have an owner, don't need null pointer bc not required.
             };
         },
         created() {
             this.fetchInstance();
         },
-        watch: {
-            id: function () {
-                this.fetchInstance();
-            }
-        },
         methods: {
             async fetchInstance() {
                 if (!this.loading) this.loading = true;
+                /*eslint-disable*/
+                console.log(this.id);
                 this.instance = await this.instanceRepository.find(this.id);
                 this.loading = false;
-                if (this.instance.owner == null) {
+                if (this.instance.owner === undefined) {
                     this.ownerPresent = false;
                 }
             }

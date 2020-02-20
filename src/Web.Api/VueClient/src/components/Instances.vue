@@ -25,7 +25,7 @@
                                                     flat
                                                     hide-no-data
                                                     hide-details
-                                                    item-text="model.vendor"
+                                                    item-text="vendor"
                                                     label="Search by keyword on model and hostname"
                                                     single-line
                                                     solo-inverted></v-autocomplete>
@@ -94,13 +94,11 @@
 
 <script>
     import Auth from "../auth"
-    //import InstanceEdit from "./InstaceEdit"
 
   export default {
     components: {
-        //InstanceEdit
     },
-    inject: ['instanceRepository','modelRepository'],
+    inject: ['instanceRepository','modelRepository','userRepository'],
     data() {
       return {
         // Filter values.
@@ -115,56 +113,38 @@
         // Table data.
         headers: [
           
-
-          { text: 'Model Vendor', value: 'model.vendor' },
-          { text: 'Model Number', value: 'model.modelNumber', },
+          { text: 'Model Vendor', value: 'vendor' },
+          { text: 'Model Number', value: 'modelNumber', },
           { text: 'Hostname', value: 'hostname' },
           { text: 'Rack', value: 'rack', filter: this.rackFilter },
           { text: 'Rack U', value: 'rackPosition', },
-          { text: 'Owner First Name', value: 'owner.firstName', },
-          { text: 'Owner Last Name', value: 'owner.lastName' },
-          { text: 'Owner Username', value: 'owner.username' },
-          { text: 'Owner Email',  value: 'owner.email'},
+          { text: 'Owner Username', value: 'owner' },
           { text: 'Comment', value: 'comment' },
-
           { text: 'Actions', value: 'action', sortable: false },
 
 
         ],
         instances: [],
         models: [],
-
-        defaultItem: {
-          model: {
+          defaultItem: {
             id: '',
-            vendor: '',
-            modelNumber: '',
-            height: 0,
-            displayColor: '',
-            ethernetPorts: 0,
-            powerPorts: 0,
-            cpu: '',
-            memory: '',
-            storage: '',
-          },
-          hostname: '',
-          rack:'',
-          owner:{
-            id:'',
-            username:'',
-            firstName:'',
-            lastName:'',
-            email:'',
-          },
-          rackPosition:0,
-          comment: ''
+            datacenter: '',
+            modelId: '',
+            hostname: '',
+            rackId: '',
+            rackPosition: '',
+            ownerId: '',
+            comment: '',
         },
-        detailItem : {
-          hostname:'',
-          rack:'',
-          rackPosition:0,
-          owner:'',
-          comment: ''
+          detailItem: {
+            id: '',
+            datacenter: '',
+            modelId: '',
+            hostname: '',
+            rackId: '',
+            rackPosition: '',
+            ownerId: '',
+            comment: '',
         },
         deleting: false,
         editing: false,
@@ -185,6 +165,7 @@
         val || this.closeDetail()
       },
     },
+
     async created() {
       this.initialize()
     },
@@ -193,8 +174,25 @@
       async initialize () {
         this.instances = await this.instanceRepository.list();
         this.models = await this.modelRepository.list();
+        this.users = await this.userRepository.list();
+
         this.loading = false;
-      },
+
+        },
+
+        findModel(id) {
+            for (const model of this.models) {
+                if (model.id === id)
+                    return model;
+            }
+        },
+
+        findOwner(id) {
+            for (const user of this.users) {
+                if (user.id === id)
+                    return user;
+            } 
+        },
     
       deleteItem (item) {
         this.deleting = true;
@@ -203,27 +201,23 @@
                         await this.initialize();
                     })
         },
-
         editItem(item) {
             this.$router.push({ name: 'instance-edit', params: { id: item.id } })
         },
-
         addItem() {
             this.$router.push({ name: 'instance-new' })
         },
-
         showInstructions() {
             this.instructionsDialog = true;
         },
-
         closeDetail() {
             this.instructionsDialog = false;
         },
-
         showDetails(item) {
-          if (!this.editing && !this.deleting) {
-              this.detailItem = Object.assign({}, item)
-              this.$router.push({ name: 'instance-details', params: { detailItem: this.detailItem, id: this.detailItem.id } })
+            if (!this.editing && !this.deleting) {
+            /*eslint-disable*/
+                console.log(item);
+              this.$router.push({ name: 'instance-details', params: {id: item.id } })
           }
           this.deleting = false;
           //this.detailsDialog = true
