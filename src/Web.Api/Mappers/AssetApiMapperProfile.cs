@@ -14,7 +14,7 @@ namespace Web.Api.Mappers
     {
         public AssetApiMapperProfile()
         {
-            CreateMap<AssetDto, GetAssetApiDto>()
+            CreateMap<AssetDto, GetAssetsApiDto>()
                 .ForMember(o => o.Vendor, opts => opts.MapFrom(src => src.Model.Vendor))
                 .ForMember(o => o.ModelNumber, opts => opts.MapFrom(src => src.Model.ModelNumber))
                 .ForMember(o => o.DisplayColor, opts => opts.MapFrom(src => src.Model.DisplayColor))

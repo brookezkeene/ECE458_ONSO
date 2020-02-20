@@ -22,13 +22,14 @@ namespace Web.Api.Controllers
             _assetService = assetService;
         }
 
-        [HttpGet("model")]
+        [HttpGet("models")]
         public async Task<ActionResult<List<ExportModelDto>>> Get([FromQuery] ModelExportQuery query)
         {
             var models = await _modelService.GetModelExportAsync(query);
             return Ok(models);
         }
-        [HttpGet("asset")]
+
+        [HttpGet("assets")]
         public async Task<ActionResult<List<ExportModelDto>>> Get([FromQuery] AssetExportQuery query)
         {
             var assets = await _assetService.GetAssetExportAsync(query);

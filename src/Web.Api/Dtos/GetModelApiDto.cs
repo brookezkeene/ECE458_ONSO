@@ -9,6 +9,7 @@ namespace Web.Api.Dtos
     {
         public List<GetModelAssetApiDto> Assets;
         public string Comment { get; set; }
+        public List<string> NetworkPortNames { get; set; }
     }
 
     public class GetModelAssetApiDto

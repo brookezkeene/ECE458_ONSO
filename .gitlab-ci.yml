@@ -69,5 +69,4 @@ deploy_cannon:
     name: cannon
     url: http://vcm-13156.vm.duke.edu/
   only:
-    - 86-update-database-schema
-    
+    - 101-support-changing-api-endpoints

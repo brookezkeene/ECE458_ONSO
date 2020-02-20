@@ -31,5 +31,6 @@ namespace Web.Api.Dtos
         public int? Memory { get; set; }
         public int? EthernetPorts { get; set; }
         public int? PowerPorts { get; set; }
+        public List<string> NetworkPortNames { get; set; }
     }
 }

@@ -50,6 +50,5 @@ namespace Web.Api.Infrastructure.DbContexts
         public DbSet<Rack> Racks { get; set; }
         public DbSet<Asset> Assets { get; set; }
         public DbSet<Datacenter> Datacenters { get; set; }
-        public DbSet<Pdu> Pdus { get; set; }
     }
 }
