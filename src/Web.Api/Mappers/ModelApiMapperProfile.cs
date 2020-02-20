@@ -13,7 +13,6 @@ namespace Web.Api.Mappers
         public ModelApiMapperProfile()
         {
             CreateMap<ModelDto, GetModelApiDto>()
-<<<<<<< HEAD
                 .ForMember(o => o.Assets, opts => opts.MapFrom(src => src.Assets))
                 .ReverseMap();
             CreateMap<AssetDto, GetModelAssetApiDto>()
@@ -31,17 +30,6 @@ namespace Web.Api.Mappers
             CreateMap<ModelNetworkPortDto, UpdateModelNetworkPortDto>()
                 .ReverseMap();
 
-=======
-                .ForMember(o => o.Assets, opts => opts.MapFrom(src => src.Assets));
-            CreateMap<AssetDto, GetModelAssetApiDto>();
-            CreateMap<ModelDto, GetModelsApiDto>();
-            CreateMap<ModelDto, CreateModelApiDto>()
-                .ForMember(o => o.NetworkPorts, opts => opts.MapFrom(src => src.NetworkPorts));
-            CreateMap<ModelDto, UpdateModelApiDto>()
-                .ForMember(o => o.NetworkPorts, opts => opts.MapFrom(src => src.NetworkPorts));
-            CreateMap<ModelNetworkPortDto, CreateModelNetworkPortDto>();
-            CreateMap<ModelNetworkPortDto, UpdateAssetApiDto>();
->>>>>>> added the necessary networkPort classes to map between a modelDTO and CreateModelApiDto and UpdatemodelApiDto
         }
     }
 }
