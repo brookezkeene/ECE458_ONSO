@@ -45,7 +45,7 @@
                                            :color="slot.style.backgroundColor"
                                            :depressed=true
                                            :tile=true
-                                           :to="{ name: 'instance-details', params: { id: slot.value.id } }">
+                                           :to="{ name: 'asset-details', params: { id: slot.value.id } }">
                                         {{ slot.value.text }}
                                     </v-btn>
                                     <v-btn v-else

@@ -72,7 +72,7 @@
                 mini: true,
                 menuItems: [
                     { title: 'Models', path: '/models', icon: 'mdi-table-large' },
-                    { title: 'Instances', path: '/instances', icon: 'mdi-server' },
+                    { title: 'Assets', path: '/assets', icon: 'mdi-server' },
                     { title: 'Datacenters & Racks', path: '/racks', icon: 'mdi-view-day' },
                     { title: 'Users', path: '/users', icon: 'mdi-account' },
                     { title: 'Reports', path: '/reports', icon: 'mdi-chart-pie' },

@@ -73,7 +73,7 @@
 <script>
 export default {
     name: 'import-wizard',
-    inject: ['modelRepository', 'instanceRepository'],
+    inject: ['modelRepository', 'assetRepository'],
     props: ['importWizard'],
     data () {
         return {
