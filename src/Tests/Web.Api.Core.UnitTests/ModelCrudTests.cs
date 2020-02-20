@@ -118,7 +118,6 @@ namespace Web.Api.Core.UnitTests
                 Memory = 10,
                 EthernetPorts = 4,
                 PowerPorts = 4,
-
             };
         }
     }
