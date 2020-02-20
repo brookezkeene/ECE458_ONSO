@@ -225,23 +225,23 @@
             this.$router.push({ name: 'asset-new' })
         },
         turnOn(item) {
+            this.powering = true;
             confirm('Are you sure you would like to turn on this asset?')
             /*eslint-disable*/
             console.log(item.id);
             //PUT the power state for this asset to the backend
-            this.powering = true;
         },
         turnOff(item) {
+            this.powering = true;
             confirm('Are you sure you would like to power off this asset?')
             console.log(item.id);
             //PUT the power state for this asset to the backend
-            this.powering = true;
         },
         cycle(item) {
+            this.powering = true;
             confirm('Are you sure you would like to cycle this asset?')
             console.log(item.id);
             //PUT the power state for this asset to the backend
-            this.powering = true;
         },
         showInstructions() {
             this.instructionsDialog = true;
@@ -256,7 +256,7 @@
               this.$router.push({ name: 'asset-details', params: {id: item.id } })
           }
           this.deleting = false;
-          //this.detailsDialog = true
+          this.powering = false;
       },
 
       /**
