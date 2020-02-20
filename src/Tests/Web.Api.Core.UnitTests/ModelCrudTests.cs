@@ -46,11 +46,6 @@ namespace Web.Api.Core.UnitTests
             var getModel = await _controller.Get(model.Id);
             Assert.NotNull(getModel);
 
-            //checking to see if update works
-            var updateModel = GenerateUpdateModel(model);
-            var updated = await _controller.Put(updateModel);
-            Assert.NotNull(updated);
-
         }
         private static CreateModelApiDto GenerateCreateModelApiDto()
         {
