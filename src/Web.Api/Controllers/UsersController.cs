@@ -59,5 +59,3 @@ namespace Web.Api.Controllers
         }
     }
 }
-
-}
