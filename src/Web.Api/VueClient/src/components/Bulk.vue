@@ -32,15 +32,15 @@
                         <v-spacer></v-spacer>
                         assets
                         <v-spacer></v-spacer>
-                        <v-icon v-if="admin" @click="showassetInfo">mdi-information</v-icon>
+                        <v-icon v-if="admin" @click="showAssetInfo">mdi-information</v-icon>
                     </v-card-title>
                     <v-card-actions class="justify-center">
                         <v-container>
                             <v-row align="center" justify="center">
-                                <v-btn v-if="admin" color="primary" class="mb-2" @click="openImportassets">Import</v-btn>
+                                <v-btn v-if="admin" color="primary" class="mb-2" @click="openImportAssets">Import</v-btn>
                             </v-row>
                             <v-row align="center" justify="center">
-                                <v-btn color="primary" class="mb-2" @click="startExportassets">Export</v-btn>
+                                <v-btn color="primary" class="mb-2" @click="startExportAssets">Export</v-btn>
                             </v-row>
                         </v-container>
                     </v-card-actions>
@@ -66,7 +66,7 @@
             </v-card>
         </v-dialog>
 
-        <v-dialog v-model="importassetWizard" max-width="500px">
+        <v-dialog v-model="importAssetWizard" max-width="500px">
             <v-card>
                 <import-wizard v-on:close-file-chooser="closeImport" v-bind:forModel="forModel"></import-wizard>
             </v-card>
@@ -76,7 +76,7 @@
             <export-model-wizard v-on:close-model-export="closeExport('model')"></export-model-wizard>
         </v-dialog>
 
-        <v-dialog v-model="exportassetDialog" max-width="300px">
+        <v-dialog v-model="exportAssetDialog" max-width="300px">
             <export-asset-wizard v-on:close-asset-export="closeExport('asset')"></export-asset-wizard>
         </v-dialog>
     </v-card>
@@ -96,7 +96,7 @@ export default {
         return {
             loading: false,       
             extrainfomodel: false,
-            extrainfoAsset: false,
+            extrainfoasset: false,
             importModelWizard: false,
             importAssetWizard: false,
             exportModelDialog: false,
