@@ -59,6 +59,7 @@ namespace Web.Api.Infrastructure.Repositories
         {
             return await _dbContext.Models
                 .Include(x => x.Assets)
+                .Include(x => x.NetworkPorts)
                 .Where(x => x.Id == modelId)
                 .AsNoTracking()
                 .SingleAsync();
