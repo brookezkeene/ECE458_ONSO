@@ -75,6 +75,7 @@
                                         <v-text-field v-model="networkPortNames[index]" 
                                                       label="Network Port" 
                                                       placeholder="port name"
+                                                      :rules="[rules.networkPortRules]"
                                                       :value="n"></v-text-field>
                                     </div>
                                 </v-container>
@@ -119,6 +120,9 @@
                 namesDialog: false,
                 networkPorts: [],
                 editedIndex: -1,
+                rules: {
+                    networkPortRules: v => /^[a-zA-Z0-9]*$/.test(v) || 'Network port name cannot contain whitespace'
+                },
             };
         },
 
@@ -180,7 +184,7 @@
             },
             closeNamesDialog() {
                 this.namesDialog = false;
-            }
+            },
         }
     }
 </script>
