@@ -16,6 +16,12 @@ namespace Web.Api.Mappers
                 .ForMember(o => o.Assets, opts => opts.MapFrom(src => src.Assets));
             CreateMap<AssetDto, GetModelAssetApiDto>();
             CreateMap<ModelDto, GetModelsApiDto>();
+            CreateMap<ModelDto, CreateModelApiDto>()
+                .ForMember(o => o.NetworkPorts, opts => opts.MapFrom(src => src.NetworkPorts));
+            CreateMap<ModelDto, UpdateModelApiDto>()
+                .ForMember(o => o.NetworkPorts, opts => opts.MapFrom(src => src.NetworkPorts));
+            CreateMap<ModelNetworkPortDto, CreateModelNetworkPortDto>();
+            CreateMap<ModelNetworkPortDto, UpdateAssetApiDto>();
         }
     }
 }
