@@ -7,6 +7,10 @@
             <v-card-text>
                 <v-row>
                     <v-col cols="12" sm="6" md="4">
+                        <v-label>Data Center: </v-label>
+                        <v-card-text> {{asset.datacenter}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
                         <v-label>Host Name: </v-label>
                         <v-card-text> {{asset.hostname}} </v-card-text>
                     </v-col>

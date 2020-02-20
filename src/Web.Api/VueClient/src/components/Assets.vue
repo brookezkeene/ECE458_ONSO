@@ -88,19 +88,19 @@
                                   light
                                   tile
                                   rounded="true">
-                        <v-btn color ="green" 
+                        <v-btn color ="green lighten-1" 
                                @click="turnOn(item)"
                                small=true
                                depressed>
                             ON
                         </v-btn>
-                        <v-btn color ="red" 
+                        <v-btn color ="red lighten-1" 
                                @click="turnOff(item)"
                                small=true
                                depressed>
                             OFF
                         </v-btn>
-                        <v-btn 
+                        <v-btn color = "grey lighten-2"
                                small=true
                                @click="cycle(item)"
                                depressed>
