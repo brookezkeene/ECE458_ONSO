@@ -67,8 +67,8 @@
 
 <script>
     export default {
-        name: 'instance-edit',
-        inject: ['instanceRepository', 'modelRepository', 'userRepository', 'rackRepository', 'datacenterRepository'],
+        name: 'asset-edit',
+        inject: ['assetRepository', 'modelRepository', 'userRepository', 'rackRepository', 'datacenterRepository'],
         props: {
             id: String,
         },
@@ -76,7 +76,7 @@
             return {
                 models: [],
                 users: [],
-                instances: [],
+                assets: [],
                 racks: [],
                 datacenters: [],
                 loading: false,
@@ -97,11 +97,11 @@
         async created() {
             this.models = await this.modelRepository.list();
             this.users = await this.userRepository.list();
-            this.instances = await this.instanceRepository.list();
+            this.assets = await this.assetRepository.list();
             this.racks = await this.rackRepository.list();
             this.datacenters = await this.datacenterRepository.list();
 
-            const existingItem = this.instances.find(o => o.id == this.id);
+            const existingItem = this.assets.find(o => o.id == this.id);
             if (typeof existingItem !== 'undefined') {
                 this.editedItem = Object.assign({}, existingItem);
             }
@@ -124,14 +124,14 @@
 
                 if (typeof this.id !== 'undefined') {
                     console.log(this.editedItem);
-                    this.instanceRepository.update(this.editedItem).then(this.close());
+                    this.assetRepository.update(this.editedItem).then(this.close());
                 } else {
                     console.log(this.editedItem)
-                    this.instanceRepository.create(this.editedItem).then(this.close());
+                    this.assetRepository.create(this.editedItem).then(this.close());
                 }
             },
             close() {
-                this.$router.push({ name: 'instances' })
+                this.$router.push({ name: 'assets' })
             },
         }
     }

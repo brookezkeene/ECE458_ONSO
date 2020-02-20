@@ -52,9 +52,9 @@
             </v-stepper-items>
         </v-stepper>
 
-        <v-dialog v-model="instanceErrorDialog">
+        <v-dialog v-model="assetErrorDialog">
             <v-card>
-                <v-title>No Instances found with these filters!</v-title>
+                <v-title>No assets found with these filters!</v-title>
                 <v-btn @click.native="step = 1">Try Again</v-btn>
             </v-card>
         </v-dialog>
@@ -63,7 +63,7 @@
 
 <script>
     export default {
-        name: 'export-instance-wizard',
+        name: 'export-asset-wizard',
         inject: ['exportRepository'],
         props: ['exportWizard'],
         data () {
@@ -91,7 +91,7 @@
                     EndRow: '',
                     EndCol: '',
                 },
-                instanceErrorDialog: false
+                assetErrorDialog: false
             };
         },
         methods: {
@@ -104,7 +104,7 @@
                 this.$emit('close-model-export');
             },
             handleError() {
-                this.instanceErrorDialog = true;
+                this.assetErrorDialog = true;
             },
         }
     }

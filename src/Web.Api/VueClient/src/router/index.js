@@ -2,16 +2,16 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/Login'
 import ModelDetails from '@/components/ModelDetails'
-import InstanceDetails from '@/components/InstanceDetails'
+import assetDetails from '@/components/AssetDetails'
 import RackDiagram from '@/components/RackDiagram'
 import ModelEdit from '@/components/ModelEdit'
 import Models from '@/components/Models'
-import Instances from '@/components/Instances'
+import assets from '@/components/Assets'
 import Racks from '@/components/Racks'
 import DatacenterEdit from '@/components/DatacenterEdit'
 import ImportExport from '@/components/Bulk'
 import Users from '@/components/Users'
-import InstanceEdit from '@/components/InstanceEdit'
+import assetEdit from '@/components/AssetEdit'
 import Reports from '@/components/Reports'
 import Dashboard from '@/components/Dashboard'
 import UsersCreate from '@/components/UserForm'
@@ -61,27 +61,27 @@ const routes = [
                 props: true,
             },
             {
-                path: '/instances',
-                name: 'instances',
-                component: Instances,
+                path: '/assets',
+                name: 'assets',
+                component: assets,
             },
             {
-                path: '/instances/:id',
-                name: 'instance-details',
-                component: InstanceDetails,
+                path: '/assets/:id',
+                name: 'asset-details',
+                component: assetDetails,
                 props: true,
             },
             {
-                path: '/instances/edit/:id',
-                name: 'instance-edit',
-                component: InstanceEdit,
+                path: '/assets/edit/:id',
+                name: 'asset-edit',
+                component: assetEdit,
                 props: true,
                 meta: { admin: true }
             },
             {
-                path: '/instances/new',
-                name: 'instance-new',
-                component: InstanceEdit,
+                path: '/assets/new',
+                name: 'asset-new',
+                component: assetEdit,
                 props: true,
                 meta: { admin: true }
             },

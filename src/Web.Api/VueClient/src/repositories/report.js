@@ -13,7 +13,7 @@ export default {
 
         mockRacks.forEach(rack => {
             numRacks++;
-            rack.instances.forEach(asset => {
+            rack.assets.forEach(asset => {
                 var model = asset.model;
                 // calculate free vs. used space
                 usedSpace += model.height;
