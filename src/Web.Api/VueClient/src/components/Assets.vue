@@ -83,7 +83,7 @@
             </template>
 
             <template v-slot:item.power="{ item }">
-                <v-row>
+                <v-row v-if="item.hasNetworkManagedPower">
                     <v-btn-toggle dense
                                   mandatory
                                   light>
