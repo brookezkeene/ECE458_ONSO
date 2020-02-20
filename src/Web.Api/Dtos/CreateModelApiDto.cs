@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace Web.Api.Dtos
 {
-    public class UpdateModelApiDto
+    public class CreateModelApiDto
     {
-        public Guid Id { get; set; }
         public string Vendor { get; set; }
         public string ModelNumber { get; set; }
+        public int Height { get; set; }
         public string DisplayColor { get; set; }
         public string Cpu { get; set; }
         public string Storage { get; set; }
@@ -17,12 +17,10 @@ namespace Web.Api.Dtos
         public int? Memory { get; set; }
         public int? EthernetPorts { get; set; }
         public int? PowerPorts { get; set; }
-        public List<UpdateModelNetworkPortDto> NetworkPorts { get; set; }
+        public List<CreateModelNetworkPortDto> NetworkPorts { get; set; }
     }
-
-    public class UpdateModelNetworkPortDto
+    public class CreateModelNetworkPortDto
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
     }
 }
