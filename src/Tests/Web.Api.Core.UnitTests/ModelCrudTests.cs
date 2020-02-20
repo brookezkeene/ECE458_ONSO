@@ -46,8 +46,6 @@ namespace Web.Api.Core.UnitTests
             var getModel = await _controller.Get(model.Id);
             Assert.NotNull(getModel);
 
-
-
         }
         private static CreateModelApiDto GenerateCreateModelApiDto()
         {
