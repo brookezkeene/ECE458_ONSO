@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Diagnostics.CodeAnalysis;
 using AspNet.Security.OAuth.Duke;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authentication;
@@ -64,7 +65,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static AuthenticationBuilder AddDuke(
             [NotNull] this AuthenticationBuilder builder,
             [NotNull] string scheme,
-            [CanBeNull] string caption,
+            [MaybeNull] string caption,
             [NotNull] Action<DukeAuthenticationOptions> configuration)
         {
             return builder.AddOAuth<DukeAuthenticationOptions, DukeAuthenticationHandler>(scheme, caption, configuration);
