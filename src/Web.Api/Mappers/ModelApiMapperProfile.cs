@@ -27,8 +27,9 @@ namespace Web.Api.Mappers
                 .ReverseMap();
             CreateMap<ModelNetworkPortDto, CreateModelNetworkPortDto>()
                 .ReverseMap();
-            CreateMap<ModelNetworkPortDto, UpdateAssetApiDto>()
+            CreateMap<ModelNetworkPortDto, UpdateModelNetworkPortDto>()
                 .ReverseMap();
+
         }
     }
 }

@@ -41,50 +41,6 @@ namespace Web.Api.Core.UnitTests
             var repo = new AssetRepository(context);
         }
 
-        [Fact]
-        public async void AddingCreateModel() // TODO: Why does this test have no asserts?
-        {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-               .UseInMemoryDatabase(Guid.NewGuid().ToString())
-               .Options;
-            await using var context = new ApplicationDbContext(options);
-            IModelRepository _repository = new ModelRepository(context);
-            IModelService _service = new ModelService(_repository);
-            IApiErrorResources _error = new ApiErrorResources();
-            ModelsController _controller = new ModelsController(_service, _error);
-
-            var createModelApiDto = GenerateCreateModelApiDto();
-            var exModel = context.Model;
-            
-            var sign = await _controller.Post(createModelApiDto);
-            Assert.NotNull(sign);
-        }
-        private static CreateModelApiDto GenerateCreateModelApiDto()
-        {
-            List<CreateModelNetworkPortDto> networkPorts = new List<CreateModelNetworkPortDto>();
-            for (int i = 0; i < 4; i++)
-            {
-                networkPorts.Add(new CreateModelNetworkPortDto { Name = (i + 1).ToString() });
-            }
-            // confirm proper address format
-            return new CreateModelApiDto
-            {
-                Vendor = "vendor",
-                ModelNumber = "modelNumber",
-                Height = 2,
-                DisplayColor = "ffffff",
-                Cpu = "cpu",
-                Storage = "storage",
-                Comment = "comment",
-                Memory = 10,
-                EthernetPorts = 4,
-                PowerPorts = 4,
-                NetworkPorts = networkPorts,
-
-            };
-
-        }
-
         private static IEnumerable<Asset> GenerateAssets()
         {
             for (int i = 0; i < 4; i++)
