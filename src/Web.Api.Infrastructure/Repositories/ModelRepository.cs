@@ -80,7 +80,7 @@ namespace Web.Api.Infrastructure.Repositories
         }
 
         public async Task<int> UpdateModelAsync(Model model)
-        {
+        { 
             _dbContext.Models.Update(model);
             return await _dbContext.SaveChangesAsync();
         }

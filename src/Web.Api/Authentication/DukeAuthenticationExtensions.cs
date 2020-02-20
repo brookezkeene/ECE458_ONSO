@@ -2,9 +2,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using AspNet.Security.OAuth.Duke;
-using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authentication;
-using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

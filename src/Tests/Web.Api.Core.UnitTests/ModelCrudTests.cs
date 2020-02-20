@@ -46,8 +46,10 @@ namespace Web.Api.Core.UnitTests
             var getModel = await _controller.Get(model.Id);
             Assert.NotNull(getModel);
 
-            
-
+            //checking to see if update works
+            var updateModel = GenerateUpdateModel(model);
+            var updated = await _controller.Put(updateModel);
+            Assert.NotNull(updated);
         }
         private static CreateModelApiDto GenerateCreateModelApiDto()
         {
@@ -106,7 +108,7 @@ namespace Web.Api.Core.UnitTests
             List<UpdateModelNetworkPortDto> networkPorts = new List<UpdateModelNetworkPortDto>();
             for (int i = 0; i < 4; i++)
             {
-                networkPorts.Add(new UpdateModelNetworkPortDto { Id = model.NetworkPorts[i].Id, Name = "lol" + (i + 1).ToString() });
+                networkPorts.Add(new UpdateModelNetworkPortDto { Id = model.NetworkPorts[i].Id, Name = "lol" + (i + 1).ToString(), ModelId = model.Id });
             }
             // confirm proper address format
             return new UpdateModelApiDto
