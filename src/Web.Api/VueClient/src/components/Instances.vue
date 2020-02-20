@@ -5,7 +5,7 @@
     <v-card>
         <v-spacer></v-spacer>
         <v-data-table :headers="filteredHeaders"
-                      :items="table"
+                      :items="instances"
                       :search="search"
                       multi-sort
                       @click:row="showDetails">
@@ -25,7 +25,7 @@
                                                     flat
                                                     hide-no-data
                                                     hide-details
-                                                    item-text="model.vendor"
+                                                    item-text="vendor"
                                                     label="Search by keyword on model and hostname"
                                                     single-line
                                                     solo-inverted></v-autocomplete>
@@ -113,15 +113,12 @@
         // Table data.
         headers: [
           
-          { text: 'Model Vendor', value: 'model.vendor' },
-          { text: 'Model Number', value: 'model.modelNumber', },
+          { text: 'Model Vendor', value: 'vendor' },
+          { text: 'Model Number', value: 'modelNumber', },
           { text: 'Hostname', value: 'hostname' },
           { text: 'Rack', value: 'rack', filter: this.rackFilter },
           { text: 'Rack U', value: 'rackPosition', },
-          { text: 'Owner First Name', value: 'owner.firstName', },
-          { text: 'Owner Last Name', value: 'owner.lastName' },
-          { text: 'Owner Username', value: 'owner.username' },
-          { text: 'Owner Email',  value: 'owner.email'},
+          { text: 'Owner Username', value: 'owner' },
           { text: 'Comment', value: 'comment' },
           { text: 'Actions', value: 'action', sortable: false },
 
@@ -129,8 +126,8 @@
         ],
         instances: [],
         models: [],
-        table: [],
-        defaultItem: {
+          defaultItem: {
+            id: '',
             datacenter: '',
             modelId: '',
             hostname: '',
@@ -139,12 +136,15 @@
             ownerId: '',
             comment: '',
         },
-        detailItem : {
-          hostname:'',
-          rack:'',
-          rackPosition:0,
-          owner:'',
-          comment: ''
+          detailItem: {
+            id: '',
+            datacenter: '',
+            modelId: '',
+            hostname: '',
+            rackId: '',
+            rackPosition: '',
+            ownerId: '',
+            comment: '',
         },
         deleting: false,
         editing: false,
@@ -176,20 +176,6 @@
         this.models = await this.modelRepository.list();
         this.users = await this.userRepository.list();
 
-            for (const instance of this.instances) {
-                this.table.push({
-                    model: this.findModel(instance.modelId),
-                    rack: instance.rack,
-                    rackPosition: instance.rackPosition,
-                    comment: instance.comment,
-                    hostname: instance.hostname,
-                    owner: this.findOwner(instance.ownerId),
-                })
-            }
-
-            /*eslint-disable*/
-            console.log(JSON.parse(JSON.stringify(this.table)));
-
         this.loading = false;
 
         },
@@ -215,27 +201,23 @@
                         await this.initialize();
                     })
         },
-
         editItem(item) {
             this.$router.push({ name: 'instance-edit', params: { id: item.id } })
         },
-
         addItem() {
             this.$router.push({ name: 'instance-new' })
         },
-
         showInstructions() {
             this.instructionsDialog = true;
         },
-
         closeDetail() {
             this.instructionsDialog = false;
         },
-
         showDetails(item) {
-          if (!this.editing && !this.deleting) {
-              this.detailItem = Object.assign({}, item)
-              this.$router.push({ name: 'instance-details', params: { detailItem: this.detailItem, id: this.detailItem.id } })
+            if (!this.editing && !this.deleting) {
+            /*eslint-disable*/
+                console.log(item);
+              this.$router.push({ name: 'instance-details', params: {id: item.id } })
           }
           this.deleting = false;
           //this.detailsDialog = true

@@ -101,14 +101,10 @@
             this.racks = await this.rackRepository.list();
             this.datacenters = await this.datacenterRepository.list();
 
-            /*eslint-disable*/
-            console.log(this.racks);
-
             const existingItem = this.instances.find(o => o.id == this.id);
             if (typeof existingItem !== 'undefined') {
                 this.editedItem = Object.assign({}, existingItem);
-/*                this.getOwnerId(existingItem);
-*/            }
+            }
 
             for (const model of this.models) {
                 model.vendorModelNo = model.vendor + " " + model.modelNumber;
@@ -124,13 +120,6 @@
             }
         },
         methods: {
-            getOwnerId(instance) {
-                if (instance.owner == null) {
-                    this.ownerId = '';
-                } else {
-                    this.ownerId = instance.owner.id;
-                }
-            },
             save() {
 
                 if (typeof this.id !== 'undefined') {
