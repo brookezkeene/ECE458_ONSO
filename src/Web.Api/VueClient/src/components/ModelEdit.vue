@@ -26,7 +26,8 @@
                             <v-text-field v-model.number="newItem.height" label="Height" type="number"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model.number="newItem.ethernetPorts" label="Ethernet Ports" type="number"></v-text-field>
+                            <v-text-field v-model.number="newItem.ethernetPorts" label="Network Ports" type="number"></v-text-field> <!--networkPorts-->
+                            <a v-if="!newItem.ethernetPorts==0" href="#" @click="openNamesDialog">Add Network Port Names</a>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model.number="newItem.powerPorts" label="Power Ports" type="number"></v-text-field>
@@ -60,6 +61,34 @@
 
                 </v-container>
             </v-card-text>
+
+            <template> <!-- dialog to set network port names -->
+                <div class="text-center">
+                    <v-dialog v-model="namesDialog" width="400">
+                        <v-card class="overflow-y-auto" max-height="500px">
+                            <v-card-title>
+                                Edit Network Port Names
+                            </v-card-title>
+                            <v-card-text>
+                                <v-container fluid>
+                                    <div v-for="(n, index) in this.networkPortNames" :key="n">
+                                        <v-text-field v-model="networkPortNames[index]" 
+                                                      label="Network Port" 
+                                                      placeholder="port name"
+                                                      :rules="[rules.networkPortRules]"
+                                                      :value="n"></v-text-field>
+                                    </div>
+                                </v-container>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="primary" text @click="saveNames">Save</v-btn>
+                                <v-btn color="primary" text @click="closeNamesDialog">Close</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+                </div>
+            </template>
         </v-card>
     </div>
 </template>
@@ -71,7 +100,7 @@
         props: {
             id: String,
         },
-        data() {
+        data: () => {
             return {
                 models: [],
                 color: '',
@@ -81,16 +110,21 @@
                     modelNumber: '',
                     height: 0,
                     displayColor: '',
-                    ethernetPorts: 0,
+                    ethernetPorts: 0, // networkPorts: 0,
                     powerPorts: 0,
                     cpu: '',
                     memory: undefined,
                     storage: '',
                     comment: ''
                 },
+                namesDialog: false,
+                networkPorts: [],
+                editedIndex: -1,
+                rules: {
+                    networkPortRules: v => /^[a-zA-Z0-9]*$/.test(v) || 'Network port name cannot contain whitespace'
+                },
             };
         },
-        editedIndex: -1,
 
         async created() {
             this.models = await this.modelRepository.list();
@@ -100,11 +134,18 @@
                 : this.models.find(o => o.id === this.id);
 
         },
-
         computed: {
             formTitle() {
                 return typeof this.id === 'undefined' ? 'New Item' : 'Edit Item'
             },
+            networkPortNames() {
+                var arr = [];
+                var j;
+                for (j = 0; j < this.newItem.ethernetPorts; j++) {
+                    arr[j] = j+1;
+                }
+                return arr
+            }
         },
         methods: {
             save() {
@@ -121,6 +162,28 @@
                 setTimeout(() => {
                     this.$router.push({ name: 'model' })
                 }, 300)
+            },
+            openNamesDialog() {
+                this.namesDialog = true;
+            },
+            saveNames() {
+                /* eslint-disable no-unused-vars, no-console */
+                console.log(this.networkPortNames);
+                var i;
+                for (i = 0; i < this.networkPortNames.length; i++) {
+                    if (this.networkPortNames[i] === null) {
+                        var portObjDefault = Object.assign({}, { name: (i+1).toString(), number: i+1 })
+                        this.networkPorts[i] = portObjDefault;
+                    } else {
+                        var portObj = Object.assign({}, { name: this.networkPortNames[i], number: i+1 })
+                        this.networkPorts[i] = portObj;
+                    }
+                }
+                console.log(this.networkPorts);
+                this.namesDialog = false;
+            },
+            closeNamesDialog() {
+                this.namesDialog = false;
             },
         }
     }

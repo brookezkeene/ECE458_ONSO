@@ -21,8 +21,15 @@
                     <v-card-text> {{model.displayColor}} </v-card-text>
                 </v-col>
                 <v-col cols="12" sm="6" md="4">
-                    <v-label>Ethernet Ports: </v-label>
-                    <v-card-text> {{model.ethernetPorts}} </v-card-text>
+                    <v-label>Network Ports: </v-label>
+                    <v-card-text> {{model.ethernetPorts}} </v-card-text> <!--networkPorts-->
+                    <a v-if="!viewNames" href="#" @click="showNames">View Network Port Names</a>
+                    <a v-else href="#" @click="hideNames">Hide Network Port Names</a>
+                    <div v-if="viewNames">
+                        <v-card max-height="300px" class="overflow-y-auto" outlined=true flat>
+                            <v-card-text v-for="port in networkPorts" :key="port"> Port {{port.number}}: {{port.name}} </v-card-text>
+                        </v-card>
+                    </div>
                 </v-col>
                 <v-col cols="12" sm="6" md="4">
                     <v-label>Power Ports: </v-label>
@@ -74,7 +81,26 @@
                 model: {
                     vendor: '',
                     modelNumber: 'foo',
-                }
+                },
+                networkPorts: [ // remove hardcoded networkPort data
+                    { name: 'a', number: 1 },
+                    { name: 'b', number: 2 },
+                    { name: 'c', number: 3 },
+                    { name: 'd', number: 4 },
+                    { name: 'e', number: 5 },
+                    { name: 'f', number: 6 },
+                    { name: 'g', number: 7 },
+                    { name: 'h', number: 8 },
+                    { name: 'i', number: 9 },
+                    { name: 'j', number: 10 },
+                    { name: 'k', number: 11 },
+                    { name: 'l', number: 12 },
+                    { name: 'm', number: 13 },
+                    { name: 'n', number: 14 },
+                    { name: 'o', number: 15 },
+                    { name: 'p', number: 16 },
+                ],
+                viewNames: false,
             };
         },
         created() {
@@ -90,6 +116,12 @@
                 if (!this.loading) this.loading = true;
                 this.model = await this.modelRepository.find(this.id);
                 this.loading = false;
+            },
+            showNames() {
+                this.viewNames = true;
+            },
+            hideNames() {
+                this.viewNames = false;
             }
         }
     }</script>

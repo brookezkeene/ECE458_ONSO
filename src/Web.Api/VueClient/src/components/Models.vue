@@ -68,14 +68,14 @@
                                         <v-col cols="3">
                                             <v-row>
                                                 <v-col cols="6">
-                                                    <v-text-field v-model="startEthernetValue"
+                                                    <v-text-field v-model="startNetworkValue"
                                                                   placeholder="from"
                                                                   type="number"
-                                                                  label="Ethernet Ports">
+                                                                  label="Network Ports">
                                                     </v-text-field>
                                                 </v-col>
                                                 <v-col cols="6">
-                                                    <v-text-field v-model="endEthernetValue"
+                                                    <v-text-field v-model="endNetworkValue"
                                                                   type="number"
                                                                   placeholder="to">
                                                     </v-text-field>
@@ -149,8 +149,8 @@
                 endHeightValue: '',
                 startMemoryValue: '',
                 endMemoryValue: '',
-                startEthernetValue: '',
-                endEthernetValue: '',
+                startNetworkValue: '',
+                endNetworkValue: '',
                 startPowerValue: '',
                 endPowerValue: '',
 
@@ -167,7 +167,7 @@
                     { text: 'Model Number', value: 'modelNumber', },
                     { text: 'Height', value: 'height', filter: this.heightFilter },
                     { text: 'Display Color', value: 'coloricon', sortable: false },
-                    { text: 'Ethernet Ports', value: 'ethernetPorts', filter: this.ethernetFilter },
+                    { text: 'Network Ports', value: 'ethernetPorts', filter: this.networkFilter }, // TODO: change value to networkPorts!
                     { text: 'Power Ports', value: 'powerPorts', filter: this.powerFilter },
                     { text: 'CPU', value: 'cpu' },
                     { text: 'Memory', value: 'memory', filter: this.memoryFilter },
@@ -183,7 +183,7 @@
                     modelNumber: '',
                     height: 0,
                     displayColor: '',
-                    ethernetPorts: 0,
+                    ethernetPorts: 0, // TODO: change to networkPorts
                     powerPorts: 0,
                     cpu: '',
                     memory: 0,
@@ -195,7 +195,7 @@
                     modelNumber: '',
                     height: 0,
                     displayColor: '',
-                    ethernetPorts: 0,
+                    ethernetPorts: 0, // TODO: change to networkPorts
                     powerPorts: 0,
                     cpu: '',
                     memory: 0,
@@ -290,17 +290,17 @@
                 return (value) >= parseInt(this.startMemoryValue)
                     && (value) <= parseInt(this.endMemoryValue);
             },
-            ethernetFilter(value) {
-                if (!this.startEthernetValue && !this.endEthernetValue) {
+            networkFilter(value) {
+                if (!this.startNetworkValue && !this.endNetworkValue) {
                     return true;
-                } else if (!this.endEthernetValue) {
-                    return (value) >= parseInt(this.startEthernetValue);
-                } else if (!this.startEthernetValue) {
-                    return (value) <= parseInt(this.endEthernetValue);
+                } else if (!this.endNetworkValue) {
+                    return (value) >= parseInt(this.startNetworkValue);
+                } else if (!this.startNetworkValue) {
+                    return (value) <= parseInt(this.endNetworkValue);
                 }
 
-                return (value) >= parseInt(this.startEthernetValue)
-                    && (value) <= parseInt(this.endEthernetValue);
+                return (value) >= parseInt(this.startNetworkValue)
+                    && (value) <= parseInt(this.endNetworkValue);
             },
             powerFilter(value) {
                 if (!this.startPowerValue && !this.endPowerValue) {
