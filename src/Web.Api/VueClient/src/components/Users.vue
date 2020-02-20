@@ -23,7 +23,7 @@
                                         solo-inverted></v-autocomplete>
                         <v-spacer></v-spacer>
 
-                        <v-btn v-if="admin" color="primary" dark class="mb-2" v-on="on" @click="openCreateUser">Add User</v-btn>
+                        <v-btn v-if="admin" color="primary" dark class="mb-2" @click="openCreateUser">Add User</v-btn>
 
                     </v-toolbar>
 
