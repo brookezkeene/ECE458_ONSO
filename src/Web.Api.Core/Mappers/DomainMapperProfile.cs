@@ -14,7 +14,13 @@ namespace Web.Api.Core.Mappers
         {
             // full dtos w/ nested dtos
             CreateMap<Model, ModelDto>()
+                .ForMember(o => o.Assets, opts => opts.MapFrom(src => src.Assets))
+                .ForMember(o => o.NetworkPorts, opts => opts.MapFrom(src => src.NetworkPorts))
                 .ReverseMap();
+            CreateMap<ModelNetworkPort, ModelNetworkPortDto>()
+                .ForMember(o => o.Model, opts => opts.MapFrom(src => src.Model))
+                .ReverseMap();
+
             CreateMap<Asset, AssetDto>()
                 .ReverseMap();
 
@@ -26,6 +32,7 @@ namespace Web.Api.Core.Mappers
             CreateMap<User, UserDto>()
                 .ReverseMap();
             CreateMap<RegisterUserDto, User>();
+            
         }
     }
 }
