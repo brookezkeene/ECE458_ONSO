@@ -30,7 +30,7 @@
                     <v-card-title class="justify-center">
                         <v-icon v-if="admin" color="white">mdi-information</v-icon>
                         <v-spacer></v-spacer>
-                        assets
+                        Assets
                         <v-spacer></v-spacer>
                         <v-icon v-if="admin" @click="showAssetInfo">mdi-information</v-icon>
                     </v-card-title>
