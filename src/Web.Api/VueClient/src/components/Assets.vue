@@ -83,26 +83,30 @@
             </template>
 
             <template v-slot:item.power="{ item }">
-                <v-row v-if="item.hasNetworkManagedPower">
-                    <v-btn-toggle dense
-                                  mandatory
-                                  light>
-                        <v-btn outlined color ="green" 
-                               @click="changePower"
-                               small=true>
+                <v-row >
+                    <v-item-group dense
+                                  light
+                                  tile
+                                  rounded="true">
+                        <v-btn color ="green" 
+                               @click="turnOn(item)"
+                               small=true
+                               depressed>
                             ON
                         </v-btn>
-                        <v-btn outlined color ="red" 
-                               @click="changePower"
-                               small=true>
+                        <v-btn color ="red" 
+                               @click="turnOff(item)"
+                               small=true
+                               depressed>
                             OFF
                         </v-btn>
-                        <v-btn outlined color ="black"
+                        <v-btn 
                                small=true
-                               @click="changePower">
+                               @click="cycle(item)"
+                               depressed>
                             Cycle
                         </v-btn>
-                    </v-btn-toggle>
+                    </v-item-group>
                 </v-row>
             </template>
 
@@ -220,7 +224,23 @@
         addItem() {
             this.$router.push({ name: 'asset-new' })
         },
-        changePower() {
+        turnOn(item) {
+            confirm('Are you sure you would like to turn on this asset?')
+            /*eslint-disable*/
+            console.log(item.id);
+            //PUT the power state for this asset to the backend
+            this.powering = true;
+        },
+        turnOff(item) {
+            confirm('Are you sure you would like to power off this asset?')
+            console.log(item.id);
+            //PUT the power state for this asset to the backend
+            this.powering = true;
+        },
+        cycle(item) {
+            confirm('Are you sure you would like to cycle this asset?')
+            console.log(item.id);
+            //PUT the power state for this asset to the backend
             this.powering = true;
         },
         showInstructions() {

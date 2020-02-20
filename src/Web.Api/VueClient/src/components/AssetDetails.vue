@@ -20,7 +20,7 @@
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Owner Username: </v-label>
-                        <v-card-text v-if = "ownerPresent"> {{asset.owner}} </v-card-text>
+                        <v-card-text v-if="ownerPresent"> {{asset.owner}} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Comment: </v-label>
@@ -33,6 +33,10 @@
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Model: </v-label>
                         <router-link :to="{ name: 'model-details', params: { id: asset.modelId } }"> {{ asset.modelNumber }} </router-link>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Power Port Connections: </v-label>
+                        <v-card-text>{{asset.powerPorts}}</v-card-text>
                     </v-col>
                 </v-row>
 
