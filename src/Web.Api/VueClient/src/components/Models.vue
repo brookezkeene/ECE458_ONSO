@@ -202,9 +202,6 @@
                     storage: '',
                     comment: ''
                 },
-                detailItem: {
-                    comment: ''
-                },
                 deleting: false,
             }
         },
@@ -251,8 +248,7 @@
             },
             showDetails(item) {
                 if (this.editedIndex === -1 && !this.deleting) {
-                    this.detailItem = Object.assign({}, item);
-                    this.$router.push({ name: 'model-details', params: {id: this.detailItem.id } })
+                    this.$router.push({ name: 'model-details', params: {id: item.id } })
                 }
                 this.deleting = false;
             },
