@@ -43,7 +43,7 @@ namespace Web.Api.Controllers
         {
             var (identityResult, userId) = await _identityService.CreateUserAsync(user);
             var createdUser = await _identityService.GetUserAsync(userId);
-            return CreatedAtAction(nameof(Get), new {id = createdUser.Id}, createdUser);
+            return CreatedAtAction(nameof(Get), new { id = createdUser.Id }, createdUser);
         }
 
         [HttpGet("{id}/roles")]

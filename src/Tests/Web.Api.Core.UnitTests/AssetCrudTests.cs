@@ -11,6 +11,11 @@ using Web.Api.Infrastructure.Repositories;
 using Web.Api.Core.Mappers;
 using Xunit;
 using Xunit.Sdk;
+using Web.Api.Dtos;
+using Web.Api.Infrastructure.Repositories.Interfaces;
+using Web.Api.Core.Services.Interfaces;
+using Web.Api.Controllers;
+using Web.Api.Resources;
 
 namespace Web.Api.Core.UnitTests
 {
@@ -35,6 +40,7 @@ namespace Web.Api.Core.UnitTests
 
             var repo = new AssetRepository(context);
         }
+
         private static IEnumerable<Asset> GenerateAssets()
         {
             for (int i = 0; i < 4; i++)
