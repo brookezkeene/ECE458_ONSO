@@ -12,11 +12,14 @@ namespace Web.Api.Mappers
     {
         public DatacenterApiMapperProfile()
         {
-            CreateMap<DatacenterDto, GetDatacenterApiDto>();
+            CreateMap<DatacenterDto, GetDatacenterApiDto>()
+                .ReverseMap();
 
-            CreateMap<CreateDatacenterApiDto, DatacenterDto>();
+            CreateMap<DatacenterDto, CreateDatacenterApiDto>()
+                .ReverseMap();
 
-            CreateMap<UpdateDatacenterApiDto, DatacenterDto>();
+            CreateMap<DatacenterDto, UpdateDatacenterApiDto>()
+                .ReverseMap();
         }
     }
 }

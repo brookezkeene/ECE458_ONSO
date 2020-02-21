@@ -46,8 +46,6 @@ namespace Web.Api.Core.UnitTests
             var getDatacenter = await _controller.Get(datacenter.Id);
             Assert.NotNull(getDatacenter);
 
-
-
         }
         private static CreateDatacenterApiDto GenerateCreateDatacenterApiDto()
         {

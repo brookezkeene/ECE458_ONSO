@@ -26,6 +26,9 @@ namespace Web.Api.Core.Mappers
             CreateMap<User, UserDto>()
                 .ReverseMap();
             CreateMap<RegisterUserDto, User>();
+
+            CreateMap<Datacenter, DatacenterDto>()
+                .ReverseMap();
         }
     }
 }
