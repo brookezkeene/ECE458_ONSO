@@ -20,10 +20,4 @@ namespace Web.Api.Infrastructure.Entities
         public Guid RackId { get; set; }
         public virtual Rack Rack { get; set; }
     }
-
-    public enum PduLocation
-    {
-        L,
-        R
-    }
 }
