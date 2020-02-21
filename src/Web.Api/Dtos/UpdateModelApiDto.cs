@@ -24,7 +24,5 @@ namespace Web.Api.Dtos
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public Guid ModelId { get; set; }
-        //public UpdateModelApiDto Model { get; set; }
     }
 }
