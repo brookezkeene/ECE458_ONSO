@@ -3,7 +3,7 @@ import modelRepository from "./repositories/model";
 import instanceRepository from "./repositories/instance";
 import rackRepository from "./repositories/rack";
 import reportRepository from "./repositories/mock/report";
-import datacenterRepository from "./repositories/mock/datacenter"
+import datacenterRepository from "./repositories/datacenter"
 import auth from './auth';
 
 export default {
