@@ -20,6 +20,7 @@ namespace Web.Api.Controllers
             return Ok(null);
         }
 
+
         [HttpGet("{id}")]
         public async Task<ActionResult<GetDatacenterApiDto>> Get(Guid id)
         {
