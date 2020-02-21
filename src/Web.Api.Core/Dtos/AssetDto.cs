@@ -53,6 +53,11 @@ namespace Web.Api.Core.Dtos
         public PduDto Pdu { get; set; }
         public Guid? AssetPowerPortId { get; set; }
         public AssetPowerPortDto AssetPowerPort { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Pdu}{Number}";
+        }
     }
 
     public class PduDto
@@ -63,5 +68,13 @@ namespace Web.Api.Core.Dtos
         public PduLocation Location { get; set; }
         public Guid RackId { get; set; }
         public RackDto Rack { get; set; }
+
+        public override string ToString()
+        {
+            var datacenter = Rack.Datacenter.Name;
+            var rack = Rack.Address;
+
+            return $"HPDU-{datacenter}-{rack}-{Location}";
+        }
     }
 }

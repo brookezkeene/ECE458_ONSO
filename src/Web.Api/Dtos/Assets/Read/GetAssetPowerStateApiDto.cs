@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Web.Api.Dtos
+namespace Web.Api.Dtos.Assets.Read
 {
     public class GetAssetPowerStateApiDto
     {

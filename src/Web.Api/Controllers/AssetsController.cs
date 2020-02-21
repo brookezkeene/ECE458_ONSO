@@ -10,6 +10,10 @@ using Web.Api.Core.Dtos;
 using Web.Api.Core.Dtos.Power;
 using Web.Api.Core.Services.Interfaces;
 using Web.Api.Dtos;
+using Web.Api.Dtos.Assets;
+using Web.Api.Dtos.Assets.Create;
+using Web.Api.Dtos.Assets.Read;
+using Web.Api.Dtos.Assets.Update;
 using Web.Api.Mappers;
 using Web.Api.Resources;
 

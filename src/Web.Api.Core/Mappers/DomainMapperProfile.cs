@@ -23,6 +23,17 @@ namespace Web.Api.Core.Mappers
 
             CreateMap<Asset, AssetDto>()
                 .ReverseMap();
+            CreateMap<AssetPowerPort, AssetPowerPortDto>()
+                .ReverseMap();
+            CreateMap<AssetNetworkPort, AssetNetworkPortDto>()
+                .ReverseMap();
+            CreateMap<PduPort, PduPortDto>()
+                .ReverseMap();
+            CreateMap<Pdu, PduDto>()
+                .ReverseMap();
+
+            CreateMap<Datacenter, DatacenterDto>()
+                .ReverseMap();
 
             CreateMap<Rack, RackDto>()
                 .ForMember(o => o.RowLetter, opts => opts.MapFrom(src => src.Row))
@@ -31,8 +42,9 @@ namespace Web.Api.Core.Mappers
 
             CreateMap<User, UserDto>()
                 .ReverseMap();
-            CreateMap<RegisterUserDto, User>();
-            
+            CreateMap<RegisterUserDto, User>(MemberList.Source)
+                .ForSourceMember(o => o.Password, opts => opts.DoNotValidate());
+
         }
     }
 }

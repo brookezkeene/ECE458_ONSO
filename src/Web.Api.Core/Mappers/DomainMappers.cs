@@ -16,6 +16,11 @@ namespace Web.Api.Core.Mappers
 
         internal static IMapper Mapper { get; }
 
+        public static void AssertConfigurationIsValid<TProfile>() where TProfile : Profile, new()
+        {
+            Mapper.ConfigurationProvider.AssertConfigurationIsValid<TProfile>();
+        }
+
         public static ModelDto ToDto(this Model model)
         {
             return model == null ? null : Mapper.Map<ModelDto>(model);
