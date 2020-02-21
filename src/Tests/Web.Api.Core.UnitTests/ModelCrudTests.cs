@@ -46,6 +46,8 @@ namespace Web.Api.Core.UnitTests
             var getModel = await _controller.Get(model.Id);
             Assert.NotNull(getModel);
 
+
+
         }
         private static CreateModelApiDto GenerateCreateModelApiDto()
         {
@@ -116,6 +118,7 @@ namespace Web.Api.Core.UnitTests
                 Memory = 10,
                 EthernetPorts = 4,
                 PowerPorts = 4,
+
             };
         }
     }
