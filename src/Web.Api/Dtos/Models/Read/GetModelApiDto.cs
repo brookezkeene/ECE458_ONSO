@@ -6,6 +6,7 @@ namespace Web.Api.Dtos.Models.Read
     {
         public List<GetModelAssetApiDto> Assets;
         public string Comment { get; set; }
-        public List<string> NetworkPortNames { get; set; }
+        public List<GetModelNetworkPort> NetworkPorts;
     }
+
 }

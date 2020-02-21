@@ -35,5 +35,6 @@ namespace Web.Api.Core.Dtos
         public string Name { get; set; }
         public Guid ModelId { get; set; }
         public ModelDto Model { get; set; }
+        public int Number { get; set; }
     }
 }
