@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Web.Api.Core.Dtos;
+using Web.Api.Dtos;
+using Web.Api.Dtos.Bulk.Export;
 
 namespace Web.Api.Mappers
 {

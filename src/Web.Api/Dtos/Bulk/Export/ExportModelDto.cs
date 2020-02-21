@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Web.Api.Core.Dtos
+﻿namespace Web.Api.Dtos.Bulk.Export
 {
     public class ExportModelDto
     {

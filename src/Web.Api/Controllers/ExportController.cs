@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
+using Web.Api.Dtos;
+using Web.Api.Dtos.Bulk.Export;
 
 namespace Web.Api.Controllers
 {

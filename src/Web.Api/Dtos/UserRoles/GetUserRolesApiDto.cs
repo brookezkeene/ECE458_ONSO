@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Web.Api.Dtos
+namespace Web.Api.Dtos.Users
 {
     public class GetUserRolesApiDto
     {

@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services;
 using Web.Api.Core.UnitTests.Mappers;
+using Web.Api.Dtos;
+using Web.Api.Dtos.Bulk.Export;
 using Web.Api.Infrastructure.DbContexts;
 using Web.Api.Infrastructure.Entities;
 using Web.Api.Infrastructure.Repositories;

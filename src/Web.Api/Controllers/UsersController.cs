@@ -9,6 +9,7 @@ using Web.Api.Common;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
 using Web.Api.Dtos;
+using Web.Api.Dtos.Users;
 
 namespace Web.Api.Controllers
 {

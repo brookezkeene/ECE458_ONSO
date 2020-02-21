@@ -15,6 +15,9 @@ using Web.Api.Dtos;
 using Web.Api.Infrastructure.Repositories.Interfaces;
 using Web.Api.Core.Services.Interfaces;
 using Web.Api.Controllers;
+using Web.Api.Dtos.Datacenters;
+using Web.Api.Dtos.Datacenters.Create;
+using Web.Api.Dtos.Datacenters.Update;
 using Web.Api.Resources;
 
 namespace Web.Api.Core.UnitTests
