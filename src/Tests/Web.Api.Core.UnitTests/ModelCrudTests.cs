@@ -39,6 +39,7 @@ namespace Web.Api.Core.UnitTests
             var createModelApiDto = GenerateCreateModelApiDto();
             var sign = await controller.Post(createModelApiDto);
             var result = await context.Models.FirstOrDefaultAsync();
+            // weak assertion. TODO: assert property-for-property equality
             Assert.NotNull(result);
 
 
@@ -50,6 +51,7 @@ namespace Web.Api.Core.UnitTests
             await context.Models.AddAsync(model);
             var numAdded = await context.SaveChangesAsync();
             var getModel = await controller.Get(model.Id);
+            // weak assertion. TODO: assert property-for-property equality
             Assert.NotNull(getModel.Result);
         }
 
