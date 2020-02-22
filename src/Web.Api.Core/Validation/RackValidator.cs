@@ -31,7 +31,7 @@ namespace Web.Api.Core.Validation
             {
                 RuleFor(rack => rack)
                     .MustAsync(HaveUniqueAddress)
-                    .WithMessage(rack => $"A rack already exists at address {rack.Row}{rack.Column}.")
+                    .WithMessage(rack => $"A rack already exists at address {rack.Row}{rack.Column} in the datacenter {rack.Datacenter.Name}.")
                     .WithSeverity(Severity.Info);
 
             });
