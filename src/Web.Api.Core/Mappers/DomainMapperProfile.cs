@@ -39,6 +39,7 @@ namespace Web.Api.Core.Mappers
             CreateMap<Rack, RackDto>()
                 .ForMember(o => o.RowLetter, opts => opts.MapFrom(src => src.Row))
                 .ForMember(o => o.RackNumber, opts => opts.MapFrom(src => src.Column))
+                .ForMember(o => o.Datacenter, opts => opts.MapFrom(src => src.Datacenter))
                 .ReverseMap();
 
             CreateMap<User, UserDto>()

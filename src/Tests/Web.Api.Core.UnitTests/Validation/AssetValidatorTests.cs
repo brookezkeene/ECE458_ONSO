@@ -55,7 +55,7 @@ namespace Web.Api.Core.UnitTests.Validation
                 .ReturnsAsync(true);
 
             var mockRackRepo = new Mock<IRackRepository>();
-            mockRackRepo.Setup(o => o.AddressExistsAsync(It.IsAny<string>(), It.IsAny<int>()))
+            mockRackRepo.Setup(o => o.AddressExistsAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<Guid>()))
                 .ReturnsAsync(true);
 
             var mockModelRepo = new Mock<IModelRepository>();
