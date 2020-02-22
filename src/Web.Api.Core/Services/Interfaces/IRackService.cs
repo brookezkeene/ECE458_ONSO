@@ -10,7 +10,7 @@ namespace Web.Api.Core.Services.Interfaces
     public interface IRackService
     {
         Task<List<RackDto>> GetRacksAsync(RackRangeQuery query);
-        Task<PagedList<RackDto>> GetRacksAsync(string search, int page = 1, int pageSize = 10);
+        Task<PagedList<RackDto>> GetRacksAsync(string search, Guid datacenterId, int page = 1, int pageSize = 10);
         Task CreateRacksAsync(RackRangeQuery query);
         Task DeleteRacksAsync(RackRangeQuery query);
     }
