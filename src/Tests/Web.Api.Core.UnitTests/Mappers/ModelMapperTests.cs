@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using FluentAssertions;
+using Newtonsoft.Json;
 using Web.Api.Core.Dtos;
 using Web.Api.Dtos;
 using Web.Api.Dtos.Models.Create;
@@ -9,6 +10,7 @@ using Web.Api.Dtos.Models.Read;
 using Web.Api.Dtos.Models.Update;
 using Web.Api.Mappers;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Web.Api.Core.UnitTests.Mappers
 {
@@ -17,6 +19,7 @@ namespace Web.Api.Core.UnitTests.Mappers
         Guid modelId = Guid.NewGuid();
         Guid networkId1 = Guid.NewGuid();
         Guid networkId2 = Guid.NewGuid();
+
         [Fact]
         public void ModelMapperConfigIsValid()
         {
@@ -33,25 +36,23 @@ namespace Web.Api.Core.UnitTests.Mappers
         }
 
         [Fact]
-        public void CanMapCreateAssetApiDto_ToAssetDto()
+        public void CanMapCreateModelApiDto_ToModelDto()
         {
             var apiDto = BuildCreateModelApiDto();
 
-            var asset = apiDto.MapTo<ModelDto>();
+            var model = apiDto.MapTo<ModelDto>();
 
-            asset.Should()
+            model.Should()
                 .BeEquivalentTo(apiDto);
         }
         [Fact]
-        public void CanMapUpdateAssetApiDto_ToAssetDto()
+        public void CanMapUpdateModelApiDto_ToModelDto()
         {
             var apiDto = BuildUpdateModelApiDto(modelId, networkId1, networkId2);
 
-            var asset = apiDto.MapTo<ModelDto>();
+            var model = apiDto.MapTo<ModelDto>();
 
-            asset.Should().NotBeNull();
-
-            asset.Should()
+            model.Should()
                 .BeEquivalentTo(apiDto);
         }
 
@@ -77,6 +78,7 @@ namespace Web.Api.Core.UnitTests.Mappers
                 Id = modelId,
                 Vendor = "foo vendor",
                 ModelNumber = "foo model number",
+                Height = 4,
                 DisplayColor = "#000fff",
                 EthernetPorts = 2,
                 PowerPorts = 2,
