@@ -52,7 +52,7 @@
                     {
                         text: 'Subject Name',
                         align: 'left',
-                        value: 'subjectName' // The person who initiated the change
+                        value: 'subjectName', // The person who initiated the change
                         sortable: false
                     },
                     { text: 'Action', value: 'action', sortable: false}, // What happened - edit, delete, create
