@@ -102,5 +102,25 @@ namespace Web.Api.Core.Mappers
         {
             return registerDto == null ? null : Mapper.Map<User>(registerDto);
         }
+
+        public static DatacenterDto ToDto(this Datacenter datacenter)
+        {
+            return datacenter == null ? null : Mapper.Map<DatacenterDto>(datacenter);
+        }
+
+        public static PagedList<DatacenterDto> ToDto(this PagedList<Datacenter> datacenters)
+        {
+            return datacenters == null ? null : Mapper.Map<PagedList<DatacenterDto>>(datacenters);
+        }
+
+        public static List<DatacenterDto> ToDto(this List<Datacenter> datacenters)
+        {
+            return datacenters == null ? null : Mapper.Map<List<DatacenterDto>>(datacenters);
+        }
+
+        public static Datacenter ToEntity(this DatacenterDto datacenterDto)
+        {
+            return datacenterDto == null ? null : Mapper.Map<Datacenter>(datacenterDto);
+        }
     }
 }

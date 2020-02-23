@@ -1,10 +1,7 @@
-﻿using System;
-
-namespace Web.Api.Dtos
+﻿namespace Web.Api.Dtos.Datacenters.Create
 {
-    public class UpdateDatacenterApiDto
+    public class CreateDatacenterApiDto
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public bool HasNetworkManagedPower { get; set; }

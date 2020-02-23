@@ -4,6 +4,8 @@ using System.Text;
 using FluentAssertions;
 using Web.Api.Core.Dtos;
 using Web.Api.Dtos;
+using Web.Api.Dtos.Models;
+using Web.Api.Dtos.Models.Read;
 using Web.Api.Mappers;
 using Xunit;
 

@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Web.Api.Dtos
+namespace Web.Api.Dtos.Datacenters.Update
 {
-    public class GetDatacenterApiDto
+    public class UpdateDatacenterApiDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

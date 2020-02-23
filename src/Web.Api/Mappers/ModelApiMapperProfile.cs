@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Web.Api.Core.Dtos;
 using Web.Api.Dtos;
+using Web.Api.Dtos.Models;
+using Web.Api.Dtos.Models.Create;
+using Web.Api.Dtos.Models.Read;
+using Web.Api.Dtos.Models.Update;
 
 namespace Web.Api.Mappers
 {

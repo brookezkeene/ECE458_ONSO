@@ -44,7 +44,6 @@ namespace Web.Api.Core.Mappers
                 .ReverseMap();
             CreateMap<RegisterUserDto, User>(MemberList.Source)
                 .ForSourceMember(o => o.Password, opts => opts.DoNotValidate());
-
         }
     }
 }

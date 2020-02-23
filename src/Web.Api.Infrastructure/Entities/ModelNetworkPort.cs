@@ -9,6 +9,7 @@ namespace Web.Api.Infrastructure.Entities
         [MaxLength(10)]
         [Required]
         public string Name { get; set; }
+        public int Number { get; set; }
         public Guid ModelId { get; set; }
         public virtual Model Model { get; set; }
     }

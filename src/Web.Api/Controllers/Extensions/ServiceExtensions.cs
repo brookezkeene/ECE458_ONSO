@@ -37,6 +37,7 @@ namespace Web.Api.Extensions
             services.AddTransient<IAssetService, AssetService>();
             services.AddTransient<IIdentityService, IdentityService>();
             services.AddTransient<IRackService, RackService>();
+            services.AddTransient<IDatacenterService, DatacenterService>();
 
             // etc
             services.ConfigureResources();
@@ -50,6 +51,7 @@ namespace Web.Api.Extensions
             services.AddTransient<IRackRepository, RackRepository>();
             services.AddTransient<IAssetRepository, AssetRepository>();
             services.AddTransient<IIdentityRepository, IdentityRepository>();
+            services.AddTransient<IDatacenterRepository, DatacenterRepository>();
 
             return services;
         }

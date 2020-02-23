@@ -10,6 +10,10 @@ using Web.Api.Core;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
 using Web.Api.Dtos;
+using Web.Api.Dtos.Models;
+using Web.Api.Dtos.Models.Create;
+using Web.Api.Dtos.Models.Read;
+using Web.Api.Dtos.Models.Update;
 using Web.Api.Mappers;
 using Web.Api.Resources;
 

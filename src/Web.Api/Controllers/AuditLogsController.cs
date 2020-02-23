@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Web.Api.Common;
 using Web.Api.Dtos;
+using Web.Api.Dtos.AuditEvents;
 
 namespace Web.Api.Controllers
 {

@@ -15,6 +15,9 @@ using Web.Api.Dtos;
 using Web.Api.Infrastructure.Repositories.Interfaces;
 using Web.Api.Core.Services.Interfaces;
 using Web.Api.Controllers;
+using Web.Api.Dtos.Models;
+using Web.Api.Dtos.Models.Create;
+using Web.Api.Dtos.Models.Update;
 using Web.Api.Resources;
 
 namespace Web.Api.Core.UnitTests
@@ -37,7 +40,7 @@ namespace Web.Api.Core.UnitTests
             var createModelApiDto = GenerateCreateModelApiDto();
             var sign = await _controller.Post(createModelApiDto);
             Assert.NotNull(sign);
-            
+
             //checking to see if get works 
             Guid id = Guid.NewGuid();
             var model = GenerateModel(id);
@@ -46,13 +49,13 @@ namespace Web.Api.Core.UnitTests
             var getModel = await _controller.Get(model.Id);
             Assert.NotNull(getModel);
 
-            
+
 
         }
         private static CreateModelApiDto GenerateCreateModelApiDto()
         {
             List<CreateModelNetworkPortDto> networkPorts = new List<CreateModelNetworkPortDto>();
-            for(int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++)
             {
                 networkPorts.Add(new CreateModelNetworkPortDto { Name = (i + 1).ToString() });
             }
@@ -72,11 +75,11 @@ namespace Web.Api.Core.UnitTests
                 PowerPorts = 4,
                 NetworkPorts = networkPorts,
 
-            }; 
+            };
         }
         private static Model GenerateModel(Guid id)
         {
-            
+
             List<ModelNetworkPort> networkPorts = new List<ModelNetworkPort>();
             for (int i = 0; i < 4; i++)
             {
