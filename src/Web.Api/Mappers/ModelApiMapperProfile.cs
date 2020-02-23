@@ -23,6 +23,7 @@ namespace Web.Api.Mappers
             CreateMap<AssetDto, GetModelAssetApiDto>()
                 .ReverseMap();
             CreateMap<ModelDto, GetModelsApiDto>()
+                .ForMember(o => o.NetworkPorts, opts => opts.MapFrom(src => src.NetworkPorts))
                 .ReverseMap();
             CreateMap<ModelDto, CreateModelApiDto>()
                 .ForMember(o => o.NetworkPorts, opts => opts.MapFrom(src => src.NetworkPorts))
@@ -36,7 +37,8 @@ namespace Web.Api.Mappers
                 .ReverseMap();
             CreateMap<ModelNetworkPortDto, GetModelNetworkPort>()
                 .ReverseMap();
-
+            CreateMap<ModelNetworkPortDto, GetModelsNetworkPort>()
+                .ReverseMap();
         }
     }
 }

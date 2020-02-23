@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Web.Api.Dtos.Models.Read
 {
@@ -14,5 +15,13 @@ namespace Web.Api.Dtos.Models.Read
         public string Cpu { get; set; }
         public int? Memory { get; set; }
         public string Storage { get; set; }
+        public List<GetModelsNetworkPort> NetworkPorts { get; set; }
+    }
+    public class GetModelsNetworkPort
+    {
+        public string Name { get; set; }
+        public Guid Id { get; set; }
+        public Guid ModelId { get; set; }
+        public int Number { get; set; }
     }
 }
