@@ -156,7 +156,7 @@ namespace Web.Api.Infrastructure.Repositories
                 List<ModelNetworkPort> newports = new List<ModelNetworkPort>();
                 for (int i = 1; i <= model.EthernetPorts; i++)
                 {
-                    newports.Add(new ModelNetworkPort { Model = model, Number = i, Name = i.ToString() });
+                    newports.Add(new ModelNetworkPort { Number = i, Name = (i+1).ToString() });
                 }
                 /*foreach (ModelNetworkPort port in model.NetworkPorts)
                 {
@@ -166,7 +166,15 @@ namespace Web.Api.Infrastructure.Repositories
                         newport.Name = port.Name;
                     }
                 }*/
-            } 
+                model.NetworkPorts = newports;
+            }  else if (model.EthernetPorts > model.NetworkPorts.Count())
+            {
+                int portCount = model.NetworkPorts.Count();
+                for (int i = portCount; i < model.EthernetPorts; i++)
+                {
+                    model.NetworkPorts.Add(new ModelNetworkPort { Number = i, Name = i.ToString() });
+                }
+            }
             else if(model.EthernetPorts < model.NetworkPorts.Count())
             {
                 for(var i = model.NetworkPorts.Count() - 1; i >= model.EthernetPorts; i--)

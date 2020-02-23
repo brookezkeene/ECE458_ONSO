@@ -186,8 +186,6 @@
                 console.log(this.networkPortNames);
                 var i;
                 for (i = 0; i < this.networkPortNames.length; i++) {
-                    console.log('in the for loop');
-                    console.log(this.newItem.networkPorts.length);
                      console.log(i);
                     if (typeof this.id === 'undefined') {
                         var portObj = Object.assign({}, { name: this.networkPortNames[i], number: i + 1 })
