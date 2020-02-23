@@ -23,11 +23,11 @@ namespace Web.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedList<GetAuditEventApiDto>>> GetMany(string searchText, int page = 1,
+        public async Task<ActionResult<PagedList<GetAuditLogApiDto>>> GetMany(string searchText, int page = 1,
             int pageSize = 10)
         {
             var events = await _auditLogService.GetAsync(searchText, page, pageSize);
-            var response = events.MapTo<PagedList<GetAuditEventApiDto>>();
+            var response = events.MapTo<PagedList<GetAuditLogApiDto>>();
             return Ok(response);
         }
     }

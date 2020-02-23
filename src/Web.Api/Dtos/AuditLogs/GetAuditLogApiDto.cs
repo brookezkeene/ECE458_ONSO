@@ -2,7 +2,7 @@
 
 namespace Web.Api.Dtos.AuditEvents
 {
-    public class GetAuditEventApiDto
+    public class GetAuditLogApiDto
     {
         public long Id { get; set; }
         public string Event { get; set; }
