@@ -51,6 +51,7 @@ namespace Web.Api
             services.AddSpaStaticFiles(options => options.RootPath = "VueClient/dist");
 
             services.AddControllers()
+                .AddNewtonsoftJson()
                 .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
             services.AddCors(options =>
@@ -67,6 +68,7 @@ namespace Web.Api
             {
                 options.SwaggerDoc("v1", new OpenApiInfo {Title = "Hyposoft API", Version = "v1"});
             });
+            services.AddSwaggerGenNewtonsoftSupport();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddAuditLogging(options =>

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
+using Web.Api.Common.Mappers;
 using Web.Api.Core.Dtos;
 using Web.Api.Dtos;
 using Web.Api.Dtos.Assets;
@@ -15,7 +16,7 @@ using Web.Api.Infrastructure.Entities;
 
 namespace Web.Api.Mappers
 {
-    public class AssetApiMapperProfile : Profile
+    public class AssetApiMapperProfile : PaginatedProfile
     {
         public AssetApiMapperProfile()
         {

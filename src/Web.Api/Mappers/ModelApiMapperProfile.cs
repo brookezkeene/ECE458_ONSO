@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
+using Web.Api.Common.Mappers;
 using Web.Api.Core.Dtos;
 using Web.Api.Dtos;
 using Web.Api.Dtos.Models;
@@ -12,7 +12,7 @@ using Web.Api.Dtos.Models.Update;
 
 namespace Web.Api.Mappers
 {
-    public class ModelApiMapperProfile : Profile
+    public class ModelApiMapperProfile : PaginatedProfile
     {
         public ModelApiMapperProfile()
         {
