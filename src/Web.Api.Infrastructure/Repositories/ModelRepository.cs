@@ -75,6 +75,7 @@ namespace Web.Api.Infrastructure.Repositories
 
         public async Task<int> AddModelAsync(Model model)
         {
+            NameNetworkPorts(model);
             _dbContext.Models.Add(model);
             return await _dbContext.SaveChangesAsync();
         }
@@ -145,6 +146,30 @@ namespace Web.Api.Infrastructure.Repositories
                 // otherwise lookup by vendor & model number
                 .WhereIf(id == default, x => x.Vendor == vendor && x.ModelNumber == modelNumber)
                 .AnyAsync();
+        }
+        private void NameNetworkPorts(Model model)
+        {
+            /*List<ModelNetworkPort> newports = new List<ModelNetworkPort>();
+            for (int i = 1; i <= model.EthernetPorts; i++)
+            {
+                newports.Add(new ModelNetworkPort { Model = model, Number = i, Name = i.ToString() });
+            }
+            foreach (ModelNetworkPort port in model.NetworkPorts)
+            {
+                var newport = newports[port.Number - 1];
+                if (port.Name != null)
+                {
+                    newport.Name = port.Name;
+                }
+            }
+            return newports;*/
+            foreach (ModelNetworkPort port in model.NetworkPorts)
+            {
+                if (port.Name == null)
+                {
+                    port.Name = port.Number.ToString();
+                }
+            }
         }
     }
 }
