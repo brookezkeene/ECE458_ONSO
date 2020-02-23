@@ -21,7 +21,7 @@ namespace Web.Api.Core.Services
         public async Task<List<RackDto>> GetRacksAsync(RackRangeQuery query)
         {
             query = query.ToUpper();
-            var racks = await _rackRepository.GetRacksInRangeAsync(query.StartRow, query.StartCol, query.EndRow, query.EndCol, query.Datacenter.Id);
+            var racks = await _rackRepository.GetRacksInRangeAsync(query.StartRow, query.StartCol, query.EndRow, query.EndCol, query.datacenterId);
             return racks.ToDto();
         }
 
@@ -34,13 +34,13 @@ namespace Web.Api.Core.Services
         public async Task CreateRacksAsync(RackRangeQuery query)
         {
             query = query.ToUpper();
-            await _rackRepository.CreateRacksInRangeAsync(query.StartRow, query.StartCol, query.EndRow, query.EndCol, query.Datacenter.Id);
+            await _rackRepository.CreateRacksInRangeAsync(query.StartRow, query.StartCol, query.EndRow, query.EndCol, query.datacenterId);
         }
 
         public async Task DeleteRacksAsync(RackRangeQuery query)
         {
             query = query.ToUpper();
-            await _rackRepository.DeleteRacksInRangeAsync(query.StartRow, query.StartCol, query.EndRow, query.EndCol, query.Datacenter.Id);
+            await _rackRepository.DeleteRacksInRangeAsync(query.StartRow, query.StartCol, query.EndRow, query.EndCol, query.datacenterId);
         }
     }
 }
