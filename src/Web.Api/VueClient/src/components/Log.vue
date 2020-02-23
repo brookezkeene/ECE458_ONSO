@@ -4,7 +4,7 @@
             <v-card-title>System Log</v-card-title>
             <v-container>
                 <v-card>
-                    <v-data-table :headers="filteredHeaders"
+                    <v-data-table :headers=headers
                                   :items="logEntries"
                                   :search="search"
                                   multi-sort
@@ -78,9 +78,14 @@
 
         methods: {
             async initialize() {
-                this.log = await this.logRepository.list();
+                this.logEntries = await this.logRepository.list();
+                /*eslint-disable*/
+                console.log(this.logEntries);
                 this.loading = false;
             },
+            showDetails() {
+
+            }
         }
     }
 </script>

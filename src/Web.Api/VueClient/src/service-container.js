@@ -5,7 +5,7 @@ import assetRepository from "./repositories/asset";
 import rackRepository from "./repositories/rack";
 import reportRepository from "./repositories/mock/report";
 import datacenterRepository from "./repositories/mock/datacenter"
-import logRepository from "./repositories/log";
+import logRepository from "./repositories/mock/log";
 import auth from './auth';
 
 export default {
