@@ -37,15 +37,16 @@ namespace Web.Api.Controllers
         public async Task<ActionResult<PagedList<GetModelsApiDto>>> Get(string searchText, int page = 1, int pageSize = 10)
         {
             var models = await _modelService.GetModelsAsync(searchText, page, pageSize);
-            return Ok(models);
+            var response = models.MapTo<PagedList<GetModelsApiDto>>();
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<GetModelApiDto>> Get(Guid id)
         {
             var model = await _modelService.GetModelAsync(id);
-
-            return Ok(model);
+            var response = model.MapTo<GetModelApiDto>();
+            return Ok(response);
         }
 
         [HttpPut]
