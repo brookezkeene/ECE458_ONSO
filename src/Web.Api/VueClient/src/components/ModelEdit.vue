@@ -27,7 +27,7 @@
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model.number="newItem.ethernetPorts" label="Network Ports" type="number"></v-text-field> <!--networkPorts-->
-                            <a v-if="!newItem.ethernetPorts==0" href="#" @click="openNamesDialog">Add Network Port Names</a>
+                            <a href="#" @click="openNamesDialog">Add Network Port Names</a>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model.number="newItem.powerPorts" label="Power Ports" type="number"></v-text-field>
@@ -115,7 +115,8 @@
                     cpu: '',
                     memory: undefined,
                     storage: '',
-                    comment: ''
+                    comment: '',
+                    networkPorts: []
                 },
                 namesDialog: false,
                 networkPorts: [],
