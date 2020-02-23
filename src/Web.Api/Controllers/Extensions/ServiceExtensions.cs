@@ -51,6 +51,7 @@ namespace Web.Api.Extensions
             services.AddTransient<IRackRepository, RackRepository>();
             services.AddTransient<IAssetRepository, AssetRepository>();
             services.AddTransient<IIdentityRepository, IdentityRepository>();
+            services.AddTransient<IDatacenterRepository, DatacenterRepository>();
 
             return services;
         }
