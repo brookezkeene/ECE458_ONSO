@@ -18,7 +18,7 @@ export default {
     list() {
         return axios.get(`${resource}`)
             .then(response => {
-                return response.data;
+                return response.data.data;
             });
     },
     findInRange(start, end) {
