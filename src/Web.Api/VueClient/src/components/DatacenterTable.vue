@@ -60,14 +60,14 @@
             return {
                 loading: true,
                 headers: [
-                    { text: 'Name', value: 'name'},
-                    { text: 'Abbreviation', value: 'abbreviation' },
+                    { text: 'Name', value: 'description'},
+                    { text: 'Abbreviation', value: 'name' },
                     { text: 'Actions', value: 'action', sortable: false },
                 ],
                 datacenters: [],
                 editedItem: {
-                    name: '',
-                    abbreviation: ''
+                    Name: '',
+                    Description: ''
                 },
                 search: '',
             };
@@ -94,8 +94,11 @@
             editItem(item) {
                 this.$router.push({ name: 'datacenter-edit', params: { id: item.id } })
             },
-            deleteItem (item) {
+            async deleteItem (item) {
                 confirm('Are you sure you want to delete this item?') && this.datacenterRepository.delete(item)
+                    .then(async () => {
+                        await this.initialize();
+                    })
             },
         }
     }</script>
