@@ -50,12 +50,12 @@
                     {
                         text: 'Subject Name',
                         align: 'left',
-                        value: 'subjectName'
+                        value: 'subjectName' // The person who initiated the change
                     },
-                    { text: 'Action', value: 'action'},
-                    { text: 'Data', value: 'data'}, 
-                    { text: 'Created', value: 'created'},
-                    { text: 'Event', value: 'event' },
+                    { text: 'Action', value: 'action', sortable: false}, // What happened - edit, delete, create
+                    { text: 'Data', value: 'data', sortable: false},  // On what data - model, user, asset, power operations
+                    { text: 'Created', value: 'created', sortable: false}, // Time stamp
+                    { text: 'Event', value: 'event',sortable: false }, // not sure
                 ],
                 logEntries: [],
                 logItem: {
