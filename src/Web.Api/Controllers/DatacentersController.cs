@@ -46,7 +46,7 @@ namespace Web.Api.Controllers
         public async Task<ActionResult<GetDatacenterApiDto>> Get(Guid id)
         {
             var datacenter = await _datacenterService.GetDatacenterAsync(id);
-            var response = datacenter.MapTo<PagedList<GetDatacenterApiDto>>();
+            var response = datacenter.MapTo<GetDatacenterApiDto>();
             return Ok(response);
         }
 
