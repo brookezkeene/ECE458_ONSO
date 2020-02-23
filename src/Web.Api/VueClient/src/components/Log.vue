@@ -53,6 +53,7 @@
                         text: 'Subject Name',
                         align: 'left',
                         value: 'subjectName' // The person who initiated the change
+                        sortable: false
                     },
                     { text: 'Action', value: 'action', sortable: false}, // What happened - edit, delete, create
                     { text: 'Data', value: 'data', sortable: false},  // On what data - model, user, asset, power operations
