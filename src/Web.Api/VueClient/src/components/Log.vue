@@ -5,8 +5,9 @@
             <v-container>
                 <v-card>
                     <v-data-table :headers=headers
-                                  :items="logEntries"
+                                  :items="items"
                                   :search="search"
+                                  v-model="page" :length="pageCount"
                                   multi-sort
                                   @click:row="showDetails">
                         <template v-slot:top v-slot:item.action="{ item }">
@@ -43,7 +44,8 @@
         inject: ['logRepository'],
         data() {
             return {
-
+                page: 1,
+                pageCount: 0,
                 loading: true,
                 search: '',
                 headers: [
@@ -58,6 +60,7 @@
                     { text: 'Event', value: 'event',sortable: false }, // not sure
                 ],
                 logEntries: [],
+                items: [],
                 logItem: {
                     subjectName: '',
                     action: '',
@@ -79,6 +82,10 @@
         methods: {
             async initialize() {
                 this.logEntries = await this.logRepository.list();
+                this.page = this.logEntries.currentPage;
+                this.pageCount = this.logEntries.totalCount;
+                this.items = this.logEntries.data;
+
                 /*eslint-disable*/
                 console.log(this.logEntries);
                 this.loading = false;
