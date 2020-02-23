@@ -12,13 +12,12 @@
 
                     <v-select v-model="selectedDatacenter"
                               :items="datacenters"
-                              item-text="name"
+                              item-text="description"
                               item-value=""
                               :return-object="false"
                               label="Datacenter"
                               placeholder="Select a datacenter or all datacenters"
                               class="pt-8 pl-4"
-                              clearable
                               @change="datacenterSearch()">
                     </v-select>
                     <v-spacer></v-spacer>
@@ -56,12 +55,12 @@
                     { text: 'Address', value: 'address'},
                     { text: 'Row Letter', value: 'rowLetter' },
                     { text: 'Rack Number', value: 'rackNumber' },
-                    { text: 'Datacenter', value: 'address' }, // change this to rack's datacenter field
+                    { text: 'Datacenter', value: 'datacenter' },
                     { text: 'Actions', value: 'action', sortable: false },
                 ],
                 racks: [],
                 datacenters: [],
-                selectedDatacenter: ''
+                selectedDatacenter: 'All Datacenters'
             };
         },
         watch: { // This might slow things down if we have a lot of racks to get from the backend !!!
@@ -85,21 +84,31 @@
                 this.racks = await this.rackRepository.list();
                 this.datacenters = await this.datacenterRepository.list();
                 var datacenter = {
-                    name: "All Datacenters",
-                    abbreviation: "All",
+                    description: "All Datacenters",
+                    name: "All",
                 }
                 this.datacenters.push(datacenter);
                 this.loading = false;
             },
-            deleteItem (item) {
-                confirm('Are you sure you want to delete this item?') && this.rackRepository.deleteInRange(item.address, item.address)
+            deleteItem(item) {
+                var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
+
+                confirm('Are you sure you want to delete this item?') && this.rackRepository.deleteInRange(item.address, item.address, searchDatacenter.id)
+                    .then(async () => {
+                        await this.initialize();
+                    })
             },
             async datacenterSearch() {
-                if (this.selectedDatacenter === "All Datacenters") {
+                /* eslint-disable no-unused-vars, no-console */
+                console.log(this.selectedDatacenter);
+                if (this.selectedDatacenter === "All Datacenters" || this.selectedDatacenter === 'undefined') {
                     // make special request for all datacenter racks
+                    this.racks = await this.rackRepository.list();
                 } else {
-                    this.racks = await this.rackRepository.list() // re-call based on new datacenter name
-
+                    // re-call based on new datacenter name
+                    var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
+                    console.log(searchDatacenter);
+                    this.racks = await this.rackRepository.list(searchDatacenter.id); 
                 }
             },
             async updateRacks() { // This might slow things down if we have a lot of racks to get from the backend !!!

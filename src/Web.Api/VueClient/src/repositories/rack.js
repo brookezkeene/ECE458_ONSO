@@ -15,20 +15,24 @@ const validAddress = (address) => {
 }
 
 export default {
-    list() {
-        return axios.get(`${resource}`)
+    list(datacenter) {
+        const query = {
+            datacenterId: datacenter
+        }
+        return axios.get(`${resource}`, { params: query })
             .then(response => {
                 return response.data.data;
             });
     },
-    findInRange(start, end) {
+    findInRange(start, end, datacenter) {
         const { rowLetter: startRow, rackNumber: startCol } = splitAddress(start);
         const { rowLetter: endRow, rackNumber: endCol } = splitAddress(end);
         const query = {
             StartRow: startRow,
             StartCol: startCol,
             EndRow: endRow,
-            EndCol: endCol
+            EndCol: endCol,
+            datacenterId: datacenter
         };
 
         return axios.get(`${resource}/range`, { params: query })
@@ -36,26 +40,28 @@ export default {
                 return response.data;
             }).catch(error => error);
     },
-    createInRange(start, end) {
+    createInRange(start, end, datacenter) {
         const { rowLetter: startRow, rackNumber: startCol } = splitAddress(start);
         const { rowLetter: endRow, rackNumber: endCol } = splitAddress(end);
         const query = {
             StartRow: startRow,
             StartCol: startCol,
             EndRow: endRow,
-            EndCol: endCol
+            EndCol: endCol,
+            datacenterId: datacenter
         };
 
         return axios.post(`${resource}/range`, null, { params: query } ).then(response => response.data).catch(error => error);
     },
-    deleteInRange(start, end) {
+    deleteInRange(start, end, datacenter) {
         const { rowLetter: startRow, rackNumber: startCol } = splitAddress(start);
         const { rowLetter: endRow, rackNumber: endCol } = splitAddress(end);
         const query = {
             StartRow: startRow,
             StartCol: startCol,
             EndRow: endRow,
-            EndCol: endCol
+            EndCol: endCol,
+            datacenterId: datacenter
         };
 
         return axios.delete(`${resource}/range`, { params: query } )
