@@ -98,9 +98,16 @@
             },
             routeToDetails(item) {
                 console.log(item);
-                console.log(item.data);
-                console.log(item.data.id);
-                this.routeToAssetDetails(item.data.id)
+                var data = JSON.parse(item.data);
+                console.log(data);
+                console.log(data.id);
+                if (item.category = 'Asset') {
+                    this.routeToAssetDetails(data.id)
+                } else if (item.category = 'Model') {
+                    this.routeToModelDetails(data.id)
+                } else if (item.category = 'User') {
+                    this.routeToUserDetails(data.id)
+                }
             },
             routeToModelDetails(id) {
                 this.$router.push({ name: 'model-details', params: { id: id } })
