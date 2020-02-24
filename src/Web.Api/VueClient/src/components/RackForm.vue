@@ -16,10 +16,10 @@
                     </v-select>
                     <v-text-field v-model="range.start" 
                                   label="Start"
-                                  placeholder="Enter the start of an en masse range (i.e. A1)"></v-text-field>
+                                  placeholder="Enter the start of a range of racks (i.e. A1)"></v-text-field>
                     <v-text-field v-model="range.end" 
                                   label="End"
-                                  placeholder="Enter the end of an en masse range (i.e. Z20)"></v-text-field>
+                                  placeholder="Enter the end of a range of racks (i.e. Z20)"></v-text-field>
 
                     <v-row>
                         <v-btn class="mr-4 ml-4" color="primary" @click="viewDiagram">View Diagrams</v-btn>
@@ -71,13 +71,15 @@ export default {
             await this.rackRepository.createInRange(this.range.start, this.range.end, searchDatacenter.id)
                 .then(() => {
                     // indicate success
+                    this.$emit('update-create'); // trigger event to update rack-table
                 })
                 .catch(() => {
                     // indicate failure
+                    this.$emit('error-create');
                 });
 
             // This might slow things down if we have a lot of racks to get from the backend !!!
-            this.$emit('update-create'); // trigger event to update rack-table
+            //this.$emit('update-create'); // trigger event to update rack-table
         },
         async deleteInRange() {
             var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
@@ -85,13 +87,15 @@ export default {
             await this.rackRepository.deleteInRange(this.range.start, this.range.end, searchDatacenter.id)
                 .then(() => {
                     // indicate success
+                    this.$emit('update-delete'); // trigger event to update rack-table
                 })
                 .catch(() => {
                     // indicate failure
+                    this.$emit('error-delete');
                 });
 
             // This might slow things down if we have a lot of racks to get from the backend !!!
-            this.$emit('update-delete'); // trigger event to update rack-table
+            //this.$emit('update-delete'); // trigger event to update rack-table
         }
     }
 }
