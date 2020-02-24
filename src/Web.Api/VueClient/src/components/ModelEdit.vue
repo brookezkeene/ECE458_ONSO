@@ -158,6 +158,9 @@
                 }, 300)
             },
             openNamesDialog() {
+                /* eslint-disable no-unused-vars, no-console */
+                console.log(this.newItem.ethernetPorts);
+                console.log('is the ehternet field empty');
                 if (typeof this.id === 'undefined') {
                     var j;
                     for (j = 0; j < this.newItem.ethernetPorts; j++) {

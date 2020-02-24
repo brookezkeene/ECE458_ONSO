@@ -28,15 +28,18 @@
                                             item-text="name"
                                             item-value="id">
                             </v-autocomplete>
+                            
                         </v-col>
                         <!-- Will need to update to show only racks from the selected datacenter -->
                         <v-col cols="12" sm="6" md="4">
-                            <v-autocomplete v-model="editedItem.rackId"
+                            <v-autocomplete v-if="!editedItem.datacenter.length==0 && updateRacks()"
+                                            v-model="editedItem.rackId"
                                             label="Rack Number"
                                             :items="racks"
                                             item-text="address"
                                             item-value="id">
                             </v-autocomplete>
+                            <a href="#" @click="openNamesDialog">Add Network Port Names</a>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model.number="editedItem.rackPosition" label="Rack Position" type="number"></v-text-field>
@@ -132,6 +135,9 @@
 
         async created() {
             this.models = await this.modelRepository.list();
+            /* eslint-disable no-unused-vars, no-console */
+            console.log(this.models.length);
+            console.log('are the models empty?');
             this.users = await this.userRepository.list();
             this.assets = await this.assetRepository.list();
             this.racks = await this.rackRepository.list();
@@ -170,6 +176,9 @@
                 this.$router.push({ name: 'assets' })
             },
             openNamesDialog() {
+                /* eslint-disable no-unused-vars, no-console */
+                console.log(this.editedItem.datacenter);
+                console.log('is the datacenter field empty');
                 this.namesDialog = true;
             },
             saveNames() {
@@ -191,6 +200,14 @@
             closeNamesDialog() {
                 this.namesDialog = false;
             },
+            async updateRacks() {
+                var datacenterID = this.editedItem.datacenter;
+                this.racks = await this.rackRepository.list(datacenterID)
+                if (this.racks.length == 0) {
+                    return false;
+                }
+                return true;
+            }
         }
     }
 </script>
