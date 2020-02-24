@@ -101,7 +101,7 @@
             async datacenterSearch() {
                 if (this.selectedDatacenter === "All Datacenters") {
                     // make special request for all datacenter racks
-                    this.racks = await this.rackRepository.list(null);
+                    this.racks = await this.rackRepository.list(Guid.Empty);
                 } else {
                     // re-call based on new datacenter name
                     var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);

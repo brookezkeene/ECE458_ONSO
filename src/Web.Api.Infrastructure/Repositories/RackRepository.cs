@@ -26,10 +26,9 @@ namespace Web.Api.Infrastructure.Repositories
         {
             var pagedList = new PagedList<Rack>();
 
-            if (datacenterId == null) {
+            if (datacenterId == Guid.Empty) {
                 var racks = await _dbContext.Racks
                     .PageBy(x => x.Id, page, pageSize)
-                    .Where(x => x.DatacenterId == datacenterId)
                     .AsNoTracking()
                     .ToListAsync();
 
@@ -42,6 +41,7 @@ namespace Web.Api.Infrastructure.Repositories
             {
                 var racks = await _dbContext.Racks
                     .PageBy(x => x.Id, page, pageSize)
+                    .Where(x => x.DatacenterId == datacenterId)
                     .AsNoTracking()
                     .ToListAsync();
 
