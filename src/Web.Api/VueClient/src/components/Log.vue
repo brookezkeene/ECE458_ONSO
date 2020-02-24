@@ -9,7 +9,7 @@
                                   :search="search"
                                   v-model="page" :length="pageCount"
                                   multi-sort
-                                  @click:row="showDetails">
+                                  @click:row="routeToDetails(item)">
                         <template v-slot:top v-slot:item.action="{ item }">
 
                             <v-toolbar flat color="white">
@@ -50,7 +50,7 @@
                 search: '',
                 headers: [
                     {
-                        text: 'Subject Name',
+                        text: 'User',
                         align: 'left',
                         value: 'subjectName', // User
                         sortable: false
@@ -96,8 +96,9 @@
                 console.log(this.logEntries);
                 this.loading = false;
             },
-            showDetails() {
-
+            routeToDetails() {
+                Console.log(item);
+                Console.log(item.data.Id);
             }
         }
     }
