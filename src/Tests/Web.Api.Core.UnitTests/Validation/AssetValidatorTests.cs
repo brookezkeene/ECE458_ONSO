@@ -122,22 +122,6 @@ namespace Web.Api.Core.UnitTests.Validation
 
             return asset;
         }
-        private static Asset GetValidAssetWithNetworkPorts()
-        {
-            var datacenter = new Datacenter { Id = Guid.NewGuid() };
-            var rack = new Rack { Column = 1, Row = "A", Datacenter = datacenter };
-            
-            var model = new Model() { Height = 4 };
-            var networkports = new List<AssetNetworkPort>{
-                new AssetNetworkPort()
-            };
-            var asset = new Asset() { RackPosition = 5, Hostname = "server9", Rack = rack, Model = model, NetworkPorts = networkports };
-            var otherNoConflict = new Asset() { RackPosition = 9, Hostname = "server8", Rack = rack, Model = model };
-
-            rack.Assets = new List<Asset> { asset, otherNoConflict };
-            model.Assets = new List<Asset> { asset, otherNoConflict };
-
-            return asset;
-        }
+        
     }
 }
