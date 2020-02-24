@@ -22,7 +22,7 @@
                             </v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-autocomplete v-model="editedItem.dataCenter"
+                            <v-autocomplete v-model="editedItem.datacenter"
                                             label="Data Center"
                                             :items="datacenters"
                                             item-text="name"
@@ -53,6 +53,12 @@
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model="editedItem.comment" label="Comment"></v-text-field>
                         </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                            <v-container>
+                                <v-title>Power Port Connections</v-title>
+                                <v-for editedItem.js></v-for>
+                            </v-container>
+                        </v-col>
                     </v-row>
                     <v-card-actions>
                         <v-spacer></v-spacer>
@@ -61,6 +67,34 @@
                     </v-card-actions>'
                 </v-container>
             </v-card-text>
+            <template>
+                <!-- dialog to set power port connections -->
+                <div class="text-center">
+                    <v-dialog v-model="namesDialog" width="400">
+                        <v-card class="overflow-y-auto" max-height="500px">
+                            <v-card-title>
+                                Edit Power Port Connections
+                            </v-card-title>
+                            <v-card-text>
+                                <v-container fluid>
+                                    <div v-for="(n, index) in this.powerPortConnections" :key="n">
+                                        <v-text-field v-model="networkPortNames[index]"
+                                                      label="Network Port"
+                                                      placeholder="port name"
+                                                      :rules="[rules.networkPortRules]"
+                                                      :value="n"></v-text-field>
+                                    </div>
+                                </v-container>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="primary" text @click="saveNames">Save</v-btn>
+                                <v-btn color="primary" text @click="closeNamesDialog">Close</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+                </div>
+            </template>
         </v-card>
     </div>
 </template>
@@ -91,6 +125,8 @@
                     comment: '',
                 },
                 rackNumber: 0,
+                powerPortConnections: [],
+                namesDialog: false,
             }
         },
 
@@ -132,6 +168,28 @@
             },
             close() {
                 this.$router.push({ name: 'assets' })
+            },
+            openNamesDialog() {
+                this.namesDialog = true;
+            },
+            saveNames() {
+                /* eslint-disable no-unused-vars, no-console */
+                console.log(this.networkPortNames);
+                var i;
+                for (i = 0; i < this.networkPortNames.length; i++) {
+                    if (this.networkPortNames[i] === null) {
+                        var portObjDefault = Object.assign({}, { name: (i+1).toString(), number: i+1 })
+                        this.networkPorts[i] = portObjDefault;
+                    } else {
+                        var portObj = Object.assign({}, { name: this.networkPortNames[i], number: i+1 })
+                        this.networkPorts[i] = portObj;
+                    }
+                }
+                console.log(this.networkPorts);
+                this.namesDialog = false;
+            },
+            closeNamesDialog() {
+                this.namesDialog = false;
             },
         }
     }

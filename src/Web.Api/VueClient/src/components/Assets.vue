@@ -82,6 +82,34 @@
                 </v-row>
             </template>
 
+            <template v-slot:item.power="{ item }">
+                <v-row >
+                    <v-item-group dense
+                                  light
+                                  tile
+                                  rounded="true">
+                        <v-btn color ="green lighten-1" 
+                               @click="turnOn(item)"
+                               small=true
+                               depressed>
+                            ON
+                        </v-btn>
+                        <v-btn color ="red lighten-1" 
+                               @click="turnOff(item)"
+                               small=true
+                               depressed>
+                            OFF
+                        </v-btn>
+                        <v-btn color = "grey lighten-2"
+                               small=true
+                               @click="cycle(item)"
+                               depressed>
+                            Cycle
+                        </v-btn>
+                    </v-item-group>
+                </v-row>
+            </template>
+
             <template v-slot:no-data>
                 <v-btn color="primary" @click="initialize">Refresh</v-btn>
             </template>
@@ -120,6 +148,7 @@
           { text: 'Rack U', value: 'rackPosition', },
           { text: 'Owner Username', value: 'owner' },
           { text: 'Comment', value: 'comment' },
+          { text: 'Power', value: 'power', sortable: false },
           { text: 'Actions', value: 'action', sortable: false },
 
 
@@ -135,6 +164,7 @@
             rackPosition: '',
             ownerId: '',
             comment: '',
+            poweredOn: false,
         },
           detailItem: {
             id: '',
@@ -148,6 +178,7 @@
         },
         deleting: false,
         editing: false,
+        powering: false,
       }},
     computed: {
         admin() {
@@ -179,22 +210,7 @@
         this.loading = false;
 
         },
-
-        findModel(id) {
-            for (const model of this.models) {
-                if (model.id === id)
-                    return model;
-            }
-        },
-
-        findOwner(id) {
-            for (const user of this.users) {
-                if (user.id === id)
-                    return user;
-            } 
-        },
-    
-      deleteItem (item) {
+        deleteItem (item) {
         this.deleting = true;
         confirm('Are you sure you want to delete this item?') && this.assetRepository.delete(item)
                     .then(async () => {
@@ -202,10 +218,30 @@
                     })
         },
         editItem(item) {
+            this.editing = true;
             this.$router.push({ name: 'asset-edit', params: { id: item.id } })
         },
         addItem() {
             this.$router.push({ name: 'asset-new' })
+        },
+        turnOn(item) {
+            this.powering = true;
+            confirm('Are you sure you would like to turn on this asset?')
+            /*eslint-disable*/
+            console.log(item.id);
+            //PUT the power state for this asset to the backend
+        },
+        turnOff(item) {
+            this.powering = true;
+            confirm('Are you sure you would like to power off this asset?')
+            console.log(item.id);
+            //PUT the power state for this asset to the backend
+        },
+        cycle(item) {
+            this.powering = true;
+            confirm('Are you sure you would like to cycle this asset?')
+            console.log(item.id);
+            //PUT the power state for this asset to the backend
         },
         showInstructions() {
             this.instructionsDialog = true;
@@ -214,13 +250,13 @@
             this.instructionsDialog = false;
         },
         showDetails(item) {
-            if (!this.editing && !this.deleting) {
+            if (!this.editing && !this.deleting && !this.powering) {
             /*eslint-disable*/
                 console.log(item);
               this.$router.push({ name: 'asset-details', params: {id: item.id } })
           }
           this.deleting = false;
-          //this.detailsDialog = true
+          this.powering = false;
       },
 
       /**
