@@ -52,13 +52,18 @@
                     {
                         text: 'Subject Name',
                         align: 'left',
-                        value: 'subjectName', // The person who initiated the change
+                        value: 'subjectName', // User
                         sortable: false
                     },
-                    { text: 'Action', value: 'action', sortable: false}, // What happened - edit, delete, create
-                    { text: 'Data', value: 'data', sortable: false},  // On what data - model, user, asset, power operations
-                    { text: 'Created', value: 'created', sortable: false}, // Time stamp
-                    { text: 'Event', value: 'event',sortable: false }, // not sure
+                    // Log entries shall include the initiating
+                    // user, the entities involved, the nature of the event, and the time and date.
+                    { text: 'Event', value: 'event',sortable: false }, // nature of the event (e.g. asset created)
+                    { text: 'Category', value: 'category', sortable: false},  // Which entity was involved
+                    { text: 'Created', value: 'created', sortable: false }, // Time stamp
+                    { text: 'Data', value: 'data', sortable: false },
+
+                    // Need to link each log to the appropriate details page 
+                    // Would come from data
                 ],
                 logEntries: [],
                 items: [],
