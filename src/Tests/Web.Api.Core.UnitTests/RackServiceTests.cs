@@ -15,7 +15,7 @@ namespace Web.Api.Core.UnitTests
 {
     public class RackServiceTests
     {
-        [Fact]
+        
         public async void GetRacks_ForRangeWithNoRacks_ReturnsEmpty()
         {
             // Arrange

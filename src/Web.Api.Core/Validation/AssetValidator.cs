@@ -88,5 +88,6 @@ namespace Web.Api.Core.Validation
         {
             return await _rackRepository.AddressExistsAsync(rack.Row, rack.Column, rack.Datacenter.Id);
         }
+
     }
 }

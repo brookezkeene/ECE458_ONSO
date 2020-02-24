@@ -25,6 +25,7 @@ namespace Web.Api.Core.UnitTests.Validation
             Assert.Contains(result.Errors, error => error.ErrorCode == "DoesNotFit");
         }
 
+
         [Fact]
         public async void AssetValidator_FailsIfAssetHasConflict()
         {
@@ -83,7 +84,8 @@ namespace Web.Api.Core.UnitTests.Validation
 
         private static Asset GetAssetThatDoesNotFitInRack()
         {
-            var rack = new Rack();
+            var datacenter = new Datacenter { Id = Guid.NewGuid() };
+            var rack = new Rack { Column = 1, Row = "A", Datacenter = datacenter };
             var model = new Model {Height = 4};
             var asset = new Asset() {RackPosition = 40, Rack = rack, Model = model};
 
@@ -95,7 +97,8 @@ namespace Web.Api.Core.UnitTests.Validation
 
         private static Asset GetAssetWithConflict()
         {
-            var rack = new Rack();
+            var datacenter = new Datacenter { Id = Guid.NewGuid() };
+            var rack = new Rack { Column = 1, Row = "A", Datacenter = datacenter };
             var model = new Model { Height = 4 };
             var asset = new Asset() { RackPosition = 5, Rack = rack, Model = model };
             var conflict = new Asset() { RackPosition = 3, Rack = rack, Model = model };
@@ -108,7 +111,8 @@ namespace Web.Api.Core.UnitTests.Validation
 
         private static Asset GetValidAsset()
         {
-            var rack = new Rack();
+            var datacenter = new Datacenter { Id = Guid.NewGuid() };
+            var rack = new Rack { Column = 1, Row = "A", Datacenter = datacenter };
             var model = new Model() {Height = 4};
             var asset = new Asset() {RackPosition = 5, Hostname = "server9", Rack = rack, Model = model};
             var otherNoConflict = new Asset() {RackPosition = 9, Hostname = "server8", Rack = rack, Model = model};
@@ -118,5 +122,6 @@ namespace Web.Api.Core.UnitTests.Validation
 
             return asset;
         }
+        
     }
 }
