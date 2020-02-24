@@ -100,13 +100,13 @@
                 console.log(item);
                 var data = JSON.parse(item.data);
                 console.log(data);
-                console.log(data.id);
+                console.log(data.Id);
                 if (item.category = 'Asset') {
-                    this.routeToAssetDetails(data.id)
+                    this.routeToAssetDetails(data.Id)
                 } else if (item.category = 'Model') {
-                    this.routeToModelDetails(data.id)
+                    this.routeToModelDetails(data.Id)
                 } else if (item.category = 'User') {
-                    this.routeToUserDetails(data.id)
+                    this.routeToUserDetails(data.Id)
                 }
             },
             routeToModelDetails(id) {
