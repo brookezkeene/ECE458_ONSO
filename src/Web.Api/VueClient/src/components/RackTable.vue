@@ -55,7 +55,7 @@
                     { text: 'Address', value: 'address'},
                     { text: 'Row Letter', value: 'rowLetter' },
                     { text: 'Rack Number', value: 'rackNumber' },
-                    { text: 'Datacenter', value: 'datacenter.name' },
+                    { text: 'Datacenter', value: 'datacenter.description' },
                     { text: 'Actions', value: 'action', sortable: false },
                 ],
                 racks: [],
