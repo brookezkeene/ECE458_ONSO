@@ -7,12 +7,12 @@
                 <form>
                     <v-select v-model="selectedDatacenter"
                               :items="datacenters"
-                              item-text="name"
+                              item-text="description"
                               item-value=""
                               :return-object="false"
                               label="Datacenter"
                               placeholder="Select a datacenter or all datacenters"
-                              clearable>
+                              >
                     </v-select>
                     <v-text-field v-model="range.start" 
                                   label="Start"
@@ -66,7 +66,9 @@ export default {
             this.$router.push({ name: "RackDiagram", query: { start: this.range.start, end: this.range.end } }); // include datacenter in this query
         },
         async createInRange() {
-            await this.rackRepository.createInRange(this.range.start, this.range.end) // include datacenter in this query
+            var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
+
+            await this.rackRepository.createInRange(this.range.start, this.range.end, searchDatacenter.id)
                 .then(() => {
                     // indicate success
                 })
@@ -75,10 +77,12 @@ export default {
                 });
 
             // This might slow things down if we have a lot of racks to get from the backend !!!
-            this.$emit('update-table'); // trigger event to update rack-table
+            this.$emit('update-create'); // trigger event to update rack-table
         },
         async deleteInRange() {
-            await this.rackRepository.deleteInRange(this.range.start, this.range.end) // include datacenter in this query
+            var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
+
+            await this.rackRepository.deleteInRange(this.range.start, this.range.end, searchDatacenter.id)
                 .then(() => {
                     // indicate success
                 })
@@ -87,7 +91,7 @@ export default {
                 });
 
             // This might slow things down if we have a lot of racks to get from the backend !!!
-            this.$emit('update-table'); // trigger event to update rack-table
+            this.$emit('update-delete'); // trigger event to update rack-table
         }
     }
 }

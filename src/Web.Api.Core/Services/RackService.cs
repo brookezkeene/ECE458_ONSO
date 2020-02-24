@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Web.Api.Common;
 using Web.Api.Core.Dtos;
@@ -20,26 +21,26 @@ namespace Web.Api.Core.Services
         public async Task<List<RackDto>> GetRacksAsync(RackRangeQuery query)
         {
             query = query.ToUpper();
-            var racks = await _rackRepository.GetRacksInRangeAsync(query.StartRow, query.StartCol, query.EndRow, query.EndCol);
+            var racks = await _rackRepository.GetRacksInRangeAsync(query.StartRow, query.StartCol, query.EndRow, query.EndCol, query.DatacenterId);
             return racks.ToDto();
         }
 
-        public async Task<PagedList<RackDto>> GetRacksAsync(string search, int page = 1, int pageSize = 10)
+        public async Task<PagedList<RackDto>> GetRacksAsync(Guid? datacenterId, int page = 1, int pageSize = 10)
         {
-            var racks = await _rackRepository.GetRacksAsync(search, page, pageSize);
+            var racks = await _rackRepository.GetRacksAsync(datacenterId, page, pageSize);
             return racks.ToDto();
         }
 
         public async Task CreateRacksAsync(RackRangeQuery query)
         {
             query = query.ToUpper();
-            await _rackRepository.CreateRacksInRangeAsync(query.StartRow, query.StartCol, query.EndRow, query.EndCol);
+            await _rackRepository.CreateRacksInRangeAsync(query.StartRow, query.StartCol, query.EndRow, query.EndCol, query.DatacenterId);
         }
 
         public async Task DeleteRacksAsync(RackRangeQuery query)
         {
             query = query.ToUpper();
-            await _rackRepository.DeleteRacksInRangeAsync(query.StartRow, query.StartCol, query.EndRow, query.EndCol);
+            await _rackRepository.DeleteRacksInRangeAsync(query.StartRow, query.StartCol, query.EndRow, query.EndCol, query.DatacenterId);
         }
     }
 }

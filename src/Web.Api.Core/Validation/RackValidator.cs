@@ -16,7 +16,12 @@ namespace Web.Api.Core.Validation
         public RackValidator(IRackRepository rackRepository)
         {
             _rackRepository = rackRepository;
-
+            // default rules
+            RuleFor(rack => rack.Row)
+                    .NotEmpty()
+                    .Matches("^[A-Z]{1}$");
+            RuleFor(rack => rack.Column)
+                .GreaterThanOrEqualTo(1);
             RuleSet("delete", () =>
             {
                 RuleFor(rack => rack.Assets)
@@ -26,14 +31,15 @@ namespace Web.Api.Core.Validation
             {
                 RuleFor(rack => rack)
                     .MustAsync(HaveUniqueAddress)
-                    .WithMessage(rack => $"A rack already exists at address {rack.Row}{rack.Column}.")
+                    .WithMessage(rack => $"A rack already exists at address {rack.Row}{rack.Column} in the datacenter {rack.Datacenter.Name}.")
                     .WithSeverity(Severity.Info);
+
             });
         }
 
         private async Task<bool> HaveUniqueAddress(Rack rack, CancellationToken cancellationToken)
         {
-            var exists = await _rackRepository.AddressExistsAsync(rack.Row, rack.Column);
+            var exists = await _rackRepository.AddressExistsAsync(rack.Row, rack.Column, rack.Datacenter.Id);
             return !exists;
         }
     }

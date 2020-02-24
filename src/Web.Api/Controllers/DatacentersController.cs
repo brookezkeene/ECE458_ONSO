@@ -37,7 +37,8 @@ namespace Web.Api.Controllers
         public async Task<ActionResult<PagedList<GetDatacenterApiDto>>> GetMany(string searchText, int page = 1, int pageSize = 10)
         {
             var datacenters = await _datacenterService.GetDatacentersAsync(searchText, page, pageSize);
-            return Ok(datacenters);
+            var response = datacenters.MapTo<PagedList<GetDatacenterApiDto>>();
+            return Ok(response);
         }
 
 
@@ -45,7 +46,8 @@ namespace Web.Api.Controllers
         public async Task<ActionResult<GetDatacenterApiDto>> Get(Guid id)
         {
             var datacenter = await _datacenterService.GetDatacenterAsync(id);
-            return Ok(datacenter);
+            var response = datacenter.MapTo<GetDatacenterApiDto>();
+            return Ok(response);
         }
 
         [HttpPut]

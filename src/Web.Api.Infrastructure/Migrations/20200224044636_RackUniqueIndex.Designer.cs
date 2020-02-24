@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Web.Api.Infrastructure.DbContexts;
 
 namespace Web.Api.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200224044636_RackUniqueIndex")]
+    partial class RackUniqueIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -405,7 +407,7 @@ namespace Web.Api.Infrastructure.Migrations
                     b.Property<int>("Column")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("DatacenterId")
+                    b.Property<Guid?>("DatacenterId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Row")
@@ -415,7 +417,8 @@ namespace Web.Api.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DatacenterId", "Row", "Column")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[DatacenterId] IS NOT NULL");
 
                     b.ToTable("Racks");
                 });
@@ -626,9 +629,7 @@ namespace Web.Api.Infrastructure.Migrations
                 {
                     b.HasOne("Web.Api.Infrastructure.Entities.Datacenter", "Datacenter")
                         .WithMany("Racks")
-                        .HasForeignKey("DatacenterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DatacenterId");
                 });
 #pragma warning restore 612, 618
         }

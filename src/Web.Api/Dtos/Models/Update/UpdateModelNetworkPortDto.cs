@@ -6,5 +6,6 @@ namespace Web.Api.Dtos.Models.Update
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public int Number { get; set; }
     }
 }
