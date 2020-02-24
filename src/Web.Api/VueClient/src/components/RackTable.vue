@@ -91,28 +91,18 @@
                 this.loading = false;
             },
             deleteItem(item) {
-                var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
-
-                confirm('Are you sure you want to delete this item?') && this.rackRepository.deleteInRange(item.address, item.address, searchDatacenter.id)
+                confirm('Are you sure you want to delete this item?') && this.rackRepository.deleteInRange(item.address, item.address, item.datacenterId)
                     .then(async () => {
-                        this.racks = await this.rackRepository.list(searchDatacenter.id);
+                        this.datacenterSearch();
                     })
             },
             async datacenterSearch() {
-                if (this.selectedDatacenter === "All Datacenters") {
-                    // make special request for all datacenter racks
-                    // TODO: brooke you can remove this. the datacenter ID is no longer required
-                    this.racks = await this.rackRepository.list('00000000-0000-0000-0000-000000000000'); // hardcoded empty GUID
-                } else {
-                    // re-call based on new datacenter name
-                    var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
-                    this.racks = await this.rackRepository.list(searchDatacenter.id); 
-                }
+                var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
+                this.racks = await this.rackRepository.list(searchDatacenter.id); 
             },
             async updateRacks() { // This might slow things down if we have a lot of racks to get from the backend !!!
                 this.$emit('updated');
-                var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
-                this.racks = await this.rackRepository.list(searchDatacenter.id); // re-call with same datacenter name if racks were added or deleted
+                this.datacenterSearch(); // re-call with same datacenter name if racks were added or deleted
             }
         }
     }

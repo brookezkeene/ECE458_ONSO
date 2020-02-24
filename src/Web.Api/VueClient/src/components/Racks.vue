@@ -24,7 +24,7 @@
             {{updateSnackbar.message}}
             <v-btn dark
                    text
-                   @click="updatedSnackbar.show = false">
+                   @click="updateSnackbar.show = false">
                 Close
             </v-btn>
         </v-snackbar>
