@@ -96,9 +96,19 @@
                 console.log(this.logEntries);
                 this.loading = false;
             },
-            routeToDetails() {
+            routeToDetails(item) {
                 console.log(item);
                 console.log(item.data.Id);
+                this.routeToModelDetails(item.data.Id)
+            },
+            routeToModelDetails(id) {
+                this.$router.push({ name: 'model-details', params: { id: id } })
+            },
+            routeToAssetDetails(id) {
+                this.$router.push({ name: 'asset-details', params: { id: id } })
+            },
+            routeToUserDetails(id) {
+                this.$router.push({ name: 'user-details', params: { id: id } })
             }
         }
     }
