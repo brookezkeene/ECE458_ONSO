@@ -119,8 +119,10 @@
                     networkPorts: []
                 },
                 namesDialog: false,
-                networkPorts: [],
                 editedIndex: -1,
+                //making this a separate variable: stores the CURRENT names of network ports
+                //for UPDATE: if the user changes the size of the ethernetports/closes the 
+                //names dialog, the newItem will still have original value from database
                 networkPortNames: [],
                 rules: {
                     networkPortRules: v => /^[a-zA-Z0-9]*$/.test(v) || 'Network port name cannot contain whitespace'
@@ -158,11 +160,11 @@
                 }, 300)
             },
             openNamesDialog() {
-                /* eslint-disable no-unused-vars, no-console */
-                console.log(this.newItem.ethernetPorts);
-                console.log('is the ehternet field empty');
+                //setting default values of the networkPortNames
+                //either 1) creating a model, populating ports with default names
+                // 2) updating the networkPortNames with the newItem.ethernetPorts from memory
                 if (typeof this.id === 'undefined') {
-                    var j;
+                    var j; 
                     for (j = 0; j < this.newItem.ethernetPorts; j++) {
                         this.networkPortNames[j] = (j + 1).toString();
                     }
@@ -184,9 +186,10 @@
                 }
                 this.namesDialog = true;
             },
+            /*here is where networkPortNames modifies the newItem.networkPorts 
+              to update the values of the item*/
             saveNames() {
-                /* eslint-disable no-unused-vars, no-console */
-                console.log(this.networkPortNames);
+                
                 var i;
                 for (i = 0; i < this.networkPortNames.length; i++) {
                      console.log(i);
@@ -197,17 +200,15 @@
                         console.log('reaching this bbbase');
                         var addObj = Object.assign({}, { name: this.networkPortNames[i], number: i + 1 })
                         this.newItem.networkPorts.push(addObj);
-                    }
-                    else {
+                    } else {
                         this.newItem.networkPorts[i].name = this.networkPortNames[i];
                     }
                 }
-
+                //for updating: if user decreased the ethernetport size
                 if (this.newItem.networkPorts.length > this.newItem.ethernetPorts) {
                     this.newItem.networkPorts = this.newItem.networkPorts.slice(0, this.newItem.ethernetPorts);
                 }
                 
-                console.log(this.networkPorts);
                 this.namesDialog = false;
             },
             closeNamesDialog() {

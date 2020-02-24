@@ -28,21 +28,7 @@
                                             item-text="name"
                                             item-value="id">
                             </v-autocomplete>
-                            
-                        </v-col>
-                        <!-- Will need to update to show only racks from the selected datacenter -->
-                        <v-col cols="12" sm="6" md="4">
-                            <v-autocomplete v-if="!editedItem.datacenter.length==0 && updateRacks()"
-                                            v-model="editedItem.rackId"
-                                            label="Rack Number"
-                                            :items="racks"
-                                            item-text="address"
-                                            item-value="id">
-                            </v-autocomplete>
-                            <a href="#" @click="openNamesDialog">Add Network Port Names</a>
-                        </v-col>
-                        <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model.number="editedItem.rackPosition" label="Rack Position" type="number"></v-text-field>
+
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-autocomplete v-model=editedItem.ownerId
@@ -56,12 +42,25 @@
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model="editedItem.comment" label="Comment"></v-text-field>
                         </v-col>
+                        <!-- Will need to update to show only racks from the selected datacenter -->
                         <v-col cols="12" sm="6" md="4">
-                            <v-container>
-                                <v-title>Power Port Connections</v-title>
-                                <v-for editedItem.js></v-for>
-                            </v-container>
+                            <v-autocomplete v-if="!editedItem.datacenter.length==0 && updateRacks()"
+                                            v-model="editedItem.rackId"
+                                            label="Rack Number"
+                                            :items="racks"
+                                            item-text="address"
+                                            item-value="id">
+                            </v-autocomplete>
                         </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                            <v-text-field v-if="!editedItem.datacenter.length==0 && updateRacks()"
+                                          v-model.number="editedItem.rackPosition"
+                                          label="Rack Position"
+                                          type="number">
+                            </v-text-field>
+                            <a href="#" @click="openNamesDialog">Edit Power Port Connections</a>
+                        </v-col>
+                        
                     </v-row>
                     <v-card-actions>
                         <v-spacer></v-spacer>
@@ -80,11 +79,11 @@
                             </v-card-title>
                             <v-card-text>
                                 <v-container fluid>
-                                    <div v-for="(n, index) in this.powerPortConnections" :key="n">
-                                        <v-text-field v-model="networkPortNames[index]"
+                                    <div v-for="(n, index) in this.powerPortNames" :key="n">
+                                        <v-text-field v-model="powerPortNames[index]"
                                                       label="Network Port"
                                                       placeholder="port name"
-                                                      :rules="[rules.networkPortRules]"
+                                                      :rules="[rules.powerPortRules]"
                                                       :value="n"></v-text-field>
                                     </div>
                                 </v-container>
@@ -127,17 +126,18 @@
                     ownerId: '',
                     comment: '',
                 },
+                datacenterID: '',
                 rackNumber: 0,
                 powerPortConnections: [],
+                rules: {
+                    powerPortRules: v => /^[a-zA-Z0-9]*$/.test(v) || 'Network port name cannot contain whitespace'
+                },
                 namesDialog: false,
             }
         },
 
         async created() {
             this.models = await this.modelRepository.list();
-            /* eslint-disable no-unused-vars, no-console */
-            console.log(this.models.length);
-            console.log('are the models empty?');
             this.users = await this.userRepository.list();
             this.assets = await this.assetRepository.list();
             this.racks = await this.rackRepository.list();
@@ -159,7 +159,16 @@
         computed: {
             formTitle() {
                  return typeof this.id === 'undefined' ? 'New Item' : 'Edit Item'
+            },
+            powerPortNames() {
+                var arr = [];
+                var j;
+                for (j = 0; j < 5; j++) {
+                    arr[j] = j+1;
+                }
+                return arr
             }
+
         },
         methods: {
             save() {
@@ -176,9 +185,6 @@
                 this.$router.push({ name: 'assets' })
             },
             openNamesDialog() {
-                /* eslint-disable no-unused-vars, no-console */
-                console.log(this.editedItem.datacenter);
-                console.log('is the datacenter field empty');
                 this.namesDialog = true;
             },
             saveNames() {
@@ -201,12 +207,12 @@
                 this.namesDialog = false;
             },
             async updateRacks() {
-                var datacenterID = this.editedItem.datacenter;
-                this.racks = await this.rackRepository.list(datacenterID)
-                if (this.racks.length == 0) {
-                    return false;
+                if (this.datacenterID != this.editedItem.datacenter) {
+                    this.datacenterID = this.editedItem.datacenter;
+                    this.racks = await this.rackRepository.list(this.datacenterID)
+                    return true;
                 }
-                return true;
+                return false;
             }
         }
     }
