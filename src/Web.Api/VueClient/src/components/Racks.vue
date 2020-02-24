@@ -1,35 +1,49 @@
 <template>
     <v-card flat>
         <v-card-title>
-            Datacenters & Racks
+            Datacenters
         </v-card-title>
 
         <v-container>
             <datacenter-table />
         </v-container>
 
+        <v-card-title>
+            Racks
+        </v-card-title>
+
+        <v-container align="center" justify="center" class="justify-center">
+            <rack-form v-on:update-create="allowUpdate('create')"
+                       v-on:update-delete="allowUpdate('delete')"
+                       v-on:error-create="showError('create')"
+                       v-on:error-delete="showError('delete')"></rack-form>
+        </v-container>
+
         <v-container align="center" justify="center">
             <rack-table :updateData="updateData" v-on:updated="blockUpdate"></rack-table>
         </v-container>
 
-        <v-container align="center" justify="center" class="justify-center">
-            <rack-form v-on:update-create="allowUpdateCreate()" 
-                       v-on:update-delete="allowUpdateDelete()"></rack-form>
-        </v-container>
-
         <v-snackbar v-model="updateSnackbar.show"
                     :bottom=true
+                    class="black--text"
                     :color="updateSnackbar.color"
                     :timeout=5000>
             {{updateSnackbar.message}}
             <v-btn dark
+                   class="black--text"
                    text
-                   @click="updatedSnackbar.show = false">
+                   @click="updateSnackbar.show = false">
                 Close
             </v-btn>
         </v-snackbar>
     </v-card>
 </template>
+
+<style>
+    .v-snackbar {
+        border-color: green;
+    }
+</style>
 
 <script>
 import DatacenterTable from "./DatacenterTable"
@@ -47,21 +61,31 @@ import RackTable from "./RackTable"
             updateSnackbar: {
                 show: false,
                 message: '',
-                color: 'green lighten-2'
+                color: ''
             }
         }),
         methods: { // This might slow things down if we have a lot of racks to get from the backend !!!
-            allowUpdateCreate() {
+            allowUpdate(action) {
                 this.updateData = true;
                 this.updated = true;
                 this.updateSnackbar.show = true;
-                this.updateSnackbar.message = 'Successfully created racks';
+                this.updateSnackbar.color = 'green lighten-4';
+                if (action === 'create') {
+                    this.updateSnackbar.message = 'Successfully created racks';
+                }
+                if (action === 'delete') {
+                    this.updateSnackbar.message = 'Successfully deleted racks';
+                }
             },
-            allowUpdateDelete() {
-                this.updateData = true;
-                this.updated = true;
+            showError(action) {
                 this.updateSnackbar.show = true;
-                this.updateSnackbar.message = 'Successfully deleted racks';
+                this.updateSnackbar.color = 'red lighten-4';
+                if (action === 'create') {
+                    this.updateSnackbar.message = 'Could not create racks';
+                }
+                if (action === 'delete') {
+                    this.updateSnackbar.message = 'Could not delete racks';
+                }
             },
             blockUpdate() {
                 this.updateData = false;

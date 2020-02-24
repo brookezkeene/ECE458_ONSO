@@ -10,12 +10,12 @@
                 <v-container fluid class="justify-center">
                     <v-row>
                         <v-col>
-                            <v-text-field v-model="newItem.Description" label="Datacenter Name" counter="50"></v-text-field>
+                            <v-text-field v-model="newItem.description" label="Datacenter Name" counter="50"></v-text-field>
                         </v-col>
                     </v-row>
                     <v-row>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model="newItem.Name" label="Datacenter Abbreviation" counter="6"></v-text-field>
+                            <v-text-field v-model="newItem.name" label="Datacenter Abbreviation" counter="6"></v-text-field>
                         </v-col>
                     </v-row>
 
@@ -42,8 +42,8 @@
                 datacenters: [],
                 loading: false,
                 newItem: {
-                    Name: '',
-                    Description: '',
+                    name: '',
+                    description: '',
                     HasNetworkManagedPower: false
                 },
             };
@@ -65,7 +65,7 @@
         },
         methods: {
             save() {
-                if (this.newItem.name === "RTP1") {
+                if (this.newItem.name.toLowerCase() === "rtp1") {
                     this.newItem.HasNetworkManagedPower = true;
                 }
 
