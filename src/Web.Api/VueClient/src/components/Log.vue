@@ -97,8 +97,8 @@
                 this.loading = false;
             },
             routeToDetails() {
-                Console.log(item);
-                Console.log(item.data.Id);
+                console.log(item);
+                console.log(item.data.Id);
             }
         }
     }
