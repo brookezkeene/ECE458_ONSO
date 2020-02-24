@@ -33,7 +33,7 @@ namespace Web.Api.Infrastructure.DbContexts
                 .IsUnique();
 
             builder.Entity<Rack>()
-                .HasIndex(r => new {r.Row, r.Column})
+                .HasIndex(r => new {r.DatacenterId, r.Row, r.Column})
                 .IsUnique();
 
             builder.Entity<Datacenter>()

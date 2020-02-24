@@ -22,40 +22,26 @@ namespace Web.Api.Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<PagedList<Rack>> GetRacksAsync(string search, Guid datacenterId, int page = 1, int pageSize = 10)
+        public async Task<PagedList<Rack>> GetRacksAsync(string search, Guid? datacenterId, int page = 1, int pageSize = 10)
         {
             var pagedList = new PagedList<Rack>();
 
-            if (datacenterId == Guid.Empty) {
-                var racks = await _dbContext.Racks
-                    .PageBy(x => x.Id, page, pageSize)
-                    .AsNoTracking()
-                    .ToListAsync();
+            var racks = await _dbContext.Racks
+                .PageBy(x => x.Id, page, pageSize)
+                .WhereIf(datacenterId !is null, x => x.DatacenterId == datacenterId)
+                .AsNoTracking()
+                .ToListAsync();
 
-                pagedList.AddRange(racks);
-                pagedList.TotalCount = await _dbContext.Racks
-                    .CountAsync();
-                pagedList.PageSize = pageSize;
-                pagedList.CurrentPage = page;
-            } else
-            {
-                var racks = await _dbContext.Racks
-                    .PageBy(x => x.Id, page, pageSize)
-                    .Where(x => x.DatacenterId == datacenterId)
-                    .AsNoTracking()
-                    .ToListAsync();
+            pagedList.AddRange(racks);
+            pagedList.TotalCount = await _dbContext.Racks
+                .CountAsync();
+            pagedList.PageSize = pageSize;
+            pagedList.CurrentPage = page;
 
-                pagedList.AddRange(racks);
-                pagedList.TotalCount = await _dbContext.Racks
-                    .CountAsync();
-                pagedList.PageSize = pageSize;
-                pagedList.CurrentPage = page;
-            }
-
-            return pagedList;
+                return pagedList;
         }
 
-        public async Task<List<Rack>> GetRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd, Guid datacenterId)
+        public async Task<List<Rack>> GetRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd, Guid? datacenterId)
         {
             Func<Rack, bool> searchCondition = x => x.Row.BetweenIgnoreCase(rowStart, rowEnd) && x.Column.Between(colStart, colEnd);
 
@@ -65,7 +51,7 @@ namespace Web.Api.Infrastructure.Repositories
                 .Include(x => x.Assets)
                     .ThenInclude(i => i.Owner)
                 .Where(x => x.Column >= colStart && x.Column <= colEnd)
-                .Where(x => x.Datacenter.Id.Equals(datacenterId))
+                .WhereIf(datacenterId !is null, x => x.Datacenter.Id.Equals(datacenterId))
                 .AsNoTracking()
                 .ToListAsync();
                 racks = racks.Where(x => x.Row[0] >= rowStart[0] && x.Row[0] <= rowEnd[0]).ToList();
