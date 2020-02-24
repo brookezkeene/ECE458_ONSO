@@ -26,17 +26,31 @@ namespace Web.Api.Infrastructure.Repositories
         {
             var pagedList = new PagedList<Rack>();
 
-            var racks = await _dbContext.Racks
-                .PageBy(x => x.Id, page, pageSize)
-                .Where(x=>x.DatacenterId == datacenterId)
-                .AsNoTracking()
-                .ToListAsync();
+            if (datacenterId == null) {
+                var racks = await _dbContext.Racks
+                    .PageBy(x => x.Id, page, pageSize)
+                    .Where(x => x.DatacenterId == datacenterId)
+                    .AsNoTracking()
+                    .ToListAsync();
 
-            pagedList.AddRange(racks);
-            pagedList.TotalCount = await _dbContext.Racks
-                .CountAsync();
-            pagedList.PageSize = pageSize;
-            pagedList.CurrentPage = page;
+                pagedList.AddRange(racks);
+                pagedList.TotalCount = await _dbContext.Racks
+                    .CountAsync();
+                pagedList.PageSize = pageSize;
+                pagedList.CurrentPage = page;
+            } else
+            {
+                var racks = await _dbContext.Racks
+                    .PageBy(x => x.Id, page, pageSize)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                pagedList.AddRange(racks);
+                pagedList.TotalCount = await _dbContext.Racks
+                    .CountAsync();
+                pagedList.PageSize = pageSize;
+                pagedList.CurrentPage = page;
+            }
 
             return pagedList;
         }
