@@ -17,7 +17,8 @@ const validAddress = (address) => {
 export default {
     list(datacenter) {
         const query = {
-            datacenterId: datacenter
+            datacenterId: datacenter,
+            pageSize: 2000000000
         }
         return axios.get(`${resource}`, { params: query })
             .then(response => {
