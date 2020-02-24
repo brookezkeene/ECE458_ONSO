@@ -15,6 +15,7 @@ import assetEdit from '@/components/AssetEdit'
 import Reports from '@/components/Reports'
 import Dashboard from '@/components/Dashboard'
 import UsersCreate from '@/components/UserForm'
+import Log from '@/components/Log'
 import auth from '@/auth'
 
 Vue.use(Router)
@@ -128,6 +129,11 @@ const routes = [
                 path: '/reports',
                 name: 'reports',
                 component: Reports,
+            },
+            {
+                path: '/log',
+                name: 'log',
+                component: Log
             }
 
             ]

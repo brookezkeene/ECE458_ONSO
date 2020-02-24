@@ -13,8 +13,7 @@ export default {
     list() {
         return axios.get(`${resource}`, { params: { pageSize: 2000000000 } })
             .then(response => {
-                console.log(response);
-                return response.data;
+                return response.data.data;
             });
     },
     create(item) {

@@ -3,12 +3,13 @@ using System.Linq;
 using AutoMapper;
 using Microsoft.VisualBasic;
 using Web.Api.Common;
+using Web.Api.Common.Mappers;
 using Web.Api.Core.Dtos;
 using Web.Api.Infrastructure.Entities;
 
 namespace Web.Api.Core.Mappers
 {
-    public class DomainMapperProfile : Profile
+    public class DomainMapperProfile : PaginatedProfile
     {
         public DomainMapperProfile()
         {
@@ -44,6 +45,8 @@ namespace Web.Api.Core.Mappers
                 .ReverseMap();
             CreateMap<RegisterUserDto, User>(MemberList.Source)
                 .ForSourceMember(o => o.Password, opts => opts.DoNotValidate());
+
+            CreateMap<PagedList<Asset>, PagedList<AssetDto>>();
         }
     }
 }

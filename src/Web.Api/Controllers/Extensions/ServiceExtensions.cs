@@ -22,6 +22,7 @@ using Web.Api.Infrastructure.Repositories.Interfaces;
 using Web.Api.Resources;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Web.Api.Controllers;
 
 namespace Web.Api.Extensions
 {
@@ -38,6 +39,7 @@ namespace Web.Api.Extensions
             services.AddTransient<IIdentityService, IdentityService>();
             services.AddTransient<IRackService, RackService>();
             services.AddTransient<IDatacenterService, DatacenterService>();
+            services.AddTransient<IAuditLogService, AuditLogService>();
 
             // etc
             services.ConfigureResources();

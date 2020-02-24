@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Web.Api.Dtos.AuditEvents
+namespace Web.Api.Core.Dtos
 {
-    public class GetAuditEventApiDto
+    public class AuditLogDto
     {
         public long Id { get; set; }
         public string Event { get; set; }
