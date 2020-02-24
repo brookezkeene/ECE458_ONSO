@@ -15,6 +15,14 @@ namespace Web.Api.Core.Dtos
         public string EndRow { get; set; }
         [Required]
         public int EndCol { get; set; }
+        [Required]
+        public Guid DatacenterId { get; set; }
+    }
+    public class RackRangeDatacenterDto
+    {
+        [Required]
+        public Guid Id { get; set; }
+        public string Name { get; set; }
     }
 
     public static class RackRangeQueryExtensions
@@ -24,6 +32,7 @@ namespace Web.Api.Core.Dtos
             var upperQuery = new RackRangeQuery {StartCol = query.StartCol, EndCol = query.EndCol};
             upperQuery.StartRow = query.StartRow.ToUpper();
             upperQuery.EndRow = query.EndRow.ToUpper();
+            upperQuery.DatacenterId = query.DatacenterId;
             return upperQuery;
         }
     }

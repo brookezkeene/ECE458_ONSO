@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Web.Api.Common;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
+using Web.Api.Dtos;
+using Web.Api.Dtos.Racks;
 
 namespace Web.Api.Controllers
 {
@@ -23,9 +25,9 @@ namespace Web.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedList<FlatRackDto>>> Get(string searchText, int page = 1, int pageSize = 10)
+        public async Task<ActionResult<PagedList<RackDto>>> Get(Guid? datacenterId, int page = 1, int pageSize = 10)
         {
-            var racks = await _rackService.GetRacksAsync(searchText, page, pageSize);
+            var racks = await _rackService.GetRacksAsync(datacenterId, page, pageSize);
             return Ok(racks);
         }
 
@@ -48,6 +50,12 @@ namespace Web.Api.Controllers
         {
             await _rackService.DeleteRacksAsync(query);
             return Ok();
+        }
+
+        [HttpGet("{id}/pdus")]
+        public async Task<ActionResult<List<GetRackPdusApiDto>>> GetRackPdus(Guid id)
+        {
+            return Ok(null);
         }
     }
 }

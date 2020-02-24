@@ -2,6 +2,7 @@
 import jwt_decode from 'jwt-decode';
 import axios from 'axios';
 const resource = '/login';
+const signin = '/signin';
 
 export default {
     login(username, pass) {
@@ -17,7 +18,7 @@ export default {
             }).catch((error) => {
                 console.error(error.message)
             });
-    },
+        },
 
     getToken() {
         return localStorage.token;

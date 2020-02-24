@@ -2,16 +2,20 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/Login'
 import ModelDetails from '@/components/ModelDetails'
-import InstanceDetails from '@/components/InstanceDetails'
+import assetDetails from '@/components/AssetDetails'
 import RackDiagram from '@/components/RackDiagram'
+import ModelEdit from '@/components/ModelEdit'
 import Models from '@/components/Models'
-import Instances from '@/components/Instances'
+import assets from '@/components/Assets'
 import Racks from '@/components/Racks'
+import DatacenterEdit from '@/components/DatacenterEdit'
 import ImportExport from '@/components/Bulk'
 import Users from '@/components/Users'
-import InstanceEdit from '@/components/InstanceEdit'
+import assetEdit from '@/components/AssetEdit'
+import Reports from '@/components/Reports'
 import Dashboard from '@/components/Dashboard'
-
+import UsersCreate from '@/components/UserForm'
+import Log from '@/components/Log'
 import auth from '@/auth'
 
 Vue.use(Router)
@@ -38,26 +42,47 @@ const routes = [
                 component: Models,
             },
             {
+                path: '/models/edit/:id',
+                name: 'model-edit',
+                component: ModelEdit,
+                props: true,
+                meta: { admin: true }
+            },
+            {
+                path: '/models/new',
+                name: 'model-create',
+                component: ModelEdit,
+                props: true,
+                meta: { admin: true }
+            },
+            {
                 path: '/models/:id',
                 name: 'model-details',
                 component: ModelDetails,
                 props: true,
             },
             {
-                path: '/instances',
-                name: 'instances',
-                component: Instances,
+                path: '/assets',
+                name: 'assets',
+                component: assets,
             },
             {
-                path: '/instances/:id',
-                name: 'instance-details',
-                component: InstanceDetails,
+                path: '/assets/:id',
+                name: 'asset-details',
+                component: assetDetails,
                 props: true,
             },
             {
-                path: '/instances/edit/:editedItem/:isNew',
-                name: 'instance-edit',
-                component: InstanceEdit,
+                path: '/assets/edit/:id',
+                name: 'asset-edit',
+                component: assetEdit,
+                props: true,
+                meta: { admin: true }
+            },
+            {
+                path: '/assets/new',
+                name: 'asset-new',
+                component: assetEdit,
                 props: true,
                 meta: { admin: true }
             },
@@ -67,10 +92,23 @@ const routes = [
                 component: Racks,
             },
             {
+                path: '/datacenters/edit/:id',
+                name: 'datacenter-edit',
+                component: DatacenterEdit,
+                props: true,
+                meta: { admin: true }
+            },
+            {
+                path: '/datacenters/new',
+                name: 'datacenter-create',
+                component: DatacenterEdit,
+                props: true,
+                meta: { admin: true }
+            },
+            {
                 path: '/importexport',
                 name: 'import-export',
                 component: ImportExport,
-                meta: { admin: true }
             },
             {
                 path: '/racks/view',
@@ -81,7 +119,21 @@ const routes = [
                 path: '/users',
                 name: 'users',
                 component: Users,
-                meta: { admin: true }
+            },
+            {
+                path: '/users/new',
+                name: 'users-create',
+                component: UsersCreate,
+            },
+            {
+                path: '/reports',
+                name: 'reports',
+                component: Reports,
+            },
+            {
+                path: '/log',
+                name: 'log',
+                component: Log
             }
 
             ]

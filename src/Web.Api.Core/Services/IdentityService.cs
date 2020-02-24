@@ -22,13 +22,13 @@ namespace Web.Api.Core.Services
             _jwtFactory = jwtFactory;
         }
 
-        public async Task<PagedList<FlatUserDto>> GetUsersAsync(string search, int page = 1, int pageSize = 10)
+        public async Task<PagedList<UserDto>> GetUsersAsync(string search, int page = 1, int pageSize = 10)
         {
             var pagedList = await _identityRepository.GetUsersAsync(search, page, pageSize);
             return pagedList.ToDto();
         }
 
-        public async Task<FlatUserDto> GetUserAsync(Guid userId)
+        public async Task<UserDto> GetUserAsync(Guid userId)
         {
             var user = await _identityRepository.GetUserAsync(userId);
             return user.ToDto();

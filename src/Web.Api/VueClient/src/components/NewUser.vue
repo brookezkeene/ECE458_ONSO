@@ -35,7 +35,7 @@
             :disabled="!valid"
             color="success"
             class="mr-4"
-            @click="submit"
+            @click="submit",
         >
             Sign In
       </v-btn>
@@ -62,7 +62,8 @@ export default {
     }),
     methods: {
       submit () {
-        this.$v.$touch()
+            this.$v.$touch()
+            this.$v.reset();
       },
       checkPassMatch() {
         if(this.password1 != this.password2) {

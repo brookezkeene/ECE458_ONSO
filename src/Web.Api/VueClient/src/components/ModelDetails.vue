@@ -20,10 +20,17 @@
                     <v-label>Display Color: </v-label>
                     <v-card-text> {{model.displayColor}} </v-card-text>
                 </v-col>
-                <v-col cols="12" sm="6" md="4">
-                    <v-label>Ethernet Ports: </v-label>
-                    <v-card-text> {{model.ethernetPorts}} </v-card-text>
-                </v-col>
+               <v-col cols="12" sm="6" md="4">
+                    <v-label>Network Ports: </v-label>
+                    <v-card-text> {{model.ethernetPorts}} </v-card-text> <!--networkPorts-->
+                    <a v-if="!viewNames" href="#" @click="showNames">View Network Port Names</a>
+                    <a v-else href="#" @click="hideNames">Hide Network Port Names</a>
+                    <div v-if="viewNames">
+                        <v-card max-height="300px" class="overflow-y-auto" outlined=true flat>
+                            <v-card-text v-for="port in model.networkPorts" :key="port"> Port {{port.number}}: {{port.name}} </v-card-text>
+                        </v-card>
+                    </div>
+                </v-col> 
                 <v-col cols="12" sm="6" md="4">
                     <v-label>Power Ports: </v-label>
                     <v-card-text> {{model.powerPorts}} </v-card-text>
@@ -46,10 +53,10 @@
                 </v-col>
 
             </v-row>
-            <v-label>Instances: </v-label>
-            <v-row no-gutters v-for="(value, name) in model.instances" v-bind:key="name">
+            <v-label>assets: </v-label>
+            <v-row no-gutters v-for="(value, name) in model.assets" v-bind:key="name">
                 <v-label>Host Name: </v-label>
-                <router-link :to="{ name: 'instance-details', params: { id: value.id } }">{{ value.hostname }}</router-link>
+                <router-link :to="{ name: 'asset-details', params: { id: value.id } }">{{ value.hostname }}</router-link>
 
             </v-row>
 
@@ -74,7 +81,9 @@
                 model: {
                     vendor: '',
                     modelNumber: 'foo',
-                }
+                },
+                networkPorts: [ ],
+                viewNames: false,
             };
         },
         created() {
@@ -90,6 +99,12 @@
                 if (!this.loading) this.loading = true;
                 this.model = await this.modelRepository.find(this.id);
                 this.loading = false;
+            },
+            showNames() {
+                this.viewNames = true;
+            },
+            hideNames() {
+                this.viewNames = false;
             }
         }
     }</script>

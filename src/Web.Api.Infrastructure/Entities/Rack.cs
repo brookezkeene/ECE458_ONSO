@@ -16,6 +16,11 @@ namespace Web.Api.Infrastructure.Entities
         [Required]
         public int Column { get; set; }
 
-        public List<Instance> Instances { get; set; }
+        public virtual List<Asset> Assets { get; set; }
+
+        public Guid DatacenterId { get; set; }
+        public virtual Datacenter Datacenter { get; set; }
+
+        public virtual List<Pdu> Pdus { get; set; }
     }
 }

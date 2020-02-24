@@ -37,6 +37,9 @@
                            @click="submit">
                         Sign In
                     </v-btn>
+                    <v-form action="/api/login/test" method="post">
+                        <v-btn type="submit">Sign in with Duke NetID</v-btn>
+                    </v-form>
                 </v-card-text>
             </v-card>
         </v-row>
@@ -56,7 +59,7 @@ export default {
       password: '',
       passwordRules: [
           v => !!v || 'Password is required',
-      ]
+      ],
     }),
     methods: {
         submit() {

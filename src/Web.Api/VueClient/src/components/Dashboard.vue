@@ -37,7 +37,7 @@
 
             <template v-if="!mini" v-slot:append>
                 <div class="pa-2">
-                    <v-btn color="primary" block>Logout</v-btn>
+                    <v-btn color="primary" block @click="logout">Logout</v-btn>
                 </div>
             </template>
         </v-navigation-drawer>
@@ -59,7 +59,10 @@
 </style>
 
 <script>
+
+    import auth from "../auth"
     export default {
+
         name: 'Dashboard',
         data() {
             return {
@@ -69,12 +72,20 @@
                 mini: true,
                 menuItems: [
                     { title: 'Models', path: '/models', icon: 'mdi-table-large' },
-                    { title: 'Instances', path: '/instances', icon: 'mdi-server' },
-                    { title: 'Racks', path: '/racks', icon: 'mdi-view-day' },
+                    { title: 'Assets', path: '/assets', icon: 'mdi-server' },
+                    { title: 'Datacenters & Racks', path: '/racks', icon: 'mdi-view-day' },
                     { title: 'Users', path: '/users', icon: 'mdi-account' },
-                    { title: 'Import/Export', path: '/importexport', icon: 'mdi-file-upload' }
+                    { title: 'Reports', path: '/reports', icon: 'mdi-chart-pie' },
+                    { title: 'Import/Export', path: '/importexport', icon: 'mdi-file-upload' },
+                    { title: 'System Log', path: '/log', icon: 'mdi-post'},
                 ]
             }
+        },
+        methods: {
+            logout() {
+                auth.logout();
+                this.$router.push({ name: 'login' });
+            },
         }
     }
 </script>
