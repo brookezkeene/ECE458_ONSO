@@ -18,6 +18,13 @@ namespace Web.Api.Infrastructure.DbContexts
                 .HasIndex(m => new {m.Vendor, m.ModelNumber})
                 .IsUnique();
 
+            builder.Entity<ModelNetworkPort>()
+                .HasIndex(o => new {o.ModelId, o.Number})
+                .IsUnique();
+            builder.Entity<ModelNetworkPort>()
+                .HasIndex(o => new {o.ModelId, o.Name})
+                .IsUnique();
+
             // auto-generate asset number
             builder.HasSequence<int>(AssetNumberSequenceName)
                 .StartsAt(100000)
@@ -33,7 +40,7 @@ namespace Web.Api.Infrastructure.DbContexts
                 .IsUnique();
 
             builder.Entity<Rack>()
-                .HasIndex(r => new {r.Row, r.Column})
+                .HasIndex(r => new {r.DatacenterId, r.Row, r.Column})
                 .IsUnique();
 
             builder.Entity<Datacenter>()

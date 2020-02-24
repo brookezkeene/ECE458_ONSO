@@ -27,7 +27,7 @@
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model.number="newItem.ethernetPorts" label="Network Ports" type="number"></v-text-field> <!--networkPorts-->
-                            <a v-if="!newItem.ethernetPorts==0" href="#" @click="openNamesDialog">Add Network Port Names</a>
+                            <a href="#" @click="openNamesDialog">Add Network Port Names</a>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model.number="newItem.powerPorts" label="Power Ports" type="number"></v-text-field>
@@ -115,11 +115,13 @@
                     cpu: '',
                     memory: undefined,
                     storage: '',
-                    comment: ''
+                    comment: '',
+                    networkPorts: []
                 },
                 namesDialog: false,
                 networkPorts: [],
                 editedIndex: -1,
+                networkPortNames: [],
                 rules: {
                     networkPortRules: v => /^[a-zA-Z0-9]*$/.test(v) || 'Network port name cannot contain whitespace'
                 },
@@ -138,14 +140,6 @@
             formTitle() {
                 return typeof this.id === 'undefined' ? 'New Item' : 'Edit Item'
             },
-            networkPortNames() {
-                var arr = [];
-                var j;
-                for (j = 0; j < this.newItem.ethernetPorts; j++) {
-                    arr[j] = j+1;
-                }
-                return arr
-            }
         },
         methods: {
             save() {
@@ -164,6 +158,27 @@
                 }, 300)
             },
             openNamesDialog() {
+                if (typeof this.id === 'undefined') {
+                    var j;
+                    for (j = 0; j < this.newItem.ethernetPorts; j++) {
+                        this.networkPortNames[j] = (j + 1).toString();
+                    }
+                    if (this.newItem.ethernetPorts < this.networkPortNames.length) {
+                        this.networkPortNames = this.networkPortNames.slice(0, this.newItem.ethernetPorts);
+                    }
+                } else {
+                    var i;
+                    for (i = 0; i < this.newItem.ethernetPorts; i++) {
+                        if (this.newItem.networkPorts.length > (i)) {
+                            this.networkPortNames[i] = this.newItem.networkPorts[i].name;
+                        } else {
+                            this.networkPortNames[i] = (i + 1).toString();
+                        }
+                    }
+                    if (this.newItem.ethernetPorts < this.networkPortNames.length) {
+                        this.networkPortNames = this.networkPortNames.slice(0, this.newItem.ethernetPorts);
+                    }
+                }
                 this.namesDialog = true;
             },
             saveNames() {
@@ -171,14 +186,24 @@
                 console.log(this.networkPortNames);
                 var i;
                 for (i = 0; i < this.networkPortNames.length; i++) {
-                    if (this.networkPortNames[i] === null) {
-                        var portObjDefault = Object.assign({}, { name: (i+1).toString(), number: i+1 })
-                        this.networkPorts[i] = portObjDefault;
-                    } else {
-                        var portObj = Object.assign({}, { name: this.networkPortNames[i], number: i+1 })
-                        this.networkPorts[i] = portObj;
+                     console.log(i);
+                    if (typeof this.id === 'undefined') {
+                        var portObj = Object.assign({}, { name: this.networkPortNames[i], number: i + 1 })
+                        this.newItem.networkPorts.push(portObj);
+                    } else if (this.newItem.networkPorts.length <= i) {
+                        console.log('reaching this bbbase');
+                        var addObj = Object.assign({}, { name: this.networkPortNames[i], number: i + 1 })
+                        this.newItem.networkPorts.push(addObj);
+                    }
+                    else {
+                        this.newItem.networkPorts[i].name = this.networkPortNames[i];
                     }
                 }
+
+                if (this.newItem.networkPorts.length > this.newItem.ethernetPorts) {
+                    this.newItem.networkPorts = this.newItem.networkPorts.slice(0, this.newItem.ethernetPorts);
+                }
+                
                 console.log(this.networkPorts);
                 this.namesDialog = false;
             },

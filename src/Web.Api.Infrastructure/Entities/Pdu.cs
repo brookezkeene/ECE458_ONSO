@@ -15,15 +15,9 @@ namespace Web.Api.Infrastructure.Entities
 
         public virtual List<PduPort> Ports { get; set; }
 
-        public PduLocationEnum LocationEnum { get; set; }
+        public PduLocation Location { get; set; }
 
         public Guid RackId { get; set; }
         public virtual Rack Rack { get; set; }
-    }
-
-    public enum PduLocationEnum
-    {
-        Left,
-        Right
     }
 }

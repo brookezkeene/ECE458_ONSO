@@ -5,14 +5,13 @@ export default {
     exportModel(query) {
         return axios.get(`${resource}/model`, { params: query })
             .then(response => {
-                console.log(response)
-                return response.data
+                return response.data;
             }).catch(error => error);
     },
     exportInstance(query) {
         return axios.get(`${resource}/asset`, { params: query })
             .then(response => {
-                response.data
+                return response.data;
             }).catch(error => error);
     }
 }

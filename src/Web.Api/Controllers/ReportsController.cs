@@ -19,13 +19,12 @@ namespace Web.Api.Controllers
             _rackService = rackService;
         }
 
-        [HttpGet]//("{id}")] - for datacenter implementation
-        public async Task<ActionResult<List<RackDto>>> Get()//string datacenter = "all")
+        [HttpGet]
+        public async Task<ActionResult<List<RackDto>>> Get(Guid? datacenterId)
         {
-            string searchText = "";
-            int page = 1;
-            int pageSize = 9999;
-            var racks = await _rackService.GetRacksAsync(searchText, page, pageSize); //TODO: will need to filter by datacenter
+            const int page = 1;
+            const int pageSize = 9999;
+            var racks = await _rackService.GetRacksAsync(datacenterId, page, pageSize);
             return Ok(racks);
         }
     }

@@ -338,9 +338,16 @@ namespace Web.Api.Infrastructure.Migrations
                         .HasColumnType("nvarchar(10)")
                         .HasMaxLength(10);
 
+                    b.Property<int>("Number")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ModelId");
+                    b.HasIndex("ModelId", "Name")
+                        .IsUnique();
+
+                    b.HasIndex("ModelId", "Number")
+                        .IsUnique();
 
                     b.ToTable("ModelNetworkPort");
                 });
@@ -351,7 +358,7 @@ namespace Web.Api.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("LocationEnum")
+                    b.Property<int>("Location")
                         .HasColumnType("int");
 
                     b.Property<int>("NumPorts")
@@ -402,7 +409,7 @@ namespace Web.Api.Infrastructure.Migrations
                     b.Property<int>("Column")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("DatacenterId")
+                    b.Property<Guid>("DatacenterId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Row")
@@ -411,9 +418,7 @@ namespace Web.Api.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DatacenterId");
-
-                    b.HasIndex("Row", "Column")
+                    b.HasIndex("DatacenterId", "Row", "Column")
                         .IsUnique();
 
                     b.ToTable("Racks");
@@ -625,7 +630,9 @@ namespace Web.Api.Infrastructure.Migrations
                 {
                     b.HasOne("Web.Api.Infrastructure.Entities.Datacenter", "Datacenter")
                         .WithMany("Racks")
-                        .HasForeignKey("DatacenterId");
+                        .HasForeignKey("DatacenterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

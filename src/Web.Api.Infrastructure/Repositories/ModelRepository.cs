@@ -30,6 +30,7 @@ namespace Web.Api.Infrastructure.Repositories
 
             var models = await _dbContext.Models
                 .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
+                .Include(x => x.NetworkPorts)
                 .PageBy(x => x.ModelNumber, page, pageSize)
                 .AsNoTracking()
                 .ToListAsync();
@@ -59,6 +60,7 @@ namespace Web.Api.Infrastructure.Repositories
         {
             return await _dbContext.Models
                 .Include(x => x.Assets)
+                .Include(x => x.NetworkPorts)
                 .Where(x => x.Id == modelId)
                 .AsNoTracking()
                 .SingleAsync();
@@ -74,12 +76,14 @@ namespace Web.Api.Infrastructure.Repositories
 
         public async Task<int> AddModelAsync(Model model)
         {
+            NetworkPortsSameNumberAsEthernetPorts(model);
             _dbContext.Models.Add(model);
             return await _dbContext.SaveChangesAsync();
         }
 
         public async Task<int> UpdateModelAsync(Model model)
         {
+            NetworkPortsSameNumberAsEthernetPorts(model);
             _dbContext.Models.Update(model);
             return await _dbContext.SaveChangesAsync();
         }
@@ -144,6 +148,40 @@ namespace Web.Api.Infrastructure.Repositories
                 // otherwise lookup by vendor & model number
                 .WhereIf(id == default, x => x.Vendor == vendor && x.ModelNumber == modelNumber)
                 .AnyAsync();
+        }
+        private void NetworkPortsSameNumberAsEthernetPorts(Model model)
+        {
+            if (model.NetworkPorts == null && model.EthernetPorts != 0)
+            {
+                List<ModelNetworkPort> newports = new List<ModelNetworkPort>();
+                for (int i = 1; i <= model.EthernetPorts; i++)
+                {
+                    newports.Add(new ModelNetworkPort { Number = i, Name = (i+1).ToString() });
+                }
+                /*foreach (ModelNetworkPort port in model.NetworkPorts)
+                {
+                    var newport = newports[port.Number - 1];
+                    if (port.Name != null)
+                    {
+                        newport.Name = port.Name;
+                    }
+                }*/
+                model.NetworkPorts = newports;
+            }  else if (model.EthernetPorts > model.NetworkPorts.Count())
+            {
+                int portCount = model.NetworkPorts.Count();
+                for (int i = portCount; i < model.EthernetPorts; i++)
+                {
+                    model.NetworkPorts.Add(new ModelNetworkPort { Number = i, Name = i.ToString() });
+                }
+            }
+            else if(model.EthernetPorts < model.NetworkPorts.Count())
+            {
+                for(var i = model.NetworkPorts.Count() - 1; i >= model.EthernetPorts; i--)
+                {
+                    model.NetworkPorts.RemoveAt(i);
+                }
+            }
         }
     }
 }

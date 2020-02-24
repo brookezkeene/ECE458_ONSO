@@ -30,6 +30,7 @@ namespace Web.Api.Infrastructure.Repositories
                 .Include(x => x.Model)
                 .Include(x => x.Owner)
                 .Include(x => x.Rack)
+                .ThenInclude(x => x.Datacenter)
                 .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
                 .PageBy(x => x.Hostname, page, pageSize)
                 .AsNoTracking()
@@ -72,6 +73,9 @@ namespace Web.Api.Infrastructure.Repositories
                 .Include(x => x.Model)
                 .Include(x => x.Owner)
                 .Include(x => x.Rack)
+                .ThenInclude(x => x.Datacenter)
+                .Include(x => x.PowerPorts)
+                .Include(x => x.NetworkPorts)
                 .Where(x => x.Id == assetId)
                 .AsNoTracking()
                 .SingleOrDefaultAsync();

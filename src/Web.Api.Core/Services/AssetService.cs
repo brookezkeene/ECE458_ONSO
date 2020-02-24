@@ -12,12 +12,10 @@ namespace Web.Api.Core.Services
     public class AssetService : IAssetService
     {
         private readonly IAssetRepository _repository;
-        private readonly IRackRepository _rackRepository;
 
-        public AssetService(IAssetRepository repository, IRackRepository rackRepository)
+        public AssetService(IAssetRepository repository)
         {
             _repository = repository;
-            _rackRepository = rackRepository;
         }
 
         public async Task<PagedList<AssetDto>> GetAssetsAsync(string search, int page = 1, int pageSize = 10)
@@ -41,10 +39,7 @@ namespace Web.Api.Core.Services
         }
         public async Task<Guid> CreateAssetAsync(AssetDto assetDto)
         {
-            //changing asset entity's newly created duplicate Model/User/Rack entities to
-            //point to entities that already exist in the database
             var entity = assetDto.ToEntity();
-            //entity.Rack = await _rackRepository.GetRackAsync(entity.Rack.Row, entity.Rack.Column); // TODO: review rack ID references
 
             await _repository.AddAssetAsync(entity);
             return entity.Id;
@@ -57,8 +52,6 @@ namespace Web.Api.Core.Services
         public async Task<int> UpdateAssetAsync(AssetDto assetDto)
         {
             var entity = assetDto.ToEntity();
-            //entity.Rack = await _rackRepository.GetRackAsync(entity.Rack.Row, entity.Rack.Column); // TODO: review rack ID references
-
             return await _repository.UpdateAssetAsync(entity);
         }
     }

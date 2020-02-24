@@ -86,7 +86,8 @@ namespace Web.Api.Core.Validation
 
         private async Task<bool> RackExists(Rack rack, CancellationToken cancellationToken)
         {
-            return await _rackRepository.AddressExistsAsync(rack.Row, rack.Column);
+            return await _rackRepository.AddressExistsAsync(rack.Row, rack.Column, rack.Datacenter.Id);
         }
+
     }
 }

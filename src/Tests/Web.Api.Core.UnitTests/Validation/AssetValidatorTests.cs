@@ -24,6 +24,8 @@ namespace Web.Api.Core.UnitTests.Validation
             Assert.False(result.IsValid);
             Assert.Contains(result.Errors, error => error.ErrorCode == "DoesNotFit");
         }
+         
+
 
         [Fact]
         public async void AssetValidator_FailsIfAssetHasConflict()
@@ -48,6 +50,35 @@ namespace Web.Api.Core.UnitTests.Validation
             Assert.True(result.IsValid);
         }
 
+        [Fact]
+        public async void AssetValidator_FailsIfRackDoesNotExist()
+        {
+            var mockAssetRepo = new Mock<IAssetRepository>();
+            mockAssetRepo.Setup(o => o.AssetIsUniqueAsync(It.IsAny<string>(), It.IsAny<Guid>()))
+                .ReturnsAsync(true);
+
+            var mockRackRepo = new Mock<IRackRepository>();
+            mockRackRepo.Setup(o => o.AddressExistsAsync(It.IsAny<string>(), It.IsAny<int>(), Guid.NewGuid()))
+                .ReturnsAsync(true);
+
+            var mockModelRepo = new Mock<IModelRepository>();
+            mockModelRepo.Setup(o => o.ModelExistsAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>()))
+                .ReturnsAsync(true);
+
+            var mockIdentityRepo = new Mock<IIdentityRepository>();
+            mockIdentityRepo.Setup(o => o.GetUserAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(new User()); // not null
+
+            var sut = new AssetValidator(mockAssetRepo.Object, mockRackRepo.Object, mockModelRepo.Object,
+                mockIdentityRepo.Object);
+
+            var asset = GetValidAsset();
+
+            var result = await sut.ValidateAsync(asset);
+
+            Assert.False(result.IsValid);
+        }
+
         private static AssetValidator GetAllGreenValidator()
         {
             var mockAssetRepo = new Mock<IAssetRepository>();
@@ -55,7 +86,7 @@ namespace Web.Api.Core.UnitTests.Validation
                 .ReturnsAsync(true);
 
             var mockRackRepo = new Mock<IRackRepository>();
-            mockRackRepo.Setup(o => o.AddressExistsAsync(It.IsAny<string>(), It.IsAny<int>()))
+            mockRackRepo.Setup(o => o.AddressExistsAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<Guid>()))
                 .ReturnsAsync(true);
 
             var mockModelRepo = new Mock<IModelRepository>();
@@ -83,7 +114,8 @@ namespace Web.Api.Core.UnitTests.Validation
 
         private static Asset GetAssetThatDoesNotFitInRack()
         {
-            var rack = new Rack();
+            var datacenter = new Datacenter { Id = Guid.NewGuid() };
+            var rack = new Rack { Column = 1, Row = "A", Datacenter = datacenter };
             var model = new Model {Height = 4};
             var asset = new Asset() {RackPosition = 40, Rack = rack, Model = model};
 
@@ -95,7 +127,8 @@ namespace Web.Api.Core.UnitTests.Validation
 
         private static Asset GetAssetWithConflict()
         {
-            var rack = new Rack();
+            var datacenter = new Datacenter { Id = Guid.NewGuid() };
+            var rack = new Rack { Column = 1, Row = "A", Datacenter = datacenter };
             var model = new Model { Height = 4 };
             var asset = new Asset() { RackPosition = 5, Rack = rack, Model = model };
             var conflict = new Asset() { RackPosition = 3, Rack = rack, Model = model };
@@ -108,7 +141,8 @@ namespace Web.Api.Core.UnitTests.Validation
 
         private static Asset GetValidAsset()
         {
-            var rack = new Rack();
+            var datacenter = new Datacenter { Id = Guid.NewGuid() };
+            var rack = new Rack { Column = 1, Row = "A", Datacenter = datacenter };
             var model = new Model() {Height = 4};
             var asset = new Asset() {RackPosition = 5, Hostname = "server9", Rack = rack, Model = model};
             var otherNoConflict = new Asset() {RackPosition = 9, Hostname = "server8", Rack = rack, Model = model};
@@ -118,5 +152,6 @@ namespace Web.Api.Core.UnitTests.Validation
 
             return asset;
         }
+        
     }
 }

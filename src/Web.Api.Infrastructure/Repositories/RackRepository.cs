@@ -22,12 +22,13 @@ namespace Web.Api.Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<PagedList<Rack>> GetRacksAsync(string search, int page = 1, int pageSize = 10)
+        public async Task<PagedList<Rack>> GetRacksAsync(Guid? datacenterId, int page = 1, int pageSize = 10)
         {
             var pagedList = new PagedList<Rack>();
 
             var racks = await _dbContext.Racks
                 .PageBy(x => x.Id, page, pageSize)
+                .WhereIf(datacenterId !is null, x => x.DatacenterId == datacenterId)
                 .AsNoTracking()
                 .ToListAsync();
 
@@ -37,10 +38,10 @@ namespace Web.Api.Infrastructure.Repositories
             pagedList.PageSize = pageSize;
             pagedList.CurrentPage = page;
 
-            return pagedList;
+                return pagedList;
         }
 
-        public async Task<List<Rack>> GetRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd)
+        public async Task<List<Rack>> GetRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd, Guid? datacenterId)
         {
             Func<Rack, bool> searchCondition = x => x.Row.BetweenIgnoreCase(rowStart, rowEnd) && x.Column.Between(colStart, colEnd);
 
@@ -50,6 +51,7 @@ namespace Web.Api.Infrastructure.Repositories
                 .Include(x => x.Assets)
                     .ThenInclude(i => i.Owner)
                 .Where(x => x.Column >= colStart && x.Column <= colEnd)
+                .WhereIf(datacenterId !is null, x => x.Datacenter.Id.Equals(datacenterId))
                 .AsNoTracking()
                 .ToListAsync();
                 racks = racks.Where(x => x.Row[0] >= rowStart[0] && x.Row[0] <= rowEnd[0]).ToList();
@@ -93,7 +95,7 @@ namespace Web.Api.Infrastructure.Repositories
             return await _dbContext.SaveChangesAsync();
         }
 
-        public async Task CreateRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd)
+        public async Task CreateRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd, Guid datacenterId)
         {
             for (var r = rowStart[0]; r <= rowEnd[0]; r++)
             {
@@ -102,7 +104,7 @@ namespace Web.Api.Infrastructure.Repositories
                 {
                     if (!await _dbContext.Racks.AnyAsync(o => o.Row == row && o.Column == col))
                     { 
-                        await _dbContext.Racks.AddAsync(new Rack {Column = col, Row = row});
+                        await _dbContext.Racks.AddAsync(new Rack { Column = col, Row = row, DatacenterId = datacenterId });
                     }
                 }
             }
@@ -110,7 +112,7 @@ namespace Web.Api.Infrastructure.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd)
+        public async Task DeleteRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd, Guid datacenterId)
         {
             for (var r = rowStart[0]; r <= rowEnd[0]; r++)
             {
@@ -118,7 +120,9 @@ namespace Web.Api.Infrastructure.Repositories
                 for (var col = colStart; col <= colEnd; col++)
                 {
                     var eligibleForDeletion =
-                        await _dbContext.Racks.Where(o => o.Row == row && o.Column == col && !o.Assets.Any())
+                        await _dbContext.Racks
+                            .Where(o => o.Row == row && o.Column == col && !o.Assets.Any())
+                            .Where(o => o.Datacenter.Id.Equals(datacenterId))
                             .ToListAsync();
                     eligibleForDeletion.ForEach(rack => _dbContext.Remove(rack));
                 }
@@ -126,9 +130,9 @@ namespace Web.Api.Infrastructure.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<bool> AddressExistsAsync(string rackRow, int rackColumn)
+        public async Task<bool> AddressExistsAsync(string rackRow, int rackColumn, Guid datacenterId)
         {
-            return await _dbContext.Racks.Where(x => x.Row == rackRow && x.Column == rackColumn)
+            return await _dbContext.Racks.Where(x => x.Row == rackRow && x.Column == rackColumn && x.Datacenter.Id == (datacenterId))
                 .AnyAsync();
         }
     }

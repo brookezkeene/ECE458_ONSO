@@ -16,6 +16,11 @@ namespace Web.Api.Core.Mappers
 
         internal static IMapper Mapper { get; }
 
+        public static void AssertConfigurationIsValid<TProfile>() where TProfile : Profile, new()
+        {
+            Mapper.ConfigurationProvider.AssertConfigurationIsValid<TProfile>();
+        }
+
         public static ModelDto ToDto(this Model model)
         {
             return model == null ? null : Mapper.Map<ModelDto>(model);
@@ -96,6 +101,26 @@ namespace Web.Api.Core.Mappers
         public static User ToEntity(this RegisterUserDto registerDto)
         {
             return registerDto == null ? null : Mapper.Map<User>(registerDto);
+        }
+
+        public static DatacenterDto ToDto(this Datacenter datacenter)
+        {
+            return datacenter == null ? null : Mapper.Map<DatacenterDto>(datacenter);
+        }
+
+        public static PagedList<DatacenterDto> ToDto(this PagedList<Datacenter> datacenters)
+        {
+            return datacenters == null ? null : Mapper.Map<PagedList<DatacenterDto>>(datacenters);
+        }
+
+        public static List<DatacenterDto> ToDto(this List<Datacenter> datacenters)
+        {
+            return datacenters == null ? null : Mapper.Map<List<DatacenterDto>>(datacenters);
+        }
+
+        public static Datacenter ToEntity(this DatacenterDto datacenterDto)
+        {
+            return datacenterDto == null ? null : Mapper.Map<Datacenter>(datacenterDto);
         }
     }
 }

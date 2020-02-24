@@ -10,12 +10,12 @@
                 <v-container fluid class="justify-center">
                     <v-row>
                         <v-col>
-                            <v-text-field v-model="newItem.name" label="Datacenter Name" counter="50"></v-text-field>
+                            <v-text-field v-model="newItem.Description" label="Datacenter Name" counter="50"></v-text-field>
                         </v-col>
                     </v-row>
                     <v-row>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model="newItem.abbreviation" label="Datacenter Abbreviation" counter="6"></v-text-field>
+                            <v-text-field v-model="newItem.Name" label="Datacenter Abbreviation" counter="6"></v-text-field>
                         </v-col>
                     </v-row>
 
@@ -42,8 +42,9 @@
                 datacenters: [],
                 loading: false,
                 newItem: {
-                    name: '',
-                    abbreviation: ''
+                    Name: '',
+                    Description: '',
+                    HasNetworkManagedPower: false
                 },
             };
         },
@@ -55,7 +56,6 @@
             this.newItem = typeof this.id === 'undefined'
                 ? this.newItem
                 : this.datacenters.find(o => o.id === this.id);
-
         },
 
         computed: {
@@ -65,7 +65,15 @@
         },
         methods: {
             save() {
-                this.datacenterRepository.create(this.newItem);
+                if (this.newItem.name === "RTP1") {
+                    this.newItem.HasNetworkManagedPower = true;
+                }
+
+                if (typeof this.id === 'undefined') {
+                    this.datacenterRepository.create(this.newItem);
+                } else {
+                    this.datacenterRepository.update(this.newItem);
+                }
                 this.close()
             },
             close() {
