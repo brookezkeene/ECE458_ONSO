@@ -66,10 +66,7 @@ export default {
             this.$router.push({ name: "RackDiagram", query: { start: this.range.start, end: this.range.end } }); // include datacenter in this query
         },
         async createInRange() {
-            /* eslint-disable no-unused-vars, no-console */
-            console.log(this.selectedDatacenter);
             var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
-            console.log(searchDatacenter);
 
             await this.rackRepository.createInRange(this.range.start, this.range.end, searchDatacenter.id)
                 .then(() => {
@@ -80,11 +77,10 @@ export default {
                 });
 
             // This might slow things down if we have a lot of racks to get from the backend !!!
-            this.$emit('update-table'); // trigger event to update rack-table
+            this.$emit('update-create'); // trigger event to update rack-table
         },
         async deleteInRange() {
             var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
-            //this.racks = await this.rackRepository.list(searchDatacenter.id); 
 
             await this.rackRepository.deleteInRange(this.range.start, this.range.end, searchDatacenter.id)
                 .then(() => {
@@ -95,7 +91,7 @@ export default {
                 });
 
             // This might slow things down if we have a lot of racks to get from the backend !!!
-            this.$emit('update-table'); // trigger event to update rack-table
+            this.$emit('update-delete'); // trigger event to update rack-table
         }
     }
 }

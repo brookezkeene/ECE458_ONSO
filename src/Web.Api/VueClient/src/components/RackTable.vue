@@ -55,7 +55,7 @@
                     { text: 'Address', value: 'address'},
                     { text: 'Row Letter', value: 'rowLetter' },
                     { text: 'Rack Number', value: 'rackNumber' },
-                    { text: 'Datacenter', value: 'datacenter' },
+                    { text: 'Datacenter', value: 'datacenter.name' },
                     { text: 'Actions', value: 'action', sortable: false },
                 ],
                 racks: [],
@@ -95,25 +95,23 @@
 
                 confirm('Are you sure you want to delete this item?') && this.rackRepository.deleteInRange(item.address, item.address, searchDatacenter.id)
                     .then(async () => {
-                        await this.initialize();
+                        this.racks = await this.rackRepository.list(searchDatacenter.id);
                     })
             },
             async datacenterSearch() {
-                /* eslint-disable no-unused-vars, no-console */
-                console.log(this.selectedDatacenter);
-                if (this.selectedDatacenter === "All Datacenters" || this.selectedDatacenter === 'undefined') {
+                if (this.selectedDatacenter === "All Datacenters") {
                     // make special request for all datacenter racks
                     this.racks = await this.rackRepository.list();
                 } else {
                     // re-call based on new datacenter name
                     var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
-                    console.log(searchDatacenter);
                     this.racks = await this.rackRepository.list(searchDatacenter.id); 
                 }
             },
             async updateRacks() { // This might slow things down if we have a lot of racks to get from the backend !!!
                 this.$emit('updated');
-                this.racks = await this.rackRepository.list(); // re-call with same datacenter name if racks were added or deleted
+                var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
+                this.racks = await this.rackRepository.list(searchDatacenter.id); // re-call with same datacenter name if racks were added or deleted
             }
         }
     }
