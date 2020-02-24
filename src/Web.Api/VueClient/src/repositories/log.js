@@ -4,8 +4,8 @@
 import axios from 'axios';
 const resource = '/audit-logs';
 export default {
-    list() {
-        return axios.get(`${resource}`)
+    list(page, pageSize, search) {
+        return axios.get(`${resource}`, { params: { search: search, page: page, pageSize: pageSize } })
             .then(response => {
                 return response.data;
             });

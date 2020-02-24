@@ -7,10 +7,12 @@
                     <v-data-table :headers=headers
                                   :items="items"
                                   :search="search"
-                                  :pagination.sync="pagination"
-                                  :total-items="totalItems"
-\                                  multi-sort
-                                  @click:row="routeToDetails">
+                                  :options.sync="options"
+                                  :server-items-length="totalItems"
+                                  :expanded.sync="expanded"
+                                  :loading="loading"
+                                  show-expand
+                                  @click:row="expand">
                         <template v-slot:top v-slot:item.action="{ item }">
 
                             <v-toolbar flat color="white">
@@ -26,7 +28,54 @@
                                 <v-spacer></v-spacer>
                             </v-toolbar>
                         </template>
-
+                        <template v-slot:expanded-item="{ headers, item }">
+                            <td :colspan="headers.length">
+                                <v-container>
+                                    <v-row>
+                                        <v-col cols="6">
+                                            <v-subheader>Previous value (for 'created' events, there is no previous value, so we only show one table and don't need a subheading)</v-subheader>
+                                            <v-simple-table dense fixed-header>
+                                                <template v-slot:default>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Property</th>
+                                                            <th>Value</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="(value, name) in item.data" :key="name" class="text-left">
+                                                            <td class="font-weight-medium">{{ name }}</td>
+                                                            <td v-if="isIdProperty(name, item)"><router-link :to="constructLink(value, name, item)">{{ value }}</router-link></td>
+                                                            <td v-else>{{ value }}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </template>
+                                            </v-simple-table>
+                                        </v-col>
+                                        <v-col cols="6">
+                                            <v-subheader>New value (unnecessary for create/delete events)</v-subheader>
+                                            <v-simple-table dense fixed-header>
+                                                <template v-slot:default>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Property</th>
+                                                            <th>Value</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="(value, name) in item.data" :key="name" class="text-left">
+                                                            <td class="font-weight-medium">{{ name }}</td>
+                                                            <td v-if="isIdProperty(name, item)"><router-link :to="constructLink(value, name, item)">{{ value }}</router-link></td>
+                                                            <td v-else>{{ value }}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </template>
+                                            </v-simple-table>
+                                        </v-col>
+                                    </v-row>
+                                </v-container>
+                            </td>
+                        </template>
                     </v-data-table>
                 </v-card>
             </v-container>
@@ -37,19 +86,19 @@
 
 
 <script>
-    import Auth from "../auth"
-
     export default {
         components: {
         },
         inject: ['logRepository'],
         data() {
             return {
-                pagination: {},
+                options: {},
                 totalItems: 0,
                 loading: true,
                 search: '',
                 headers: [
+                    { text: 'Event', value: 'event', sortable: false }, // nature of the event (e.g. asset created)
+                    { text: 'Date', value: 'created', sortable: false }, // Time stamp
                     {
                         text: 'User',
                         align: 'left',
@@ -57,76 +106,67 @@
                         sortable: false
                     },
                     // Log entries shall include the initiating
-                    // user, the entities involved, the nature of the event, and the time and date.
-                    { text: 'Event', value: 'event',sortable: false }, // nature of the event (e.g. asset created)
-                    { text: 'Category', value: 'category', sortable: false},  // Which entity was involved
-                    { text: 'Created', value: 'created', sortable: false }, // Time stamp
-                    { text: 'Data', value: 'data', sortable: false },
-
+                    // user, the entities involved, the nature of the event, and the time and date
                     // Need to link each log to the appropriate details page 
                     // Would come from data
                 ],
-                logEntries: [],
                 items: [],
-                logItem: {
-                    subjectName: '',
-                    action: '',
-                    data: '',
-                    created: '',
-                    event:'',
-                },
+                expanded: []
             }
         },
-        computed: {
-            admin() {
-                return Auth.isAdmin()
-            },
-        },
-        async created() {
-            this.initialize()
-        },
         watch: {
-          pagination: {
-            handler () {
-              this.logRepository.list()
-                .then(data => {
-                  this.items = data.data
-                  this.totalItems = data.totalCount
-                })
+            options: {
+                handler() {
+                    this.getDataFromApi()
+                        .then(data => {
+                            this.items = data.data;
+                            this.totalItems = data.totalCount;
+                            this.parseJsonProperties();
+                            this.loading = false;
+                        })
+                },
+                deep: true
             },
-          },
+        },
         methods: {
-            async initialize() {
-                this.logEntries = await this.logRepository.list();
-                this.page = this.logEntries.currentPage;
-                this.pageCount = this.logEntries.totalCount;
-                this.items = this.logEntries.data;
-
-                /*eslint-disable*/
-                console.log(this.logEntries);
-                this.loading = false;
+            getDataFromApi() {
+                this.loading = true;
+                const { page, itemsPerPage } = this.options;
+                return this.logRepository.list(page, itemsPerPage, this.search);
             },
-            routeToDetails(item) {
-                console.log(item);
-                var data = JSON.parse(item.data);
-                console.log(data);
-                console.log(data.Id);
-                if (item.category = 'Asset') {
-                    this.routeToAssetDetails(data.Id)
-                } else if (item.category = 'Model') {
-                    this.routeToModelDetails(data.Id)
-                } else if (item.category = 'User') {
-                    this.routeToUserDetails(data.Id)
+            expand(value) {
+                let index = this.expanded.indexOf(value);
+                if (index >= 0) this.expanded.splice(index, 1);
+                else this.expanded.push(value);
+            },
+            getEntityType(name, item) {
+                var entityType = name.toLowerCase().replace('id', '');
+                if (entityType === '')
+                    entityType = item.category.toLowerCase();
+                return entityType;
+            },
+            isIdProperty(name, item) {
+                var entityType = this.getEntityType(name, item);
+                return name.toLowerCase().endsWith('id') && ['asset', 'model'].includes(entityType);
+            },
+            constructLink(value, name, item) {
+                var entityType = this.getEntityType(name, item);
+                return {
+                    name: `${entityType}-details`,
+                    params: { id: value }
                 }
             },
-            routeToModelDetails(id) {
-                this.$router.push({ name: 'model-details', params: { id: id } })
-            },
-            routeToAssetDetails(id) {
-                this.$router.push({ name: 'asset-details', params: { id: id } })
-            },
-            routeToUserDetails(id) {
-                this.$router.push({ name: 'user-details', params: { id: id } })
+            parseJsonProperties() {
+                if (typeof this.items !== 'undefined') {
+                    this.items.forEach(log => {
+                        if (typeof log === 'undefined')
+                            return;
+                        if (typeof log.action !== 'undefined')
+                            log.action = JSON.parse(log.action);
+                        if (typeof log.data !== 'undefined')
+                            log.data = JSON.parse(log.data);
+                    });
+                }
             }
         }
     }
