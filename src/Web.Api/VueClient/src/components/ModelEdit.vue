@@ -192,12 +192,10 @@
                 
                 var i;
                 for (i = 0; i < this.networkPortNames.length; i++) {
-                     console.log(i);
                     if (typeof this.id === 'undefined') {
                         var portObj = Object.assign({}, { name: this.networkPortNames[i], number: i + 1 })
                         this.newItem.networkPorts.push(portObj);
                     } else if (this.newItem.networkPorts.length <= i) {
-                        console.log('reaching this bbbase');
                         var addObj = Object.assign({}, { name: this.networkPortNames[i], number: i + 1 })
                         this.newItem.networkPorts.push(addObj);
                     } else {
