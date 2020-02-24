@@ -9,7 +9,7 @@
                                   :search="search"
                                   v-model="page" :length="pageCount"
                                   multi-sort
-                                  @click:row="routeToDetails(item)">
+                                  @click:row="routeToDetails">
                         <template v-slot:top v-slot:item.action="{ item }">
 
                             <v-toolbar flat color="white">
@@ -98,8 +98,9 @@
             },
             routeToDetails(item) {
                 console.log(item);
-                console.log(item.data.Id);
-                this.routeToModelDetails(item.data.Id)
+                console.log(item.data);
+                console.log(item.data.id);
+                this.routeToAssetDetails(item.data.id)
             },
             routeToModelDetails(id) {
                 this.$router.push({ name: 'model-details', params: { id: id } })
