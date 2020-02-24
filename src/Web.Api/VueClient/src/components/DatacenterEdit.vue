@@ -65,7 +65,7 @@
         },
         methods: {
             save() {
-                if (this.newItem.name === "RTP1") {
+                if (this.newItem.name.toLowerCase() === "rtp1") {
                     this.newItem.HasNetworkManagedPower = true;
                 }
 
