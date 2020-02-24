@@ -6,6 +6,8 @@
                 <v-card>
                     <v-data-table :headers=headers
                                   :items="items"
+                                  :pagination.sync="pagination"
+                                  :total-items="totalItems"
                                   :search="search"
                                   v-model="page" :length="pageCount"
                                   multi-sort
@@ -81,12 +83,30 @@
                 return Auth.isAdmin()
             },
         },
-        async created() {
-            this.initialize()
+        watch: {
+            pagination: {
+            handler () {
+                this.getDataFromApi()
+                .then(data => {
+                    this.items = data.data;
+                    this.totalItems = data.totalSize;
+                })
+            },
+            deep: true
+            }
         },
-
+        mounted () {
+          this.getDataFromApi()
+            .then(data => {
+                this.items = data.items;
+                this.totalItems = data.totalSize;
+            })
+        },
+        async created() {
+            this.getDataFromApi()
+        },
         methods: {
-            async initialize() {
+            async getDataFromApi() {
                 this.logEntries = await this.logRepository.list();
                 this.page = this.logEntries.currentPage;
                 this.pageCount = this.logEntries.totalCount;
