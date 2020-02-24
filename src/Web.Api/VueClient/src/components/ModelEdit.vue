@@ -133,7 +133,7 @@
 
             this.newItem = typeof this.id === 'undefined'
                 ? this.newItem
-                : this.models.find(o => o.id === this.id);
+                : await this.modelRepository.find(this.id);
 
         },
         computed: {
