@@ -24,6 +24,7 @@ namespace Web.Api.Core.UnitTests.Validation
             Assert.False(result.IsValid);
             Assert.Contains(result.Errors, error => error.ErrorCode == "DoesNotFit");
         }
+         
 
 
         [Fact]
@@ -151,5 +152,6 @@ namespace Web.Api.Core.UnitTests.Validation
 
             return asset;
         }
+        
     }
 }

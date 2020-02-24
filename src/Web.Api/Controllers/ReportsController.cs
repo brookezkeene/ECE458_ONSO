@@ -24,7 +24,7 @@ namespace Web.Api.Controllers
         {
             const int page = 1;
             const int pageSize = 9999;
-            var racks = await _rackService.GetRacksAsync(datacenterId, page, pageSize); 
+            var racks = await _rackService.GetRacksAsync(datacenterId, page, pageSize);
             return Ok(racks);
         }
     }

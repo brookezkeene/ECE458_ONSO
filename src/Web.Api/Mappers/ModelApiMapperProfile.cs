@@ -36,7 +36,6 @@ namespace Web.Api.Mappers
                 .ReverseMap();
             CreateMap<ModelNetworkPortDto, GetModelNetworkPort>()
                 .ReverseMap();
-
         }
     }
 }
