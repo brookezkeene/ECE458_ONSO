@@ -7,9 +7,8 @@
                     <v-data-table :headers=headers
                                   :items="items"
                                   :search="search"
-                                  :pagination.sync="pagination"
-                                  :total-items="totalItems"
-\                                  multi-sort
+                                  v-model="page" :length="pageCount"
+                                  multi-sort
                                   @click:row="routeToDetails">
                         <template v-slot:top v-slot:item.action="{ item }">
 
@@ -45,8 +44,8 @@
         inject: ['logRepository'],
         data() {
             return {
-                pagination: {},
-                totalItems: 0,
+                page: 1,
+                pageCount: 0,
                 loading: true,
                 search: '',
                 headers: [
@@ -85,16 +84,7 @@
         async created() {
             this.initialize()
         },
-        watch: {
-          pagination: {
-            handler () {
-              this.logRepository.list()
-                .then(data => {
-                  this.items = data.data
-                  this.totalItems = data.totalCount
-                })
-            },
-          },
+
         methods: {
             async initialize() {
                 this.logEntries = await this.logRepository.list();
