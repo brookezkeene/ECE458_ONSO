@@ -8,7 +8,7 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
 {
     public interface IRackRepository
     {
-        Task<PagedList<Rack>> GetRacksAsync(string search, Guid? datacenterId, int page = 1, int pageSize = 10);
+        Task<PagedList<Rack>> GetRacksAsync(Guid? datacenterId, int page = 1, int pageSize = 10);
         Task<List<Rack>> GetRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd, Guid? datacenterId);
         Task<Rack> GetRackAsync(string row, int col);
         Task<Rack> GetRackAsync(Guid rackId);

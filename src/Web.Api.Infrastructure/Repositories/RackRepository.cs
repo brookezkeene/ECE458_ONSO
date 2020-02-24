@@ -22,7 +22,7 @@ namespace Web.Api.Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<PagedList<Rack>> GetRacksAsync(string search, Guid? datacenterId, int page = 1, int pageSize = 10)
+        public async Task<PagedList<Rack>> GetRacksAsync(Guid? datacenterId, int page = 1, int pageSize = 10)
         {
             var pagedList = new PagedList<Rack>();
 
