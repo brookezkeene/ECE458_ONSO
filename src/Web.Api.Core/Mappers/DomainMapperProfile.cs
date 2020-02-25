@@ -45,8 +45,7 @@ namespace Web.Api.Core.Mappers
             CreateMap<User, UserDto>()
                 .ReverseMap();
             CreateMap<RegisterUserDto, User>(MemberList.Source)
-                .ForSourceMember(o => o.Password, opts => opts.DoNotValidate())
-                .ForSourceMember(o => o.Role, opts => opts.DoNotValidate());
+                .ForSourceMember(o => o.Password, opts => opts.DoNotValidate());
 
             CreateMap<PagedList<Asset>, PagedList<AssetDto>>();
         }

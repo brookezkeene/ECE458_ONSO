@@ -156,7 +156,7 @@
             },
             close() {
                 setTimeout(() => {
-                    this.$router.push({ name: 'model' })
+                    this.$router.push({ name: 'models' })
                 }, 300)
             },
             openNamesDialog() {

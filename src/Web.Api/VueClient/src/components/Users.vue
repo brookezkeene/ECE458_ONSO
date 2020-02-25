@@ -35,12 +35,13 @@
                                 </v-card-title>
                                 <v-card-text>
                                     <v-container fluid>
-                                        <v-radio-group v-model="editedRole" :mandatory="true">
-                                            <v-radio label="Regular" 
-                                                     value="basic"></v-radio>
-                                            <v-radio label="Administrator" 
-                                                     value="admin"></v-radio>
-                                        </v-radio-group>
+                                            <v-checkbox label="Basic"
+                                                        v-model="editedRoles"
+                                                        disabled
+                                                        value="basic"></v-checkbox>
+                                            <v-checkbox label="Administrator" 
+                                                        v-model="editedRoles"
+                                                        value="admin"></v-checkbox>
                                     </v-container>
                                 </v-card-text>
                                 <v-card-actions>
@@ -56,16 +57,16 @@
                 <template v-slot:item.role="{ item }">
                     <v-row class="pl-3">
                         {{item.role}}
-                        <v-icon v-if="admin && item.username != 'admin'"
-                                medium
-                                class="mr-2"
-                                @click="editPermissions(item)">mdi-pencil</v-icon>
                     </v-row>
                 </template>
 
                 <template v-if="admin" v-slot:item.action="{ item }">
                     <v-row class="pl-5">
-                        <v-icon v-if="item.username != 'admin'"
+                        <v-icon v-if="showActionsForUser(item)"
+                                medium
+                                class="mr-2"
+                                @click="editPermissions(item)">mdi-pencil</v-icon>
+                        <v-icon v-if="showActionsForUser(item)"
                                 medium
                                 class="mr-2"
                                 @click="deleteItem(item)">mdi-delete</v-icon>
@@ -94,7 +95,6 @@ import Auth from "../auth"
             { text: 'Last Name', value: 'lastName' },
             { text: 'Username', value: 'username' },
             { text: 'Email', value: 'email' },
-            { text: 'Permission Level', value: 'role' },
             { text: 'Actions', value: 'action', sortable: false },
         ],
         users: [],
@@ -113,7 +113,7 @@ import Auth from "../auth"
             username: '',
             password: ''
         },
-        editedRole: '',
+        editedRoles: [],
         permissionsDialog: false,
       }
     },
@@ -123,7 +123,7 @@ import Auth from "../auth"
         },
         filteredHeaders() {
                 return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
-            },
+        },
     },
 
     async created() {
@@ -131,16 +131,12 @@ import Auth from "../auth"
     },
 
     methods: {
+        showActionsForUser(item) {
+            return !['admin', Auth.username()].includes(item.username);
+        },
         async initialize() {
-        /* eslint-disable no-unused-vars, no-console */
             this.loading = true
             this.users = await this.userRepository.list();
-            var i;
-            for (i = 0; i < this.users.length; i++) {
-                var userRole = await this.userRepository.findRole(this.users[i].id);
-                this.users[i].role = userRole[0];
-            }
-            //console.log(this.users);
             this.loading = false;
         },
         openCreateUser() {
@@ -153,23 +149,21 @@ import Auth from "../auth"
                 })
         },
         editPermissions(item) {
-            this.editedItem = Object.assign({}, item);
-            this.editedRole = item.role;
-            this.permissionsDialog = true;
+            this.editedItem = item;
+            this.userRepository.findRole(item.id)
+                .then((roles) => {
+                    this.editedRoles = roles;
+                    this.permissionsDialog = true;
+                })
         },
         savePermissions() {
-            const roleItem = {
-                id: this.editedItem.id,
-                name: this.editedRole,
-            }
-            this.permissionsDialog = false;
-            this.userRepository.createRole(roleItem.id, roleItem)
+            this.userRepository.updateUserRoles(this.editedItem.id, { roles: this.editedRoles } )
                 .then(async () => {
+                    this.closeDialog();
                     await this.initialize();
                 })
         },
         closeDialog() {
-            confirm("Are you sure you want to exit this dialog? Changes to user's permission level will not be saved.")
             this.permissionsDialog = false;
         }
     },

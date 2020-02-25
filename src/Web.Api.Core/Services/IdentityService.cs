@@ -37,7 +37,7 @@ namespace Web.Api.Core.Services
         public async Task<(IdentityResult identityResult, Guid userId)> CreateUserAsync(RegisterUserDto user)
         {
             var userIdentity = user.ToEntity();
-            var (identityResult, userId) = await _identityRepository.CreateUserAsync(userIdentity, user.Password, user.Role);
+            var (identityResult, userId) = await _identityRepository.CreateUserAsync(userIdentity, user.Password);
 
             return (identityResult, userId);
         }

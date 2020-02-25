@@ -81,38 +81,35 @@ namespace Web.Api.Controllers
             return Ok(await _userManager.GetRolesAsync(user));
         }
 
-        [HttpPost("{id}/roles")]
-        public async Task<IActionResult> PostUserRoles(Guid id, [FromBody] UpdateUserRoleApiDto role)
+        [HttpPut("{id}/roles")]
+        public async Task<IActionResult> PostUserRoles(Guid id, [FromBody] UpdateUserRoleApiDto roles)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
             {
                 return NotFound("User not found.");
-            } else if (user.FirstName == "Admin")
+            }
+
+            if (user.UserName == "admin")
             {
                 return Forbid();
             }
 
-            var otherRole = "basic";
-            if (role.Name == "basic")
+            var requestedRolesExist = true;
+            foreach (var role in roles.Roles)
             {
-                otherRole = "admin";
+                requestedRolesExist &= await _roleManager.RoleExistsAsync(role);
             }
-            await _userManager.RemoveFromRoleAsync(user, otherRole);
-
-            var roleExists = await _roleManager.RoleExistsAsync(role.Name);
-            if (!roleExists)
+            if (!requestedRolesExist)
             {
-                return NotFound("Role not found.");
+                return NotFound("One or more of the requested roles do not exist.");
             }
 
-            if (!await _userManager.IsInRoleAsync(user, role.Name))
-            {
-                return Ok(await _userManager.AddToRoleAsync(user, role.Name));
-            } else
-            {
-                return BadRequest("User exists in Role.");
-            }
+            var allRoles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, allRoles);
+
+            var add = await _userManager.AddToRolesAsync(user, roles.Roles);
+            return Ok(add);
         }
 
         [HttpGet("me")]
