@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Web.Api.Core.Dtos.Power;
 
 namespace Web.Api.Dtos.Assets.Read
 {
