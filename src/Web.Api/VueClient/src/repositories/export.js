@@ -13,5 +13,11 @@ export default {
             .then(response => {
                 return response.data;
             }).catch(error => error);
+    },
+    exportNetwork(query) {
+        return axios.get(`${resource}/networks`, { params: query })
+            .then(response => {
+                return response.data;
+            }).catch(error => error);
     }
 }

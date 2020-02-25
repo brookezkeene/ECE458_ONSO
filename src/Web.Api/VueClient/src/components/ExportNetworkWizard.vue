@@ -19,16 +19,6 @@
                                 </v-label>
                                 <v-text-field v-model="query.HostName">
                                 </v-text-field>
-                                <v-text-field v-model="query.Search">
-                                </v-text-field>
-                                <v-text-field v-model="query.StartRow">
-                                </v-text-field>
-                                <v-text-field v-model="query.StartCol">
-                                </v-text-field>
-                                <v-text-field v-model="query.EndRow">
-                                </v-text-field>
-                                <v-text-field v-model="query.EndCol">
-                                </v-text-field>
                             </v-container>
                         </v-card>
                     </v-card>
@@ -62,9 +52,9 @@
             </v-stepper-items>
         </v-stepper>
 
-        <v-dialog v-model="assetErrorDialog">
+        <v-dialog v-model="networkErrorDialog">
             <v-card>
-                <v-title>No assets found with these filters!</v-title>
+                <v-title>No networks found with these filters!</v-title>
                 <v-btn @click.native="step = 1">Try Again</v-btn>
             </v-card>
         </v-dialog>
@@ -73,7 +63,7 @@
 
 <script>
     export default {
-        name: 'export-asset-wizard',
+        name: 'export-network-wizard',
         inject: ['exportRepository'],
         props: ['exportWizard'],
         data () {
@@ -101,28 +91,12 @@
                     EndRow: '',
                     EndCol: 0,
                 },
-                assetErrorDialog: false
+                networkErrorDialog: false
             };
         },
         methods: {
             async setStep2() {
-                var temp = await this.exportRepository.exportAsset(this.query);
-                /* eslint-disable no-unused-vars, no-console */
-                console.log(temp.length);
-                console.log(temp);
-                console.log("This is inside of temp");
-                var i; var j;
-                for (i = 0; i < temp.length; i++) {
-                    var powerPorts = temp[i].power_port;
-                    var powPortLength = powerPorts.length;
-                    delete temp[i].power_port;
-                    for (j = 0; j < powPortLength; j++) {
-                        var name = "power_port_name_" + (j + 1).toString();
-                        temp[i][`${name}`] = powerPorts[j].power_port_location + powerPorts[j].power_port_number;
-                    }
-                }
-
-                this.exportRaw = temp;
+                this.exportRaw = await this.exportRepository.exportNetwork(this.query);
 
                 /* eslint-disable no-unused-vars, no-console */
                 console.log(this.exportRaw.length);
@@ -136,7 +110,7 @@
                 this.$emit('close-model-export');
             },
             handleError() {
-                this.assetErrorDialog = true;
+                this.networkErrorDialog = true;
             },
         }
     }

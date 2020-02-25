@@ -46,6 +46,7 @@
                     </v-card-actions>
                 </v-card>
             </v-col>
+
         </v-container>
 
         <v-dialog v-model="extrainfomodel">
