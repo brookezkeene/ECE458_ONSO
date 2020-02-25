@@ -91,6 +91,9 @@
                     EndRow: '',
                     EndCol: 0,
                 },
+                rules: {
+                    rackRules: v => /[a-z][0-9]+$/.test(v) || 'Network port name cannot contain whitespace'
+                },
                 networkErrorDialog: false
             };
         },

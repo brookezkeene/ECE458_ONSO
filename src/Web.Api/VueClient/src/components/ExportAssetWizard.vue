@@ -27,16 +27,14 @@
                                 <v-label>
                                     Input a start rack to filter result by
                                 </v-label>
-                                <v-text-field v-model="query.StartRow">
-                                </v-text-field>
-                                <v-text-field v-model="query.StartCol">
+                                <v-text-field v-model="startRack"
+                                              :rules="[rules.rackRules]">
                                 </v-text-field>
                                 <v-label>
                                     Input an end rack to filter result by
                                 </v-label>
-                                <v-text-field v-model="query.EndRow">
-                                </v-text-field>
-                                <v-text-field v-model="query.EndCol">
+                                <v-text-field v-model="endRack"
+                                              :rules="[rules.rackRules]">
                                 </v-text-field>
                             </v-container>
                         </v-card>
@@ -111,14 +109,17 @@
                     EndCol: 0,
                 },
                 startRack: '',
-                endRack:'',
+                endRack: '',
+                rules: {
+                    rackRules: v => /^(?:|[a-z][0-9]+)*$/.test(v) || 'This is not a valid Rack Address'
+                },
                 assetErrorDialog: false
             };
         },
         methods: {
             async setStep2() {
                 
-                var temp = await this.exportRepository.exportAsset(this.query);
+                var temp = await this.exportRepository.exportAsset(this.query); 
                 /* eslint-disable no-unused-vars, no-console */
                 console.log(temp.length);
                 console.log(temp);
