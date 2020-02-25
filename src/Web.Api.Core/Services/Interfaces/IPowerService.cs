@@ -7,7 +7,7 @@ using Web.Api.Core.Dtos.Power;
 
 namespace Web.Api.Core.Services.Interfaces
 {
-    interface IPowerService
+    public interface IPowerService
     {
         public Task<AssetPowerStateDto> setStates(Guid assetId, PowerState state);
 

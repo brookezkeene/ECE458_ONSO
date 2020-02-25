@@ -59,6 +59,11 @@ namespace Web.Api.Mappers
             CreateMap<DatacenterDto, GetAssetsApiDto>(MemberList.None);
             CreateMap<ModelDto, GetAssetsApiDto>(MemberList.None);
 
+            CreateMap<AssetPowerPortStateDto, GetAssetPowerPortStateApiDto>()
+                .ReverseMap();
+            CreateMap<AssetPowerStateDto, UpdateAssetPowerStateApiDto>()
+                .ReverseMap();
+
         }
     }
 }
