@@ -55,6 +55,17 @@ namespace Web.Api.Controllers
             return CreatedAtAction(nameof(Get), new { id = createdUser.Id }, createdUser);
         }
 
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<UserDto>> Delete(Guid id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+            return Ok(await _identityService.DeleteUserAsync(id));
+        }
+
         [HttpGet("{id}/roles")]
         public async Task<ActionResult<List<string>>> GetUserRoles(Guid id)
         {

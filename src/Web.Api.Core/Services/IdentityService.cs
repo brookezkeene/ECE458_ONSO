@@ -42,6 +42,14 @@ namespace Web.Api.Core.Services
             return (identityResult, userId);
         }
 
+        public async Task<IdentityResult> DeleteUserAsync(Guid userId)
+        {
+            var user = await _identityRepository.GetUserAsync(userId);
+            var identityResult = await _identityRepository.DeleteUserAsync(user);
+
+            return identityResult;
+        }
+
         public async Task<Token> LoginAsync(LoginDto login)
         {
             if (!string.IsNullOrEmpty(login.Username) && !string.IsNullOrEmpty(login.Password))
