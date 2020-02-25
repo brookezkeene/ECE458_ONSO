@@ -231,27 +231,41 @@
             this.$router.push({ name: 'asset-new' })
         },
         turnOn(item) {
-            this.powering = true;
-            confirm('Are you sure you would like to turn on this asset?')
             /*eslint-disable*/
-            console.log(item.id);
-            //PUT the power state for this asset to the backend
+            this.powering = true;
+            var powerState = {
+                // 0 is on
+                action: 0,
+            };
+            confirm('Are you sure you would like to turn on this asset?') && this.assetRepository.postPowerState(item.id, powerState)
+                .then(async () => {
+                    console.log(item);
+                    await this.initialize();
+                })
         },
         turnOff(item) {
             this.powering = true;
-            confirm('Are you sure you would like to power off this asset?')
-            var ret = {
-                action: 0,
+            var powerState = {
+                // 1 is off
+                action: 1,
             };
-            console.log(item);
-            this.assetRepository.postPowerState('7e0b7766-08f0-4af3-9bcc-95cb74eff767', ret);
-            //PUT the power state for this asset to the backend
+            confirm('Are you sure you would like to power off this asset?') && this.assetRepository.postPowerState(item.id, powerState)
+                .then(async () => {
+                    console.log(item);
+                    await this.initialize();
+                })
         },
         cycle(item) {
             this.powering = true;
-            confirm('Are you sure you would like to cycle this asset?')
-            console.log(item.id, 'cycle');
-            //PUT the power state for this asset to the backend
+            var ret = {
+                // 2 is cycle
+                action: 2,
+            };
+            confirm('Are you sure you would like to cycle this asset?') && this.assetRepository.postPowerState(item.id, powerState)
+                .then(async () => {
+                    console.log(item);
+                    await this.initialize();
+                })
         },
         showInstructions() {
             this.instructionsDialog = true;
@@ -263,10 +277,11 @@
             if (!this.editing && !this.deleting && !this.powering) {
             /*eslint-disable*/
                 console.log(item);
-              this.$router.push({ name: 'asset-details', params: {id: item.id } })
-          }
-          this.deleting = false;
-          this.powering = false;
+                this.$router.push({ name: 'asset-details', params: {id: item.id } })
+            }
+            this.deleting = false;
+            this.powering = false;
+            this.powering = false;
       },
 
       /**

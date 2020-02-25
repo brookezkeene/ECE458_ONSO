@@ -91,7 +91,7 @@ namespace Web.Api.Controllers
         {
             var state = PowerState.Off;
             // Call to update the power state of the associated asset ports to on/off/cycle
-            if(powerState.Equals("On"))
+            if(powerState.Action.Equals( PowerState.On))
             {
                 state = PowerState.On;
             }
