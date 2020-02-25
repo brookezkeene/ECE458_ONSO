@@ -283,26 +283,8 @@
                 }
             },
             close() {
-                /* eslint-disable no-unused-vars, no-console */
-                console.log(this.editedItem);
                 this.$router.push({ name: 'assets' })
             },
-           /* saveNames() {
-                *//* eslint-disable no-unused-vars, no-console *//*
-                console.log(this.networkPortNames);
-                var i;
-                for (i = 0; i < this.networkPortNames.length; i++) {
-                    if (this.networkPortNames[i] === null) {
-                        var portObjDefault = Object.assign({}, { name: (i + 1).toString(), number: i + 1 })
-                        this.networkPorts[i] = portObjDefault;
-                    } else {
-                        var portObj = Object.assign({}, { name: this.networkPortNames[i], number: i + 1 })
-                        this.networkPorts[i] = portObj;
-                    }
-                }
-                console.log(this.networkPorts);
-                this.namesDialog = false;
-            },*/
             async updateRacks() {
                 if (this.datacenterID != this.editedItem.datacenter) {
                     this.datacenterID = this.editedItem.datacenter;
@@ -313,8 +295,6 @@
             },
             async modelSelected() {
                 var selectedModel = await this.modelRepository.find(this.editedItem.modelId);
-                /* eslint-disable no-unused-vars, no-console */
-                console.log(selectedModel.networkPorts);
                 var networkPortsArray = new Array();
                 var j;
                 for (j = 0; j < selectedModel.networkPorts.length; j++) {
@@ -344,9 +324,6 @@
                     powerPortsArray.push(powerPortObj);
                 }
                 this.editedItem.powerPorts = powerPortsArray;
-                /* eslint-disable no-unused-vars, no-console */
-                console.log(this.editedItem.networkPorts);
-                console.log(this.editedItem.powerPorts);
             }
         }
     }
