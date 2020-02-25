@@ -37,7 +37,8 @@
                            @click="submit">
                         Sign In
                     </v-btn>
-                    <v-form action="/api/login/test" method="post">
+                    <v-spacer></v-spacer>
+                    <v-form action="/api/login/external" method="post">
                         <v-btn type="submit">Sign in with Duke NetID</v-btn>
                     </v-form>
                 </v-card-text>
@@ -63,7 +64,7 @@ export default {
     }),
     methods: {
         submit() {
-            //if (this.$refs.form.validate()) {
+            if (this.$refs.form.validate()) {
                 Auth.login(this.username, this.password)
                     .then(() => {
                         this.$router.push(this.$route.query.redirect || { name: 'dashboard' } )
@@ -71,7 +72,7 @@ export default {
                     .catch((error) => {
                         alert(error.message)
                     });
-            //}
+            }
         }
      
     }

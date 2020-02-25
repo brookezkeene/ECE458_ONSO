@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "core-js": "^3.4.4",
+    "js-cookie": "^2.2.1",
     "jwt-decode": "^2.2.0",
     "vue": "^2.6.10",
     "vue-json-excel": "^0.2.98",

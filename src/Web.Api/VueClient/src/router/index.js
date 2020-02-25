@@ -148,20 +148,26 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (!auth.loggedIn()) {
-            next({
-                path: '/login',
-                query: { redirect: to.fullPath }
+        auth.heartbeat().then(() => {
+                if (!auth.loggedIn()) {
+                    next({
+                        path: '/login',
+                        query: { redirect: to.fullPath }
+                    })
+                } else if (to.matched.some(record => record.meta.admin)) {
+                    if (!auth.isAdmin()) {
+                        next(false)
+                    } else {
+                        next()
+                    }
+                } else {
+                    next()
+                }
             })
-        } else if (to.matched.some(record => record.meta.admin)) {
-            if (!auth.isAdmin()) {
-                next(false)
-            } else {
-                next()
-            }
-        } else {
-            next()
-        }
+            .catch(() => {
+                // the only reason we should get here is if the user loses internet connection or the server goes down
+                // display something? a red banner at the top of the page maybe?
+            });
     } else {
         next()
     }
