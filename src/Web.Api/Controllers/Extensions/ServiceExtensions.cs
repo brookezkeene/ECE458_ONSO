@@ -40,6 +40,7 @@ namespace Web.Api.Extensions
             services.AddTransient<IRackService, RackService>();
             services.AddTransient<IDatacenterService, DatacenterService>();
             services.AddTransient<IAuditLogService, AuditLogService>();
+            services.AddHttpClient<PowerService>();
 
             // etc
             services.ConfigureResources();

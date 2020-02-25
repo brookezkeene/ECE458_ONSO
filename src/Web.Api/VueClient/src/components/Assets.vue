@@ -113,8 +113,14 @@
             <template v-slot:no-data>
                 <v-btn color="primary" @click="initialize">Refresh</v-btn>
             </template>
-            >
         </v-data-table>
+        
+        <div v-for="item in assets" :key="item">
+            <v-btn @click="turnOff(item)">
+                TEST PDU API
+            </v-btn>
+        </div>
+
     </v-card>
     </v-container>
   </v-card>
@@ -228,17 +234,17 @@
             this.powering = true;
             confirm('Are you sure you would like to turn on this asset?')
             /*eslint-disable*/
-            console.log(item.id, 'on');
+            console.log(item.id);
             //PUT the power state for this asset to the backend
         },
         turnOff(item) {
             this.powering = true;
             confirm('Are you sure you would like to power off this asset?')
-            console.log(item.id);
             var ret = {
                 action: 0,
             };
-            this.assetRepository.postPowerState(item.id, ret);
+            console.log(item);
+            this.assetRepository.postPowerState('7e0b7766-08f0-4af3-9bcc-95cb74eff767', ret);
             //PUT the power state for this asset to the backend
         },
         cycle(item) {

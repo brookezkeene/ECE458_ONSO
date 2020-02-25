@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Web.Api.Common;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Dtos.Power;
+using Web.Api.Core.Services;
 using Web.Api.Core.Services.Interfaces;
 using Web.Api.Dtos;
 using Web.Api.Dtos.Assets;
@@ -26,9 +27,9 @@ namespace Web.Api.Controllers
     {
         private readonly IAssetService _assetService;
         private readonly IApiErrorResources _errorResources;
-        private readonly IPowerService _powerService;
+        private readonly PowerService _powerService;
 
-        public AssetsController(IAssetService assetService, IApiErrorResources errorResources, IPowerService powerService)
+        public AssetsController(IAssetService assetService, IApiErrorResources errorResources, PowerService powerService)
         {
             _assetService = assetService;
             _errorResources = errorResources;

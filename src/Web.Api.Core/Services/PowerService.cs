@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 namespace Web.Api.Core.Services
 {
-    class PowerService : IPowerService
+    public class PowerService : IPowerService
 {
         private static Regex _regex;
         private const string Pattern = @"^.*>(\d+)<.*>(ON|OFF)<";
