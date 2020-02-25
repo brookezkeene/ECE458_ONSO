@@ -228,19 +228,23 @@
             this.powering = true;
             confirm('Are you sure you would like to turn on this asset?')
             /*eslint-disable*/
-            console.log(item.id);
+            console.log(item.id, 'on');
             //PUT the power state for this asset to the backend
         },
         turnOff(item) {
             this.powering = true;
             confirm('Are you sure you would like to power off this asset?')
             console.log(item.id);
+            var ret = {
+                action: 0,
+            };
+            this.assetRepository.postPowerState(item.id, ret);
             //PUT the power state for this asset to the backend
         },
         cycle(item) {
             this.powering = true;
             confirm('Are you sure you would like to cycle this asset?')
-            console.log(item.id);
+            console.log(item.id, 'cycle');
             //PUT the power state for this asset to the backend
         },
         showInstructions() {
