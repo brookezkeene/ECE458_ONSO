@@ -114,12 +114,6 @@
                 <v-btn color="primary" @click="initialize">Refresh</v-btn>
             </template>
         </v-data-table>
-        
-        <div v-for="item in assets" :key="item">
-            <v-btn @click="turnOff(item)">
-                TEST PDU API
-            </v-btn>
-        </div>
 
     </v-card>
     </v-container>
