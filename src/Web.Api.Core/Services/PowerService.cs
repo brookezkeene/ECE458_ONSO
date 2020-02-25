@@ -72,7 +72,7 @@ namespace Web.Api.Core.Services
             return ret;
         }
 
-        public async Task<AssetPowerStateDto> setStates(Guid assetId, PowerState state)
+        public async Task<AssetPowerStateDto> setStates(Guid assetId, PowerAction state)
         {
 
             var pduPorts = (await _assetService.GetAssetAsync(assetId))
@@ -101,10 +101,16 @@ namespace Web.Api.Core.Services
                     var data = new StringContent(json, Encoding.UTF8, "application/json");
                     var response = await Client.PostAsync("/power.php", data);
 
+                    // Translate the action that was taken on the asset into a current power state
+                    var powerState = PowerState.Off;
+                    if (state == PowerAction.On || state == PowerAction.Cycle) {
+                        powerState = PowerState.On;
+                    }
+
                     var powerPortState = new AssetPowerPortStateDto()
                     {
                         Port = kvp.Key.ToString(),
-                        Status = state
+                        Status = powerState
                     };
 
                     powerStates.Add(powerPortState);

@@ -114,7 +114,6 @@
                 <v-btn color="primary" @click="initialize">Refresh</v-btn>
             </template>
         </v-data-table>
-
     </v-card>
     </v-container>
   </v-card>
@@ -140,7 +139,6 @@
 
         // Table data.
         headers: [
-          
           { text: 'Model Vendor', value: 'vendor' },
           { text: 'Model Number', value: 'modelNumber', },
           { text: 'Hostname', value: 'hostname' },
@@ -150,8 +148,6 @@
           { text: 'Comment', value: 'comment' },
           { text: 'Power', value: 'power', sortable: false },
           { text: 'Actions', value: 'action', sortable: false },
-
-
         ],
         assets: [],
         models: [],

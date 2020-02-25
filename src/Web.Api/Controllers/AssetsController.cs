@@ -89,12 +89,8 @@ namespace Web.Api.Controllers
         public async Task<ActionResult<GetAssetPowerStateApiDto>> PostPowerState(Guid id,
             [FromBody] UpdateAssetPowerStateApiDto powerState)
         {
-            var state = PowerState.Off;
+            var state = powerState.Action;
             // Call to update the power state of the associated asset ports to on/off/cycle
-            if(powerState.Action.Equals( PowerState.On))
-            {
-                state = PowerState.On;
-            }
 
             var resp = await _powerService.setStates(id, state);
             var response = resp.MapTo<GetAssetPowerStateApiDto>();

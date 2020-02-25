@@ -4,6 +4,6 @@ namespace Web.Api.Dtos.Assets.Read
 {
     public class GetAssetPowerPortStateApiDto : GetAssetPowerPortApiDto
     {
-        public PowerState Status { get; set; }
+        public PowerAction Status { get; set; }
     }
 }

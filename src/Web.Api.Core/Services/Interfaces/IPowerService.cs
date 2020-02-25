@@ -9,7 +9,7 @@ namespace Web.Api.Core.Services.Interfaces
 {
     public interface IPowerService
     {
-        public Task<AssetPowerStateDto> setStates(Guid assetId, PowerState state);
+        public Task<AssetPowerStateDto> setStates(Guid assetId, PowerAction state);
 
         public Task<AssetPowerStateDto> getStates(Guid assetId);
 
