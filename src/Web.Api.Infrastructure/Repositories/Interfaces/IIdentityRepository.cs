@@ -58,6 +58,9 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
         {
             var identityResult = await _userManager.CreateAsync(user, password);
 
+            // basic access by default
+            await _userManager.AddToRoleAsync(user, "basic");
+
             return (identityResult, Guid.Parse(user.Id));
         }
 
