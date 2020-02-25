@@ -60,7 +60,6 @@ namespace Web.Api.Helpers
                 await identityRepository.CreateUserAsync(user, "@$8^5#QqsX8K");
             }
 
-            // sorry for the shit code, I don't really care at this point
             var adminUser = await userManager.FindByNameAsync("admin");
             if (!await userManager.IsInRoleAsync(adminUser, "admin"))
             {

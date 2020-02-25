@@ -55,6 +55,21 @@ namespace Web.Api.Controllers
             return CreatedAtAction(nameof(Get), new { id = createdUser.Id }, createdUser);
         }
 
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<UserDto>> Delete(Guid id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            } else if (user.FirstName == "Admin")
+            {
+                return Forbid();
+            }
+
+            return Ok(await _identityService.DeleteUserAsync(id));
+        }
+
         [HttpGet("{id}/roles")]
         public async Task<ActionResult<List<string>>> GetUserRoles(Guid id)
         {
@@ -66,8 +81,8 @@ namespace Web.Api.Controllers
             return Ok(await _userManager.GetRolesAsync(user));
         }
 
-        [HttpPost("{id}/roles")]
-        public async Task<IActionResult> PostUserRoles(Guid id, [FromBody] UpdateUserRolesApiDto roles)
+        [HttpPut("{id}/roles")]
+        public async Task<IActionResult> PostUserRoles(Guid id, [FromBody] UpdateUserRoleApiDto roles)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
@@ -75,27 +90,26 @@ namespace Web.Api.Controllers
                 return NotFound("User not found.");
             }
 
-            foreach (var role in _roleManager.Roles.ToList())
+            if (user.UserName == "admin")
             {
-                await _userManager.RemoveFromRoleAsync(user, role.Name);
+                return Forbid();
             }
 
+            var requestedRolesExist = true;
             foreach (var role in roles.Roles)
             {
-                var roleExists = await _roleManager.RoleExistsAsync(role);
-                if (!roleExists)
-                {
-                    return NotFound("Role not found.");
-                }
-
-                if (await _userManager.IsInRoleAsync(user, role))
-                {
-                    continue;
-                }
-
-                await _userManager.AddToRoleAsync(user, role);
+                requestedRolesExist &= await _roleManager.RoleExistsAsync(role);
             }
-            return Ok();
+            if (!requestedRolesExist)
+            {
+                return NotFound("One or more of the requested roles do not exist.");
+            }
+
+            var allRoles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, allRoles);
+
+            var add = await _userManager.AddToRolesAsync(user, roles.Roles);
+            return Ok(add);
         }
 
         [HttpGet("me")]

@@ -28,43 +28,46 @@
                     </v-toolbar>
 
                     <div class="text-center">
-                        <v-dialog v-model="permissionsDialog" width="250">
+                        <v-dialog v-model="permissionsDialog" width="35%">
                             <v-card>
                                 <v-card-title>
                                     Edit Permission Level for {{editedItem.username}}
                                 </v-card-title>
                                 <v-card-text>
                                     <v-container fluid>
-                                        <p>{{ permissionsRadio }}</p>
-                                        <v-radio-group v-model="permissionsRadio" :mandatory="false"> <!--should be editedItem.permission-->
-                                            <v-radio label="Regular" value="regular"></v-radio>
-                                            <v-radio label="Administrator" value="admin"></v-radio>
-                                        </v-radio-group>
+                                            <v-checkbox label="Basic"
+                                                        v-model="editedRoles"
+                                                        disabled
+                                                        value="basic"></v-checkbox>
+                                            <v-checkbox label="Administrator" 
+                                                        v-model="editedRoles"
+                                                        value="admin"></v-checkbox>
                                     </v-container>
                                 </v-card-text>
                                 <v-card-actions>
                                     <v-spacer></v-spacer>
-                                    <v-btn color="primary" text @click="savePermissions(item)">Save</v-btn>
                                     <v-btn color="primary" text @click="closeDialog">Close</v-btn>
+                                    <v-btn color="primary" text @click="savePermissions">Save</v-btn>
                                 </v-card-actions>
                             </v-card>
                         </v-dialog>
                     </div>
                 </template>
 
-                <template v-slot:item.permission="{ item }">
+                <template v-slot:item.role="{ item }">
                     <v-row class="pl-3">
-                        {{item.username}}
-                        <v-icon v-if="admin"
-                                medium
-                                class="mr-2"
-                                @click="editPermissions(item)">mdi-pencil</v-icon>
+                        {{item.role}}
                     </v-row>
                 </template>
 
                 <template v-if="admin" v-slot:item.action="{ item }">
                     <v-row class="pl-5">
-                        <v-icon medium
+                        <v-icon v-if="showActionsForUser(item)"
+                                medium
+                                class="mr-2"
+                                @click="editPermissions(item)">mdi-pencil</v-icon>
+                        <v-icon v-if="showActionsForUser(item)"
+                                medium
                                 class="mr-2"
                                 @click="deleteItem(item)">mdi-delete</v-icon>
                     </v-row>
@@ -92,7 +95,6 @@ import Auth from "../auth"
             { text: 'Last Name', value: 'lastName' },
             { text: 'Username', value: 'username' },
             { text: 'Email', value: 'email' },
-            { text: 'Permission Level', value: 'permission' },
             { text: 'Actions', value: 'action', sortable: false },
         ],
         users: [],
@@ -110,9 +112,9 @@ import Auth from "../auth"
             email: '',
             username: '',
             password: ''
-        }, 
+        },
+        editedRoles: [],
         permissionsDialog: false,
-        permissionsRadio: '',
       }
     },
     computed: {
@@ -121,17 +123,7 @@ import Auth from "../auth"
         },
         filteredHeaders() {
                 return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
-            },
-    },
-
-    watch: {
-      dialog (val) {
-        val || this.close()
-      },
-      permissionsDialog (val) {
-        val || this.closeDialog()
-      },
-
+        },
     },
 
     async created() {
@@ -139,7 +131,11 @@ import Auth from "../auth"
     },
 
     methods: {
+        showActionsForUser(item) {
+            return !['admin', Auth.username()].includes(item.username);
+        },
         async initialize() {
+            this.loading = true
             this.users = await this.userRepository.list();
             this.loading = false;
         },
@@ -147,20 +143,25 @@ import Auth from "../auth"
             this.$router.push({ name: 'users-create' });
         },
         deleteItem(item) {
-            confirm('Are you sure you want to delete this user?') && this.userRepository.delete(item)
+            confirm('Are you sure you want to delete this user?') && this.userRepository.delete(item.id)
                 .then(async () => {
                     await this.initialize();
                 })
         },
         editPermissions(item) {
-            this.editedItem = Object.assign({}, item);
-            this.permissionsRadio = item.username; // change to permission prop - item.permission
-            this.permissionsDialog = true;
+            this.editedItem = item;
+            this.userRepository.findRole(item.id)
+                .then((roles) => {
+                    this.editedRoles = roles;
+                    this.permissionsDialog = true;
+                })
         },
-        savePermissions(item) {
-            // save new permissionsRadio value as user item's permission
-            // item.permission = this.permissionsRadio
-            this.userRepository.update(item);
+        savePermissions() {
+            this.userRepository.updateUserRoles(this.editedItem.id, { roles: this.editedRoles } )
+                .then(async () => {
+                    this.closeDialog();
+                    await this.initialize();
+                })
         },
         closeDialog() {
             this.permissionsDialog = false;
