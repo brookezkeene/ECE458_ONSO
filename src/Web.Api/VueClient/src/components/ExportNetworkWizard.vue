@@ -15,9 +15,26 @@
                         <v-card flat>
                             <v-container fill-height fluid>
                                 <v-label>
-                                    Input a host name to filter result by
+                                    Input an asset host name to filter result by
                                 </v-label>
                                 <v-text-field v-model="query.HostName">
+                                </v-text-field>
+                                <v-label>
+                                    Input a model vendor name to filter result by
+                                </v-label>
+                                <v-text-field v-model="query.Search">
+                                </v-text-field>
+                                <v-label>
+                                    Input a start rack to filter result by
+                                </v-label>
+                                <v-text-field v-model="startRack"
+                                              :rules="[rules.rackRules]">
+                                </v-text-field>
+                                <v-label>
+                                    Input an end rack to filter result by
+                                </v-label>
+                                <v-text-field v-model="endRack"
+                                              :rules="[rules.rackRules]">
                                 </v-text-field>
                             </v-container>
                         </v-card>
@@ -91,14 +108,26 @@
                     EndRow: '',
                     EndCol: 0,
                 },
+                startRack: '',
+                endRack: '',
                 rules: {
-                    rackRules: v => /[a-z][0-9]+$/.test(v) || 'Network port name cannot contain whitespace'
+                    rackRules: v => /[a-zA-Z][0-9]+$/.test(v) || 'Network port name cannot contain whitespace'
                 },
                 networkErrorDialog: false
             };
         },
         methods: {
             async setStep2() {
+                if (/^(?:|[a-zA-Z][0-9]+)*$/.test(this.startRack) && /^(?:|[a-zA-Z][0-9]+)*$/.test(this.endRack)) {
+                    if (this.startRack.length != 0) {
+                        this.query.StartRow = this.startRack[0];
+                        this.query.StartCol = parseInt(this.startRack.substring(1));
+                    }
+                    if (this.endRack.length != 0) {
+                        this.query.EndRow = this.endRack[0];
+                        this.query.EndCol = parseInt(this.endRack.substring(1));
+                    }
+                }
                 this.exportRaw = await this.exportRepository.exportNetwork(this.query);
 
                 /* eslint-disable no-unused-vars, no-console */
