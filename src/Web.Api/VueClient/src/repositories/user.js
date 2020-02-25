@@ -9,6 +9,13 @@ export default {
                 return response.data;
             });
     },
+    findRole(id) {
+        return axios.get(`${resource}/${id}/roles`)
+            .then(response => {
+                //console.log(response)
+                return response.data;
+            }).catch(error => error)
+    },
     list() {
         return axios.get(`${resource}`, { params: { pageSize: 2000000000 } })
             .then(response => {
@@ -18,11 +25,15 @@ export default {
     create(item) {
         return axios.post(`${resource}`, item).then(response => response.data).catch(error => error);
     },
+    createRole(item) {
+        //console.log(item);
+        return axios.post(`${resource}/${item.id}/roles`, item).then(response => response.data).catch(error => error);
+    },
     update(item) {
         return axios.put(`${resource}`, item).then(response => response.data).catch(error => error);
     },
-    delete(item) {
-        return axios.delete(`${resource}/${item.id}`)
+    delete(id) {
+        return axios.delete(`${resource}/${id}`)
             .then(response => {
                 return response.data;
             }).catch(error => error);

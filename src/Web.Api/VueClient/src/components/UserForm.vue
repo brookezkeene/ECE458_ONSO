@@ -26,7 +26,7 @@
                     </v-row>
                     <v-row>
                         <v-col cols="12" sm="6" md="6">
-                            <v-select v-model="editedItem.permission" label="Permission Level" :items="permissions"></v-select> <!--Add permissions field to v-model-->
+                            <v-select v-model="editedItem.role" label="Permission Level" :items="permissions"></v-select> <!--Add permissions field to v-model-->
                         </v-col>
                     </v-row>
                     <v-row>
@@ -73,7 +73,10 @@ export default {
             ],
             password1: '',
             password2: '',
-            permissions: ['Regular', 'Administrator'],
+            permissions: [
+                { text: 'Regular', value: 'basic' },
+                { text: 'Administrator', value: 'admin' },
+            ],
             rules: {
                 required: value => !!value || "Required.",
                 emailMatch: () => "The email and password you entered don't match",
@@ -92,7 +95,12 @@ export default {
                 lastName: '',
                 username: '',
                 email: '',
-                password: ''
+                password: '',
+                role: ''
+            },
+            roleItem: {
+                id:'',
+                name:'',
             },
             users: [],
         };
@@ -100,15 +108,18 @@ export default {
 
     
         async created() {
+            this.initialize();
+            
+        },
+
+    methods: {
+        async initialize() {
             this.users = await this.userRepository.list();
 
             this.editedItem = typeof this.id === 'undefined'
                 ? this.editedItem
                 : this.users.find(o => o.id === this.id);
-
         },
-
-    methods: {
         checkPassMatch() {
             if (this.password1 != this.password2) {
                 this.snackbar = false
@@ -116,12 +127,12 @@ export default {
                 this.editedItem.password = this.password1;
             }
         },
-        save () {
+        save() {
             this.userRepository.create(this.editedItem)
                 .then(async () => {
                             await this.initialize();
-                        })
-        this.close()
+                })
+            this.close()
         },
         close() {
             this.$router.push({name: 'users'})
