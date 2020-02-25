@@ -53,9 +53,6 @@ namespace Web.Api.Mappers
                 .ForMember(o => o.dest_hostname, opts => opts.MapFrom(src => src.ConnectedPort.Asset.Hostname))
                 .ForMember(o => o.dest_port, opts => opts.MapFrom(src => src.ConnectedPort.ModelNetworkPort.Name))
                 .ReverseMap();
-            CreateMap<AssetDto, ExportNetworkPortAssetDto>()
-                .ForMember(o => o.network_ports, opts => opts.MapFrom(src => src.NetworkPorts))
-                .ReverseMap();
         }
     }
 }

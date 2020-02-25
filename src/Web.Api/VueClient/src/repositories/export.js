@@ -15,7 +15,7 @@ export default {
             }).catch(error => error);
     },
     exportNetwork(query) {
-        return axios.get(`${resource}/networks`, { params: query })
+        return axios.get(`${resource}/networkports`, { params: query })
             .then(response => {
                 return response.data;
             }).catch(error => error);

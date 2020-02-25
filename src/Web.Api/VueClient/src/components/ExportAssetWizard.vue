@@ -15,16 +15,25 @@
                         <v-card flat>
                             <v-container fill-height fluid>
                                 <v-label>
-                                    Input a host name to filter result by
+                                    Input an asset host name to filter result by
                                 </v-label>
                                 <v-text-field v-model="query.HostName">
                                 </v-text-field>
+                                <v-label>
+                                    Input a model vendor name to filter result by
+                                </v-label>
                                 <v-text-field v-model="query.Search">
                                 </v-text-field>
+                                <v-label>
+                                    Input a start rack to filter result by
+                                </v-label>
                                 <v-text-field v-model="query.StartRow">
                                 </v-text-field>
                                 <v-text-field v-model="query.StartCol">
                                 </v-text-field>
+                                <v-label>
+                                    Input an end rack to filter result by
+                                </v-label>
                                 <v-text-field v-model="query.EndRow">
                                 </v-text-field>
                                 <v-text-field v-model="query.EndCol">
@@ -101,11 +110,14 @@
                     EndRow: '',
                     EndCol: 0,
                 },
+                startRack: '',
+                endRack:'',
                 assetErrorDialog: false
             };
         },
         methods: {
             async setStep2() {
+                
                 var temp = await this.exportRepository.exportAsset(this.query);
                 /* eslint-disable no-unused-vars, no-console */
                 console.log(temp.length);

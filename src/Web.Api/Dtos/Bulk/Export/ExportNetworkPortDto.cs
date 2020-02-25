@@ -5,9 +5,6 @@ using System.Threading.Tasks;
 
 namespace Web.Api.Dtos.Bulk.Export
 {
-    public class ExportNetworkPortAssetDto {
-        public List<ExportNetworkPortDto> network_ports {get; set;}
-    }
     public class ExportNetworkPortDto
     {
         public string src_hostname { get; set; }

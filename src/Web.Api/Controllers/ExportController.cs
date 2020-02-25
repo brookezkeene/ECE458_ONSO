@@ -60,13 +60,13 @@ namespace Web.Api.Controllers
         [HttpGet("networkports")]
         public async Task<ActionResult<List<ExportNetworkPortDto>>> Get([FromQuery] NetworkPortExportQuery query)
         {
-            var assets = await _assetService.GetNetworkPortExportAsync(query);
+            var ports = await _assetService.GetNetworkPortExportAsync(query);
             var response = new List<ExportNetworkPortDto>();
 
-            foreach (AssetDto asset in assets)
+            foreach (AssetNetworkPortDto port in ports)
             {
-                var NPasset = asset.MapTo<ExportNetworkPortAssetDto>();
-                response.AddRange((NPasset.MapTo<ExportNetworkPortAssetDto>()).network_ports);
+                var export = port.MapTo<ExportNetworkPortDto>();
+                response.Add(export);
             }
             
             return Ok(response);

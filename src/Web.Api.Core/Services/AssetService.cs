@@ -38,11 +38,11 @@ namespace Web.Api.Core.Services
             return assets.ToDto();
 
         }
-        public async Task<List<AssetDto>> GetNetworkPortExportAsync(NetworkPortExportQuery query)
+        public async Task<List<AssetNetworkPortDto>> GetNetworkPortExportAsync(NetworkPortExportQuery query)
         {
             query = query.ReformatQuery();
             System.Diagnostics.Debug.WriteLine(query.StartRow);
-            var assets = await _repository.GetAssetExportAsync(query.Search, query.Hostname, query.StartRow, query.StartCol, query.EndRow, query.EndCol);
+            var assets = await _repository.GetNetworkPortExportAsync(query.Search, query.Hostname, query.StartRow, query.StartCol, query.EndRow, query.EndCol);
             return assets.ToDto();
         }
         public async Task<Guid> CreateAssetAsync(AssetDto assetDto)
