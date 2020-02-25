@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Web.Api.Core.Dtos.Power;
 using Web.Api.Infrastructure.Entities;
 
 namespace Web.Api.Core.Dtos
@@ -76,5 +77,10 @@ namespace Web.Api.Core.Dtos
 
             return $"HPDU-{datacenter}-{rack}-{Location}";
         }
+    }
+
+    public class AssetPowerStateDto
+    {
+        public PowerState state { get; set; } 
     }
 }
