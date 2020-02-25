@@ -8,6 +8,8 @@ using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
 using Web.Api.Dtos;
 using Web.Api.Dtos.Bulk.Export;
+using Web.Api.Dtos.Models.Read;
+using Web.Api.Mappers;
 
 namespace Web.Api.Controllers
 {
@@ -28,7 +30,15 @@ namespace Web.Api.Controllers
         public async Task<ActionResult<List<ExportModelDto>>> Get([FromQuery] ModelExportQuery query)
         {
             var models = await _modelService.GetModelExportAsync(query);
-            return Ok(models);
+            var response = new List<ExportModelDto>();
+            if (models.Count() != 0)
+            {
+                foreach (ModelDto model in models)
+                {
+                    response.Add(model.MapTo<ExportModelDto>());
+                }
+            }
+            return Ok(response);
         }
 
         [HttpGet("assets")]

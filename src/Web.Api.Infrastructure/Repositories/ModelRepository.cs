@@ -50,6 +50,7 @@ namespace Web.Api.Infrastructure.Repositories
 
             var models = await _dbContext.Models
                 .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
+                .Include(x => x.NetworkPorts)
                 .AsNoTracking()
                 .ToListAsync();
             //models = models.Where(x => x.ModelNumber.Contains(search) || x.Vendor.Contains(search)).ToList();
