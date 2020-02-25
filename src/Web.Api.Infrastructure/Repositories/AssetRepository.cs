@@ -80,13 +80,13 @@ namespace Web.Api.Infrastructure.Repositories
                 .Include(x => x.Asset).ThenInclude(x => x.Rack).ThenInclude(x => x.Datacenter)
                 .Include(x => x.ConnectedPort).ThenInclude(x => x.ModelNetworkPort)
                 .Include(x => x.ConnectedPort).ThenInclude(x => x.Asset)
-                .Where(x => x.Asset.Rack.Column >= colStart)
-                .Where(x => x.Asset.Rack.Column <= colEnd)
+                //.Where(x => x.Asset.Rack.Column >= colStart)
+                //.Where(x => x.Asset.Rack.Column <= colEnd)
                 .WhereIf(!string.IsNullOrEmpty(search), modelCondition)
                 .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
                 .AsNoTracking()
                 .ToListAsync();
-            ports = ports.Where(x => x.Asset.Rack.Row[0] >= rowStart[0] && x.Asset.Rack.Row[0] <= rowEnd[0]).ToList();
+            ports = ports.Where(x => x.Asset.Rack.Row[0] >= rowStart[0] && x.Asset.Rack.Row[0] <= rowEnd[0] && x.Asset.Rack.Column >= colStart && x.Asset.Rack.Column <= colEnd).ToList();
 
             return ports;
         }

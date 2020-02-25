@@ -111,14 +111,26 @@
                 startRack: '',
                 endRack: '',
                 rules: {
-                    rackRules: v => /^(?:|[a-z][0-9]+)*$/.test(v) || 'This is not a valid Rack Address'
+                    rackRules: v => /^(?:|[a-zA-Z][0-9]+)*$/.test(v) || 'This is not a valid Rack Address'
                 },
                 assetErrorDialog: false
             };
         },
         methods: {
             async setStep2() {
-                
+
+                if (/^(?:|[a-zA-Z][0-9]+)*$/.test(this.startRack) && /^(?:|[a-zA-Z][0-9]+)*$/.test(this.endRack)) {
+                    if (this.startRack.length != 0) {
+                        this.query.StartRow = this.startRack[0];
+                        this.query.StartCol = parseInt(this.startRack.substring(1));
+                    }
+                    if (this.endRack.length != 0) {
+                        this.query.EndRow = this.endRack[0];
+                        this.query.EndCol = parseInt(this.endRack.substring(1));
+                    }
+                }
+
+
                 var temp = await this.exportRepository.exportAsset(this.query); 
                 /* eslint-disable no-unused-vars, no-console */
                 console.log(temp.length);
