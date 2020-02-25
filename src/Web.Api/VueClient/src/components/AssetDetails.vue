@@ -107,8 +107,8 @@
             async fetchasset() {
                 if (!this.loading) this.loading = true;
                 /*eslint-disable*/
-                console.log(this.id);
                 this.asset = await this.assetRepository.find(this.id);
+                console.log(this.asset);
                 this.loading = false;
                 if (this.asset.owner === undefined) {
                     this.ownerPresent = false;
