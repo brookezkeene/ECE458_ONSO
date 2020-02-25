@@ -57,12 +57,14 @@ namespace Web.Api.Infrastructure.Repositories
                 .Include(x => x.Model)
                 .Include(x => x.Owner)
                 .Include(x => x.Rack)
-                .Where(x => x.Rack.Row[0] >= rowStart[0] && x.Rack.Column >= colStart && x.Rack.Row[0] <= rowEnd[0] && x.Rack.Column <= colEnd)
+                .Where(x => x.Rack.Column >= colStart)
+                .Where(x => x.Rack.Column <= colEnd)
                 .WhereIf(!string.IsNullOrEmpty(search), modelCondition)
                 .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
                 .AsNoTracking()
                 .ToListAsync();
-
+                assets = assets.Where(x => x.Rack.Row[0] >= rowStart[0] && x.Rack.Row[0] <= rowEnd[0]).ToList();
+    
 
             return assets;
         }

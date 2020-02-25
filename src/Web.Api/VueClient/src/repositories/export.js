@@ -8,7 +8,7 @@ export default {
                 return response.data;
             }).catch(error => error);
     },
-    exportInstance(query) {
+    exportAsset(query) {
         return axios.get(`${resource}/assets`, { params: query })
             .then(response => {
                 return response.data;

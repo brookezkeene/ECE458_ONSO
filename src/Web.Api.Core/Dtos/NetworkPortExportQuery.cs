@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Web.Api.Core.Dtos
 {
-    public class AssetExportQuery
+    public class NetworkPortExportQuery
     {
         public string Search { get; set; }
         public string Hostname { get; set; }
@@ -14,17 +14,18 @@ namespace Web.Api.Core.Dtos
         public string EndRow { get; set; }
         public int EndCol { get; set; }
     }
-    public static class AssetExportQueryExtensions
+    public static class NetworkPortExportQueryExtensions
     {
-        public static AssetExportQuery ReformatQuery(this AssetExportQuery query)
+        public static NetworkPortExportQuery ReformatQuery(this NetworkPortExportQuery query)
         {
-            var upperQuery = new AssetExportQuery { };
+            var upperQuery = new NetworkPortExportQuery { };
             if (!string.IsNullOrEmpty(query.StartRow))
             {
                 upperQuery.StartRow = query.StartRow.ToUpper();
                 upperQuery.StartCol = query.StartCol;
             }
-            else {
+            else
+            {
                 upperQuery.StartRow = "A";
                 upperQuery.StartCol = 1;
 
@@ -43,7 +44,8 @@ namespace Web.Api.Core.Dtos
             if (!string.IsNullOrEmpty(query.Search))
             {
                 upperQuery.Search = query.Search.ToUpper();
-            } else
+            }
+            else
             {
                 upperQuery.Search = "";
             }

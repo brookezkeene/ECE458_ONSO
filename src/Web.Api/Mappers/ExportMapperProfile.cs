@@ -28,16 +28,33 @@ namespace Web.Api.Mappers
                 .ForMember(o => o.network_ports, opts => opts.MapFrom(src => src.NetworkPorts))
                 .ReverseMap();
             CreateMap<AssetDto, ExportAssetDto>()
+                .ForMember(o => o.asset_number, opts => opts.MapFrom(src => src.AssetNumber))
                 .ForMember(o => o.hostname, opts => opts.MapFrom(src => src.Hostname))
+                .ForMember(o => o.datacenter, opts => opts.MapFrom(src => src.Rack.Datacenter.Name))
                 .ForMember(o => o.rack, opts => opts.MapFrom(src => src.Rack.Address))
                 .ForMember(o => o.rack_position, opts => opts.MapFrom(src => src.RackPosition))
                 .ForMember(o => o.vendor, opts => opts.MapFrom(src => src.Model.Vendor))
                 .ForMember(o => o.model_number, opts => opts.MapFrom(src => src.Model.ModelNumber))
                 .ForMember(o => o.owner, opts => opts.MapFrom(src => src.Owner.Username))
                 .ForMember(o => o.comment, opts => opts.MapFrom(src => src.Comment))
+                .ForMember(o => o.power_port, opts => opts.MapFrom(src => src.PowerPorts))
                 .ReverseMap();
             CreateMap<ModelNetworkPortDto, ExportModelNetworkPortDto>()
                 .ForMember(o => o.network_port_name, opts => opts.MapFrom(src => src.Name))
+                .ReverseMap();
+            CreateMap<AssetPowerPortDto, ExportAssetPowerPortDto>()
+                .ForMember(o => o.power_port_location, opts => opts.MapFrom(src => src.PduPort.Pdu.Location))
+                .ForMember(o => o.power_port_number, opts => opts.MapFrom(src => src.PduPort.Number))
+                .ReverseMap();
+            CreateMap<AssetNetworkPortDto, ExportNetworkPortDto>()
+                .ForMember(o => o.src_hostname, opts => opts.MapFrom(src => src.Asset.Hostname))
+                .ForMember(o => o.src_port, opts => opts.MapFrom(src => src.ModelNetworkPort.Name))
+                .ForMember(o => o.src_mac, opts => opts.MapFrom(src => src.MacAddress))
+                .ForMember(o => o.dest_hostname, opts => opts.MapFrom(src => src.ConnectedPort.Asset.Hostname))
+                .ForMember(o => o.dest_port, opts => opts.MapFrom(src => src.ConnectedPort.ModelNetworkPort.Name))
+                .ReverseMap();
+            CreateMap<AssetDto, ExportNetworkPortAssetDto>()
+                .ForMember(o => o.network_ports, opts => opts.MapFrom(src => src.NetworkPorts))
                 .ReverseMap();
         }
     }

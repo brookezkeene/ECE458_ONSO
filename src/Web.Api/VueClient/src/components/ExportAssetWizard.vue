@@ -17,7 +17,7 @@
                                 <v-label>
                                     Input a host name to filter result by
                                 </v-label>
-                                <v-text-field v-model="query.hostName">
+                                <v-text-field v-model="query.HostName">
                                 </v-text-field>
                             </v-container>
                         </v-card>
@@ -87,16 +87,38 @@
                     Search: '',
                     HostName: '',
                     StartRow: '',
-                    StartCol: '',
+                    StartCol: 0,
                     EndRow: '',
-                    EndCol: '',
+                    EndCol: 0,
                 },
                 assetErrorDialog: false
             };
         },
         methods: {
             async setStep2() {
-                this.exportRaw = await this.exportRepository.exportModel(this.query);
+                var temp = await this.exportRepository.exportAsset(this.query);
+                /* eslint-disable no-unused-vars, no-console */
+                console.log(temp.length);
+                console.log(temp);
+                console.log("This is inside of temp");
+                var i; var j;
+                for (i = 0; i < temp.length; i++) {
+                    var powerPorts = temp[i].power_port;
+                    var powPortLength = powerPorts.length;
+                    delete temp[i].power_port;
+                    for (j = 0; j < powPortLength; j++) {
+                        var name = "power_port_name_" + (j + 1).toString();
+                        temp[i][`${name}`] = powerPorts[j].power_port_location + powerPorts[j].power_port_number;
+                    }
+                }
+
+                this.exportRaw = temp;
+
+                /* eslint-disable no-unused-vars, no-console */
+                console.log(this.exportRaw.length);
+                console.log(this.exportRaw);
+                console.log("This is inside of export raw");
+
                 this.step = 2
             },
             close() {

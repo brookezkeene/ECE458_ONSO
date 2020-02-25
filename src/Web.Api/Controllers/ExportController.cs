@@ -42,11 +42,34 @@ namespace Web.Api.Controllers
         }
 
         [HttpGet("assets")]
-        public async Task<ActionResult<List<ExportModelDto>>> Get([FromQuery] AssetExportQuery query)
+        public async Task<ActionResult<List<ExportAssetDto>>> Get([FromQuery] AssetExportQuery query)
         {
             var assets = await _assetService.GetAssetExportAsync(query);
-            return Ok(assets);
+            var response = new List<ExportAssetDto>();
+            if (assets.Count() != 0)
+            {
+                foreach (AssetDto asset in assets)
+                {
+                    response.Add(asset.MapTo<ExportAssetDto>());
+                }
+            }
+            return Ok(response);
         }
 
+
+        [HttpGet("networkports")]
+        public async Task<ActionResult<List<ExportNetworkPortDto>>> Get([FromQuery] NetworkPortExportQuery query)
+        {
+            var assets = await _assetService.GetNetworkPortExportAsync(query);
+            var response = new List<ExportNetworkPortDto>();
+
+            foreach (AssetDto asset in assets)
+            {
+                var NPasset = asset.MapTo<ExportNetworkPortAssetDto>();
+                response.AddRange((NPasset.MapTo<ExportNetworkPortAssetDto>()).network_ports);
+            }
+            
+            return Ok(response);
+        }
     }
 }
