@@ -103,8 +103,18 @@ namespace Web.Api.Infrastructure.Repositories
                 for (var col = colStart; col <= colEnd; col++)
                 {
                     if (!await _dbContext.Racks.AnyAsync(o => o.Row == row && o.Column == col))
-                    { 
-                        await _dbContext.Racks.AddAsync(new Rack { Column = col, Row = row, DatacenterId = datacenterId });
+                    {
+                        await _dbContext.Racks.AddAsync(new Rack
+                        {
+                            Column = col, Row = row, DatacenterId = datacenterId,
+                            Pdus = (new[] {PduLocation.L, PduLocation.R}).Select(loc => new Pdu
+                                {
+                                    NumPorts = 24, Location = loc, Ports = Enumerable.Range(1, 24)
+                                        .Select(n => new PduPort {Number = n})
+                                        .ToList()
+                                })
+                                .ToList()
+                        });
                     }
                 }
             }

@@ -56,55 +56,8 @@ namespace AspNet.Security.OAuth.Duke
             var context = new OAuthCreatingTicketContext(principal, properties, Context, Scheme, Options, Backchannel, tokens, jsonDocument.RootElement);
             context.RunClaimActions();
 
-            var dukeInfo = JsonConvert.DeserializeObject<DukeOAthInfo>(payload);
-            identity.AddClaim(new Claim(ClaimTypes.Email, dukeInfo.mail));
-            identity.AddClaim(new Claim(ClaimTypes.GivenName, dukeInfo.firstName));
-            identity.AddClaim(new Claim(ClaimTypes.Surname, dukeInfo.lastName));
-            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, dukeInfo.netid));
-
             await Options.Events.CreatingTicket(context);
-            var what = new AuthenticationTicket(context.Principal, context.Properties, Scheme.Name);
-            return what;
+            return new AuthenticationTicket(context.Principal, context.Properties, Scheme.Name);
         }
-    }
-    public class LDAP
-    {
-        public string dn { get; set; }
-        public string key { get; set; }
-        public List<string> objectClass { get; set; }
-        public string duSponsor { get; set; }
-    }
-
-    public class Settings
-    {
-        public string homeDirectory { get; set; }
-        public string remoteHomeDirectory { get; set; }
-        public string loginShell { get; set; }
-        public string uidNumber { get; set; }
-        public string gidNumber { get; set; }
-    }
-
-    public class DukeOAthInfo
-    {
-        public string duPSAcadCareerC1 { get; set; }
-        public string duPSAcadCareerDescC1 { get; set; }
-        public string duPSAcadProgC1 { get; set; }
-        public string duDukeidHistory { get; set; }
-        public string duDukeID { get; set; }
-        public string eduPersonPrimaryAffiliation { get; set; }
-        public string displayName { get; set; }
-        public string duMiddleName1 { get; set; }
-        public string eduPersonPrincipalName { get; set; }
-        public string mail { get; set; }
-        public string duSAPOrgUnit { get; set; }
-        public string duSAPCompany { get; set; }
-        public string duSAPCompanyDesc { get; set; }
-        public string netid { get; set; }
-        public string lastName { get; set; }
-        public string firstName { get; set; }
-        public string nickname { get; set; }
-        public string gradYear { get; set; }
-        public LDAP LDAP { get; set; }
-        public Settings settings { get; set; }
     }
 }
