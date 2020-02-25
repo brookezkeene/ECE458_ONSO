@@ -57,7 +57,7 @@ namespace Web.Api.Helpers
                     Email = "admin@test.com",
                     UserName = "admin"
                 };
-                await identityRepository.CreateUserAsync(user, "@$8^5#QqsX8K");
+                await identityRepository.CreateUserAsync(user, "@$8^5#QqsX8K", "admin");
             }
 
             // sorry for the shit code, I don't really care at this point
