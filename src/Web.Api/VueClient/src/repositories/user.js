@@ -25,9 +25,9 @@ export default {
     create(item) {
         return axios.post(`${resource}`, item).then(response => response.data).catch(error => error);
     },
-    createRole(item) {
+    createRole(id, item) {
         //console.log(item);
-        return axios.post(`${resource}/${item.id}/roles`, item).then(response => response.data).catch(error => error);
+        return axios.post(`${resource}/${id}/roles`, item).then(response => response.data).catch(error => error);
     },
     update(item) {
         return axios.put(`${resource}`, item).then(response => response.data).catch(error => error);

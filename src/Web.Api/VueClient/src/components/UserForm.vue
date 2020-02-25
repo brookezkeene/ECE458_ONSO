@@ -26,7 +26,7 @@
                     </v-row>
                     <v-row>
                         <v-col cols="12" sm="6" md="6">
-                            <v-select v-model="editedItem.role" label="Permission Level" :items="permissions"></v-select> <!--Add permissions field to v-model-->
+                            <v-select v-model="editedItem.role" label="Permission Level" :items="permissions"></v-select>
                         </v-col>
                     </v-row>
                     <v-row>
