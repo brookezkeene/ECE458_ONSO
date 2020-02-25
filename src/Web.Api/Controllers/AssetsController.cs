@@ -105,12 +105,12 @@ namespace Web.Api.Controllers
         [HttpPut("{id}/power")]
         public async Task<ActionResult<GetAssetPowerStateApiDto>> PostPowerState(Guid id,
             [FromBody] UpdateAssetPowerStateApiDto powerState)
-        { 
-        
+        {
+
             // Call to update the power state of the associated asset ports to on/off/cycle
 
 
-            
+
 
             return Ok(null);
         }

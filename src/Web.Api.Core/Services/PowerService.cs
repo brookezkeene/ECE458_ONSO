@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Dtos.Power;
+using Newtonsoft.Json;
 
 namespace Web.Api.Core.Services
 {
@@ -41,6 +42,8 @@ namespace Web.Api.Core.Services
                     d => d.Select(o => o.PduPort.Number)
                           .ToList());
 
+            var powerStates = new List<AssetPowerPortStateDto>();
+
             foreach (var kvp in pduPorts)
             {
                 var response = await Client.GetAsync(
@@ -48,17 +51,71 @@ namespace Web.Api.Core.Services
                 response.EnsureSuccessStatusCode();
                 var parsedResponse = ParseResponse(await response.Content.ReadAsStringAsync());
                 var statesICareAbout = kvp.Value.Select(i => parsedResponse[i]);
-            }
+                var state = PowerState.Off;
+                if(statesICareAbout.Equals("ON"))
+                {
+                    state = PowerState.On;
+                }
+                var powerPortState = new AssetPowerPortStateDto() {
+                    Port = kvp.Key.ToString(),
+                    Status = state
+                };
+                powerStates.Add(powerPortState);
 
-            var ret = new AssetPowerStateDto();
+        }
+            var ret = new AssetPowerStateDto()
+            {
+                Id = assetId,
+                PowerPorts = powerStates
+            };
 
-            return statesICareAbout;
-            
+            return ret;
         }
 
-        public async Task<AssetPowerStateDto> setState(Guid assetId, PowerState state)
+        public async Task<AssetPowerStateDto> setStates(Guid assetId, PowerState state)
         {
 
+            var pduPorts = (await _assetService.GetAssetAsync(assetId))
+                .PowerPorts
+                .Where(o => o.PduPort != null)
+                .GroupBy(o => o.ToString())
+                .ToDictionary(d => d.Key,
+                    d => d.Select(o => o.PduPort.Number)
+                          .ToList());
+            var powerStates = new List<AssetPowerPortStateDto>();
+
+            foreach (var kvp in pduPorts)
+            {
+                // data is pdu: (hpdu-rtp1-A01L) (rack address + pdunumber + (LorR)
+                // port: number
+                // v: on, off
+                foreach (var port in kvp.Value)
+                {
+
+                    var requestData = new Data();
+                    requestData.pdu = kvp.Key.ToString();
+                    requestData.port = port.ToString();
+                    requestData.v = state.ToString().ToLower();
+
+                    var json = JsonConvert.SerializeObject(requestData);
+                    var data = new StringContent(json, Encoding.UTF8, "application/json");
+                    var response = await Client.PostAsync("/power.php", data);
+
+                    var powerPortState = new AssetPowerPortStateDto()
+                    {
+                        Port = kvp.Key.ToString(),
+                        Status = state
+                    };
+
+                    powerStates.Add(powerPortState);
+                }
+            }
+            var ret = new AssetPowerStateDto()
+            {
+                Id = assetId,
+                PowerPorts = powerStates
+            };
+            return ret;
         }
 
         private static IDictionary<int, string> ParseResponse(string response)
@@ -70,3 +127,9 @@ namespace Web.Api.Core.Services
         }
     }
 }
+
+public class Data {
+    public string pdu { get; set; }
+    public string port { get; set; }
+    public string v { get; set; }
+    }

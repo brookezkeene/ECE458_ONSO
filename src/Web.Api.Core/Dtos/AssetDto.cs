@@ -79,8 +79,4 @@ namespace Web.Api.Core.Dtos
         }
     }
 
-    public class AssetPowerStateDto
-    {
-        public PowerState state { get; set; } 
-    }
 }
