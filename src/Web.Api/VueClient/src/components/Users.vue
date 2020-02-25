@@ -56,7 +56,7 @@
                 <template v-slot:item.role="{ item }">
                     <v-row class="pl-3">
                         {{item.role}}
-                        <v-icon v-if="admin"
+                        <v-icon v-if="admin && item.username != 'admin'"
                                 medium
                                 class="mr-2"
                                 @click="editPermissions(item)">mdi-pencil</v-icon>
@@ -65,7 +65,8 @@
 
                 <template v-if="admin" v-slot:item.action="{ item }">
                     <v-row class="pl-5">
-                        <v-icon medium
+                        <v-icon v-if="item.username != 'admin'"
+                                medium
                                 class="mr-2"
                                 @click="deleteItem(item)">mdi-delete</v-icon>
                     </v-row>
