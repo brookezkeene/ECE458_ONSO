@@ -62,7 +62,11 @@ namespace Web.Api.Controllers
             if (user == null)
             {
                 return NotFound("User not found.");
+            } else if (user.FirstName == "Admin")
+            {
+                return Forbid();
             }
+
             return Ok(await _identityService.DeleteUserAsync(id));
         }
 
@@ -84,6 +88,9 @@ namespace Web.Api.Controllers
             if (user == null)
             {
                 return NotFound("User not found.");
+            } else if (user.FirstName == "Admin")
+            {
+                return Forbid();
             }
 
             var otherRole = "basic";
