@@ -10,6 +10,7 @@ using Web.Api.Core;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
 using Web.Api.Dtos;
+using Web.Api.Dtos.Assets.Read;
 using Web.Api.Dtos.Datacenters;
 using Web.Api.Dtos.Datacenters.Create;
 using Web.Api.Dtos.Datacenters.Read;
@@ -41,6 +42,18 @@ namespace Web.Api.Controllers
             return Ok(response);
         }
 
+
+        [HttpGet("{id}/networkports")]
+        public async Task<ActionResult<List<GetAssetNetworkPortApiDto>>> GetNetworks(Guid id)
+        {
+            var ports = await _datacenterService.GetNetworkPortsOfDataCenterAsync(id);
+            var response = new List<GetAssetNetworkPortApiDto>();
+            for(int i = 0; i<ports.Count(); i++)
+            {
+                response.Add(ports[i].MapTo<GetAssetNetworkPortApiDto>());
+            }
+            return response;
+        }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<GetDatacenterApiDto>> Get(Guid id)

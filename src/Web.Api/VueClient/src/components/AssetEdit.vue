@@ -129,9 +129,13 @@
                                             <v-spacer></v-spacer>
                                             <p>{{port.name}}</p>
                                             <v-spacer></v-spacer>
-                                            <v-select v-model="editedItem.networkPorts[index].connectedPortId"
-                                                      placeholder="Network Port">
-                                            </v-select>
+                                            <v-autocomplete v-model="editedItem.networkPorts[index].connectedPortId"
+                                                            :items="networks"
+                                                            item-text="nameRackAssetNum"
+                                                            item-value="id"
+                                                            label="Connected Network Port"
+                                                            persistent-hint>
+                                            </v-autocomplete>
                                             <v-spacer></v-spacer>
                                         </v-layout>
                                     </v-container>
@@ -209,6 +213,7 @@
                 assets: [],
                 users: [],
                 racks: [],
+                networks: [],
                 datacenters: [],
                 loading: false,
                 titles: [
@@ -232,6 +237,7 @@
                     modelId: '',
                     assetNumber: '000000'
                 },
+                selectedModel: [],
                 datacenterID: '',
                 rackNumber: 0,
                 networkPorts: [], // array of objects that contains name and number
@@ -260,6 +266,7 @@
             for (const model of this.models) {
                 model.vendorModelNo = model.vendor + " " + model.modelNumber;
             }
+
         },
 
         computed: {
@@ -278,9 +285,19 @@
         },
         methods: {
             save() {
+                /* eslint-disable no-unused-vars, no-console */
+                        console.log(this.selectedModel.networkPorts[0].id);
+                        console.log('is this not being hit1');
                 if (typeof this.id !== 'undefined') {
+                    for (var j = 0; j < this.editedItem.networkPorts.length; j++) {
+                        this.editedItem.networkPorts[j].modelNetworkPortId = this.selectedModel.networkPorts[i].id;
+                    }
                     this.assetRepository.update(this.editedItem).then(this.close());
                 } else {
+
+                    for (var i = 0; i < this.editedItem.networkPorts.length; i++) {
+                        this.editedItem.networkPorts[i].modelNetworkPortId = this.selectedModel.networkPorts[i].id;
+                    }
                     this.assetRepository.create(this.editedItem).then(this.close());
                 }
             },
@@ -288,9 +305,12 @@
                 this.$router.push({ name: 'assets' })
             },
             async sendNetworkPortRequest() {
-                var networks = await this.datacenterRepository.networtPorts(this.datacenterID);
+                this.networks = await this.datacenterRepository.networkPorts(this.datacenterID);
                 /* eslint-disable no-unused-vars, no-console */
-                console.log(networks);
+                console.log(this.networks);
+                for (const network of this.networks) {
+                    network.nameRackAssetNum = network.name + " " + network.macAddress;
+                }
             },
             async updateRacks() {
                 if (this.datacenterID != this.editedItem.datacenter) {
@@ -301,10 +321,9 @@
                 return false;
             },
             async modelSelected() {
-                /* eslint-disable no-unused-vars, no-console */
-                var selectedModel = await this.modelRepository.find(this.editedItem.modelId);
-                this.makeNetworkPorts(selectedModel);
-                this.makePowerPorts(selectedModel);
+                this.selectedModel = await this.modelRepository.find(this.editedItem.modelId);
+                this.makeNetworkPorts(this.selectedModel);
+                this.makePowerPorts(this.selectedModel);
             },
             makeNetworkPorts(model) {
                 var networkPortsArray = new Array();

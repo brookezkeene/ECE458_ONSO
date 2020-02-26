@@ -11,7 +11,8 @@ export default {
             });
     },
     networkPorts(id) {
-        return axios.getNetwork(`${resource}/networkports/${id}`).then(response => { return response.data; }).catch(error => error);
+        return axios.get(`${resource}/${id}/networkports`)
+            .then(response => { return response.data; }).catch(error => error);
     },
     list() {
         return axios.get(`${resource}`, { params: { pageSize: 2000000000 } })
