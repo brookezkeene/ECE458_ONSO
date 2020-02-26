@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Web.Api.Core.Dtos.Power;
 using Web.Api.Infrastructure.Entities;
 
 namespace Web.Api.Core.Dtos
@@ -71,10 +72,19 @@ namespace Web.Api.Core.Dtos
 
         public override string ToString()
         {
-            var datacenter = Rack.Datacenter.Name;
-            var rack = Rack.Address;
+            var datacenter = Rack.Datacenter.Name.ToLower();
+            var rack = Rack.Address.ToUpper();
 
-            return $"HPDU-{datacenter}-{rack}-{Location}";
+            return $"hpdu-{datacenter}-{rack}{Location}";
+        }
+
+        public string ToPdu()
+        {
+            var datacenter = Rack.Datacenter.Name.ToLower();
+            var rack = Rack.Address.ToUpper();
+
+            return $"{datacenter}-{rack}{Location}";
         }
     }
+
 }

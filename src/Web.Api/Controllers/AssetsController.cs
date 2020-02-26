@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Web.Api.Common;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Dtos.Power;
+using Web.Api.Core.Services;
 using Web.Api.Core.Services.Interfaces;
 using Web.Api.Dtos;
 using Web.Api.Dtos.Assets;
@@ -26,11 +27,13 @@ namespace Web.Api.Controllers
     {
         private readonly IAssetService _assetService;
         private readonly IApiErrorResources _errorResources;
+        private readonly PowerService _powerService;
 
-        public AssetsController(IAssetService assetService, IApiErrorResources errorResources)
+        public AssetsController(IAssetService assetService, IApiErrorResources errorResources, PowerService powerService)
         {
             _assetService = assetService;
             _errorResources = errorResources;
+            _powerService = powerService;
         }
 
         [HttpGet]
@@ -76,38 +79,25 @@ namespace Web.Api.Controllers
 
         [HttpGet("{id}/power")]
         public async Task<ActionResult<GetAssetPowerStateApiDto>> GetPowerState(Guid id)
+        
         {
-            var example = new GetAssetPowerStateApiDto()
-            {
-                Id = id,
-                PowerPorts = new List<GetAssetPowerPortStateApiDto>()
-                {
-                    new GetAssetPowerPortStateApiDto()
-                    {
-                        Id = Guid.NewGuid(),
-                        Number = 1,
-                        PduPort = "L1",
-                        PduPortId = Guid.NewGuid(),
-                        Status = PowerState.On
-                    },
-                    new GetAssetPowerPortStateApiDto()
-                    {
-                        Id = Guid.NewGuid(),
-                        Number = 2,
-                        PduPort = "R1",
-                        PduPortId = Guid.NewGuid(),
-                        Status = PowerState.Off
-                    }
-                }
-            };
-            return Ok(example);
+            var resp = await _powerService.getStates(id);
+            var response = resp.MapTo<GetAssetPowerStateApiDto>();
+
+            return Ok(response);
         }
 
         [HttpPut("{id}/power")]
         public async Task<ActionResult<GetAssetPowerStateApiDto>> PostPowerState(Guid id,
             [FromBody] UpdateAssetPowerStateApiDto powerState)
         {
-            return Ok(null);
+            var state = powerState.Action;
+            // Call to update the power state of the associated asset ports to on/off/cycle
+
+            var resp = await _powerService.setStates(id, state);
+            var response = resp.MapTo<GetAssetPowerStateApiDto>();
+
+            return Ok(response);
         }
 
     }

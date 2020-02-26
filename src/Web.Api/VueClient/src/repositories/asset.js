@@ -2,11 +2,27 @@
 
 import axios from 'axios';
 const resource = '/assets';
+
 export default {
     find(id) {
         return axios.get(`${resource}/${id}`)
             .then(response => {
                 return response.data;
+            });
+    },
+    getPowerPortState(powerportid) {
+        return axios.get(`${resource}/${powerportid}/power`)
+            .then(response => {
+                return response.data;
+            })
+    },
+    postPowerState(id, state) {
+        return axios.put(`${resource}/${id}/power`, state)
+            .then(response => {
+                console.log(response);
+                return response.data;
+            }).catch(error => {
+                console.log(error);
             });
     },
     list() {

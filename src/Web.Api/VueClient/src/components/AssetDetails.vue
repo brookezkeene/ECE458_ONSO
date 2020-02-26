@@ -39,17 +39,22 @@
                         <router-link :to="{ name: 'model-details', params: { id: asset.modelId } }"> {{ asset.modelNumber }} </router-link>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
+                        <!--power port connections-->
                         <v-label>Power Port Connections: </v-label>
-                        <v-card-text>{{asset.powerPorts}}</v-card-text>
+                        <v-scroll>
+                            <v-card flat class="overflow-y-auto">
+                                <div v-for="(port,index) in asset.powerPorts" :key="index">
+                                    <v-card-text>{{port.number}} : {{port.pduPort}}</v-card-text>
+                                </div>
+                            </v-card>
+                        </v-scroll>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                        <v-label>Power Ports: </v-label>
-                        <v-card-text> {{asset.powerPorts}} </v-card-text> <!--powerPorts-->
-                        <a v-if="!viewNames" href="#" @click="showNames">View Power Port Status</a>
-                        <a v-else href="#" @click="hideNames">Hide Power Port Status</a>
+                        <v-btn small color="primary" v-if="!viewNames" @click="showNames">View Power Port Status</v-btn>
+                        <v-btn dark small color="primary" v-else href @click="hideNames">Hide Power Port Status</v-btn>
                         <div v-if="viewNames">
-                            <v-card max-height="300px" class="overflow-y-auto" outlined=true flat>
-                                <v-card-text v-for="port in powerPorts" :key="port"> Port {{port.pduPort}}: {{port.status}} </v-card-text>
+                            <v-card max-height="300px" class="overflow-y-auto" flat>
+                                <v-card-text v-for="(object,index) in powerPorts.powerPorts" :key="index"> Port {{object.port}}: {{object.status}} </v-card-text>
                             </v-card>
                         </div>
                     </v-col>
@@ -64,7 +69,33 @@
             <a href="javascript:history.go(-1)"> Go Back</a>
 
         </v-card>
+
+        <!--<template name="powerPortTable">
+            <p>Power Ports</p>
+            <v-container fill max-width="50%">
+                <v-simple-table dense class="text-center">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Asset Port Number</th>
+                            <th class="text-center">Pdu Port</th>
+                            <th class="text-center">Power</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(object, index) in asset.powerPorts" :key="index">
+                            <td> {{object.number}} </td>
+                            <td>{{ object.pduPort }}</td>
+                        </tr>
+                        <tr v-for="(object, index) in powerPorts.powerPorts" :key="index">
+                            <td> {{object.status}} </td>
+                        </tr>
+                    </tbody>
+                </v-simple-table>
+            </v-container>
+        </template>-->
+
     </div>
+
 </template>
 
 <script>
@@ -85,36 +116,50 @@
                     comment: '',
                     vendor: '',
                     modelNumber: '',
+                    powerPorts: [],
                 },
                 ownerPresent: true, // in case the asset does not have an owner, don't need null pointer bc not required.
                 viewNames: false,
-                powerPorts: [ // remove hardcoded powerPort data
-                    { pduPort: 'a', status: 'on' },
-                    { pduPort: 'b', status: 'off' },
-                    { pduPort: 'c', status: 'on' },
-                    { pduPort: 'd', status: 'off' },
-                    { pduPort: 'e', status: 'on' },
-                    { pduPort: 'f', status: 'on' },
-                    { pduPort: 'g', status: 'on' },
-                ],
-                    
+                powerPorts: {},
             };
         },
         created() {
-            this.fetchasset();
+            this.initialize();
         },
         methods: {
-            async fetchasset() {
-                if (!this.loading) this.loading = true;
+            async initialize() {
                 /*eslint-disable*/
-                console.log(this.id);
+                if (!this.loading) this.loading = true;
                 this.asset = await this.assetRepository.find(this.id);
+                console.log(this.asset);
                 this.loading = false;
                 if (this.asset.owner === undefined) {
                     this.ownerPresent = false;
                 }
             },
-            showNames() {
+            async fetchPowerPortIds() {
+                var powerPortStates = [];
+                /*eslint-disable*/
+                powerPortStates = await this.assetRepository.getPowerPortState(this.asset.id);
+                console.log(powerPortStates);
+                for (var i = 0; i<powerPortStates.powerPorts.length; i++) {
+                    if (powerPortStates.powerPorts[i].status=='0') {
+                        powerPortStates.powerPorts[i].status = 'On';
+                        var name = powerPortStates.powerPorts[i].port.split('-');
+                        console.log(name);
+                        powerPortStates.powerPorts[i].port = name[2][3] + " " + name[2][4];
+                    } else {
+                        powerPortStates.powerPorts[i].status = 'Off'
+                    }
+                }
+                return powerPortStates;
+            },
+            fechPowerPortConnections() {
+
+            },
+            async showNames() {
+                this.powerPorts = await this.fetchPowerPortIds();
+                console.log(this.powerPorts);
                 this.viewNames = true;
             },
             hideNames() {

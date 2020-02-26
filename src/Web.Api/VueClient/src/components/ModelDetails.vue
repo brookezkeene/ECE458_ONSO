@@ -1,73 +1,106 @@
 <template>
-    <v-container>
-        <div v-if="!loading">
-            <v-card-title>Model Details</v-card-title>
+    <div v-if="!loading">
+        <v-card flat>
+            <v-card-title>
+                <span class="headline">Model Details</span>
+            </v-card-title>
             <!-- Contains the model data-->
-            <v-row>
-                <v-col cols="12" sm="6" md="4">
-                    <v-label>Model: </v-label>
-                    <v-card-text> {{model.vendor}} </v-card-text>
-                </v-col>
-                <v-col cols="12" sm="6" md="4">
-                    <v-label>Model Number: </v-label>
-                    <v-card-text> {{model.modelNumber}} </v-card-text>
-                </v-col>
-                <v-col cols="12" sm="6" md="4">
-                    <v-label>Height: </v-label>
-                    <v-card-text> {{model.height}} </v-card-text>
-                </v-col>
-                <v-col cols="12" sm="6" md="4">
-                    <v-label>Display Color: </v-label>
-                    <v-card-text> {{model.displayColor}} </v-card-text>
-                </v-col>
-               <v-col cols="12" sm="6" md="4">
-                    <v-label>Network Ports: </v-label>
-                    <v-card-text> {{model.ethernetPorts}} </v-card-text> <!--networkPorts-->
-                    <a v-if="!viewNames" href="#" @click="showNames">View Network Port Names</a>
-                    <a v-else href="#" @click="hideNames">Hide Network Port Names</a>
-                    <div v-if="viewNames">
-                        <v-card max-height="300px" class="overflow-y-auto" outlined=true flat>
-                            <v-card-text v-for="port in model.networkPorts" :key="port"> Port {{port.number}}: {{port.name}} </v-card-text>
-                        </v-card>
-                    </div>
-                </v-col> 
-                <v-col cols="12" sm="6" md="4">
-                    <v-label>Power Ports: </v-label>
-                    <v-card-text> {{model.powerPorts}} </v-card-text>
-                </v-col>
-                <v-col cols="12" sm="6" md="4">
-                    <v-label>CPU: </v-label>
-                    <v-card-text> {{model.cpu}} </v-card-text>
-                </v-col>
-                <v-col cols="12" sm="6" md="4">
-                    <v-label>Memory: </v-label>
-                    <v-card-text> {{model.memory}} </v-card-text>
-                </v-col>
-                <v-col cols="12" sm="6" md="4">
-                    <v-label>Storage: </v-label>
-                    <v-card-text> {{model.storage}} </v-card-text>
-                </v-col>
-                <v-col cols="12" sm="6" md="4">
-                    <v-label>Comment: </v-label>
-                    <v-card-text> {{model.comment}} </v-card-text>
-                </v-col>
+            <v-card-text>
+                <v-row>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Model </v-label>
+                        <v-card-text> {{model.vendor}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Model Number </v-label>
+                        <v-card-text> {{model.modelNumber}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Height </v-label>
+                        <v-card-text> {{model.height}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>CPU </v-label>
+                        <v-card-text> {{model.cpu}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Memory </v-label>
+                        <v-card-text> {{model.memory}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Storage </v-label>
+                        <v-card-text> {{model.storage}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Power Ports </v-label>
+                        <v-card-text> {{model.powerPorts}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Network Ports </v-label>
+                        <v-card-text> {{model.ethernetPorts}} </v-card-text> <!--networkPorts-->
+                        <a v-if="!viewNames" href="#" @click="showNames">View Network Port Names</a>
+                        <a v-else href="#" @click="hideNames">Hide Network Port Names</a>
+                        <div v-if="viewNames">
+                            <v-card max-height="300px" class="overflow-y-auto" outlined=true flat>
+                                <v-card-text v-for="port in model.networkPorts" :key="port"> Port {{port.number}}: {{port.name}} </v-card-text>
+                            </v-card>
+                        </div>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Display Color </v-label>
+                            <v-card-text>
+                                {{model.displayColor}}
+                                <v-icon class="mr-2"
+                                        :color=model.displayColor>
+                                    mdi-circle
+                                </v-icon>
+                            </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Comment </v-label>
+                        <v-card-text> {{model.comment}} </v-card-text>
+                    </v-col>
+                </v-row>
+            </v-card-text>
+        </v-card>
 
-            </v-row>
-            <v-label>assets: </v-label>
-            <v-row no-gutters v-for="(value, name) in model.assets" v-bind:key="name">
-                <v-label>Host Name: </v-label>
-                <router-link :to="{ name: 'asset-details', params: { id: value.id } }">{{ value.hostname }}</router-link>
+        <v-col>
+            <!--Links to the assets for this model-->
+            <p>Assets</p>
+            <v-container fill max-width="50%">
+                <v-simple-table dense class="text-center">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Asset Number</th>
+                            <th class="text-center">Host Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in model.assets" :key="item.name">
+                            <td @click="goToAssetDetails(item.id)">
+                                {{item.assetId}}
+                                <v-icon small>mdi-open-in-new</v-icon>
+                            </td>
+                            <td @click="goToAssetDetails(id)">{{ item.hostname }}</td>
+                        </tr>
+                    </tbody>
+                </v-simple-table>
+            </v-container>
+        </v-col>
 
-            </v-row>
+        <v-spacer />
 
-            <v-spacer />
-
-            <!--Back button to return to main page-->
-            <v-spacer></v-spacer>
-            <a href="javascript:history.go(-1)"> Go Back</a>
-        </div>
-    </v-container>
+        <!--Back button to return to main page-->
+        <v-spacer></v-spacer>
+        <a @click="back">Go Back</a>
+    </div>
 </template>
+
+<style>
+    .v-label{
+        color: #4bbd51;
+    }
+</style>
 
 <script>
 
@@ -100,11 +133,17 @@
                 this.model = await this.modelRepository.find(this.id);
                 this.loading = false;
             },
+            goToAssetDetails(id) {
+                this.$router.push({ name: 'asset-details', params: { id: id } });
+            },
             showNames() {
                 this.viewNames = true;
             },
             hideNames() {
                 this.viewNames = false;
+            },
+            back() {
+                this.$router.go(-1);
             }
         }
     }</script>
