@@ -52,6 +52,7 @@ namespace Web.Api.Infrastructure.DbContexts
                 .HasOne(o => o.PduPort)
                 .WithOne(o => o.AssetPowerPort)
                 .HasForeignKey<PduPort>(o => o.AssetPowerPortId);
+
         }
 
         public DbSet<Model> Models { get; set; }
