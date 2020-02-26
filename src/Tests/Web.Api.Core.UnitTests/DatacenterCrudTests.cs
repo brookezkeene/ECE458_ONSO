@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Moq;
+using Skoruba.AuditLogging.Services;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services;
 using Web.Api.Core.UnitTests.Mappers;
@@ -23,6 +25,13 @@ namespace Web.Api.Core.UnitTests
 {
     public class DatacenterCrudTests
     {
+        protected readonly Mock<IAuditEventLogger> AuditMock;
+
+        public DatacenterCrudTests()
+        {
+            AuditMock = new Mock<IAuditEventLogger>();
+        }
+
         [Fact]
         public async void PostDatacenter()
         {
@@ -31,7 +40,7 @@ namespace Web.Api.Core.UnitTests
                .Options;
             await using var context = new ApplicationDbContext(options);
             IDatacenterRepository repository = new DatacenterRepository(context);
-            IDatacenterService service = new DatacenterService(repository);
+            IDatacenterService service = new DatacenterService(repository, AuditMock.Object);
             IApiErrorResources error = new ApiErrorResources();
             var controller = new DatacentersController(service, error);
 

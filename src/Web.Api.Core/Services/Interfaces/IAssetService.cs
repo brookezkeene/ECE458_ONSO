@@ -13,9 +13,9 @@ namespace Web.Api.Core.Services.Interfaces
         Task<AssetDto> GetAssetAsync(Guid assetId);
         Task<List<AssetDto>> GetAssetExportAsync(AssetExportQuery query);
         Task<List<AssetNetworkPortDto>> GetNetworkPortExportAsync(NetworkPortExportQuery query);
-        Task<Guid> CreateAssetAsync(AssetDto assetDto);
-        Task DeleteAssetAsync(Guid assetId);
-        Task<int> UpdateAssetAsync(AssetDto assetDto);
+        Task<Guid> CreateAssetAsync(AssetDto asset);
+        Task DeleteAssetAsync(AssetDto asset);
+        Task<int> UpdateAssetAsync(AssetDto asset);
 
     }
 }

@@ -10,8 +10,8 @@ namespace Web.Api.Core.Services.Interfaces
     {
         Task<PagedList<DatacenterDto>> GetDatacentersAsync(string search, int page = 1, int pageSize = 10);
         Task<DatacenterDto> GetDatacenterAsync(Guid datacenterId);
-        Task<int> UpdateDatacenterAsync(DatacenterDto datacenterDto);
-        Task<Guid> CreateDatacenterAsync(DatacenterDto datacenterDto);
-        Task DeleteDatacenterAsync(Guid datacenterId);
+        Task<int> UpdateDatacenterAsync(DatacenterDto datacenter);
+        Task<Guid> CreateDatacenterAsync(DatacenterDto datacenter);
+        Task DeleteDatacenterAsync(DatacenterDto datacenter);
     }
 }

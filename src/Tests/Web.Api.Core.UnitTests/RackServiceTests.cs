@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Moq;
+using Skoruba.AuditLogging.Services;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services;
 using Web.Api.Core.UnitTests.Mappers;
@@ -15,7 +17,13 @@ namespace Web.Api.Core.UnitTests
 {
     public class RackServiceTests
     {
-        
+        protected readonly Mock<IAuditEventLogger> AuditMock;
+
+        public RackServiceTests()
+        {
+            AuditMock = new Mock<IAuditEventLogger>();
+        }
+
         public async void GetRacks_ForRangeWithNoRacks_ReturnsEmpty()
         {
             // Arrange
@@ -29,7 +37,7 @@ namespace Web.Api.Core.UnitTests
             var numAdded = await context.SaveChangesAsync();
             
             var repo = new RackRepository(context);
-            var sut = new RackService(repo);
+            var sut = new RackService(repo, AuditMock.Object);
 
 
             // Act
@@ -44,29 +52,6 @@ namespace Web.Api.Core.UnitTests
 
             // Assert
             Assert.Equal(result.Count, 5);
-
-            //sometimes this test fails and I don't know why
-            /*var query1 = new RackRangeQuery
-            {
-                StartRow = "A",
-                StartCol = 1,
-                EndRow = "A",
-                EndCol = 3
-            };
-
-            await sut.DeleteRacksAsync(query1);
-            var resultDelete = await sut.GetRacksAsync(query1);
-            var resultGet = await sut.GetRacksAsync(query);
-
-            System.Diagnostics.Debug.WriteLine("printing out rack");
-            System.Diagnostics.Debug.WriteLine(resultDelete.Count);
-            System.Diagnostics.Debug.WriteLine(resultGet.Count);
-
-
-            Assert.Equal(resultDelete.Count, 0);
-            Assert.Equal(resultGet.Count, 2);*/
-
-
         }
 
         private static IEnumerable<Rack> GenerateRacks(params string[] addresses)

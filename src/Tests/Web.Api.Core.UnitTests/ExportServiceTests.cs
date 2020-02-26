@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Moq;
+using Skoruba.AuditLogging.Services;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services;
 using Web.Api.Core.UnitTests.Mappers;
@@ -18,6 +20,13 @@ namespace Web.Api.Core.UnitTests
 {
     public class ExportServiceTests
     {
+        protected readonly Mock<IAuditEventLogger> AuditMock;
+
+        public ExportServiceTests()
+        {
+            AuditMock = new Mock<IAuditEventLogger>();
+        }
+
         [Fact]
         public async void GetExportAssets() // TODO: Why does this test have no asserts?
         {
@@ -49,7 +58,7 @@ namespace Web.Api.Core.UnitTests
             var numAdded = await context.SaveChangesAsync();
 
             var repo = new ModelRepository(context);
-            var sut = new ModelService(repo);
+            var sut = new ModelService(repo, AuditMock.Object);
 
             // Act
             var query = new ModelExportQuery
