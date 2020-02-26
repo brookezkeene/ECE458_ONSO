@@ -98,14 +98,15 @@
                                     </div>
                                     <v-container fluid
                                                  fill
-                                                 v-for="(port, index) in editedItem.networkPorts" :key="index">
+                                                 v-for="(port, index) in networkPorts" :key="index">
                                         <v-layout align-center
                                                   justify-bottom>
                                             <v-spacer></v-spacer>
                                             <p>{{port.name}}</p>
                                             <v-spacer></v-spacer>
-                                            <v-text-field :v-model="port.macAddress"
-                                                          placeholde="MAC Address">
+                                            <v-text-field v-model="editedItem.networkPorts[index].macAddress"
+                                                          placeholder="Please enter a 6-byte hexadecimal string"
+                                                          :rules="[rules.macAddressRules]">
                                             </v-text-field>
                                             <v-spacer></v-spacer>
                                         </v-layout>
@@ -122,13 +123,13 @@
                                     </div>
                                     <v-container fluid 
                                                  fill 
-                                                  v-for="(port, index) in editedItem.networkPorts" :key="index">
+                                                  v-for="(port, index) in networkPorts" :key="index">
                                         <v-layout align-center
                                                   justify-bottom>
                                             <v-spacer></v-spacer>
                                             <p>{{port.name}}</p>
                                             <v-spacer></v-spacer>
-                                            <v-select :v-model="port.connectedPortId"
+                                            <v-select v-model="editedItem.networkPorts[index].connectedPortId"
                                                       placeholder="Network Port">
                                             </v-select>
                                             <v-spacer></v-spacer>
@@ -146,7 +147,7 @@
                                     </div>
                                     <v-container fluid 
                                                  fill 
-                                                 v-for="(port, index) in editedItem.powerPorts" :key="index">
+                                                 v-for="(port, index) in powerPorts" :key="index">
                                         <v-layout align-center
                                                   justify-bottom>
                                                 <v-spacer></v-spacer>
@@ -162,7 +163,7 @@
                                                     </v-btn>
                                                 </v-btn-toggle>
                                                 <v-spacer></v-spacer>
-                                                <v-text-field v-model="port.pduNumber"
+                                                <v-text-field v-model="editedItem.powerPorts[index].number"
                                                               typeof="number"
                                                               placeholder="PDU Number">
                                                 </v-text-field>
@@ -232,14 +233,14 @@
                 },
                 datacenterID: '',
                 rackNumber: 0,
-                //networkPorts: [],
+                networkPorts: [], // array of objects that contains name and number
+                powerPorts: [], // array of objects that contain fields port, location (left/right), and pduNumber
                 //networkPortConnections: [],
-                //powerPorts: [], // array of objects that contain fields port, location (left/right), and pduNumber
                 toggle_exclusive: undefined,
-                rules: {
-                    powerPortRules: v => /^[a-zA-Z0-9]*$/.test(v) || 'Network port name cannot contain whitespace'
-                },
                 namesDialog: false,
+                rules: {
+                    macAddressRules: v => /^([0-9A-Fa-f]{2}[\W_]*){5}([0-9A-Fa-f]{2})$/.test(v) || 'Invalid MAC Address.'
+                },
             }
         }, 
 
@@ -294,34 +295,49 @@
                 return false;
             },
             async modelSelected() {
+                /* eslint-disable no-unused-vars, no-console */
                 var selectedModel = await this.modelRepository.find(this.editedItem.modelId);
+                this.makeNetworkPorts(selectedModel);
+                this.makePowerPorts(selectedModel);
+            },
+            makeNetworkPorts(model) {
                 var networkPortsArray = new Array();
+                this.networkPorts = [];
                 var j;
-                for (j = 0; j < selectedModel.networkPorts.length; j++) {
-                    const networkPortInfo = {
-                        name: selectedModel.networkPorts[j].name,
-                        number: selectedModel.networkPorts[j].number,
+                for (j = 0; j < model.networkPorts.length; j++) {
+                    const portInfo = {
+                        name: model.networkPorts[j].name,
+                        number: model.networkPorts[j].number,
+                    }
+                    this.networkPorts[j] = Object.assign({}, portInfo);
+
+                    const newPortInfo = {
                         id: '',
                         macAddress: '',
-                        connectedPortId: '',
+                        connectedPortId: null,
                     }
-                    var networkPortObj = Object.assign({}, networkPortInfo);
-                    networkPortsArray.push(networkPortObj);
+                    networkPortsArray.push(Object.assign({}, newPortInfo));
                 }
                 this.editedItem.networkPorts = networkPortsArray;
-
-                var numPowerPorts = selectedModel.powerPorts;
+            },
+            makePowerPorts(model) {
+                var numPowerPorts = model.powerPorts;
                 var powerPortsArray = new Array();
+                this.powerPorts = [];
                 var i;
                 for (i = 0; i < numPowerPorts; i++) {
-                    const powerPortInfo = {
-                        number: i,
+                    const pduInfo = {
                         pduLocation: '',
-                        pduNumber: 0,
-                        pduPortId: ''
+                    }
+                    this.powerPorts[i] = Object.assign({}, pduInfo);
+
+                    const powerPortInfo = {
+                        
+                        id: '',
+                        number: 0,
+                        pduPortId: null
                     };
-                    var powerPortObj = Object.assign({}, powerPortInfo);
-                    powerPortsArray.push(powerPortObj);
+                    powerPortsArray.push(Object.assign({}, powerPortInfo));
                 }
                 this.editedItem.powerPorts = powerPortsArray;
             }
