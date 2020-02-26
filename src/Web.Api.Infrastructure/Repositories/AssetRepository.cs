@@ -111,6 +111,22 @@ namespace Web.Api.Infrastructure.Repositories
             return await _dbContext.SaveChangesAsync();
         }
 
+        //TODO: this is the hacky way of making connections between AssetNetworkPorts
+        public async Task<AssetNetworkPort> GetConnectedNetworkPortAsync(Guid? networkId)
+        {
+            return await _dbContext.AssetNetworkPort
+                .Include(x => x.ConnectedPort)
+                .Where(x => x.Id == networkId)
+                .AsNoTracking()
+                .SingleOrDefaultAsync(); ;
+        }
+
+        public async Task<int> UpdateConnectedNetworkPortAsync(AssetNetworkPort port)
+        {
+            _dbContext.AssetNetworkPort.Update(port);
+            return await _dbContext.SaveChangesAsync();
+        }
+
         public async Task<int> UpdateAssetAsync(Asset asset)
         {
             _dbContext.Assets.Update(asset);
@@ -124,8 +140,6 @@ namespace Web.Api.Infrastructure.Repositories
             return await _dbContext.SaveChangesAsync();
 
         }
-
-
 
         public async Task<bool> AssetIsUniqueAsync(string hostname, Guid id = default)
         {

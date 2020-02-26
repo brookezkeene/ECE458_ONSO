@@ -8,6 +8,7 @@ using Web.Api.Core.Dtos;
 using Web.Api.Core.Events.Asset;
 using Web.Api.Core.Mappers;
 using Web.Api.Core.Services.Interfaces;
+using Web.Api.Infrastructure.Entities;
 using Web.Api.Infrastructure.Repositories.Interfaces;
 
 namespace Web.Api.Core.Services
@@ -55,8 +56,6 @@ namespace Web.Api.Core.Services
         {
             var entity = asset.ToEntity();
             await _repository.AddAssetAsync(entity);
-
-            await _auditEventLogger.LogEventAsync(new AssetCreatedEvent(asset));
             return entity.Id;
         }
 

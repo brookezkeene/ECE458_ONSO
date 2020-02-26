@@ -183,7 +183,6 @@
                     <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn text @click="close">Cancel</v-btn>
-                        <v-btn text @click="sendNetworkPortRequest">network port request</v-btn>
                         <v-btn color="primary" text @click="save">Save</v-btn>
                     </v-card-actions>'
                 </v-container>
