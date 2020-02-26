@@ -55,7 +55,10 @@ namespace Web.Api.Core.Mappers
         {
             return assets == null ? null : Mapper.Map<List<AssetDto>>(assets);
         }
-
+        public static List<AssetNetworkPortDto> ToDto(this List<AssetNetworkPort> ports)
+        {
+            return ports == null ? null : Mapper.Map<List<AssetNetworkPortDto>>(ports);
+        }
         public static Asset ToEntity(this AssetDto assetDto)
         {
             return assetDto == null ? null : Mapper.Map<Asset>(assetDto);

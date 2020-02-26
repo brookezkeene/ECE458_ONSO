@@ -8,6 +8,7 @@ namespace Web.Api.Infrastructure.DbContexts
     public class ApplicationDbContext : IdentityDbContext<User>
     {
         private const string AssetNumberSequenceName = "AssetNumberSequence";
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -57,5 +58,6 @@ namespace Web.Api.Infrastructure.DbContexts
         public DbSet<Rack> Racks { get; set; }
         public DbSet<Asset> Assets { get; set; }
         public DbSet<Datacenter> Datacenters { get; set; }
+        public DbSet<AssetNetworkPort> AssetNetworkPort { get; set; }
     }
 }

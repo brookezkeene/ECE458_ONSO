@@ -15,9 +15,26 @@
                         <v-card flat>
                             <v-container fill-height fluid>
                                 <v-label>
-                                    Input a vendor or model number to filter output
+                                    Input an asset host name to filter result by
                                 </v-label>
-                                <v-text-field v-model="model_filter">
+                                <v-text-field v-model="query.HostName">
+                                </v-text-field>
+                                <v-label>
+                                    Input a model vendor name to filter result by
+                                </v-label>
+                                <v-text-field v-model="query.Search">
+                                </v-text-field>
+                                <v-label>
+                                    Input a start rack to filter result by
+                                </v-label>
+                                <v-text-field v-model="startRack"
+                                              :rules="[rules.rackRules]">
+                                </v-text-field>
+                                <v-label>
+                                    Input an end rack to filter result by
+                                </v-label>
+                                <v-text-field v-model="endRack"
+                                              :rules="[rules.rackRules]">
                                 </v-text-field>
                             </v-container>
                         </v-card>
@@ -36,7 +53,7 @@
                             </a>.
                             <downloadCsv :data="exportRaw"
                                          name="models.csv"
-                                         type    = "csv">
+                                         type="csv">
                                 <v-spacer></v-spacer>
                                 <v-btn>
                                     <b>Download</b>
@@ -52,9 +69,9 @@
             </v-stepper-items>
         </v-stepper>
 
-        <v-dialog v-model="modelErrorDialog">
+        <v-dialog v-model="networkErrorDialog">
             <v-card>
-                <v-title>No Models found with this Vendor/Model Number!</v-title>
+                <v-title>No networks found with these filters!</v-title>
                 <v-btn @click.native="step = 1">Try Again</v-btn>
             </v-card>
         </v-dialog>
@@ -63,7 +80,7 @@
 
 <script>
     export default {
-        name: 'export-model-wizard',
+        name: 'export-network-wizard',
         inject: ['exportRepository'],
         props: ['exportWizard'],
         data () {
@@ -84,32 +101,40 @@
                     'Vendor': 'name',
                 },
                 query: {
-                    Search: ''
+                    Search: '',
+                    HostName: '',
+                    StartRow: '',
+                    StartCol: 0,
+                    EndRow: '',
+                    EndCol: 0,
                 },
-                modelErrorDialog: false
+                startRack: '',
+                endRack: '',
+                rules: {
+                    rackRules: v => /[a-zA-Z][0-9]+$/.test(v) || 'Network port name cannot contain whitespace'
+                },
+                networkErrorDialog: false
             };
         },
         methods: {
             async setStep2() {
-                this.query.Search = this.model_filter;
-                var temp = await this.exportRepository.exportModel(this.query);
-                var i; var j;
-                for (i = 0; i < temp.length; i++) {
-                    var networkPorts = temp[i].network_ports;
-                    var netPortLength = networkPorts.length;
-                    delete temp[i].network_ports;
-                    for (j = 0; j < netPortLength; j++) {
-                        var name = "network_port_name_" + (j + 1).toString();
-                        temp[i][`${name}`] = networkPorts[j].network_port_name;
+                if (/^(?:|[a-zA-Z][0-9]+)*$/.test(this.startRack) && /^(?:|[a-zA-Z][0-9]+)*$/.test(this.endRack)) {
+                    if (this.startRack.length != 0) {
+                        this.query.StartRow = this.startRack[0];
+                        this.query.StartCol = parseInt(this.startRack.substring(1));
+                    }
+                    if (this.endRack.length != 0) {
+                        this.query.EndRow = this.endRack[0];
+                        this.query.EndCol = parseInt(this.endRack.substring(1));
                     }
                 }
-
-                this.exportRaw = temp;
+                this.exportRaw = await this.exportRepository.exportNetwork(this.query);
 
                 /* eslint-disable no-unused-vars, no-console */
                 console.log(this.exportRaw.length);
                 console.log(this.exportRaw);
                 console.log("This is inside of export raw");
+
                 this.step = 2
             },
             close() {
@@ -117,7 +142,7 @@
                 this.$emit('close-model-export');
             },
             handleError() {
-                this.modelErrorDialog = true;
+                this.networkErrorDialog = true;
             },
         }
     }

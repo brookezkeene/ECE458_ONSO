@@ -46,6 +46,27 @@
                     </v-card-actions>
                 </v-card>
             </v-col>
+            <v-col>
+                <v-card>
+                    <v-card-title class="justify-center">
+                        <v-icon v-if="admin" color="white">mdi-information</v-icon>
+                        <v-spacer></v-spacer>
+                        Networks
+                        <v-spacer></v-spacer>
+                        <v-icon v-if="admin" @click="showNetworkInfo">mdi-information</v-icon>
+                    </v-card-title>
+                    <v-card-actions class="justify-center">
+                        <v-container>
+                            <v-row align="center" justify="center">
+                                <v-btn v-if="admin" color="primary" class="mb-2" @click="openImportNetworks">Import</v-btn>
+                            </v-row>
+                            <v-row align="center" justify="center">
+                                <v-btn color="primary" class="mb-2" @click="startExportNetworks">Export</v-btn>
+                            </v-row>
+                        </v-container>
+                    </v-card-actions>
+                </v-card>
+            </v-col>
         </v-container>
 
         <v-dialog v-model="extrainfomodel">
@@ -57,6 +78,12 @@
         <v-dialog v-model="extrainfoasset">
             <v-card>
                 <asset-import-format-info></asset-import-format-info>
+            </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="extrainfonetwork">
+            <v-card>
+                <network-import-format-info></network-import-format-info>
             </v-card>
         </v-dialog>
 
@@ -72,12 +99,22 @@
             </v-card>
         </v-dialog>
 
+        <v-dialog v-model="importNetworkWizard" max-width="500px">
+            <v-card>
+                <import-wizard v-on:close-file-chooser="closeImport" v-bind:forModel="forModel"></import-wizard>
+            </v-card>
+        </v-dialog>
+
         <v-dialog v-model="exportModelDialog" max-width="300px">
             <export-model-wizard v-on:close-model-export="closeExport('model')"></export-model-wizard>
         </v-dialog>
 
         <v-dialog v-model="exportAssetDialog" max-width="300px">
             <export-asset-wizard v-on:close-asset-export="closeExport('asset')"></export-asset-wizard>
+        </v-dialog>
+
+        <v-dialog v-model="exportNetworkDialog" max-width="300px">
+            <export-network-wizard v-on:close-network-export="closeExport('network')"></export-network-wizard>
         </v-dialog>
     </v-card>
 </template>
@@ -86,9 +123,11 @@
 
 import ModelImportFormatInfo from "./ModelImportFormatInfo"
 import AssetImportFormatInfo from "./AssetImportFormatInfo"
+import NetworkImportFormatInfo from "./NetworkImportFormatInfo"
 import ImportWizard from "./ImportWizard"
 import ExportModelWizard from "./ExportModelWizard"
 import ExportAssetWizard from "./ExportAssetWizard"
+import ExportNetworkWizard from "./ExportNetworkWizard"
 import Auth from "../auth"
 
 export default {
@@ -97,10 +136,13 @@ export default {
             loading: false,       
             extrainfomodel: false,
             extrainfoasset: false,
+            extrainfonetwork: false,
             importModelWizard: false,
             importAssetWizard: false,
+            importNetworkWizard: false,
             exportModelDialog: false,
             exportAssetDialog: false,
+            exportNetworkDialog: false,
             forModel: false,
         };
     },
@@ -116,6 +158,9 @@ export default {
         importAssetWizard(val) {
             val || this.closeImport("asset")
         },
+        importNetworkWizard(val) {
+            val || this.closeImport("network")
+        },
         exportDialog(val) {
             val || this.closeExport()
         }
@@ -123,9 +168,11 @@ export default {
     components: {
       ModelImportFormatInfo,
       AssetImportFormatInfo,
+      NetworkImportFormatInfo,
       ImportWizard,
       ExportModelWizard,
-      ExportAssetWizard
+      ExportAssetWizard,
+      ExportNetworkWizard
     },
     methods: {
         showModelInfo() {
@@ -134,6 +181,9 @@ export default {
         showAssetInfo() {
             this.extrainfoasset = true
         },
+        showNetworkInfo() {
+            this.extrainfonetwork = true
+        },
         openImportModels() {
             this.importModelWizard = true
             this.forModel = true
@@ -141,22 +191,31 @@ export default {
         openImportAssets() {
             this.importAssetWizard = true
             this.forModel = false
-
+        },
+        openImportNetworks() {
+            this.importNetworkWizard = true
+            this.forModel = false
         },
         closeImport(type) {
             if (type === "model") {
                 this.importModelWizard = false
             }
-            else {
+            else if (type === "asset") {
                 this.importAssetWizard = false
+            }
+            else {
+                this.importNetworkWizard = false
             }
         },
         closeExport(type) {
             if (type === "model") {
                 this.exportModelDialog = false
             }
-            else {
+            else if (type === "asset") {
                 this.exportAssetDialog = false
+            }
+            else {
+                this.exportNetworkDialog = false
             }
         },
         startExportModels() {
@@ -164,6 +223,9 @@ export default {
         },
         startExportAssets() {
             this.exportAssetDialog = true
+        },
+        startExportNetworks() {
+            this.exportNetworkDialog = true
         },
     }
 }
