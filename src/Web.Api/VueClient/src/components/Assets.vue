@@ -7,6 +7,7 @@
         <v-data-table :headers="filteredHeaders"
                       :items="assets"
                       :search="search"
+                      class="pa-10"
                       multi-sort
                       @click:row="showDetails">
 
@@ -149,7 +150,6 @@
           { text: 'Rack', value: 'rack', filter: this.rackFilter },
           { text: 'Rack U', value: 'rackPosition', },
           { text: 'Owner Username', value: 'owner' },
-          { text: 'Comment', value: 'comment' },
           { text: 'Power', value: 'power', sortable: false },
           { text: 'Actions', value: 'action', sortable: false },
         ],

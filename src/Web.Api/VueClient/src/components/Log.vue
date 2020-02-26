@@ -11,6 +11,7 @@
                                   :server-items-length="totalItems"
                                   :expanded.sync="expanded"
                                   :loading="loading"
+                                  class="pa-10"
                                   show-expand
                                   @click:row="expand">
                         <template v-slot:top v-slot:item.action="{ item }">

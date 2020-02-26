@@ -7,40 +7,76 @@
             <v-card-text>
                 <v-row>
                     <v-col cols="12" sm="6" md="4">
-                        <v-label>Data Center: </v-label>
-                        <v-card-text> {{asset.datacenter}} </v-card-text>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                        <v-label>Host Name: </v-label>
-                        <v-card-text> {{asset.hostname}} </v-card-text>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                        <v-label>Rack Number: </v-label>
-                        <v-card-text> {{asset.rack}} </v-card-text>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                        <v-label>Rack Position: </v-label>
-                        <v-card-text> {{asset.rackPosition}} </v-card-text>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                        <v-label>Owner Username: </v-label>
-                        <v-card-text v-if="ownerPresent"> {{asset.owner}} </v-card-text>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                        <v-label>Comment: </v-label>
-                        <v-card-text> {{asset.comment}} </v-card-text>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                        <v-label>Model Vendor: </v-label>
+                        <v-label>Model Vendor</v-label>
                         <v-card-text> {{asset.vendor}} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                        <v-label>Model: </v-label>
-                        <router-link :to="{ name: 'model-details', params: { id: asset.modelId } }"> {{ asset.modelNumber }} </router-link>
+                        <v-label>Model</v-label>
+                        <v-card-text>
+                            <router-link :to="{ name: 'model-details', params: { id: asset.modelId } }"> {{ asset.modelNumber }} </router-link>
+                        </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Host Name</v-label>
+                        <v-card-text> {{asset.hostname}} </v-card-text>
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Data Center</v-label>
+                        <v-card-text> {{asset.datacenter}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Rack Number</v-label>
+                        <v-card-text> {{asset.rack}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Rack Position</v-label>
+                        <v-card-text> {{asset.rackPosition}} </v-card-text>
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Asset Number</v-label>
+                        <v-card-text> {{asset.number}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Owner Username</v-label>
+                        <v-card-text v-if="ownerPresent"> {{asset.owner}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Comment</v-label>
+                        <v-card-text> {{asset.comment}} </v-card-text>
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col cols="12" sm="6" md="4">
+                        <!--MAC Addresses-->
+                        <v-label>MAC Addresses</v-label>
+                        <v-scroll>
+                            <v-card flat outlined class="overflow-y-auto"  max-height="300px">
+                                <div v-for="(port,index) in asset.networkPorts" :key="index">
+                                    <v-card-text>{{port.number}} : {{port.pduPort}}</v-card-text>
+                                </div>
+                            </v-card>
+                        </v-scroll>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <!--network port connections-->
+                        <v-label>Network Port Connections</v-label>
+                        <v-scroll>
+                            <v-card flat outlined class="overflow-y-auto" max-height="300px">
+                                <div v-for="(port,index) in asset.networkPorts" :key="index">
+                                    <v-card-text>{{port.number}} : {{port.pduPort}}</v-card-text>
+                                </div>
+                            </v-card>
+                        </v-scroll>
+
+                        <v-btn small class="mt-4" color="primary" outlined v-if="!viewNames" @click="showNeighborhood">View Network Neighborhood</v-btn>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <!--power port connections-->
-                        <v-label>Power Port Connections: </v-label>
+                        <v-label>Power Port Connections</v-label>
                         <v-scroll>
                             <v-card flat class="overflow-y-auto">
                                 <div v-for="(port,index) in asset.powerPorts" :key="index">
@@ -48,10 +84,9 @@
                                 </div>
                             </v-card>
                         </v-scroll>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                        <v-btn small color="primary" v-if="!viewNames" @click="showNames">View Power Port Status</v-btn>
-                        <v-btn dark small color="primary" v-else href @click="hideNames">Hide Power Port Status</v-btn>
+
+                        <v-btn small color="primary" outlined v-if="!viewNames" @click="showNames">View Power Port Status</v-btn>
+                        <v-btn dark small color="primary" outlined v-else href @click="hideNames">Hide Power Port Status</v-btn>
                         <div v-if="viewNames">
                             <v-card max-height="300px" class="overflow-y-auto" flat>
                                 <v-card-text v-for="(object,index) in powerPorts.powerPorts" :key="index"> Port {{object.port}}: {{object.status}} </v-card-text>
@@ -97,6 +132,15 @@
     </div>
 
 </template>
+
+<style>
+    .v-label {
+        font-size: 20px;
+    }
+    .p {
+        font-size: 15px;
+    }
+</style>
 
 <script>
     export default {
@@ -164,7 +208,10 @@
             },
             hideNames() {
                 this.viewNames = false;
-            }            
+            },
+            showNeighborhood() {
+                
+            }
         }
     }
 </script>

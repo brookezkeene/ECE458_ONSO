@@ -7,6 +7,7 @@
                     <v-data-table :headers="filteredHeaders"
                                   :items="models"
                                   :search="search"
+                                  class="pa-10"
                                   multi-sort
                                   @click:row="showDetails">
                         <template v-slot:top v-slot:item.action="{ item }">
@@ -172,7 +173,6 @@
                     { text: 'CPU', value: 'cpu' },
                     { text: 'Memory', value: 'memory', filter: this.memoryFilter },
                     { text: 'Storage', value: 'storage' },
-                    { text: 'Comment', value: 'comment' },
                     { text: 'Actions', value: 'action', sortable: false },
 
                 ],

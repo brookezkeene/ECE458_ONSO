@@ -8,7 +8,7 @@
             <datacenter-table />
         </v-container>
 
-        <v-card-title>
+        <v-card-title class="pt-10">
             Racks
         </v-card-title>
 

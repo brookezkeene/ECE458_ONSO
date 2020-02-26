@@ -6,6 +6,7 @@
             <v-data-table :headers="filteredHeaders"
                           :items="users"
                           :search="search"
+                          class="pa-10"
                           multi-sort>
                 <template v-slot:top>
                     <v-toolbar flat color="white">

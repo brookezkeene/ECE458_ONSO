@@ -1,6 +1,6 @@
 <template>
-    <v-container align="center" justify="center">
-        <v-card>
+    <v-container align-center justify-center>
+        <v-card class="pa-10">
             <v-card-title>Rack Range Selection</v-card-title>
 
             <v-card-text class="justify-center">
@@ -22,7 +22,7 @@
                                   placeholder="Enter the end of a range of racks (i.e. Z20)"></v-text-field>
 
                     <v-row>
-                        <v-btn class="mr-4 ml-4" color="primary" @click="viewDiagram">View Diagrams</v-btn>
+                        <v-btn class="mr-4 ml-4" color="primary" :disabled="startFilled" @click="viewDiagram">View Diagrams</v-btn>
                         <v-spacer></v-spacer>
                         <v-btn v-if="admin" class="mr-4" color="primary" @click="createInRange">Add Racks</v-btn>
                         <v-btn v-if="admin" class="mr-4" color="primary" @click="deleteInRange">Delete Racks</v-btn>
@@ -53,6 +53,9 @@ export default {
         admin() {
             return Auth.isAdmin()
         },
+        startFilled() {
+            return this.range.start === '';
+        }
     },
     async created () {
             this.initialize()
