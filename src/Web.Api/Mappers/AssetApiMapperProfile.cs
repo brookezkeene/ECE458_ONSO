@@ -45,7 +45,8 @@ namespace Web.Api.Mappers
             CreateMap<AssetDto, GetAssetApiDto>();
 
             CreateMap<AssetDto, GetAssetNetworkPortShallowApiDto>(MemberList.None);
-            CreateMap<AssetPowerPortDto, GetAssetPowerPortApiDto>();
+            CreateMap<AssetPowerPortDto, GetAssetPowerPortApiDto>()
+                .IncludeAllDerived();
 
             CreateMap<AssetNetworkPortDto, GetAssetNetworkPortApiDto>()
                 .IncludeMembers(o => o.ModelNetworkPort);
@@ -59,11 +60,7 @@ namespace Web.Api.Mappers
             CreateMap<DatacenterDto, GetAssetsApiDto>(MemberList.None);
             CreateMap<ModelDto, GetAssetsApiDto>(MemberList.None);
 
-            CreateMap<AssetPowerPortStateDto, GetAssetPowerPortStateApiDto>()
-                .ReverseMap();
-            CreateMap<AssetPowerStateDto, UpdateAssetPowerStateApiDto>()
-                .ReverseMap();
-
-        }
+            CreateMap<AssetPowerStateDto, GetAssetPowerStateApiDto>();
+            CreateMap<AssetPowerPortStateDto, GetAssetPowerPortStateApiDto>();        }
     }
 }

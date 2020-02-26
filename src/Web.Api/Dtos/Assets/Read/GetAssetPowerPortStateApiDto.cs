@@ -2,8 +2,9 @@
 
 namespace Web.Api.Dtos.Assets.Read
 {
-    public class GetAssetPowerPortStateApiDto : GetAssetPowerPortApiDto
+    public class GetAssetPowerPortStateApiDto
     {
+        public string Port { get; set; }
         public PowerState Status { get; set; }
     }
 }
