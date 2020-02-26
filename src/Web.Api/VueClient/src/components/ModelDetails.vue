@@ -38,8 +38,10 @@
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Network Ports </v-label>
                         <v-card-text> {{model.ethernetPorts}} </v-card-text> <!--networkPorts-->
-                        <a v-if="!viewNames" href="#" @click="showNames">View Network Port Names</a>
-                        <a v-else href="#" @click="hideNames">Hide Network Port Names</a>
+
+                        <v-btn small color="primary" outlined v-if="!viewNames" @click="showNames">View Network Port Names</v-btn>
+                        <v-btn dark small color="primary" outlined v-else href @click="hideNames">Hide Network Port Names</v-btn>
+
                         <div v-if="viewNames">
                             <v-card max-height="300px" class="overflow-y-auto" outlined=true flat>
                                 <v-card-text v-for="port in model.networkPorts" :key="port"> Port {{port.number}}: {{port.name}} </v-card-text>
@@ -61,32 +63,32 @@
                         <v-card-text> {{model.comment}} </v-card-text>
                     </v-col>
                 </v-row>
+  
+                <!--Links to the assets for this model-->
+                <div>
+                    <v-label>Assets</v-label>
+                </div>
+                <v-container fill max-width="50%" >
+                    <v-simple-table dense class="text-center">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Asset Number</th>
+                                <th class="text-center">Host Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="item in model.assets" :key="item.name">
+                                <td @click="goToAssetDetails(item.id)">
+                                    {{item.assetId}}
+                                    <v-icon small>mdi-open-in-new</v-icon>
+                                </td>
+                                <td @click="goToAssetDetails(id)">{{ item.hostname }}</td>
+                            </tr>
+                        </tbody>
+                    </v-simple-table>
+                </v-container>
             </v-card-text>
         </v-card>
-
-        <v-col>
-            <!--Links to the assets for this model-->
-            <p>Assets</p>
-            <v-container fill max-width="50%">
-                <v-simple-table dense class="text-center">
-                    <thead>
-                        <tr>
-                            <th class="text-center">Asset Number</th>
-                            <th class="text-center">Host Name</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="item in model.assets" :key="item.name">
-                            <td @click="goToAssetDetails(item.id)">
-                                {{item.assetId}}
-                                <v-icon small>mdi-open-in-new</v-icon>
-                            </td>
-                            <td @click="goToAssetDetails(id)">{{ item.hostname }}</td>
-                        </tr>
-                    </tbody>
-                </v-simple-table>
-            </v-container>
-        </v-col>
 
         <v-spacer />
 
