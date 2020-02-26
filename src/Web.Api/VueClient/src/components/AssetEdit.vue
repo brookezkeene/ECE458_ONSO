@@ -309,7 +309,9 @@
                 /* eslint-disable no-unused-vars, no-console */
                 console.log(this.networks);
                 for (const network of this.networks) {
-                    network.nameRackAssetNum = network.name + " " + network.macAddress;
+                    network.nameRackAssetNum = "Network Name: " + network.name +
+                        " " + "Asset Hostname" + network.assetHostname +
+                        "Rack: " + network.rowLetter + network.rackNumber.toString();
                 }
             },
             async updateRacks() {

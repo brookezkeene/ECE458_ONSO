@@ -44,13 +44,13 @@ namespace Web.Api.Controllers
 
 
         [HttpGet("{id}/networkports")]
-        public async Task<ActionResult<List<GetAssetNetworkPortApiDto>>> GetNetworks(Guid id)
+        public async Task<ActionResult<List<GetAssetNetworkPortFromDatacenterDto>>> GetNetworks(Guid id)
         {
             var ports = await _datacenterService.GetNetworkPortsOfDataCenterAsync(id);
-            var response = new List<GetAssetNetworkPortApiDto>();
+            var response = new List<GetAssetNetworkPortFromDatacenterDto>();
             for(int i = 0; i<ports.Count(); i++)
             {
-                response.Add(ports[i].MapTo<GetAssetNetworkPortApiDto>());
+                response.Add(ports[i].MapTo<GetAssetNetworkPortFromDatacenterDto>());
             }
             return response;
         }
