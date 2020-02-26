@@ -7,6 +7,7 @@
         <v-data-table :headers="filteredHeaders"
                       :items="assets"
                       :search="search"
+                      class="pa-10"
                       multi-sort
                       @click:row="showDetails">
 

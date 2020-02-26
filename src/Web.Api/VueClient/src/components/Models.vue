@@ -7,6 +7,7 @@
                     <v-data-table :headers="filteredHeaders"
                                   :items="models"
                                   :search="search"
+                                  class="pa-10"
                                   multi-sort
                                   @click:row="showDetails">
                         <template v-slot:top v-slot:item.action="{ item }">

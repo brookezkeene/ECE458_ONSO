@@ -3,6 +3,7 @@
         <v-data-table
           :headers="filteredHeaders"
           :items="racks"
+          class="pa-10"
           multi-sort
           >
             <template v-slot:top>

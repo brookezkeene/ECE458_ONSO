@@ -1,6 +1,6 @@
 <template>
-    <v-container align="center" justify="center">
-        <v-card>
+    <v-container align-center justify-center>
+        <v-card class="pa-10">
             <v-card-title>Rack Range Selection</v-card-title>
 
             <v-card-text class="justify-center">
