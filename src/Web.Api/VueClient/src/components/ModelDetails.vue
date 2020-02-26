@@ -64,7 +64,7 @@
 
             <!--Back button to return to main page-->
             <v-spacer></v-spacer>
-            <a href="javascript:history.go(-1)"> Go Back</a>
+            <a @click="back">Go Back</a>
         </div>
     </v-container>
 </template>
@@ -105,6 +105,9 @@
             },
             hideNames() {
                 this.viewNames = false;
+            },
+            back() {
+                this.$router.go(-1);
             }
         }
     }</script>

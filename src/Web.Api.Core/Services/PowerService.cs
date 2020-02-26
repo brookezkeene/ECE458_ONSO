@@ -34,10 +34,11 @@ namespace Web.Api.Core.Services
 
         public async Task<AssetPowerStateDto> getStates(Guid assetId)
         {
-            var pduPorts = (await _assetService.GetAssetAsync(assetId))
-                .PowerPorts
+            var asset = await _assetService.GetAssetAsync(assetId);
+            // possible null reference exceptions: asset, asset.PowerPorts, asset.PowerPorts.PduPort.Pdu (any), 
+            var pduPorts = asset.PowerPorts
                 .Where(o => o.PduPort != null)
-                .GroupBy(o => o.ToString())
+                .GroupBy(o => o.PduPort.Pdu.ToString())
                 .ToDictionary(d => d.Key,
                     d => d.Select(o => o.PduPort.Number)
                           .ToList());
@@ -47,7 +48,7 @@ namespace Web.Api.Core.Services
             foreach (var kvp in pduPorts)
             {
                 var response = await Client.GetAsync(
-                "/pdu.php?pdu={kvp.Key}");
+                $"/pdu.php?pdu={kvp.Key}");
                 response.EnsureSuccessStatusCode();
                 var parsedResponse = ParseResponse(await response.Content.ReadAsStringAsync());
                 var statesICareAbout = kvp.Value.Select(i => parsedResponse[i]);

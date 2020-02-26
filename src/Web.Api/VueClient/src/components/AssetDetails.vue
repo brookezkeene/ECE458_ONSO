@@ -44,11 +44,11 @@
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Power Ports: </v-label>
-                        <a v-if="!viewNames" href="#" @click="showNames">View Power Port Status</a>
-                        <a v-else href="#" @click="hideNames">Hide Power Port Status</a>
+                        <v-btn elevation="0" size="xSmall" color="primary" v-if="!viewNames" @click="showNames">View Power Port Status</v-btn>
+                        <v-btn elevation="0" size="xSmall" color="primary" v-else href @click="hideNames">Hide Power Port Status</v-btn>
                         <div v-if="viewNames">
-                            <v-card max-height="300px" class="overflow-y-auto" outlined="true" flat>
-                                <v-card-text v-for="port in powerPorts" :key="port"> Port {{port.number}}: {{port.status}} </v-card-text>
+                            <v-card max-height="300px" class="overflow-y-auto" outlined flat>
+                                <v-card-text v-for="(object,index) in powerPorts.powerPorts" :key="index"> Port {{object.port}}: {{object.status}} </v-card-text>
                             </v-card>
                         </div>
                     </v-col>
@@ -88,7 +88,7 @@
                 },
                 ownerPresent: true, // in case the asset does not have an owner, don't need null pointer bc not required.
                 viewNames: false,
-                powerPorts: [],
+                powerPorts: {},
             };
         },
         created() {
@@ -110,21 +110,14 @@
                 var powerPortStates = [];
                 /*eslint-disable*/
                 console.log(powerPortStates);
-                console.log(this.asset.powerPorts.length);
                 console.log('Got to fetch power port ids!');
-                for (var i = 0; i < this.asset.powerPorts.length; i++) {
-                    console.log('For loop!')
-                    if (!this.loading) this.loading = true;
-                    console.log(this.asset.powerPorts[i].id)
-                    var powerState = await this.assetRepository.getPowerState(this.asset.powerPorts[i].id)
-                    powerPortStates.put(powerState);
-                    console.log(powerPortStates);
-                    this.loading = false;
-                }
+                powerPortStates = await this.assetRepository.getPowerPortState(this.asset.id);
                 console.log(powerPortStates);
+                return powerPortStates;
             },
-            showNames() {
-                this.powerPorts = this.fetchPowerPortIds();
+            async showNames() {
+                this.powerPorts = await this.fetchPowerPortIds();
+                console.log(this.powerPorts);
                 this.viewNames = true;
             },
             hideNames() {
