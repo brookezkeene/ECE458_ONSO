@@ -134,7 +134,8 @@
                                                             item-text="nameRackAssetNum"
                                                             item-value="id"
                                                             label="Connected Network Port"
-                                                            persistent-hint>
+                                                            persistent-hint
+                                                            class="overflow-x-auto">
                                             </v-autocomplete>
                                             <v-spacer></v-spacer>
                                         </v-layout>
@@ -309,15 +310,16 @@
                 /* eslint-disable no-unused-vars, no-console */
                 console.log(this.networks);
                 for (const network of this.networks) {
-                    network.nameRackAssetNum = "Network Name: " + network.name +
-                        " " + "Asset Hostname" + network.assetHostname +
-                        "Rack: " + network.rowLetter + network.rackNumber.toString();
+                    network.nameRackAssetNum = "NAME: " + network.name +
+                        " " + "HOSTNAME: " + network.assetHostname +
+                        " " + "RACK: " + network.rowLetter + network.rackNumber.toString();
                 }
             },
             async updateRacks() {
                 if (this.datacenterID != this.editedItem.datacenter) {
                     this.datacenterID = this.editedItem.datacenter;
-                    this.racks = await this.rackRepository.list(this.datacenterID)
+                    this.racks = await this.rackRepository.list(this.datacenterID);
+                    this.sendNetworkPortRequest();
                     return true;
                 }
                 return false;
