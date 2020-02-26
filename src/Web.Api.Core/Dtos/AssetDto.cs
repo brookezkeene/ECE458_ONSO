@@ -18,7 +18,7 @@ namespace Web.Api.Core.Dtos
         public string Hostname { get; set; }
         public int RackPosition { get; set; }
         public string Comment { get; set; }
-        public IEnumerable<int> SlotsOccupied => Enumerable.Range(RackPosition, Model.Height);
+        public IEnumerable<int> SlotsOccupied => Model == null ? null : Enumerable.Range(RackPosition, Model.Height);
         public int? AssetNumber { get; set; }
         public List<AssetPowerPortDto> PowerPorts { get; set; }
         public List<AssetNetworkPortDto> NetworkPorts { get; set; }
@@ -65,7 +65,7 @@ namespace Web.Api.Core.Dtos
     {
         public Guid Id { get; set; }
         public int NumPorts { get; set; } = 24;
-        public List<PduPort> Ports { get; set; }
+        public List<PduPortDto> Ports { get; set; }
         public PduLocation Location { get; set; }
         public Guid RackId { get; set; }
         public RackDto Rack { get; set; }

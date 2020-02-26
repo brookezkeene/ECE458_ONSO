@@ -15,6 +15,5 @@ namespace Web.Api.Dtos.Racks
         public string Address => $"{RowLetter}{RackNumber}";
         public Guid DatacenterId { get; set; }
         public RackDatacenterApiDto Datacenter { get; set; }
-        public List<GetRackPdusApiDto> Pdus { get; set; }
     }
 }

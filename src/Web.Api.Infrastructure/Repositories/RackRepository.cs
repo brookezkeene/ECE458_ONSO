@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic.CompilerServices;
 using Web.Api.Common;
 using Web.Api.Common.Extensions;
 using Web.Api.Infrastructure.DbContexts;
 using Web.Api.Infrastructure.Entities;
+using Web.Api.Infrastructure.Entities.Extensions;
 using Web.Api.Infrastructure.Repositories.Interfaces;
 
 namespace Web.Api.Infrastructure.Repositories
@@ -62,7 +65,8 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<Rack> GetRackAsync(Guid rackId)
         {
             return await _dbContext.Racks
-                .Include(x => x.Assets)
+                .Include(o => o.Pdus)
+                .ThenInclude(o => o.Ports)
                 .Where(x => x.Id == rackId)
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
