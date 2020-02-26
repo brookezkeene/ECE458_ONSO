@@ -43,9 +43,8 @@
                         <v-card-text>{{asset.powerPorts}}</v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                        <v-label>Power Ports: </v-label>
-                        <v-btn elevation="0" size="xSmall" color="primary" v-if="!viewNames" @click="showNames">View Power Port Status</v-btn>
-                        <v-btn elevation="0" size="xSmall" color="primary" v-else href @click="hideNames">Hide Power Port Status</v-btn>
+                        <v-btn small="true" color="primary" v-if="!viewNames" @click="showNames">View Power Port Status</v-btn>
+                        <v-btn dark small="true" size="xSmall" color="primary" v-else href @click="hideNames">Hide Power Port Status</v-btn>
                         <div v-if="viewNames">
                             <v-card max-height="300px" class="overflow-y-auto" outlined flat>
                                 <v-card-text v-for="(object,index) in powerPorts.powerPorts" :key="index"> Port {{object.port}}: {{object.status}} </v-card-text>
