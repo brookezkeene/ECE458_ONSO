@@ -112,9 +112,12 @@
                 console.log(powerPortStates);
                 console.log(this.asset.powerPorts.length);
                 console.log('Got to fetch power port ids!');
-                for (i = 0; i < this.asset.powerPorts.length; i++) {
+                for (var i = 0; i < this.asset.powerPorts.length; i++) {
+                    console.log('For loop!')
                     if (!this.loading) this.loading = true;
-                    powerPortStates.put(await this.assetRepository.findPowerPort(this.asset.powerPorts[i].id));
+                    console.log(this.asset.powerPorts[i].id)
+                    var powerState = await this.assetRepository.getPowerState(this.asset.powerPorts[i].id)
+                    powerPortStates.put(powerState);
                     console.log(powerPortStates);
                     this.loading = false;
                 }

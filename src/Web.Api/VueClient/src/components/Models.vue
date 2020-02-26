@@ -203,6 +203,7 @@
                     comment: ''
                 },
                 deleting: false,
+                editing: false,
             }
         },
         computed: {
@@ -234,6 +235,7 @@
                 this.loading = false;
             },
             editItem(item) {
+                this.editing = true
                 this.$router.push({ name: 'model-edit', params: { id: item.id } })
             },
             addItem() {
@@ -249,7 +251,7 @@
             showDetails(item) {
                 /*eslint-disable*/
                 console.log(item);
-                if (this.editedIndex === -1 && !this.deleting) {
+                if (this.editedIndex === -1 && !this.deleting && !this.editing) {
                     this.$router.push({ name: 'model-details', params: {id: item.id } })
                 }
                 this.deleting = false;
@@ -283,7 +285,6 @@
                 } else if (!this.startMemoryValue) {
                     return (value) <= parseInt(this.endMemoryValue);
                 }
-
 
                 return (value) >= parseInt(this.startMemoryValue)
                     && (value) <= parseInt(this.endMemoryValue);
