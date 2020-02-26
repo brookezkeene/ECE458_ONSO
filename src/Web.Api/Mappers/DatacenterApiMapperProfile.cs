@@ -24,6 +24,13 @@ namespace Web.Api.Mappers
 
             CreateMap<DatacenterDto, UpdateDatacenterApiDto>()
                 .ReverseMap();
+
+            CreateMap<AssetNetworkPortDto, GetAssetNetworkPortFromDatacenterDto>()
+                .ForMember(o => o.Name, opts => opts.MapFrom(src => src.ModelNetworkPort.Name))
+                .ForMember(o => o.AssetHostname, opts => opts.MapFrom(src => src.Asset.Hostname))
+                .ForMember(o => o.RowLetter, opts => opts.MapFrom(src => src.Asset.Rack.RowLetter))
+                .ForMember(o => o.RackNumber, opts => opts.MapFrom(src => src.Asset.Rack.RackNumber))
+                .ForMember(o => o.Id, opts => opts.MapFrom(src => src.Id));
         }
     }
 }

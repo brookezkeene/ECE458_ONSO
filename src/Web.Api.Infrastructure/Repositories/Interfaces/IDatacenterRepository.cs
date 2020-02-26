@@ -15,6 +15,8 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
         Task<int> DeleteDatacenterAsync(Datacenter datacenter);
         Task<bool> CanDeleteDatacenterAsync(Datacenter datacenter);
         Task<bool> RacksInDatacenterExistAsync(Datacenter datacenter);
+        Task<List<AssetNetworkPort>> GetNetworkPortFromDatacenterAsync(Guid datacenterID);
+
         Task<bool> DatacenterIsUniqueAsync(string vendor, string modelNumber, Guid id = default);
         Task<bool> DatacenterExistsAsync(string vendor, string modelNumber, Guid id);
     }

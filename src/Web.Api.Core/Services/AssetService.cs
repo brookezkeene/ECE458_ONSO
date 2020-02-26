@@ -8,6 +8,7 @@ using Web.Api.Core.Dtos;
 using Web.Api.Core.Events.Asset;
 using Web.Api.Core.Mappers;
 using Web.Api.Core.Services.Interfaces;
+using Web.Api.Infrastructure.Entities;
 using Web.Api.Infrastructure.Repositories.Interfaces;
 
 namespace Web.Api.Core.Services
@@ -39,9 +40,8 @@ namespace Web.Api.Core.Services
         {
             query = query.ReformatQuery();
             System.Diagnostics.Debug.WriteLine(query.StartRow);
-            var assets = await _repository.GetAssetExportAsync(query.Search, query.Hostname, query.StartRow, query.StartCol, query.EndRow, query.EndCol) ;
+            var assets = await _repository.GetAssetExportAsync(query.Search, query.Hostname, query.StartRow, query.StartCol, query.EndRow, query.EndCol);
             return assets.ToDto();
-
         }
 
         public async Task<List<AssetNetworkPortDto>> GetNetworkPortExportAsync(NetworkPortExportQuery query)
@@ -56,8 +56,6 @@ namespace Web.Api.Core.Services
         {
             var entity = asset.ToEntity();
             await _repository.AddAssetAsync(entity);
-
-            await _auditEventLogger.LogEventAsync(new AssetCreatedEvent(asset));
             return entity.Id;
         }
 
