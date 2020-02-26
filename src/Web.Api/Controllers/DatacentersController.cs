@@ -69,7 +69,8 @@ namespace Web.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _datacenterService.DeleteDatacenterAsync(id);
+            var datacenter = await _datacenterService.GetDatacenterAsync(id);
+            await _datacenterService.DeleteDatacenterAsync(datacenter);
             return Ok();
         }
     }

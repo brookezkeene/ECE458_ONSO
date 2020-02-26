@@ -62,7 +62,8 @@ namespace Web.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _assetService.DeleteAssetAsync(id);
+            var asset = await _assetService.GetAssetAsync(id);
+            await _assetService.DeleteAssetAsync(asset);
             return Ok();
         }
         [HttpPut]

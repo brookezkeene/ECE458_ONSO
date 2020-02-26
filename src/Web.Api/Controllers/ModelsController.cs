@@ -68,7 +68,8 @@ namespace Web.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _modelService.DeleteModelAsync(id);
+            var model = await _modelService.GetModelAsync(id);
+            await _modelService.DeleteModelAsync(model);
             return Ok();
         }
     }

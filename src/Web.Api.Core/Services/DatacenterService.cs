@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Skoruba.AuditLogging.Services;
 using Web.Api.Common;
 using Web.Api.Core.Dtos;
+using Web.Api.Core.Events.Datacenter;
 using Web.Api.Core.Mappers;
 using Web.Api.Core.Services.Interfaces;
 using Web.Api.Infrastructure.Repositories.Interfaces;
@@ -14,23 +16,30 @@ namespace Web.Api.Core.Services
     public class DatacenterService : IDatacenterService
     {
         private readonly IDatacenterRepository _repository;
+        private readonly IAuditEventLogger _auditEventLogger;
 
-        public DatacenterService(IDatacenterRepository repository)
+        public DatacenterService(IDatacenterRepository repository, IAuditEventLogger auditEventLogger)
         {
             _repository = repository;
+            _auditEventLogger = auditEventLogger;
         }
 
-        public async Task<Guid> CreateDatacenterAsync(DatacenterDto datacenterDto)
+        public async Task<Guid> CreateDatacenterAsync(DatacenterDto datacenter)
         {
-            var entity = datacenterDto.ToEntity();
+            var entity = datacenter.ToEntity();
             await _repository.AddDatacenterAsync(entity);
+
+            await _auditEventLogger.LogEventAsync(new DatacenterCreatedEvent(datacenter));
+
             return entity.Id;
         }
 
-        public async Task DeleteDatacenterAsync(Guid datacenterId)
+        public async Task DeleteDatacenterAsync(DatacenterDto datacenter)
         {
-            var entity = await _repository.GetDatacenterAsync(datacenterId);
+            var entity = datacenter.ToEntity();
             await _repository.DeleteDatacenterAsync(entity);
+
+            await _auditEventLogger.LogEventAsync(new DatacenterDeletedEvent(datacenter));
         }
 
         public async Task<DatacenterDto> GetDatacenterAsync(Guid datacenterId)
@@ -46,11 +55,12 @@ namespace Web.Api.Core.Services
             return pagedList.ToDto();
         }
 
-        public async Task<int> UpdateDatacenterAsync(DatacenterDto datacenterDto)
+        public async Task<int> UpdateDatacenterAsync(DatacenterDto datacenter)
         {
-            var datacenter = datacenterDto.ToEntity();
-            var updated = await _repository.UpdateDatacenterAsync(datacenter);
+            var entity = datacenter.ToEntity();
+            var updated = await _repository.UpdateDatacenterAsync(entity);
 
+            await _auditEventLogger.LogEventAsync(new DatacenterUpdatedEvent(datacenter));
             return updated;
         }
     }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -75,11 +76,12 @@ namespace Web.Api
                 {
                     options.UseDefaultAction = true;
                     options.UseDefaultSubject = true;
+                    options.Source = "Web";
                 })
                 .AddDefaultHttpEventData(subjectOptions =>
                 {
-                    subjectOptions.SubjectIdentifierClaim = ClaimsConsts.Sub;
-                    subjectOptions.SubjectNameClaim = ClaimsConsts.Name;
+                    subjectOptions.SubjectIdentifierClaim = ClaimTypes.NameIdentifier;
+                    subjectOptions.SubjectNameClaim = ClaimTypes.Name;
                 })
                 .AddDefaultStore(options => options.UseSqlServer(
                     Configuration.GetConnectionString(ConfigurationConsts.ApplicationDbConnectionStringKey), sql =>

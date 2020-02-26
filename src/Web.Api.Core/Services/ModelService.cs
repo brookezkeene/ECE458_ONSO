@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Skoruba.AuditLogging.Services;
 using Web.Api.Common;
 using Web.Api.Core.Dtos;
+using Web.Api.Core.Events.Model;
 using Web.Api.Core.ExceptionHandling;
 using Web.Api.Core.Mappers;
 using Web.Api.Core.Services.Interfaces;
@@ -14,10 +16,12 @@ namespace Web.Api.Core.Services
     public class ModelService : IModelService
     {
         private readonly IModelRepository _repository;
+        private readonly IAuditEventLogger _auditEventLogger;
 
-        public ModelService(IModelRepository repository)
+        public ModelService(IModelRepository repository, IAuditEventLogger auditEventLogger)
         {
             _repository = repository;
+            _auditEventLogger = auditEventLogger;
         }
 
         public async Task<PagedList<ModelDto>> GetModelsAsync(string search, int page = 1, int pageSize = 10)
@@ -40,25 +44,30 @@ namespace Web.Api.Core.Services
             return model.ToDto();
         }
 
-        public async Task<int> UpdateModelAsync(ModelDto modelDto)
+        public async Task<int> UpdateModelAsync(ModelDto model)
         {
-            var model = modelDto.ToEntity();
-            var updated = await _repository.UpdateModelAsync(model);
+            var entity = model.ToEntity();
+            var updated = await _repository.UpdateModelAsync(entity);
 
+            await _auditEventLogger.LogEventAsync(new ModelUpdatedEvent(model));
             return updated;
         }
 
-        public async Task<Guid> CreateModelAsync(ModelDto modelDto)
+        public async Task<Guid> CreateModelAsync(ModelDto model)
         {
-            var entity = modelDto.ToEntity();
+            var entity = model.ToEntity();
             await _repository.AddModelAsync(entity);
+
+            await _auditEventLogger.LogEventAsync(new ModelCreatedEvent(model));
             return entity.Id;
         }
 
-        public async Task DeleteModelAsync(Guid modelId)
+        public async Task DeleteModelAsync(ModelDto model)
         {
-            var entity = await _repository.GetModelAsync(modelId);
+            var entity = model.ToEntity();
             await _repository.DeleteModelAsync(entity);
+
+            await _auditEventLogger.LogEventAsync(new ModelDeletedEvent(model));
         }
     }
 }
