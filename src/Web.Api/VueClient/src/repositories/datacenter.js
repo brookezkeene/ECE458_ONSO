@@ -10,6 +10,9 @@ export default {
                 return response.data;
             });
     },
+    networkPorts(id) {
+        return axios.getNetwork(`${resource}/networkports/${id}`).then(response => { return response.data; }).catch(error => error);
+    },
     list() {
         return axios.get(`${resource}`, { params: { pageSize: 2000000000 } })
             .then(response => {

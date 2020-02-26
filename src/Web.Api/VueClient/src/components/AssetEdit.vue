@@ -178,6 +178,7 @@
                     <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn text @click="close">Cancel</v-btn>
+                        <v-btn text @click="sendNetworkPortRequest">network port request</v-btn>
                         <v-btn color="primary" text @click="save">Save</v-btn>
                     </v-card-actions>'
                 </v-container>
@@ -285,6 +286,11 @@
             },
             close() {
                 this.$router.push({ name: 'assets' })
+            },
+            async sendNetworkPortRequest() {
+                var networks = await this.datacenterRepository.networtPorts(this.datacenterID);
+                /* eslint-disable no-unused-vars, no-console */
+                console.log(networks);
             },
             async updateRacks() {
                 if (this.datacenterID != this.editedItem.datacenter) {

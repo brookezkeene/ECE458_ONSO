@@ -48,7 +48,11 @@ namespace Web.Api.Core.Services
             // TODO: handle null result (no datacenter found)
             return datacenter.ToDto();
         }
-
+        public async Task<List<AssetNetworkPortDto>> GetNetworkPortsOfDataCenterAsync(Guid datacenterId)
+        {
+            var networkports = await _repository.GetNetworkPortFromDatacenterAsync(datacenterId);
+            return networkports.ToDto();
+        }
         public async Task<PagedList<DatacenterDto>> GetDatacentersAsync(string search, int page = 1, int pageSize = 10)
         {
             var pagedList = await _repository.GetDatacentersAsync(search, page, pageSize);

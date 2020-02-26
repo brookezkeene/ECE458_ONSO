@@ -51,6 +51,19 @@ namespace Web.Api.Infrastructure.Repositories
                             .AnyAsync();
         }
 
+        public async Task<List<AssetNetworkPort>> GetNetworkPortFromDatacenterAsync(Guid datacenterID)
+        {
+            var ports = await _dbContext.AssetNetworkPort
+                .Include(x => x.ModelNetworkPort)
+                .Include(x => x.Asset).ThenInclude(x => x.Rack)
+                .Include(x => x.ConnectedPort).ThenInclude(x => x.ModelNetworkPort)
+                .Include(x => x.ConnectedPort).ThenInclude(x => x.Asset)
+                .Where(x => x.Asset.Rack.Datacenter.Id == datacenterID)
+                .AsNoTracking()
+                .ToListAsync();
+            return ports;
+        }
+
         public async Task<int> DeleteDatacenterAsync(Datacenter datacenter)
         {
             _dbContext.Datacenters.Remove(datacenter);
