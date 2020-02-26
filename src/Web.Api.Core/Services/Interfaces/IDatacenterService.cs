@@ -15,6 +15,6 @@ namespace Web.Api.Core.Services.Interfaces
 
         Task<int> UpdateDatacenterAsync(DatacenterDto datacenterDto);
         Task<Guid> CreateDatacenterAsync(DatacenterDto datacenterDto);
-        Task DeleteDatacenterAsync(Guid datacenterId);
+        Task DeleteDatacenterAsync(DatacenterDto datacenterDto);
     }
 }
