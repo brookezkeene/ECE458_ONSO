@@ -132,7 +132,6 @@
         startRackValue: '',
         endRackValue: '',
 
-        dialog: false,
         instructionsDialog: false,
         loading: true,
         search: '',
@@ -185,9 +184,6 @@
         },
     },
     watch: {
-      dialog (val) {
-        val || this.close()
-      },
       instructionsDialog (val) {
         val || this.closeDetail()
       },

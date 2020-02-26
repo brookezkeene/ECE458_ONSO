@@ -247,6 +247,8 @@
                     })
             },
             showDetails(item) {
+                /*eslint-disable*/
+                console.log(item);
                 if (this.editedIndex === -1 && !this.deleting) {
                     this.$router.push({ name: 'model-details', params: {id: item.id } })
                 }

@@ -72,10 +72,10 @@ namespace Web.Api.Core.Dtos
 
         public override string ToString()
         {
-            var datacenter = Rack.Datacenter.Name;
-            var rack = Rack.Address;
+            var datacenter = Rack.Datacenter.Name.ToLower();
+            var rack = Rack.Address.ToUpper();
 
-            return $"HPDU-{datacenter}-{rack}-{Location}";
+            return $"hpdu-{datacenter}-{rack}{Location}";
         }
     }
 

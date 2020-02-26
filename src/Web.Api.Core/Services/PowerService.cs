@@ -26,7 +26,7 @@ namespace Web.Api.Core.Services
             _regex = new Regex(Pattern, RegexOptions.Compiled | RegexOptions.Multiline);
             _assetService = assetService;
 
-            client.BaseAddress = new Uri("http://hyposoft-mgt.colab.duke.edu:8003");
+            client.BaseAddress = new Uri("http://hyposoft-mgt.colab.duke.edu:8000");
 
             Client = client;
 
@@ -78,7 +78,7 @@ namespace Web.Api.Core.Services
             var pduPorts = (await _assetService.GetAssetAsync(assetId))
                 .PowerPorts
                 .Where(o => o.PduPort != null)
-                .GroupBy(o => o.ToString())
+                .GroupBy(o => o.PduPort.Pdu.ToString())
                 .ToDictionary(d => d.Key,
                     d => d.Select(o => o.PduPort.Number)
                           .ToList());
@@ -92,14 +92,16 @@ namespace Web.Api.Core.Services
                 foreach (var port in kvp.Value)
                 {
 
-                    var requestData = new Data();
-                    requestData.pdu = kvp.Key.ToString();
-                    requestData.port = port.ToString();
-                    requestData.v = state.ToString().ToLower();
+                    var requestData = new Dictionary<String, String>
+                    {
+                        { "pdu", kvp.Key },
+                        { "port", port.ToString() },
+                        { "v", state.ToString().ToLower() }
+                    };
 
-                    var json = JsonConvert.SerializeObject(requestData);
-                    var data = new StringContent(json, Encoding.UTF8, "application/json");
+                    var data = new FormUrlEncodedContent(requestData);
                     var response = await Client.PostAsync("/power.php", data);
+                    Console.WriteLine(response);
 
                     // Translate the action that was taken on the asset into a current power state
                     var powerState = PowerState.Off;

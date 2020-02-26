@@ -53,7 +53,7 @@
                 </v-col>
 
             </v-row>
-            <v-label>assets: </v-label>
+            <v-label>Assets of this Model: </v-label>
             <v-row no-gutters v-for="(value, name) in model.assets" v-bind:key="name">
                 <v-label>Host Name: </v-label>
                 <router-link :to="{ name: 'asset-details', params: { id: value.id } }">{{ value.hostname }}</router-link>
