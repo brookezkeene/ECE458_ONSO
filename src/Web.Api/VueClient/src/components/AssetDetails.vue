@@ -119,6 +119,17 @@
                 console.log('Got to fetch power port ids!');
                 powerPortStates = await this.assetRepository.getPowerPortState(this.asset.id);
                 console.log(powerPortStates);
+                for (var i = 0; i<powerPortStates.powerPorts.length; i++) {
+                    console.log(powerPortStates.powerPorts[i]);
+                    if (powerPortStates.powerPorts[i].status=='0') {
+                        powerPortStates.powerPorts[i].status = 'On';
+                        var name = powerPortStates.powerPorts[i].port.split('-');
+                        console.log(name);
+                        powerPortStates.powerPorts[i].port = name[2][3] + " " + name[2][4];
+                    } else {
+                        powerPortStates.powerPorts[i].status = 'Off'
+                    }
+                }
                 return powerPortStates;
             },
             async showNames() {
