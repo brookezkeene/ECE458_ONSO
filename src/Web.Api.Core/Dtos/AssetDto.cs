@@ -77,6 +77,14 @@ namespace Web.Api.Core.Dtos
 
             return $"hpdu-{datacenter}-{rack}{Location}";
         }
+
+        public string ToPdu()
+        {
+            var datacenter = Rack.Datacenter.Name.ToLower();
+            var rack = Rack.Address.ToUpper();
+
+            return $"{datacenter}-{rack}{Location}";
+        }
     }
 
 }

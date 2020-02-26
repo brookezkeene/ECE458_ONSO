@@ -38,15 +38,22 @@
                         <v-label>Model: </v-label>
                         <router-link :to="{ name: 'model-details', params: { id: asset.modelId } }"> {{ asset.modelNumber }} </router-link>
                     </v-col>
-                    <v-col cols="12" sm="6" md="4"> <!--power port connections-->>
+                    <v-col cols="12" sm="6" md="4"> <!--power port connections-->
                         <v-label>Power Port Connections: </v-label>
-                        <v-card-text>{{asset.powerPorts}}</v-card-text>
+                        <v-scroll>
+                            <v-card flat class="overflow-y-auto">
+                                <div v-for="(port,index) in asset.powerPorts" :key="index">
+                                    <v-card-text>{{port.pduPort}}</v-card-text>
+
+                                </div>
+                            </v-card>
+                        </v-scroll>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                        <v-btn small="true" color="primary" v-if="!viewNames" @click="showNames">View Power Port Status</v-btn>
-                        <v-btn dark small="true" size="xSmall" color="primary" v-else href @click="hideNames">Hide Power Port Status</v-btn>
+                        <v-btn small color="primary" v-if="!viewNames" @click="showNames">View Power Port Status</v-btn>
+                        <v-btn dark small color="primary" v-else href @click="hideNames">Hide Power Port Status</v-btn>
                         <div v-if="viewNames">
-                            <v-card max-height="300px" class="overflow-y-auto" outlined flat>
+                            <v-card max-height="300px" class="overflow-y-auto" flat>
                                 <v-card-text v-for="(object,index) in powerPorts.powerPorts" :key="index"> Port {{object.port}}: {{object.status}} </v-card-text>
                             </v-card>
                         </div>

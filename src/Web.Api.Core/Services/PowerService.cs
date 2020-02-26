@@ -35,7 +35,6 @@ namespace Web.Api.Core.Services
         public async Task<AssetPowerStateDto> getStates(Guid assetId)
         {
             var asset = await _assetService.GetAssetAsync(assetId);
-            // possible null reference exceptions: asset, asset.PowerPorts, asset.PowerPorts.PduPort.Pdu (any), 
             var pduPorts = asset.PowerPorts
                 .Where(o => o.PduPort != null)
                 .GroupBy(o => o.PduPort.Pdu.ToString())
@@ -51,19 +50,13 @@ namespace Web.Api.Core.Services
                 $"/pdu.php?pdu={kvp.Key}");
                 response.EnsureSuccessStatusCode();
                 var parsedResponse = ParseResponse(await response.Content.ReadAsStringAsync());
-                var statesICareAbout = kvp.Value.Select(i => parsedResponse[i]);
-                var state = PowerState.Off;
-                if(statesICareAbout.Equals("ON"))
+                var states = kvp.Value.Select(n => new AssetPowerPortStateDto()
                 {
-                    state = PowerState.On;
-                }
-                var powerPortState = new AssetPowerPortStateDto() {
-                    Port = kvp.Key.ToString(),
-                    Status = state
-                };
-                powerStates.Add(powerPortState);
-
-        }
+                    Port = kvp.Key + n,
+                    Status = (PowerState)Enum.Parse(typeof(PowerState), parsedResponse[n], true)
+                });
+                powerStates.AddRange(states);
+            }
             var ret = new AssetPowerStateDto()
             {
                 Id = assetId,

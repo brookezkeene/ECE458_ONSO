@@ -78,6 +78,7 @@ namespace Web.Api.Controllers
 
         [HttpGet("{id}/power")]
         public async Task<ActionResult<GetAssetPowerStateApiDto>> GetPowerState(Guid id)
+        
         {
             var resp = await _powerService.getStates(id);
             var response = resp.MapTo<GetAssetPowerStateApiDto>();
