@@ -172,7 +172,6 @@
                     { text: 'CPU', value: 'cpu' },
                     { text: 'Memory', value: 'memory', filter: this.memoryFilter },
                     { text: 'Storage', value: 'storage' },
-                    { text: 'Comment', value: 'comment' },
                     { text: 'Actions', value: 'action', sortable: false },
 
                 ],

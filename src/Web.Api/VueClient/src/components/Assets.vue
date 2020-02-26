@@ -149,7 +149,6 @@
           { text: 'Rack', value: 'rack', filter: this.rackFilter },
           { text: 'Rack U', value: 'rackPosition', },
           { text: 'Owner Username', value: 'owner' },
-          { text: 'Comment', value: 'comment' },
           { text: 'Power', value: 'power', sortable: false },
           { text: 'Actions', value: 'action', sortable: false },
         ],
