@@ -71,7 +71,7 @@
                             </v-card-title>
                             <v-card-text>
                                 <v-container fluid>
-                                    <div v-for="(n, index) in this.networkPortNames" :key="n">
+                                    <div v-for="(n, index) in this.networkPortNames" :key="index">
                                         <v-text-field v-model="networkPortNames[index]" 
                                                       label="Network Port" 
                                                       placeholder="port name"
@@ -82,8 +82,8 @@
                             </v-card-text>
                             <v-card-actions>
                                 <v-spacer></v-spacer>
-                                <v-btn color="primary" text @click="saveNames">Save</v-btn>
                                 <v-btn color="primary" text @click="closeNamesDialog">Close</v-btn>
+                                <v-btn color="primary" text @click="saveNames">Save</v-btn>
                             </v-card-actions>
                         </v-card>
                     </v-dialog>
@@ -210,9 +210,6 @@
                 if (this.newItem.networkPorts.length > this.newItem.ethernetPorts) {
                     this.newItem.networkPorts = this.newItem.networkPorts.slice(0, this.newItem.ethernetPorts);
                 }
-
-                                console.log(this.newItem.networkPorts);
-
                 
                 this.namesDialog = false;
             },

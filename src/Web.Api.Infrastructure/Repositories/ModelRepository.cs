@@ -152,6 +152,7 @@ namespace Web.Api.Infrastructure.Repositories
         }
         private void NetworkPortsSameNumberAsEthernetPorts(Model model)
         {
+            //checking to see that netorkports has the same size as the int ethernetport input
             if (model.NetworkPorts == null && model.EthernetPorts != 0)
             {
                 List<ModelNetworkPort> newports = new List<ModelNetworkPort>();
@@ -159,14 +160,6 @@ namespace Web.Api.Infrastructure.Repositories
                 {
                     newports.Add(new ModelNetworkPort { Number = i, Name = (i+1).ToString() });
                 }
-                /*foreach (ModelNetworkPort port in model.NetworkPorts)
-                {
-                    var newport = newports[port.Number - 1];
-                    if (port.Name != null)
-                    {
-                        newport.Name = port.Name;
-                    }
-                }*/
                 model.NetworkPorts = newports;
             }  else if (model.EthernetPorts > model.NetworkPorts.Count())
             {
@@ -181,6 +174,15 @@ namespace Web.Api.Infrastructure.Repositories
                 for(var i = model.NetworkPorts.Count() - 1; i >= model.EthernetPorts; i--)
                 {
                     model.NetworkPorts.RemoveAt(i);
+                }
+            }
+
+            //if the name is null or empty, update it to be the same as the number
+            for (int i = 0; i < model.EthernetPorts; i++)
+            {
+                if(model.NetworkPorts[i].Name == null || model.NetworkPorts[i].Name.Length == 0)
+                {
+                    model.NetworkPorts[i].Name = model.NetworkPorts[i].Number.ToString();
                 }
             }
         }
