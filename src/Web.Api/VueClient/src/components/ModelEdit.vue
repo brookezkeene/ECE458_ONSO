@@ -166,7 +166,9 @@
                 if (typeof this.id === 'undefined') {
                     var j; 
                     for (j = 0; j < this.newItem.ethernetPorts; j++) {
-                        this.networkPortNames[j] = (j + 1).toString();
+                        if (this.networkPortNames[j] == null) {
+                            this.networkPortNames[j] = (j + 1).toString();
+                        }
                     }
                     if (this.newItem.ethernetPorts < this.networkPortNames.length) {
                         this.networkPortNames = this.networkPortNames.slice(0, this.newItem.ethernetPorts);
@@ -189,10 +191,12 @@
             /*here is where networkPortNames modifies the newItem.networkPorts 
               to update the values of the item*/
             saveNames() {
-                
+                 /* eslint-disable no-unused-vars, no-console */
+                console.log(this.networkPortNames);
+
                 var i;
                 for (i = 0; i < this.networkPortNames.length; i++) {
-                    if (typeof this.id === 'undefined') {
+                    if (typeof this.id === 'undefined' && this.newItem.networkPorts.length == 0) {
                         var portObj = Object.assign({}, { name: this.networkPortNames[i], number: i + 1 })
                         this.newItem.networkPorts.push(portObj);
                     } else if (this.newItem.networkPorts.length <= i) {
@@ -206,6 +210,9 @@
                 if (this.newItem.networkPorts.length > this.newItem.ethernetPorts) {
                     this.newItem.networkPorts = this.newItem.networkPorts.slice(0, this.newItem.ethernetPorts);
                 }
+
+                                console.log(this.newItem.networkPorts);
+
                 
                 this.namesDialog = false;
             },
