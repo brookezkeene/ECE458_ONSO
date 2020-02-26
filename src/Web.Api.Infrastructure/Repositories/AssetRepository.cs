@@ -57,14 +57,38 @@ namespace Web.Api.Infrastructure.Repositories
                 .Include(x => x.Model)
                 .Include(x => x.Owner)
                 .Include(x => x.Rack)
-                .Where(x => x.Rack.Row[0] >= rowStart[0] && x.Rack.Column >= colStart && x.Rack.Row[0] <= rowEnd[0] && x.Rack.Column <= colEnd)
+                .Where(x => x.Rack.Column >= colStart)
+                .Where(x => x.Rack.Column <= colEnd)
                 .WhereIf(!string.IsNullOrEmpty(search), modelCondition)
                 .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
                 .AsNoTracking()
                 .ToListAsync();
-
+                assets = assets.Where(x => x.Rack.Row[0] >= rowStart[0] && x.Rack.Row[0] <= rowEnd[0]).ToList();
+    
 
             return assets;
+        }
+
+        public async Task<List<AssetNetworkPort>> GetNetworkPortExportAsync(string search, string hostname, string rowStart, int colStart, string rowEnd, int colEnd)
+        {
+
+            Expression<Func<AssetNetworkPort, bool>> modelCondition = x => x.Asset.Model.ModelNumber.ToUpper().Contains(search) || x.Asset.Model.Vendor.ToUpper().Contains(search);
+            Expression<Func<AssetNetworkPort, bool>> hostnameCondition = x => x.Asset.Hostname.ToUpper().Contains(hostname);
+
+            var ports = await _dbContext.AssetNetworkPort
+                .Include(x => x.ModelNetworkPort)
+                .Include(x => x.Asset).ThenInclude(x => x.Rack).ThenInclude(x => x.Datacenter)
+                .Include(x => x.ConnectedPort).ThenInclude(x => x.ModelNetworkPort)
+                .Include(x => x.ConnectedPort).ThenInclude(x => x.Asset)
+                //.Where(x => x.Asset.Rack.Column >= colStart)
+                //.Where(x => x.Asset.Rack.Column <= colEnd)
+                .WhereIf(!string.IsNullOrEmpty(search), modelCondition)
+                .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
+                .AsNoTracking()
+                .ToListAsync();
+            ports = ports.Where(x => x.Asset.Rack.Row[0] >= rowStart[0] && x.Asset.Rack.Row[0] <= rowEnd[0] && x.Asset.Rack.Column >= colStart && x.Asset.Rack.Column <= colEnd).ToList();
+
+            return ports;
         }
 
         public async Task<Asset> GetAssetAsync(Guid assetId)

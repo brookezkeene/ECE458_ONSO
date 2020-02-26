@@ -92,7 +92,24 @@
         methods: {
             async setStep2() {
                 this.query.Search = this.model_filter;
-                this.exportRaw = await this.exportRepository.exportModel(this.query);
+                var temp = await this.exportRepository.exportModel(this.query);
+                var i; var j;
+                for (i = 0; i < temp.length; i++) {
+                    var networkPorts = temp[i].network_ports;
+                    var netPortLength = networkPorts.length;
+                    delete temp[i].network_ports;
+                    for (j = 0; j < netPortLength; j++) {
+                        var name = "network_port_name_" + (j + 1).toString();
+                        temp[i][`${name}`] = networkPorts[j].network_port_name;
+                    }
+                }
+
+                this.exportRaw = temp;
+
+                /* eslint-disable no-unused-vars, no-console */
+                console.log(this.exportRaw.length);
+                console.log(this.exportRaw);
+                console.log("This is inside of export raw");
                 this.step = 2
             },
             close() {

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Moq;
+using Skoruba.AuditLogging.Services;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services;
 using Web.Api.Core.UnitTests.Mappers;
@@ -23,6 +25,13 @@ namespace Web.Api.Core.UnitTests
 {
     public class ModelCrudTests
     {
+        protected readonly Mock<IAuditEventLogger> AuditMock;
+
+        public ModelCrudTests()
+        {
+            AuditMock = new Mock<IAuditEventLogger>();
+        }
+
         [Fact]
         public async void PostModel()
         {
@@ -31,7 +40,7 @@ namespace Web.Api.Core.UnitTests
                .Options;
             await using var context = new ApplicationDbContext(options);
             IModelRepository repository = new ModelRepository(context);
-            IModelService service = new ModelService(repository);
+            IModelService service = new ModelService(repository, AuditMock.Object);
             IApiErrorResources error = new ApiErrorResources();
             var controller = new ModelsController(service, error);
 

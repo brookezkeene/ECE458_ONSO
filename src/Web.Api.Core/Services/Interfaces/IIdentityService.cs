@@ -11,6 +11,7 @@ namespace Web.Api.Core.Services.Interfaces
         Task<PagedList<UserDto>> GetUsersAsync(string search, int page = 1, int pageSize = 10);
         Task<UserDto> GetUserAsync(Guid userId);
         Task<(IdentityResult identityResult, Guid userId)> CreateUserAsync(RegisterUserDto user);
+        Task<IdentityResult> DeleteUserAsync(Guid userId);
         Task<Token> LoginAsync(LoginDto login);
     }
 }

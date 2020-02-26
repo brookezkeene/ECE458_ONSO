@@ -95,11 +95,12 @@ namespace Web.Api.Infrastructure.Repositories
             return await _dbContext.SaveChangesAsync();
         }
 
-        public async Task CreateRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd, Guid datacenterId)
+        public async Task<int> CreateRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd,
+            Guid datacenterId)
         {
             for (var r = rowStart[0]; r <= rowEnd[0]; r++)
             {
-                var row = r.ToString();
+                var row = r.ToString().ToUpper();
                 for (var col = colStart; col <= colEnd; col++)
                 {
                     if (!await _dbContext.Racks.AnyAsync(o => o.Row == row && o.Column == col))
@@ -119,10 +120,11 @@ namespace Web.Api.Infrastructure.Repositories
                 }
             }
 
-            await _dbContext.SaveChangesAsync();
+            return await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd, Guid datacenterId)
+        public async Task<int> DeleteRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd,
+            Guid datacenterId)
         {
             for (var r = rowStart[0]; r <= rowEnd[0]; r++)
             {
@@ -137,7 +139,7 @@ namespace Web.Api.Infrastructure.Repositories
                     eligibleForDeletion.ForEach(rack => _dbContext.Remove(rack));
                 }
             }
-            await _dbContext.SaveChangesAsync();
+            return await _dbContext.SaveChangesAsync();
         }
 
         public async Task<bool> AddressExistsAsync(string rackRow, int rackColumn, Guid datacenterId)

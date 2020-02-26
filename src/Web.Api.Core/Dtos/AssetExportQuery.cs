@@ -43,10 +43,17 @@ namespace Web.Api.Core.Dtos
             if (!string.IsNullOrEmpty(query.Search))
             {
                 upperQuery.Search = query.Search.ToUpper();
+            } else
+            {
+                upperQuery.Search = "";
             }
             if (!string.IsNullOrEmpty(query.Hostname))
             {
                 upperQuery.Hostname = query.Hostname.ToUpper();
+            }
+            else
+            {
+                upperQuery.Hostname = "";
             }
 
             return upperQuery;

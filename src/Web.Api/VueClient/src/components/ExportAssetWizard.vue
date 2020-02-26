@@ -15,9 +15,26 @@
                         <v-card flat>
                             <v-container fill-height fluid>
                                 <v-label>
-                                    Input a host name to filter result by
+                                    Input an asset host name to filter result by
                                 </v-label>
-                                <v-text-field v-model="query.hostName">
+                                <v-text-field v-model="query.HostName">
+                                </v-text-field>
+                                <v-label>
+                                    Input a model vendor name to filter result by
+                                </v-label>
+                                <v-text-field v-model="query.Search">
+                                </v-text-field>
+                                <v-label>
+                                    Input a start rack to filter result by
+                                </v-label>
+                                <v-text-field v-model="startRack"
+                                              :rules="[rules.rackRules]">
+                                </v-text-field>
+                                <v-label>
+                                    Input an end rack to filter result by
+                                </v-label>
+                                <v-text-field v-model="endRack"
+                                              :rules="[rules.rackRules]">
                                 </v-text-field>
                             </v-container>
                         </v-card>
@@ -87,16 +104,56 @@
                     Search: '',
                     HostName: '',
                     StartRow: '',
-                    StartCol: '',
+                    StartCol: 0,
                     EndRow: '',
-                    EndCol: '',
+                    EndCol: 0,
+                },
+                startRack: '',
+                endRack: '',
+                rules: {
+                    rackRules: v => /^(?:|[a-zA-Z][0-9]+)*$/.test(v) || 'This is not a valid Rack Address'
                 },
                 assetErrorDialog: false
             };
         },
         methods: {
             async setStep2() {
-                this.exportRaw = await this.exportRepository.exportModel(this.query);
+
+                if (/^(?:|[a-zA-Z][0-9]+)*$/.test(this.startRack) && /^(?:|[a-zA-Z][0-9]+)*$/.test(this.endRack)) {
+                    if (this.startRack.length != 0) {
+                        this.query.StartRow = this.startRack[0];
+                        this.query.StartCol = parseInt(this.startRack.substring(1));
+                    }
+                    if (this.endRack.length != 0) {
+                        this.query.EndRow = this.endRack[0];
+                        this.query.EndCol = parseInt(this.endRack.substring(1));
+                    }
+                }
+
+
+                var temp = await this.exportRepository.exportAsset(this.query); 
+                /* eslint-disable no-unused-vars, no-console */
+                console.log(temp.length);
+                console.log(temp);
+                console.log("This is inside of temp");
+                var i; var j;
+                for (i = 0; i < temp.length; i++) {
+                    var powerPorts = temp[i].power_port;
+                    var powPortLength = powerPorts.length;
+                    delete temp[i].power_port;
+                    for (j = 0; j < powPortLength; j++) {
+                        var name = "power_port_name_" + (j + 1).toString();
+                        temp[i][`${name}`] = powerPorts[j].power_port_location + powerPorts[j].power_port_number;
+                    }
+                }
+
+                this.exportRaw = temp;
+
+                /* eslint-disable no-unused-vars, no-console */
+                console.log(this.exportRaw.length);
+                console.log(this.exportRaw);
+                console.log("This is inside of export raw");
+
                 this.step = 2
             },
             close() {

@@ -1,4 +1,6 @@
-﻿namespace Web.Api.Dtos.Bulk.Export
+﻿using System.Collections.Generic;
+
+namespace Web.Api.Dtos.Bulk.Export
 {
     public class ExportModelDto
     {
@@ -12,5 +14,11 @@
         public int? memory { get; set; }
         public string storage { get; set; }
         public string comment { get; set; }
+        public List<ExportModelNetworkPortDto> network_ports { get; set; }
+    }
+    public class ExportModelNetworkPortDto
+    {
+        public string network_port_name { get; set; }
+
     }
 }

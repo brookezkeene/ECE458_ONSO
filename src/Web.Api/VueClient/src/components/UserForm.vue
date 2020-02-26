@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!loading">
+    <div>
         <v-card flat>
             <v-card-title>
             <span class="headline">New User</span>
@@ -22,11 +22,6 @@
                         </v-col>
                         <v-col cols="12" sm="6" md="6">
                             <v-text-field v-model="editedItem.email" label="Email" :rules="[rules.required]"></v-text-field>
-                        </v-col>
-                    </v-row>
-                    <v-row>
-                        <v-col cols="12" sm="6" md="6">
-                            <v-select v-model="editedItem.permission" label="Permission Level" :items="permissions"></v-select> <!--Add permissions field to v-model-->
                         </v-col>
                     </v-row>
                     <v-row>
@@ -64,7 +59,6 @@ export default {
     data () {
         return {
             show: false,
-            show1: false,
             valid: true,
             email: '',
             emailRules: [
@@ -73,10 +67,8 @@ export default {
             ],
             password1: '',
             password2: '',
-            permissions: ['Regular', 'Administrator'],
             rules: {
                 required: value => !!value || "Required.",
-                emailMatch: () => "The email and password you entered don't match",
                 passwordLengthRules:
                     v => {
                         if (v.length < 6) {
@@ -86,51 +78,25 @@ export default {
                         }
                     },
             },
-            loading: false,
             editedItem: {
                 firstName: '',
                 lastName: '',
                 username: '',
                 email: '',
-                password: ''
-            },
-            users: [],
-        };
-        },
-
-    
-        async created() {
-            this.users = await this.userRepository.list();
-
-            this.editedItem = typeof this.id === 'undefined'
-                ? this.editedItem
-                : this.users.find(o => o.id === this.id);
-
-        },
-
-    methods: {
-        checkPassMatch() {
-            if (this.password1 != this.password2) {
-                this.snackbar = false
-            } else {
-                this.editedItem.password = this.password1;
+                password: '',
             }
-        },
-        save () {
+        };
+    },
+    methods: {
+        save() {
             this.userRepository.create(this.editedItem)
-                .then(async () => {
-                            await this.initialize();
-                        })
-        this.close()
+                .then(() => {
+                    this.close()
+                });
         },
         close() {
             this.$router.push({name: 'users'})
         }
-    },
-    computed: {
-        passwordConfirmationRule() {
-            return this.password1 === this.password2 || "Passwords must match";
-        },
     }
 }
 </script>

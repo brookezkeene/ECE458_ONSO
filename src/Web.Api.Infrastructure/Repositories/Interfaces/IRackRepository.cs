@@ -15,8 +15,8 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
         Task<int> AddRackAsync(Rack rack);
         Task<int> UpdateRackAsync(Rack rack);
         Task<int> DeleteRackAsync(Rack rack);
-        Task CreateRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd, Guid datacenterId);
-        Task DeleteRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd, Guid datacenterId);
+        Task<int> CreateRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd, Guid datacenterId);
+        Task<int> DeleteRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd, Guid datacenterId);
         Task<bool> AddressExistsAsync(string rackRow, int rackColumn, Guid datacenterId);
     }
 }

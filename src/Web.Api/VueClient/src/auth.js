@@ -39,8 +39,16 @@ export default {
         let cookie = Cookies.get(loginCookie);
         if (typeof cookie !== 'undefined') {
             cookie = JSON.parse(cookie);
-            const role = cookie.find(o => o.type == claimsType.Role);
-            return role.value === 'admin';
+            const role = cookie.find(o => o.type === claimsType.Role && o.value === 'admin');
+            return typeof role !== 'undefined';
+        }
+    },
+    username() {
+        let cookie = Cookies.get(loginCookie);
+        if (typeof cookie !== 'undefined') {
+            cookie = JSON.parse(cookie);
+            const username = cookie.find(o => o.type === claimsType.Name) || {};
+            return username.value;
         }
     }
 }

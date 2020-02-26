@@ -27,18 +27,18 @@ const routes = [
         component: Login
     },
     {
-        path: '',
-        name: 'dashboard',
+        path: '/',
         component: Dashboard,
         meta: { requiresAuth: true },
         children: [
             {
                 path: '',
+                name: 'dashboard',
                 component: Models,
             },
             {
                 path: '/models',
-                name: 'model',
+                name: 'models',
                 component: Models,
             },
             {
