@@ -38,7 +38,8 @@
                         <v-label>Model: </v-label>
                         <router-link :to="{ name: 'model-details', params: { id: asset.modelId } }"> {{ asset.modelNumber }} </router-link>
                     </v-col>
-                    <v-col cols="12" sm="6" md="4"> <!--power port connections-->
+                    <v-col cols="12" sm="6" md="4">
+                        <!--power port connections-->
                         <v-label>Power Port Connections: </v-label>
                         <v-scroll>
                             <v-card flat class="overflow-y-auto">
@@ -68,7 +69,33 @@
             <a href="javascript:history.go(-1)"> Go Back</a>
 
         </v-card>
+
+        <!--<template name="powerPortTable">
+            <p>Power Ports</p>
+            <v-container fill max-width="50%">
+                <v-simple-table dense class="text-center">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Asset Port Number</th>
+                            <th class="text-center">Pdu Port</th>
+                            <th class="text-center">Power</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(object, index) in asset.powerPorts" :key="index">
+                            <td> {{object.number}} </td>
+                            <td>{{ object.pduPort }}</td>
+                        </tr>
+                        <tr v-for="(object, index) in powerPorts.powerPorts" :key="index">
+                            <td> {{object.status}} </td>
+                        </tr>
+                    </tbody>
+                </v-simple-table>
+            </v-container>
+        </template>-->
+
     </div>
+
 </template>
 
 <script>
