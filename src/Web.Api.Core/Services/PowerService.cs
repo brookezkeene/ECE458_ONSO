@@ -26,7 +26,7 @@ namespace Web.Api.Core.Services
             _regex = new Regex(Pattern, RegexOptions.Compiled | RegexOptions.Multiline);
             _assetService = assetService;
 
-            client.BaseAddress = new Uri("http://hyposoft-mgt.colab.duke.edu:8000");
+            client.BaseAddress = new Uri("http://hyposoft-mgt.colab.duke.edu:8003");
 
             Client = client;
 
