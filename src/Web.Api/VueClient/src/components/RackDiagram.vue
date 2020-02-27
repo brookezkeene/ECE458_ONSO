@@ -94,13 +94,11 @@
 </style>
 
 <script>
-    //import rowsOfRacks from '@/repositories/mock/mock-racks-by-rows';
     import rackDiagram from '@/rackDiagram';
     export default {
-    inject: ['rackRepository'],
+    inject: ['datacenterRepository'],
     data () {
         return {
-            racks: [],
             racksByRow: [],
             loading: true,
         }
@@ -110,15 +108,18 @@
     },
     methods: {
         async fetchRacks() {
-            const start = this.$route.query.start;
-            const end = this.$route.query.end;
-            this.racks = await this.rackRepository.findInRange(start, end)
+            const datacenterDesc = this.$route.query.datacenter;
+            this.datacenterRepository.list().then((list) => {
+                const id = list.find(o => o.description === datacenterDesc);
+                const start = this.$route.query.start;
+                const end = this.$route.query.end;
             
-            rackDiagram.createRacksByRows(start, end).then((response) => {
-                this.racksByRow = response;
-            });
+                rackDiagram.createRacksByRows(start, end, id).then((data) => {
+                    this.racksByRow = data;
+                });
 
-            this.loading = false;
+                this.loading = false;
+            })
         }
     }    
 }

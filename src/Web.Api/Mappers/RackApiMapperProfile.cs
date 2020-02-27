@@ -18,7 +18,9 @@ namespace Web.Api.Mappers
         public RackApiMapperProfile()
         {
             CreateMap<RackDto, GetRacksApiDto>();
-            CreateMap<AssetDto, GetRackAssetApiDto>();
+            CreateMap<AssetDto, GetRackAssetApiDto>()
+                .IncludeMembers(o => o.Model);
+            CreateMap<ModelDto, GetRackAssetApiDto>(MemberList.None);
             CreateMap<DatacenterDto, RackDatacenterApiDto>();
 
             CreateMap<RackDto, GetRackPdusApiDto>()

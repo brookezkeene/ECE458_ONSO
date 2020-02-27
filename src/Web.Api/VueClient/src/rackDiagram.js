@@ -16,9 +16,7 @@ export default {
 
     async createRacksByRows(start, end) {
 
-        var racksInRange;
-        
-        racksInRange = await rackRepository.findInRange(start, end);
+        var racksInRange = await rackRepository.findInRange(start, end);
         console.log(racksInRange)
        
         const { rowLetter: startRow, rackNumber: startCol } = splitAddress(start);
@@ -61,14 +59,11 @@ export default {
         var assets_length = Object.keys(assets).length;
         for (var j = 0; j < assets_length; j++) {
             var rackU = assets[j].rackPosition - 1;
-            var color = assets[j].model.displayColor;
-            rows[rackU].style = { color: 'black', backgroundColor: color };
-            rows[rackU].value = { text: assets[j].model.vendor + ' ' + assets[j].model.modelNumber + ' ' + assets[j].hostname, id: assets[j].id };
+            var color = assets[j].displayColor;
+            rows[rackU].value = { text: assets[j].vendor + ' ' + assets[j].modelNumber + ' ' + assets[j].hostname, id: assets[j].id };
 
-            var model_height = assets[j].model.height
-            for (var k = 1; k < model_height; k++) {
-                var position = rackU + k;
-                rows[position].style = { color: 'black', backgroundColor: color };
+            for (const k of assets[j].slotsOccupied) {
+                rows[k - 1].style = { color: 'black', backgroundColor: color };
             }
         }
         return rows.reverse();
