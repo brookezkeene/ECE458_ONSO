@@ -14,10 +14,11 @@ const validAddress = (address) => {
 
 export default {
 
-    async createRacksByRows(start, end, id) {
+    async createRacksByRows(start, end) {
+
         var racksInRange;
         
-        racksInRange = await rackRepository.findInRange(start, end, id);
+        racksInRange = await rackRepository.findInRange(start, end);
         console.log(racksInRange)
        
         const { rowLetter: startRow, rackNumber: startCol } = splitAddress(start);
@@ -62,7 +63,7 @@ export default {
             var rackU = assets[j].rackPosition - 1;
             var color = assets[j].model.displayColor;
             rows[rackU].style = { color: 'black', backgroundColor: color };
-            rows[rackU].value = { text: assets[j].model.vendor + ' ' + assets[j].model.modelNumber + ' ' + assets[j].assetNumber, id: assets[j].id };
+            rows[rackU].value = { text: assets[j].model.vendor + ' ' + assets[j].model.modelNumber + ' ' + assets[j].hostname, id: assets[j].id };
 
             var model_height = assets[j].model.height
             for (var k = 1; k < model_height; k++) {

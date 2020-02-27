@@ -97,10 +97,9 @@
     //import rowsOfRacks from '@/repositories/mock/mock-racks-by-rows';
     import rackDiagram from '@/rackDiagram';
     export default {
-        inject: ['rackRepository', 'datacenterRepository'],
+    inject: ['rackRepository'],
     data () {
         return {
-            datacenters: [],
             racks: [],
             racksByRow: [],
             loading: true,
@@ -111,24 +110,14 @@
     },
     methods: {
         async fetchRacks() {
-        /* eslint-disable no-unused-vars, no-console */
-            var datacenter = this.$route.query.datacenter;
-            this.datacenters = await this.datacenterRepository.list();
-            var foundDatacenter = this.datacenters.find(o => o.description === datacenter);
-
             const start = this.$route.query.start;
             const end = this.$route.query.end;
-            var id;
-            if (foundDatacenter.id === 'undefined') {
-                id = null;
-            } else {
-                id = foundDatacenter.id;
-            }
+            this.racks = await this.rackRepository.findInRange(start, end)
             
-            rackDiagram.createRacksByRows(start, end, id).then((response) => {
+            rackDiagram.createRacksByRows(start, end).then((response) => {
                 this.racksByRow = response;
             });
-            console.log(this.racksByRow);
+
             this.loading = false;
         }
     }    

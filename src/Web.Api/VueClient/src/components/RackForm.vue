@@ -66,7 +66,7 @@ export default {
             this.loading = false;
          },
         viewDiagram() {
-            this.$router.push({ name: "RackDiagram", query: { start: this.range.start, end: this.range.end, datacenter: this.selectedDatacenter } });
+            this.$router.push({ name: "RackDiagram", query: { start: this.range.start, end: this.range.end } }); // include datacenter in this query
         },
         async createInRange() {
             var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
