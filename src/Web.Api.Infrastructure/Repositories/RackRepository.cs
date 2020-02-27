@@ -46,15 +46,13 @@ namespace Web.Api.Infrastructure.Repositories
 
         public async Task<List<Rack>> GetRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd, Guid? datacenterId)
         {
-            Func<Rack, bool> searchCondition = x => x.Row.BetweenIgnoreCase(rowStart, rowEnd) && x.Column.Between(colStart, colEnd);
-
             var racks = await _dbContext.Racks
                 .Include(x => x.Assets)
                     .ThenInclude(i => i.Model)
                 .Include(x => x.Assets)
                     .ThenInclude(i => i.Owner)
                 .Where(x => x.Column >= colStart && x.Column <= colEnd)
-                .WhereIf(datacenterId != null, x => x.DatacenterId == datacenterId)
+                .WhereIf(datacenterId != null && datacenterId.Value != default, x => x.DatacenterId == datacenterId)
                 .AsNoTracking()
                 .ToListAsync();
                 racks = racks.Where(x => x.Row[0] >= rowStart[0] && x.Row[0] <= rowEnd[0]).ToList();

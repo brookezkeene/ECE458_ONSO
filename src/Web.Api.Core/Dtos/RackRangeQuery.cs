@@ -10,19 +10,10 @@ namespace Web.Api.Core.Dtos
         [Required]
         public string StartRow { get; set; }
         [Required]
-        public int StartCol { get; set; }
-        [Required]
         public string EndRow { get; set; }
-        [Required]
+        public int StartCol { get; set; }
         public int EndCol { get; set; }
-        [Required]
         public Guid DatacenterId { get; set; }
-    }
-    public class RackRangeDatacenterDto
-    {
-        [Required]
-        public Guid Id { get; set; }
-        public string Name { get; set; }
     }
 
     public static class RackRangeQueryExtensions
