@@ -42,7 +42,7 @@
                                         <div>
                                             <v-row>
                                                 <v-col cols="12" sm="6" md="4">
-                                                    <v-autocomplete v-model="editedItem.datacenter"
+                                                    <v-autocomplete v-model="editedItem.datacenterId"
                                                                     label="Data Center"
                                                                     :items="datacenters"
                                                                     item-text="name"
@@ -51,7 +51,7 @@
                                                 </v-col>
                                                 <!-- Will need to update to show only racks from the selected datacenter -->
                                                 <v-col cols="12" sm="6" md="4">
-                                                    <v-autocomplete v-if="!editedItem.datacenter.length==0 && updateRacks()"
+                                                    <v-autocomplete v-if="!editedItem.datacenterId.length==0 && updateRacks()"
                                                                     v-model="editedItem.rackId"
                                                                     label="Rack Number"
                                                                     :items="racks"
@@ -60,7 +60,7 @@
                                                     </v-autocomplete>
                                                 </v-col>
                                                 <v-col cols="12" sm="6" md="4">
-                                                    <v-text-field v-if="!editedItem.datacenter.length==0 && updateRacks()"
+                                                    <v-text-field v-if="!editedItem.datacenterId.length==0 && updateRacks()"
                                                                     v-model.number="editedItem.rackPosition"
                                                                     label="Rack Position"
                                                                     type="number">
@@ -98,7 +98,7 @@
                                     </div>
                                     <v-container fluid
                                                  fill
-                                                 v-for="(port, index) in networkPorts" :key="index">
+                                                 v-for="(port, index) in editedItem.networkPorts" :key="index">
                                         <v-layout align-center
                                                   justify-bottom>
                                             <v-spacer></v-spacer>
@@ -230,6 +230,7 @@
                     id: '',
                     rackId: '',
                     datacenter: '',
+                    datacenterId: '',
                     hostname: '',
                     comment: '',
                     rackPosition: 0,
@@ -258,15 +259,24 @@
             this.racks = await this.rackRepository.list();
             this.datacenters = await this.datacenterRepository.list();
 
-            const existingItem = await this.assets.find(o => o.id === this.id);
-            if (typeof existingItem !== 'undefined') {
-                this.editedItem = Object.assign({}, existingItem);
-            }
-
             for (const model of this.models) {
                 model.vendorModelNo = model.vendor + " " + model.modelNumber;
             }
+            /* eslint-disable no-unused-vars, no-console */
+                console.log(this.models);
 
+            const existingItem = await this.assetRepository.find(this.id);
+            if (typeof existingItem !== 'undefined') {
+                /*eslint-disable no-unused-vars, no-console */
+                console.log(existingItem);
+                this.editedItem = Object.assign({}, existingItem);
+            }
+            console.log(this.editedItem.networkPorts[0].connectedPortId)
+            console.log("above is the network port")
+            
+            /*this.editedItem = typeof this.id === 'undefined'
+                ? this.newItem
+                : await this.assetRepository.find(this.id);*/
         },
 
         computed: {
@@ -312,11 +322,14 @@
                     network.nameRackAssetNum = "NAME: " + network.name +
                         " " + "HOSTNAME: " + network.assetHostname +
                         " " + "RACK: " + network.rowLetter + network.rackNumber.toString();
+                    
                 }
             },
             async updateRacks() {
-                if (this.datacenterID != this.editedItem.datacenter) {
-                    this.datacenterID = this.editedItem.datacenter;
+                /* eslint-disable no-unused-vars, no-console */
+                console.log(this.datacenterID);
+                if (this.datacenterID != this.editedItem.datacenterId) {
+                    this.datacenterID = this.editedItem.datacenterId;
                     this.racks = await this.rackRepository.list(this.datacenterID);
                     this.sendNetworkPortRequest();
                     return true;
