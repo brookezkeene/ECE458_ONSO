@@ -13,5 +13,6 @@ namespace Web.Api.Core.Services.Interfaces
         Task<PagedList<RackDto>> GetRacksAsync(Guid? datacenterId, int page = 1, int pageSize = 10);
         Task CreateRacksAsync(RackRangeQuery query);
         Task DeleteRacksAsync(RackRangeQuery query);
+        Task<RackDto> GetAvailablePowerPorts(Guid id);
     }
 }

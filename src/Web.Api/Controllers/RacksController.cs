@@ -57,9 +57,11 @@ namespace Web.Api.Controllers
         }
 
         [HttpGet("{id}/pdus")]
-        public async Task<ActionResult<List<GetRackPdusApiDto>>> GetRackPdus(Guid id)
+        public async Task<ActionResult<GetRackPdusApiDto>> GetRackPdus(Guid id)
         {
-            return Ok(null);
+            var availablePorts = await _rackService.GetAvailablePowerPorts(id);
+
+            return Ok(availablePorts.MapTo<GetRackPdusApiDto>());
         }
     }
 }

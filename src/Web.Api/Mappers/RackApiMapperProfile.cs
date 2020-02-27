@@ -9,6 +9,7 @@ using Web.Api.Common.Mappers;
 using Web.Api.Core.Dtos;
 using Web.Api.Dtos;
 using Web.Api.Dtos.Racks;
+using Web.Api.Infrastructure.Entities;
 
 namespace Web.Api.Mappers
 {
@@ -16,14 +17,17 @@ namespace Web.Api.Mappers
     {
         public RackApiMapperProfile()
         {
-            CreateMap<RackDto, GetRacksApiDto>()
-                .ReverseMap();
-            CreateMap<AssetDto, GetRackAssetApiDto>()
-                .ReverseMap();
-            CreateMap<PduDto, GetRackPdusApiDto>()
-                .ReverseMap();
-            CreateMap<DatacenterDto, RackDatacenterApiDto>()
-                .ReverseMap();
+            CreateMap<RackDto, GetRacksApiDto>();
+            CreateMap<AssetDto, GetRackAssetApiDto>();
+            CreateMap<DatacenterDto, RackDatacenterApiDto>();
+
+            CreateMap<RackDto, GetRackPdusApiDto>()
+                .ForMember(o => o.Left,
+                    opts => opts.MapFrom(src => src.Pdus.FirstOrDefault(pdu => pdu.Location == PduLocation.L).Ports))
+                .ForMember(o => o.Right,
+                    opts => opts.MapFrom(src => src.Pdus.FirstOrDefault(pdu => pdu.Location == PduLocation.R).Ports));
+
+            CreateMap<PduPortDto, GetRackPduPortApiDto>();
         }
     }
 }
