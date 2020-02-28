@@ -5,9 +5,9 @@
                 <span class="headline">{{formTitle}}</span>
             </v-card-title>
 
-            <v-card-text>
+            <v-container>
 
-                <v-container>
+                <v-form v-model="valid">
                     <v-row>
                         <v-col cols="12" sm="6" md="4">
                             <v-combobox v-model="newItem.vendor"
@@ -17,14 +17,22 @@
                                         :return-object="false"
                                         label="Vendor"
                                         placeholder="i.e. Dell" 
+                                        :rules="[rules.vendorRules]"
                                         counter="50"
-                                        clearable></v-combobox>
-                        </v-col>
-                        <v-col>
-                        <v-text-field v-model="newItem.modelNumber" label="Model Number" placeholder="i.e. R710" counter="50"></v-text-field>
+                                        required></v-combobox>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model.number="newItem.height" label="Height (in Rack U)" type="number"></v-text-field>
+                            <v-text-field v-model="newItem.modelNumber" 
+                                      label="Model Number" 
+                                      placeholder="i.e. R710" 
+                                      :rules="[rules.modelRules]"
+                                      counter="50"></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                            <v-text-field v-model.number="newItem.height" 
+                                          label="Height (in Rack U)" 
+                                          type="number" 
+                                          :rules="[rules.heightRules]"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model.number="newItem.ethernetPorts" label="Network Ports" type="number" @change="networkPortNum"></v-text-field>
@@ -56,12 +64,12 @@
 
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn text @click="close">Cancel</v-btn>
-                        <v-btn color="primary" text @click="save">Save</v-btn>
+                        <v-btn @click="close">Cancel</v-btn>
+                        <v-btn color="primary" :disabled="!valid" @click="save">Save</v-btn>
                     </v-card-actions>'
 
-                </v-container>
-            </v-card-text>
+                </v-form>
+            </v-container>
 
             <template> <!-- dialog to set network port names -->
                 <div class="text-center">
@@ -126,8 +134,12 @@
                 //names dialog, the newItem will still have original value from database
                 networkPortNames: [],
                 rules: {
+                    vendorRules: v => /^(?=\s*\S).*$/.test(v) || 'Vendor is required',
+                    modelRules: v => /^(?!\s*$).+/.test(v) || 'Model Number is required',
+                    heightRules: v => /^(?=\s*\S).*$/.test(v) && v > 0 || 'Height is required',
                     networkPortRules: v => /^[a-zA-Z0-9]*$/.test(v) || 'Network port name cannot contain whitespace'
                 },
+                valid: true
             };
         },
 
