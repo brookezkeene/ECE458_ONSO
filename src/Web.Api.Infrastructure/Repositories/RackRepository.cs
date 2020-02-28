@@ -31,6 +31,10 @@ namespace Web.Api.Infrastructure.Repositories
                 .PageBy(x => x.Id, page, pageSize)
                 .WhereIf(datacenterId != null, x => x.DatacenterId == datacenterId)
                 .Include(x => x.Datacenter)
+                .Include(x => x.Assets)
+                    .ThenInclude(x => x.Model)
+                .Include(x => x.Assets)
+                    .ThenInclude(x => x.Owner)
                 .AsNoTracking();
             var racks = await query.ToListAsync();
 
