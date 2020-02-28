@@ -65,7 +65,8 @@
                                                                         :rules="[rules.rackRules]"
                                                                         :items="racks"
                                                                         item-text="address"
-                                                                        item-value="id">
+                                                                        item-value="id"
+                                                                        @change="rackSelected">
                                                         </v-autocomplete>
                                                     </v-col>
                                                     <v-col cols="12" sm="6" md="4">
@@ -158,38 +159,57 @@
                                             flat
                                             v-if="index===3">
                                         <div>
-                                            <p v-if="editedItem.powerPorts.length > 0">Enter the PDU and PDU Number for each Power Port below.</p>
-                                            <p v-else>No model selected. Please select a model first.</p>
+                                            <p v-if="(selectedRack && selectedModelBool) || (id!=undefined)">Enter the PDU and PDU Number for each Power Port below.</p>
+                                            <p v-else>No model or rack selected. Please select a model and a rack first.</p>
                                         </div>
-                                        <v-container fluid
-                                                     fill
-                                                     v-for="(port, index) in powerPorts" :key="index">
-                                            <v-layout align-center
-                                                      justify-bottom>
-                                                <v-spacer></v-spacer>
-                                                <p>Power Port {{index+1}}</p>
-                                                <v-spacer></v-spacer>
-                                                <v-btn-toggle v-model="port.pduLocation"
-                                                              mandatory>
-                                                    <v-btn value="left">
-                                                        Left
-                                                    </v-btn>
-                                                    <v-btn value="right">
-                                                        Right
-                                                    </v-btn>
-                                                </v-btn-toggle>
-                                                <v-spacer></v-spacer>
-                                                <v-text-field v-model="editedItem.powerPorts[index].number"
-                                                              typeof="number"
-                                                              placeholder="PDU Number">
-                                                </v-text-field>
-                                                <v-spacer></v-spacer>
-                                            </v-layout>
-                                        </v-container>
+                                        <div v-if="(selectedRack && selectedModelBool) || (id!=undefined)">
+
+                                            <v-container fluid
+                                                         fill
+                                                         v-for="(port, index) in powerPorts" :key="index">
+                                                <v-layout align-center
+                                                          justify-bottom>
+                                                    <v-spacer></v-spacer>
+                                                    <v-spacer></v-spacer>
+
+                                                    <p>Power Port {{index+1}}</p>
+                                                    <v-spacer></v-spacer>
+                                                    <v-btn-toggle v-model="port.pduLocation"
+                                                                  mandatory>
+                                                        <v-btn @click="setLocation('left')" value="true">
+                                                            Left
+                                                        </v-btn>
+                                                        <v-btn @click="setLocation('right')" value="false">
+                                                            Right
+                                                        </v-btn>
+                                                    </v-btn-toggle>
+                                                    <v-spacer></v-spacer>
+                                                    <v-autocomplete v-if="port.pduLocation" 
+                                                                v-model="editedItem.powerPorts[index].pduPortId"
+                                                                :items="availablePortsInRack.right"
+                                                                item-text ="number"
+                                                                item-value ="id"
+                                                                :return-object="false"
+                                                                typeof="number"
+                                                                placeholder="PDU Number">
+                                                    </v-autocomplete>
+                                                    <v-autocomplete v-if="!port.pduLocation" 
+                                                                v-model="editedItem.powerPorts[index].pduPortId"
+                                                                :items="availablePortsInRack.left"
+                                                                item-text="number"
+                                                                item-value="id"
+                                                                :return-object="false"
+                                                                typeof="number"
+                                                                placeholder="PDU Number">
+                                                    </v-autocomplete>
+                                                    <v-spacer></v-spacer>
+                                                </v-layout>
+                                            </v-container>
+                                        </div>
                                     </v-card>
-                                </v-expansion-panel-content>
-                            </v-expansion-panel>
-                        </v-expansion-panels>
+                            </v-expansion-panel-content>
+                        </v-expansion-panel>
+                    </v-expansion-panels>
 
                         <v-card-actions>
                             <v-spacer></v-spacer>
@@ -259,6 +279,10 @@
                 //networkPortConnections: [],
                 toggle_exclusive: undefined,
                 namesDialog: false,
+                selectedRack: false,
+                selectedModelBool: false,
+                sidePortIsOn: 'left',
+                availablePortsInRack: [],
                 rules: {
                     modelRules: v => /^(?!\s*$).+/.test(v) || 'Model is required',
                     assetRules: v => /^(?!\s*$).+/.test(v) || 'Asset Number is required',
@@ -282,12 +306,16 @@
                 model.vendorModelNo = model.vendor + " " + model.modelNumber;
             }
 
-            const existingItem = await this.assetRepository.find(this.id);
-            if (typeof existingItem !== 'undefined') {
-                this.editedItem = Object.assign({}, existingItem);
-                this.selectedModel = await this.modelRepository.find(existingItem.modelId);
-                this.makeNetworkPorts(this.selectedModel)
-                this.makePowerPorts(this.selectedModel)
+            if (typeof this.id !== 'undefined') {
+                this.editedItem = await this.assetRepository.find(this.id);
+                /*eslint-disable*/
+                console.log(this.editedItem);
+                this.selectedModel = await this.modelRepository.find(this.editedItem.modelId);
+                this.makeNetworkPorts(this.selectedModel);
+                this.makePowerPorts(this.selectedModel);
+                this.selectedModelBool = true;
+                this.selectedRack = true;
+                this.rackSelected();
             }
 
         },
@@ -302,9 +330,8 @@
                 for (j = 0; j < 5; j++) {
                     arr[j] = j + 1;
                 }
-                return arr
-            }
-
+                return arr;
+            },
         },
         methods: {
             save() {
@@ -315,6 +342,7 @@
                     for (var j = 0; j < this.editedItem.networkPorts.length; j++) {
                         this.editedItem.networkPorts[j].modelNetworkPortId = this.selectedModel.networkPorts[j].id;
                     }
+                    console.log(this.editedItem);
                     this.assetRepository.update(this.editedItem).then(this.close());
                 } else {
                                         console.log(this.selectedModel);
@@ -324,9 +352,13 @@
                     }
                     this.assetRepository.create(this.editedItem).then(this.close());
                 }
+                this.selectedRack = false;
+                this.selectedModelBool = false;
             },
             close() {
                 this.$router.push({ name: 'assets' })
+                this.selectedRack = false;
+                this.selectedModelBool = false;
             },
             async sendNetworkPortRequest() {
                 this.networks = await this.datacenterRepository.networkPorts(this.datacenterID);
@@ -347,9 +379,21 @@
                 return false;
             },
             async modelSelected() {
+                this.selectedModelBool = true;
                 this.selectedModel = await this.modelRepository.find(this.editedItem.modelId);
                 this.makeNetworkPorts(this.selectedModel);
                 this.makePowerPorts(this.selectedModel);
+            },
+            async rackSelected() {
+                this.selectedRack = true;
+                let availablePorts = {};
+                availablePorts = await this.rackRepository.getPdus(this.editedItem.rackId);
+/*                for (var i = 0; i < availablePorts.length; i++) {
+                    availablePorts[i].number = +port.number;
+                }*/
+/*                availablePorts.sort(a, b => a - b); //sorting port numbers so that they are easier to see in frontend
+*/              this.availablePortsInRack = availablePorts;
+                console.log(this.availablePortsInRack);
             },
             makeNetworkPorts(model) {
                 this.networkPorts = [];
@@ -383,7 +427,7 @@
                 for (i = 0; i < numPowerPorts; i++) {
 
                     const pduInfo = {
-                        pduLocation: '',
+                        pduLocation: true,
                     }
                     this.powerPorts[i] = Object.assign({}, pduInfo);
                 }
@@ -400,7 +444,11 @@
                     }
                     this.editedItem.powerPorts = powerPortsArray;
                 }
+            },
+            setLocation(side) {
+                this.sidePortIsOn = side;
             }
-        }
+        },
+
     }
 </script>

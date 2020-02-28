@@ -57,7 +57,7 @@
                             <v-label>
                                 Display Color
                             </v-label>
-                            <v-color-picker v-model="color">
+                            <v-color-picker v-model="newItem.displayColor">
                             </v-color-picker>
                         </v-col>
                     </v-row>
@@ -112,7 +112,6 @@
         data: () => {
             return {
                 models: [],
-                color: '',
                 loading: false,
                 newItem: {
                     vendor: '',
@@ -159,10 +158,10 @@
         methods: {
             save() {
                 if (typeof this.id !== 'undefined') {
-                    this.newItem.displayColor = this.color.substring(0, 7);
+                    this.newItem.displayColor = this.newItem.displayColor.substring(0, 7);
                     this.modelRepository.update(this.newItem);
                 } else {
-                    this.newItem.displayColor = this.color.substring(0, 7);
+                    this.newItem.displayColor = this.newItem.displayColor.substring(0, 7);
                     this.modelRepository.create(this.newItem);
                 }
                 this.close()
