@@ -126,11 +126,22 @@
                         <template v-slot:no-data>
                             <v-btn color="primary" @click="initialize">Reset</v-btn>
                         </template>
-                        >
                     </v-data-table>
                 </v-card>
             </v-container>
-
+            <v-snackbar v-model="updateSnackbar.show"
+                        :bottom=true
+                        class="black--text"
+                        :color="updateSnackbar.color"
+                        :timeout=5000>
+                {{updateSnackbar.message}}
+                <v-btn dark
+                       class="black--text"
+                       text
+                       @click="updateSnackbar.show = false">
+                    Close
+                </v-btn>
+            </v-snackbar>
         </v-card>
     </div>
 </template>
@@ -145,6 +156,11 @@
         inject: ['modelRepository'],
         data() {
             return {
+                updateSnackbar: {
+                    show: false,
+                    message: '',
+                    color: ''
+                },
                 // Filter values.
                 startHeightValue: '',
                 endHeightValue: '',
@@ -241,8 +257,17 @@
             addItem() {
                 this.$router.push({ name: 'model-create' })
             },
-            deleteItem(item) {
+            async deleteItem(item) {
                 this.deleting = true;
+                var deleteModel = await this.modelRepository.find(item.id)
+
+                if (deleteModel.assets != null && deleteModel.assets.length != 0) {
+                    this.deleting = false;
+                    this.updateSnackbar.show = true;
+                    this.updateSnackbar.color = 'red lighten-4';
+                    this.updateSnackbar.message = 'Assets of this model exist, cannot delete';
+                    return;
+                }
                 confirm('Are you sure you want to delete this item?') && this.modelRepository.delete(item)
                     .then(async () => {
                         await this.initialize();

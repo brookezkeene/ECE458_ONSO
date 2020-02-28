@@ -72,6 +72,7 @@
             </v-container>
 
             <template> <!-- dialog to set network port names -->
+
                 <div class="text-center">
                     <v-dialog v-model="namesDialog" width="400">
                         <v-card class="overflow-y-auto" max-height="500px">
@@ -98,6 +99,19 @@
                     </v-dialog>
                 </div>
             </template>
+            <v-snackbar v-model="updateSnackbar.show"
+                        :bottom=true
+                        class="black--text"
+                        :color="updateSnackbar.color"
+                        :timeout=5000>
+                {{updateSnackbar.message}}
+                <v-btn dark
+                       class="black--text"
+                       text
+                       @click="updateSnackbar.show = false">
+                    Close
+                </v-btn>
+            </v-snackbar>
         </v-card>
     </div>
 </template>
@@ -111,6 +125,11 @@
         },
         data: () => {
             return {
+                updateSnackbar: {
+                    show: false,
+                    message: '',
+                    color: ''
+                },
                 models: [],
                 loading: false,
                 newItem: {
@@ -133,10 +152,12 @@
                 //names dialog, the newItem will still have original value from database
                 networkPortNames: [],
                 rules: {
+<<<<<<< HEAD
                     vendorRules: v => /^(?=\s*\S).*$/.test(v) || 'Vendor is required',
                     modelRules: v => /^(?!\s*$).+/.test(v) || 'Model Number is required',
                     heightRules: v => /^(?=\s*\S).*$/.test(v) && v > 0 || 'Height is required',
                     networkPortRules: v => /^[a-zA-Z0-9]*$/.test(v) || 'Network port name cannot contain whitespace'
+
                 },
                 valid: true
             };
@@ -156,13 +177,32 @@
             },
         },
         methods: {
-            save() {
+            async save() {
+                if (this.validationInputs(this.newItem) > 0) {
+                    return;
+                }
                 if (typeof this.id !== 'undefined') {
+<<<<<<< HEAD
                     this.newItem.displayColor = this.newItem.displayColor.substring(0, 7);
                     this.modelRepository.update(this.newItem);
                 } else {
                     this.newItem.displayColor = this.newItem.displayColor.substring(0, 7);
                     this.modelRepository.create(this.newItem);
+=======
+                    this.newItem.displayColor = this.color.substring(0, 7);
+                    var resultUpdate = await this.modelRepository.update(this.newItem);
+
+                    if (this.validationCreateAndUpdate(resultUpdate) != 0) {
+                        return;
+                    }
+                   
+                } else {
+                    this.newItem.displayColor = this.color.substring(0, 7);
+                    var resultCreate = await this.modelRepository.create(this.newItem);
+                    if (this.validationCreateAndUpdate(resultCreate) != 0) {
+                        return;
+                    }
+>>>>>>> added validation to models
                 }
                 this.close()
             },
@@ -227,6 +267,68 @@
             closeNamesDialog() {
                 this.namesDialog = false;
             },
+            validationInputs(item) {
+                var count = 0;
+                this.updateSnackbar.message = '';
+                if (item.vendor == null || item.vendor.length == 0) {
+                    this.updateSnackbar.show = true;
+                    this.updateSnackbar.color = 'red lighten-4';
+                    this.updateSnackbar.message = this.updateSnackbar.message + 'Vendor name field is required. ';
+                    count++;
+                }
+                if (item.modelNumber == null || item.modelNumber.length == 0) {
+                    this.updateSnackbar.show = true;
+                    this.updateSnackbar.color = 'red lighten-4';
+                    this.updateSnackbar.message = this.updateSnackbar.message + 'Model Number field is required. ';
+                    count++;
+                }
+                if (item.height <= 0 || item.height > 42 || !(/^[0-9]*$/.test(item.height))) {
+                    this.updateSnackbar.show = true;
+                    this.updateSnackbar.color = 'red lighten-4';
+                    this.updateSnackbar.message = this.updateSnackbar.message + 'The height of the model must be a valid number greater than 0 and less than 42. ';
+                    count++
+                }
+                if (item.ethernetPorts < 0 || !(/^[0-9]*$/.test(item.ethernetPorts))) {
+                    this.updateSnackbar.show = true;
+                    this.updateSnackbar.color = 'red lighten-4';
+                    this.updateSnackbar.message = this.updateSnackbar.message + 'The number of network ports of the model must be a valid number greater than -1. ';
+                    count++
+                }
+                if (item.powerPorts < 0 || !(/^[0-9]*$/.test(item.powerPorts))) {
+                    this.updateSnackbar.show = true;
+                    this.updateSnackbar.color = 'red lighten-4';
+                    this.updateSnackbar.message = this.updateSnackbar.message + 'The number of network ports of the model must be a valid number greater than -1. ';
+                    count++
+                }
+                if (item.cpu < 0 || !(/^[0-9]*$/.test(item.cpu))) {
+                    this.updateSnackbar.show = true;
+                    this.updateSnackbar.color = 'red lighten-4';
+                    this.updateSnackbar.message = this.updateSnackbar.message + 'The CPU must be a valid number greater than -1. ';
+                    count++
+                }
+                if (item.memory < 0 || !(/^[0-9]*$/.test(item.memory))) {
+                    this.updateSnackbar.show = true;
+                    this.updateSnackbar.color = 'red lighten-4';
+                    this.updateSnackbar.message = this.updateSnackbar.message + 'Memory must be a valid number greater than -1. ';
+                    count++
+                }
+                if (item.storage < 0 || !(/^[0-9]*$/.test(item.storage))) {
+                    this.updateSnackbar.show = true;
+                    this.updateSnackbar.color = 'red lighten-4';
+                    this.updateSnackbar.message = this.updateSnackbar.message + 'Storage must be a valid number greater than -1. ';
+                    count++
+                }
+                return count;
+            },
+            validationCreateAndUpdate(result) {
+                if (result != null && result.length != 0) {
+                    this.updateSnackbar.show = true;
+                    this.updateSnackbar.color = 'red lighten-4';
+                    this.updateSnackbar.message = 'Failed to create model. Model vendor and model number must be unique';
+                    return 1;
+                } 
+                return 0;
+            }
         }
     }
 </script>
