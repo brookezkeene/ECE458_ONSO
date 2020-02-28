@@ -94,8 +94,10 @@
                                                                         persistent-hint>
                                                         </v-autocomplete>
                                                     </v-col>
-                                                    <v-col cols="12" sm="6" md="4">
-                                                        <v-text-field v-model="editedItem.comment" label="Comment"></v-text-field>
+                                                </v-row>
+                                                <v-row>
+                                                    <v-col cols="6">
+                                                        <v-textarea v-model="editedItem.comment" label="Comment" multi-line textarea></v-textarea>
                                                     </v-col>
                                                 </v-row>
                                             </div>
@@ -288,7 +290,7 @@
                 rules: {
                     modelRules: v => /^(?!\s*$).+/.test(v) || 'Model is required',
                     hostnameRules: v => /^(?![0-9]+$)(?!.*-$)(?!-)[a-zA-Z0-9-]{1,63}$/.test(v) || 'Valid hostname is required',
-                    assetRules: v => /^[0-9]{6}$/.test(v) || 'Valid asset number is required',
+                    assetRules: v => /^[1-9]\d{5}$/.test(v) || 'Valid asset number is required',
                     datacenterRules: v => /^(?!\s*$).+/.test(v) || 'Datacenter is required',
                     rackRules: v => /^(?!\s*$).+/.test(v) || 'Rack is required',
                     rackuRules: v => /^(?!\s*$).+/.test(v) || 'Rack U is required',
