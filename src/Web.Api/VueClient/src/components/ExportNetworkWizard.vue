@@ -51,14 +51,16 @@
                                href="https://drive.google.com/file/d/1UB8J9E_cKlezRtgtk3g10ikO9Iqz5lGN/view?usp=sharing">
                                 document
                             </a>.
-                            <downloadCsv :data="exportRaw"
-                                         name="models.csv"
-                                         type="csv">
-                                <v-spacer></v-spacer>
-                                <v-btn>
-                                    <b>Download</b>
-                                </v-btn>
-                            </downloadCsv>
+                            <div class="pt-10">
+                                <downloadCsv :data="exportRaw"
+                                             name="models.csv"
+                                             type="csv">
+                                    <v-spacer></v-spacer>
+                                    <v-btn>
+                                        <b>Download</b>
+                                    </v-btn>
+                                </downloadCsv>
+                            </div>
                         </v-card-text>
 
                     </v-card>

@@ -105,15 +105,15 @@
             </v-card>
         </v-dialog>
 
-        <v-dialog v-model="exportModelDialog" max-width="300px">
+        <v-dialog v-model="exportModelDialog" max-width="500px">
             <export-model-wizard v-on:close-model-export="closeExport('model')"></export-model-wizard>
         </v-dialog>
 
-        <v-dialog v-model="exportAssetDialog" max-width="300px">
+        <v-dialog v-model="exportAssetDialog" max-width="500px">
             <export-asset-wizard v-on:close-asset-export="closeExport('asset')"></export-asset-wizard>
         </v-dialog>
 
-        <v-dialog v-model="exportNetworkDialog" max-width="300px">
+        <v-dialog v-model="exportNetworkDialog" max-width="500px">
             <export-network-wizard v-on:close-network-export="closeExport('network')"></export-network-wizard>
         </v-dialog>
 
