@@ -107,12 +107,13 @@ export default {
     },
     methods: {
         async save() {
-            if (this.validationInputs(this.editedItem) != 0) {
-                return;
-            }
 
             var result = await this.userRepository.create(this.editedItem)
-            if (this.validationAfterReturning(result) != 0) {
+            if (result != null &&  result.id.length == 0) {
+                this.updateSnackbar.show = true;
+                this.updateSnackbar.color = 'red lighten-4';
+                this.updateSnackbar.message = 'Failed to create users. Users cannot have the same username';
+
                 return;
             }
             this.close()
