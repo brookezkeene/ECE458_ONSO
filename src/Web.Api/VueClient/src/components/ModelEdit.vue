@@ -184,15 +184,17 @@
                 if (this.validationInputs(this.newItem) > 0) {
                     return;
                 }
-                if (typeof this.id !== 'undefined') {
-                    this.newItem.displayColor = this.color.substring(0, 7);
+                 if (typeof this.id !== 'undefined') {
+                    this.newItem.displayColor = this.newItem.displayColor.substring(0, 7);
+
                     var resultUpdate = await this.modelRepository.update(this.newItem);
                     if (this.validationCreateAndUpdate(resultUpdate) != 0) {
                         return;
                     }
 
                 } else {
-                    this.newItem.displayColor = this.color.substring(0, 7);
+                    this.newItem.displayColor = this.newItem.displayColor.substring(0, 7);
+
                     var resultCreate = await this.modelRepository.create(this.newItem);
                     if (this.validationCreateAndUpdate(resultCreate) != 0) {
                         return;
