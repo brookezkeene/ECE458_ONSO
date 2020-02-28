@@ -56,6 +56,9 @@ namespace Web.Api.Core.Services
         {
             var entity = asset.ToEntity();
             await _repository.AddAssetAsync(entity);
+
+            await _auditEventLogger.LogEventAsync(new AssetCreatedEvent(asset));
+
             return entity.Id;
         }
 
