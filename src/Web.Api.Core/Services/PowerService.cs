@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using Web.Api.Core.Services.Interfaces;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;

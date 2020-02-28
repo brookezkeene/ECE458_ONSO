@@ -89,19 +89,19 @@
 
         <v-dialog v-model="importModelWizard" max-width="500px">
             <v-card>
-                <import-wizard v-on:close-file-chooser="closeImport" v-bind:forModel="forModel"></import-wizard>
+                <import-wizard type="models" v-on:close-file-chooser="closeImport"></import-wizard>
             </v-card>
         </v-dialog>
 
         <v-dialog v-model="importAssetWizard" max-width="500px">
             <v-card>
-                <import-wizard v-on:close-file-chooser="closeImport" v-bind:forModel="forModel"></import-wizard>
+                <import-wizard v-on:close-file-chooser="closeImport"></import-wizard>
             </v-card>
         </v-dialog>
 
         <v-dialog v-model="importNetworkWizard" max-width="500px">
             <v-card>
-                <import-wizard v-on:close-file-chooser="closeImport" v-bind:forModel="forModel"></import-wizard>
+                <import-wizard v-on:close-file-chooser="closeImport"></import-wizard>
             </v-card>
         </v-dialog>
 
@@ -143,7 +143,6 @@ export default {
             exportModelDialog: false,
             exportAssetDialog: false,
             exportNetworkDialog: false,
-            forModel: false,
         };
     },
     computed: {
@@ -186,15 +185,12 @@ export default {
         },
         openImportModels() {
             this.importModelWizard = true
-            this.forModel = true
         },
         openImportAssets() {
             this.importAssetWizard = true
-            this.forModel = false
         },
         openImportNetworks() {
             this.importNetworkWizard = true
-            this.forModel = false
         },
         closeImport(type) {
             if (type === "model") {

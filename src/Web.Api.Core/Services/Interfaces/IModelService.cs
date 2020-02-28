@@ -12,7 +12,7 @@ namespace Web.Api.Core.Services.Interfaces
         Task<List<ModelDto>> GetModelExportAsync(ModelExportQuery query);
         Task<ModelDto> GetModelAsync(Guid modelId);
         Task<int> UpdateModelAsync(ModelDto model);
-        Task<Guid> CreateModelAsync(ModelDto model);
+        Task<int> CreateModelAsync(ModelDto model);
         Task DeleteModelAsync(ModelDto model);
     }
 }

@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -28,6 +29,9 @@ using Web.Api.Extensions;
 using Web.Api.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Web.Api.Core.Mappers;
+using Web.Api.Core.Mappers.Import;
+using Web.Api.Mappers;
 
 namespace Web.Api
 {
@@ -44,8 +48,9 @@ namespace Web.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.ConfigureCoreServices()
-                //.ConfigureInMemoryDbContext();
                 .ConfigureSqlDbContext(Configuration);
+
+            services.AddAutoMapper(typeof(ApiMappers).Assembly, typeof(ImportMapper).Assembly);
 
             services.AddApiAuthentication(Configuration);
               

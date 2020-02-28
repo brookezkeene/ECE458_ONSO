@@ -53,13 +53,13 @@ namespace Web.Api.Core.Services
             return updated;
         }
 
-        public async Task<Guid> CreateModelAsync(ModelDto model)
+        public async Task<int> CreateModelAsync(ModelDto model)
         {
             var entity = model.ToEntity();
-            await _repository.AddModelAsync(entity);
+            var added = await _repository.AddModelAsync(entity);
 
             await _auditEventLogger.LogEventAsync(new ModelCreatedEvent(model));
-            return entity.Id;
+            return added;
         }
 
         public async Task DeleteModelAsync(ModelDto model)
