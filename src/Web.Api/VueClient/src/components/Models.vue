@@ -29,7 +29,7 @@
                             </v-toolbar>
 
                             <v-row class="pl-4">
-                                <v-col cols="10">
+                                <v-col cols="11">
                                     <v-row>
                                         <!-- Custom filters; sorts between height ranges -->
                                         <v-col cols="3">
