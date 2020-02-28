@@ -8,6 +8,8 @@ using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
 using Web.Api.Dtos;
 using Web.Api.Dtos.Bulk.Export;
+using Web.Api.Dtos.Models.Read;
+using Web.Api.Mappers;
 
 namespace Web.Api.Controllers
 {
@@ -28,15 +30,46 @@ namespace Web.Api.Controllers
         public async Task<ActionResult<List<ExportModelDto>>> Get([FromQuery] ModelExportQuery query)
         {
             var models = await _modelService.GetModelExportAsync(query);
-            return Ok(models);
+            var response = new List<ExportModelDto>();
+            if (models.Count() != 0)
+            {
+                foreach (ModelDto model in models)
+                {
+                    response.Add(model.MapTo<ExportModelDto>());
+                }
+            }
+            return Ok(response);
         }
 
         [HttpGet("assets")]
-        public async Task<ActionResult<List<ExportModelDto>>> Get([FromQuery] AssetExportQuery query)
+        public async Task<ActionResult<List<ExportAssetDto>>> Get([FromQuery] AssetExportQuery query)
         {
             var assets = await _assetService.GetAssetExportAsync(query);
-            return Ok(assets);
+            var response = new List<ExportAssetDto>();
+            if (assets.Count() != 0)
+            {
+                foreach (AssetDto asset in assets)
+                {
+                    response.Add(asset.MapTo<ExportAssetDto>());
+                }
+            }
+            return Ok(response);
         }
 
+
+        [HttpGet("networkports")]
+        public async Task<ActionResult<List<ExportNetworkPortDto>>> Get([FromQuery] NetworkPortExportQuery query)
+        {
+            var ports = await _assetService.GetNetworkPortExportAsync(query);
+            var response = new List<ExportNetworkPortDto>();
+
+            foreach (AssetNetworkPortDto port in ports)
+            {
+                var export = port.MapTo<ExportNetworkPortDto>();
+                response.Add(export);
+            }
+            
+            return Ok(response);
+        }
     }
 }

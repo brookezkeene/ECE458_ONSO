@@ -65,9 +65,15 @@ export default {
             datacenterId: datacenter
         };
 
-        return axios.delete(`${resource}/range`, { params: query } )
+        return axios.delete(`${resource}/range`, { params: query })
             .then(response => {
                 return response.data;
             }).catch(error => error);
+    },
+    getPdus(rackid, location) {
+        return axios.get(`${resource}/${rackid}/pdus`)
+            .then(response => {
+                return response.data;
+            }).catch (error => error);
     }
 }

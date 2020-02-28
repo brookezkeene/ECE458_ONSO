@@ -50,6 +50,7 @@ namespace Web.Api.Infrastructure.Repositories
 
             var models = await _dbContext.Models
                 .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
+                .Include(x => x.NetworkPorts)
                 .AsNoTracking()
                 .ToListAsync();
             //models = models.Where(x => x.ModelNumber.Contains(search) || x.Vendor.Contains(search)).ToList();
@@ -149,39 +150,37 @@ namespace Web.Api.Infrastructure.Repositories
                 .WhereIf(id == default, x => x.Vendor == vendor && x.ModelNumber == modelNumber)
                 .AnyAsync();
         }
-        private void NetworkPortsSameNumberAsEthernetPorts(Model model)
+
+        public Model GetModel(string vendor, string modelNumber)
         {
-            if (model.NetworkPorts == null && model.EthernetPorts != 0)
+            return _dbContext.Models
+                .Include(model => model.NetworkPorts)
+                .AsNoTracking()
+                .SingleOrDefault(model => model.Vendor == vendor && model.ModelNumber == modelNumber);
+        }
+
+        private static void NetworkPortsSameNumberAsEthernetPorts(Model model)
+        {
+            // 1. sort by port number ascending
+            var ports = model.NetworkPorts.OrderBy(o => o.Number).ToList();
+
+            // 2. remove all ports in excess of # dictated by property
+            ports = ports.Take(model.EthernetPorts.GetValueOrDefault()).ToList();
+
+            // 3. add ports as necessary
+            var missingPorts = Enumerable.Range(1, model.EthernetPorts.GetValueOrDefault())
+                .Where(n => model.NetworkPorts.SingleOrDefault(o => o.Number == n) == null)
+                .Select(n => new ModelNetworkPort {Number = n, Name = n.ToString()});
+            ports.AddRange(missingPorts);
+
+            // 4. default empty port names to the port number
+            foreach (var port in ports.Where(port => string.IsNullOrWhiteSpace(port.Name)))
             {
-                List<ModelNetworkPort> newports = new List<ModelNetworkPort>();
-                for (int i = 1; i <= model.EthernetPorts; i++)
-                {
-                    newports.Add(new ModelNetworkPort { Number = i, Name = (i+1).ToString() });
-                }
-                /*foreach (ModelNetworkPort port in model.NetworkPorts)
-                {
-                    var newport = newports[port.Number - 1];
-                    if (port.Name != null)
-                    {
-                        newport.Name = port.Name;
-                    }
-                }*/
-                model.NetworkPorts = newports;
-            }  else if (model.EthernetPorts > model.NetworkPorts.Count())
-            {
-                int portCount = model.NetworkPorts.Count();
-                for (int i = portCount; i < model.EthernetPorts; i++)
-                {
-                    model.NetworkPorts.Add(new ModelNetworkPort { Number = i, Name = i.ToString() });
-                }
+                port.Name = port.Number.ToString();
             }
-            else if(model.EthernetPorts < model.NetworkPorts.Count())
-            {
-                for(var i = model.NetworkPorts.Count() - 1; i >= model.EthernetPorts; i--)
-                {
-                    model.NetworkPorts.RemoveAt(i);
-                }
-            }
+
+            // 5. done
+            model.NetworkPorts = ports;
         }
     }
 }

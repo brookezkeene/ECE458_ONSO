@@ -6,9 +6,12 @@ export default {
     find(id) {
         return axios.get(`${resource}/${id}`)
             .then(response => {
-                console.log(response);
                 return response.data;
             });
+    },
+    networkPorts(id) {
+        return axios.get(`${resource}/${id}/networkports`)
+            .then(response => { return response.data; }).catch(error => error);
     },
     list() {
         return axios.get(`${resource}`, { params: { pageSize: 2000000000 } })
@@ -25,7 +28,6 @@ export default {
     delete(item) {
         return axios.delete(`${resource}/${item.id}`)
             .then(response => {
-                console.log(response);
                 return response.data;
             }).catch(error => error);
     },

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +12,7 @@ using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
 using Web.Api.Dtos;
 using Web.Api.Dtos.Users;
+using Web.Api.Infrastructure.Entities;
 
 namespace Web.Api.Controllers
 {
@@ -19,10 +22,15 @@ namespace Web.Api.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IIdentityService _identityService;
-
-        public UsersController(IIdentityService identityService)
+        private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<User> _signInManager;
+        public UsersController(IIdentityService identityService, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, SignInManager<User> signInManager)
         {
             _identityService = identityService;
+            _userManager = userManager;
+            _roleManager = roleManager;
+            _signInManager = signInManager;
         }
 
         [HttpGet]
@@ -47,16 +55,70 @@ namespace Web.Api.Controllers
             return CreatedAtAction(nameof(Get), new { id = createdUser.Id }, createdUser);
         }
 
-        [HttpGet("{id}/roles")]
-        public async Task<ActionResult<PagedList<GetUserRolesApiDto>>> GetUserRoles(Guid id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<UserDto>> Delete(Guid id)
         {
-            return Ok(null);
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            } else if (user.FirstName == "Admin")
+            {
+                return Forbid();
+            }
+
+            return Ok(await _identityService.DeleteUserAsync(id));
         }
 
-        [HttpPost("{id}/roles")]
-        public async Task<IActionResult> PostUserRoles(Guid id, [FromBody] CreateUserRolesApiDto roles)
+        [HttpGet("{id}/roles")]
+        public async Task<ActionResult<List<string>>> GetUserRoles(Guid id)
         {
-            return Ok();
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+            return Ok(await _userManager.GetRolesAsync(user));
+        }
+
+        [HttpPut("{id}/roles")]
+        public async Task<IActionResult> PostUserRoles(Guid id, [FromBody] UpdateUserRoleApiDto roles)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            if (user.UserName == "admin")
+            {
+                return Forbid();
+            }
+
+            var requestedRolesExist = true;
+            foreach (var role in roles.Roles)
+            {
+                requestedRolesExist &= await _roleManager.RoleExistsAsync(role);
+            }
+            if (!requestedRolesExist)
+            {
+                return NotFound("One or more of the requested roles do not exist.");
+            }
+
+            var allRoles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, allRoles);
+
+            var add = await _userManager.AddToRolesAsync(user, roles.Roles);
+            return Ok(add);
+        }
+
+        [HttpGet("me")]
+        public ActionResult<IEnumerable<object>> GetMyInfo()
+        {
+            if (!HttpContext.User.Identity.IsAuthenticated) return Ok();
+            var claims = HttpContext.User.Claims.Select(o => new {o.Type, o.Value});
+            
+            return Ok(claims);
         }
     }
 }

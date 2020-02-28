@@ -13,6 +13,7 @@ namespace Web.Api.Mappers
                     cfg.AddProfile<ExportMapperProfile>();
                     cfg.AddProfile<DatacenterApiMapperProfile>();
                     cfg.AddProfile<AuditLogApiMapperProfile>();
+                    cfg.AddProfile<RackApiMapperProfile>();
                 })
                 .CreateMapper();
         }

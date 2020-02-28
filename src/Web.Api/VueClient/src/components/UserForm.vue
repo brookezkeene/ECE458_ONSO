@@ -1,8 +1,8 @@
 <template>
-    <div v-if="!loading">
+    <div>
         <v-card flat>
             <v-card-title>
-            <span class="headline">New User</span>
+                <span class="headline">New User</span>
             </v-card-title>
 
             <v-card-text>
@@ -22,11 +22,6 @@
                         </v-col>
                         <v-col cols="12" sm="6" md="6">
                             <v-text-field v-model="editedItem.email" label="Email" :rules="[rules.required]"></v-text-field>
-                        </v-col>
-                    </v-row>
-                    <v-row>
-                        <v-col cols="12" sm="6" md="6">
-                            <v-select v-model="editedItem.permission" label="Permission Level" :items="permissions"></v-select> <!--Add permissions field to v-model-->
                         </v-col>
                     </v-row>
                     <v-row>
@@ -50,6 +45,19 @@
                 </v-card-actions>
 
             </v-card-text>
+            <v-snackbar v-model="updateSnackbar.show"
+                        :bottom=true
+                        class="black--text"
+                        :color="updateSnackbar.color"
+                        :timeout=5000>
+                {{updateSnackbar.message}}
+                <v-btn dark
+                       class="black--text"
+                       text
+                       @click="updateSnackbar.show = false">
+                    Close
+                </v-btn>
+            </v-snackbar>
         </v-card>
     </div>
 </template>
@@ -63,8 +71,12 @@ export default {
     },
     data () {
         return {
+            updateSnackbar: {
+                    show: false,
+                    message: '',
+                    color: ''
+             },
             show: false,
-            show1: false,
             valid: true,
             email: '',
             emailRules: [
@@ -73,10 +85,8 @@ export default {
             ],
             password1: '',
             password2: '',
-            permissions: ['Regular', 'Administrator'],
             rules: {
                 required: value => !!value || "Required.",
-                emailMatch: () => "The email and password you entered don't match",
                 passwordLengthRules:
                     v => {
                         if (v.length < 6) {
@@ -86,51 +96,66 @@ export default {
                         }
                     },
             },
-            loading: false,
             editedItem: {
                 firstName: '',
                 lastName: '',
                 username: '',
                 email: '',
-                password: ''
-            },
-            users: [],
-        };
-        },
-
-    
-        async created() {
-            this.users = await this.userRepository.list();
-
-            this.editedItem = typeof this.id === 'undefined'
-                ? this.editedItem
-                : this.users.find(o => o.id === this.id);
-
-        },
-
-    methods: {
-        checkPassMatch() {
-            if (this.password1 != this.password2) {
-                this.snackbar = false
-            } else {
-                this.editedItem.password = this.password1;
+                password: '',
             }
-        },
-        save () {
-            this.userRepository.create(this.editedItem)
-                .then(async () => {
-                            await this.initialize();
-                        })
-        this.close()
+        };
+    },
+    methods: {
+        async save() {
+            var result = await this.userRepository.create(this.editedItem)
+            if (result != null &&  result.id.length == 0) {
+                this.updateSnackbar.show = true;
+                this.updateSnackbar.color = 'red lighten-4';
+                this.updateSnackbar.message = 'Failed to create users. Users cannot have the same username';
+                return;
+            }
+            this.close()
         },
         close() {
             this.$router.push({name: 'users'})
-        }
-    },
-    computed: {
-        passwordConfirmationRule() {
-            return this.password1 === this.password2 || "Passwords must match";
         },
+        validationAfterReturning(result) {
+            if (result != null && (result.id == null || result.id.length == 0)) {
+                this.updateSnackbar.show = true;
+                this.updateSnackbar.color = 'red lighten-4';
+                this.updateSnackbar.message = 'Failed to create users. Users cannot have the same username';
+                return 1;
+            }
+            return 0;
+        },
+        validationInputs(item) {
+            var count = 0;
+            if (item.firstName == null || item.firstName.length == 0) {
+                this.updateSnackbar.show = true;
+                this.updateSnackbar.color = 'red lighten-4';
+                this.updateSnackbar.message = 'First name is required. ';
+                count++;
+            }
+            if (item.lastName == null || item.lastName.length == 0) {
+                this.updateSnackbar.show = true;
+                this.updateSnackbar.color = 'red lighten-4';
+                this.updateSnackbar.message = this.updateSnackbar.message + 'Last name is required. ';
+                count++;
+            }
+            if (item.email == null || item.email.length == 0 || !(/.+@.+\..+/.test(item.email))) {
+                this.updateSnackbar.show = true;
+                this.updateSnackbar.color = 'red lighten-4';
+                this.updateSnackbar.message = this.updateSnackbar.message + 'A valid email address is required. ';
+                count++;
+            }
+            if (item.username == null || item.username.length == 0) {
+                this.updateSnackbar.show = true;
+                this.updateSnackbar.color = 'red lighten-4';
+                this.updateSnackbar.message = this.updateSnackbar.message + 'A username is required. ';
+                count++;
+            }
+            return count;
+        }
     }
 }
 </script>

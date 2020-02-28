@@ -7,6 +7,7 @@
                     <v-data-table :headers="filteredHeaders"
                                   :items="models"
                                   :search="search"
+                                  class="pa-10"
                                   multi-sort
                                   @click:row="showDetails">
                         <template v-slot:top v-slot:item.action="{ item }">
@@ -28,7 +29,7 @@
                             </v-toolbar>
 
                             <v-row class="pl-4">
-                                <v-col cols="10">
+                                <v-col cols="11">
                                     <v-row>
                                         <!-- Custom filters; sorts between height ranges -->
                                         <v-col cols="3">
@@ -42,23 +43,6 @@
                                                 </v-col>
                                                 <v-col cols="6">
                                                     <v-text-field v-model="endHeightValue"
-                                                                  type="number"
-                                                                  placeholder="to">
-                                                    </v-text-field>
-                                                </v-col>
-                                            </v-row>
-                                        </v-col>
-                                        <v-col cols="3">
-                                            <v-row>
-                                                <v-col cols="6">
-                                                    <v-text-field v-model="startMemoryValue"
-                                                                  placeholder="from"
-                                                                  type="number"
-                                                                  label="Memory">
-                                                    </v-text-field>
-                                                </v-col>
-                                                <v-col cols="6">
-                                                    <v-text-field v-model="endMemoryValue"
                                                                   type="number"
                                                                   placeholder="to">
                                                     </v-text-field>
@@ -99,6 +83,23 @@
                                                 </v-col>
                                             </v-row>
                                         </v-col>
+                                        <v-col cols="3">
+                                            <v-row>
+                                                <v-col cols="6">
+                                                    <v-text-field v-model="startMemoryValue"
+                                                                  placeholder="from"
+                                                                  type="number"
+                                                                  label="Memory">
+                                                    </v-text-field>
+                                                </v-col>
+                                                <v-col cols="6">
+                                                    <v-text-field v-model="endMemoryValue"
+                                                                  type="number"
+                                                                  placeholder="to">
+                                                    </v-text-field>
+                                                </v-col>
+                                            </v-row>
+                                        </v-col>
                                     </v-row>
                                 </v-col>
                             </v-row>
@@ -125,11 +126,22 @@
                         <template v-slot:no-data>
                             <v-btn color="primary" @click="initialize">Reset</v-btn>
                         </template>
-                        >
                     </v-data-table>
                 </v-card>
             </v-container>
-
+            <v-snackbar v-model="updateSnackbar.show"
+                        :bottom=true
+                        class="black--text"
+                        :color="updateSnackbar.color"
+                        :timeout=5000>
+                {{updateSnackbar.message}}
+                <v-btn dark
+                       class="black--text"
+                       text
+                       @click="updateSnackbar.show = false">
+                    Close
+                </v-btn>
+            </v-snackbar>
         </v-card>
     </div>
 </template>
@@ -144,6 +156,11 @@
         inject: ['modelRepository'],
         data() {
             return {
+                updateSnackbar: {
+                    show: false,
+                    message: '',
+                    color: ''
+                },
                 // Filter values.
                 startHeightValue: '',
                 endHeightValue: '',
@@ -172,7 +189,6 @@
                     { text: 'CPU', value: 'cpu' },
                     { text: 'Memory', value: 'memory', filter: this.memoryFilter },
                     { text: 'Storage', value: 'storage' },
-                    { text: 'Comment', value: 'comment' },
                     { text: 'Actions', value: 'action', sortable: false },
 
                 ],
@@ -203,6 +219,7 @@
                     comment: ''
                 },
                 deleting: false,
+                editing: false,
             }
         },
         computed: {
@@ -234,20 +251,30 @@
                 this.loading = false;
             },
             editItem(item) {
+                this.editing = true
                 this.$router.push({ name: 'model-edit', params: { id: item.id } })
             },
             addItem() {
                 this.$router.push({ name: 'model-create' })
             },
-            deleteItem(item) {
+            async deleteItem(item) {
                 this.deleting = true;
+                var deleteModel = await this.modelRepository.find(item.id)
+
+                if (deleteModel.assets != null && deleteModel.assets.length != 0) {
+                    this.deleting = false;
+                    this.updateSnackbar.show = true;
+                    this.updateSnackbar.color = 'red lighten-4';
+                    this.updateSnackbar.message = 'Assets of this model exist, cannot delete';
+                    return;
+                }
                 confirm('Are you sure you want to delete this item?') && this.modelRepository.delete(item)
                     .then(async () => {
                         await this.initialize();
                     })
             },
             showDetails(item) {
-                if (this.editedIndex === -1 && !this.deleting) {
+                if (this.editedIndex === -1 && !this.deleting && !this.editing) {
                     this.$router.push({ name: 'model-details', params: {id: item.id } })
                 }
                 this.deleting = false;
@@ -281,7 +308,6 @@
                 } else if (!this.startMemoryValue) {
                     return (value) <= parseInt(this.endMemoryValue);
                 }
-
 
                 return (value) >= parseInt(this.startMemoryValue)
                     && (value) <= parseInt(this.endMemoryValue);

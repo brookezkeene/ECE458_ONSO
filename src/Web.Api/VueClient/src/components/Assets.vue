@@ -7,6 +7,7 @@
         <v-data-table :headers="filteredHeaders"
                       :items="assets"
                       :search="search"
+                      class="pa-10"
                       multi-sort
                       @click:row="showDetails">
 
@@ -83,25 +84,30 @@
             </template>
 
             <template v-slot:item.power="{ item }">
-                <v-row >
+                <v-row v-if="item.hasNetworkManagedPower">
                     <v-item-group dense
                                   light
-                                  tile
-                                  rounded="true">
+                                  tile>
                         <v-btn color ="green lighten-1" 
                                @click="turnOn(item)"
-                               small=true
+                               small
+                               width="30%"
+                               min-width="30px"
                                depressed>
                             ON
                         </v-btn>
                         <v-btn color ="red lighten-1" 
                                @click="turnOff(item)"
-                               small=true
+                               min-width="30px"
+                               small
+                               width="30%"
                                depressed>
                             OFF
                         </v-btn>
                         <v-btn color = "grey lighten-2"
-                               small=true
+                               small
+                               min-width="60px"
+                               width="30%"
                                @click="cycle(item)"
                                depressed>
                             Cycle
@@ -113,7 +119,6 @@
             <template v-slot:no-data>
                 <v-btn color="primary" @click="initialize">Refresh</v-btn>
             </template>
-            >
         </v-data-table>
     </v-card>
     </v-container>
@@ -133,25 +138,20 @@
         startRackValue: '',
         endRackValue: '',
 
-        dialog: false,
         instructionsDialog: false,
         loading: true,
         search: '',
 
         // Table data.
         headers: [
-          
           { text: 'Model Vendor', value: 'vendor' },
           { text: 'Model Number', value: 'modelNumber', },
           { text: 'Hostname', value: 'hostname' },
           { text: 'Rack', value: 'rack', filter: this.rackFilter },
           { text: 'Rack U', value: 'rackPosition', },
           { text: 'Owner Username', value: 'owner' },
-          { text: 'Comment', value: 'comment' },
           { text: 'Power', value: 'power', sortable: false },
           { text: 'Actions', value: 'action', sortable: false },
-
-
         ],
         assets: [],
         models: [],
@@ -189,9 +189,6 @@
         },
     },
     watch: {
-      dialog (val) {
-        val || this.close()
-      },
       instructionsDialog (val) {
         val || this.closeDetail()
       },
@@ -204,6 +201,8 @@
     methods: {
       async initialize () {
         this.assets = await this.assetRepository.list();
+            /*eslint-disable*/
+            console.log(this.assets);
         this.models = await this.modelRepository.list();
         this.users = await this.userRepository.list();
 
@@ -225,23 +224,41 @@
             this.$router.push({ name: 'asset-new' })
         },
         turnOn(item) {
-            this.powering = true;
-            confirm('Are you sure you would like to turn on this asset?')
             /*eslint-disable*/
-            console.log(item.id);
-            //PUT the power state for this asset to the backend
+            this.powering = true;
+            var powerState = {
+                // 0 is on
+                action: 0,
+            };
+            confirm('Are you sure you would like to turn on this asset?') && this.assetRepository.postPowerState(item.id, powerState)
+                .then(async () => {
+                    console.log(item);
+                    await this.initialize();
+                })
         },
         turnOff(item) {
             this.powering = true;
-            confirm('Are you sure you would like to power off this asset?')
-            console.log(item.id);
-            //PUT the power state for this asset to the backend
+            var powerState = {
+                // 1 is off
+                action: 1,
+            };
+            confirm('Are you sure you would like to power off this asset?') && this.assetRepository.postPowerState(item.id, powerState)
+                .then(async () => {
+                    console.log(item);
+                    await this.initialize();
+                })
         },
         cycle(item) {
             this.powering = true;
-            confirm('Are you sure you would like to cycle this asset?')
-            console.log(item.id);
-            //PUT the power state for this asset to the backend
+            var ret = {
+                // 2 is cycle
+                action: 2,
+            };
+            confirm('Are you sure you would like to cycle this asset?') && this.assetRepository.postPowerState(item.id, powerState)
+                .then(async () => {
+                    console.log(item);
+                    await this.initialize();
+                })
         },
         showInstructions() {
             this.instructionsDialog = true;
@@ -253,10 +270,11 @@
             if (!this.editing && !this.deleting && !this.powering) {
             /*eslint-disable*/
                 console.log(item);
-              this.$router.push({ name: 'asset-details', params: {id: item.id } })
-          }
-          this.deleting = false;
-          this.powering = false;
+                this.$router.push({ name: 'asset-details', params: {id: item.id } })
+            }
+            this.deleting = false;
+            this.powering = false;
+            this.powering = false;
       },
 
       /**

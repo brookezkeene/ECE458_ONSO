@@ -12,9 +12,10 @@ namespace Web.Api.Core.Services.Interfaces
         Task<PagedList<AssetDto>> GetAssetsAsync(string search, int page = 1, int pageSize = 10);
         Task<AssetDto> GetAssetAsync(Guid assetId);
         Task<List<AssetDto>> GetAssetExportAsync(AssetExportQuery query);
-        Task<Guid> CreateAssetAsync(AssetDto assetDto);
-        Task DeleteAssetAsync(Guid assetId);
-        Task<int> UpdateAssetAsync(AssetDto assetDto);
+        Task<List<AssetNetworkPortDto>> GetNetworkPortExportAsync(NetworkPortExportQuery query);
+        Task<Guid> CreateAssetAsync(AssetDto asset);
+        Task DeleteAssetAsync(AssetDto asset);
+        Task<int> UpdateAssetAsync(AssetDto asset);
 
     }
 }

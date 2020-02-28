@@ -273,6 +273,20 @@ namespace Web.Api.Infrastructure.Migrations
                     b.ToTable("Datacenters");
                 });
 
+            modelBuilder.Entity("Web.Api.Infrastructure.Entities.ImportFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Data")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ImportFiles");
+                });
+
             modelBuilder.Entity("Web.Api.Infrastructure.Entities.Model", b =>
                 {
                     b.Property<Guid>("Id")

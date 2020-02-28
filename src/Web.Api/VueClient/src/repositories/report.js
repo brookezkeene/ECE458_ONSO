@@ -2,8 +2,21 @@
 
 import axios from 'axios';
 const resource = '/reports';
+
+function sortProperties(obj) {
+    var sortable = [];
+    for (var key in obj)
+        if (obj.hasOwnProperty(key))
+            sortable.push([key, obj[key]]);
+
+    sortable.sort(function (a, b) {
+        return b[1] - a[1];
+    });
+    return sortable; // array in format [ [ key1, val1 ], [ key2, val2 ], ... ]
+}
+
 export default {
-    generate() {
+    calculateStatistics(racks) {
         // calculate statistics for report
         var numRacks = 0;
         var usedSpace = 0; // freeSpace = 42 - usedSpace
@@ -11,29 +24,30 @@ export default {
         var models = {};
         var owners = {};
 
-        mockRacks.forEach(rack => {
+        racks.forEach(rack => {
+            console.log(rack);
             numRacks++;
             rack.assets.forEach(asset => {
-                var model = asset.model;
+                console.log(asset);
                 // calculate free vs. used space
-                usedSpace += model.height;
+                usedSpace += asset.height;
                 // calculate allocated per vendor
-                if (typeof vendors[model.vendor] == "undefined") {
-                    vendors[model.vendor] = model.height;
+                if (typeof vendors[asset.vendor] == "undefined") {
+                    vendors[asset.vendor] = asset.height;
                 } else {
-                    vendors[model.vendor] += model.height;
+                    vendors[asset.vendor] += asset.height;
                 }
                 // calculate allocated per model
-                if (typeof models[model.modelNumber] == "undefined") {
-                    models[model.modelNumber] = model.height;
+                if (typeof models[asset.modelNumber] == "undefined") {
+                    models[asset.modelNumber] = asset.height;
                 } else {
-                    models[model.modelNumber] += model.height;
+                    models[asset.modelNumber] += asset.height;
                 }
                 // calculate allocated per owner
-                if (typeof owners[asset.owner.username] == "undefined") {
-                    owners[asset.owner.username] = model.height;
+                if (typeof owners[asset.owner] == "undefined") {
+                    owners[asset.owner] = asset.height;
                 } else {
-                    owners[asset.owner.username] += model.height;
+                    owners[asset.owner] += asset.height;
                 }
             });
         });
@@ -77,4 +91,5 @@ export default {
 
         return res;
     }
+    
 }

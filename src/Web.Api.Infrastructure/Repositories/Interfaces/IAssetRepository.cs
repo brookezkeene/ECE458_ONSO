@@ -15,5 +15,6 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
         Task<int> DeleteAssetAsync(Asset asset);
         Task<List<Asset>> GetAssetExportAsync(string search, string hostname, string rowStart, int colStart, string rowEnd, int colEnd);
         Task<bool> AssetIsUniqueAsync(string hostname, Guid id = default);
+        Task<List<AssetNetworkPort>> GetNetworkPortExportAsync(string search, string hostname, string rowStart, int colStart, string rowEnd, int colEnd);
     }
 }

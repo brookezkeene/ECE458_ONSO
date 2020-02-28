@@ -1,8 +1,6 @@
-﻿
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OAuth;
-using static AspNet.Security.OAuth.Duke.DukeAuthenticationConstants;
 
 namespace AspNet.Security.OAuth.Duke
 {
@@ -21,10 +19,12 @@ namespace AspNet.Security.OAuth.Duke
             TokenEndpoint = DukeAuthenticationDefaults.TokenEndpoint;
             UserInformationEndpoint = DukeAuthenticationDefaults.UserInformationEndpoint;
 
-            ClaimActions.MapJsonKey(ClaimTypes.Name, "displayName");
-            ClaimActions.MapJsonKey(ClaimTypes.Email, "mail");
-            ClaimActions.MapJsonKey(Claims.Name, "netid");
+            SaveTokens = true;
 
+            ClaimActions.MapJsonKey(ClaimTypes.Email, "mail");
+            ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "netid");
+            ClaimActions.MapJsonKey(ClaimTypes.GivenName, "firstName");
+            ClaimActions.MapJsonKey(ClaimTypes.Surname, "lastName");
         }
 
     }

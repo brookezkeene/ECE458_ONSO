@@ -11,6 +11,7 @@
                                   :server-items-length="totalItems"
                                   :expanded.sync="expanded"
                                   :loading="loading"
+                                  class="pa-10"
                                   show-expand
                                   @click:row="expand">
                         <template v-slot:top v-slot:item.action="{ item }">
@@ -32,8 +33,8 @@
                             <td :colspan="headers.length">
                                 <v-container>
                                     <v-row>
-                                        <v-col cols="6">
-                                            <v-subheader>Previous value (for 'created' events, there is no previous value, so we only show one table and don't need a subheading)</v-subheader>
+                                        <v-col v-for="(table, title, index) in item.data" :key="index">
+                                            <v-subheader>{{ title }}</v-subheader>
                                             <v-simple-table dense fixed-header>
                                                 <template v-slot:default>
                                                     <thead>
@@ -43,27 +44,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr v-for="(value, name) in item.data" :key="name" class="text-left">
-                                                            <td class="font-weight-medium">{{ name }}</td>
-                                                            <td v-if="isIdProperty(name, item)"><router-link :to="constructLink(value, name, item)">{{ value }}</router-link></td>
-                                                            <td v-else>{{ value }}</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </template>
-                                            </v-simple-table>
-                                        </v-col>
-                                        <v-col cols="6">
-                                            <v-subheader>New value (unnecessary for create/delete events)</v-subheader>
-                                            <v-simple-table dense fixed-header>
-                                                <template v-slot:default>
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Property</th>
-                                                            <th>Value</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr v-for="(value, name) in item.data" :key="name" class="text-left">
+                                                        <tr v-for="(value, name) in table" :key="name" class="text-left">
                                                             <td class="font-weight-medium">{{ name }}</td>
                                                             <td v-if="isIdProperty(name, item)"><router-link :to="constructLink(value, name, item)">{{ value }}</router-link></td>
                                                             <td v-else>{{ value }}</td>

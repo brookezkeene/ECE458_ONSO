@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Web.Api.Core.Dtos.Power;
 using Web.Api.Infrastructure.Entities;
 
 namespace Web.Api.Core.Dtos
@@ -17,7 +18,7 @@ namespace Web.Api.Core.Dtos
         public string Hostname { get; set; }
         public int RackPosition { get; set; }
         public string Comment { get; set; }
-        public IEnumerable<int> SlotsOccupied => Enumerable.Range(RackPosition, Model.Height);
+        public IEnumerable<int> SlotsOccupied => Model == null ? null : Enumerable.Range(RackPosition, Model.Height);
         public int? AssetNumber { get; set; }
         public List<AssetPowerPortDto> PowerPorts { get; set; }
         public List<AssetNetworkPortDto> NetworkPorts { get; set; }
@@ -64,17 +65,26 @@ namespace Web.Api.Core.Dtos
     {
         public Guid Id { get; set; }
         public int NumPorts { get; set; } = 24;
-        public List<PduPort> Ports { get; set; }
+        public List<PduPortDto> Ports { get; set; }
         public PduLocation Location { get; set; }
         public Guid RackId { get; set; }
         public RackDto Rack { get; set; }
 
         public override string ToString()
         {
-            var datacenter = Rack.Datacenter.Name;
-            var rack = Rack.Address;
+            var datacenter = Rack.Datacenter.Name.ToLower();
+            var rack = Rack.Address.ToUpper();
 
-            return $"HPDU-{datacenter}-{rack}-{Location}";
+            return $"hpdu-{datacenter}-{rack}{Location}";
+        }
+
+        public string ToPdu()
+        {
+            var datacenter = Rack.Datacenter.Name.ToLower();
+            var rack = Rack.Address.ToUpper();
+
+            return $"{datacenter}-{rack}{Location}";
         }
     }
+
 }

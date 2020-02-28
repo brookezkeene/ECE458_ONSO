@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,12 +29,25 @@ namespace Web.Api.Helpers
                 .CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var identityRepository = scope.ServiceProvider.GetRequiredService<IIdentityRepository>();
-
-            await EnsureSeedData(context, identityRepository);
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+            await EnsureSeedData(context, identityRepository, roleManager, userManager);
         }
 
-        public static async Task EnsureSeedData(ApplicationDbContext context, IIdentityRepository identityRepository)
+        public static async Task EnsureSeedData(ApplicationDbContext context, IIdentityRepository identityRepository, RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
         {
+            if (!await roleManager.RoleExistsAsync("basic"))
+            {
+                await roleManager.CreateAsync(new IdentityRole("basic"));
+            }
+
+            if (!await roleManager.RoleExistsAsync("admin"))
+            {
+                var adminRole = new IdentityRole("admin");
+                await roleManager.CreateAsync(adminRole);
+                await roleManager.AddClaimAsync(adminRole, new Claim("owner:asset", "all"));
+            }
+
             if (await identityRepository.FindByNameAsync("admin") == null)
             {
                 var user = new User
@@ -43,6 +58,12 @@ namespace Web.Api.Helpers
                     UserName = "admin"
                 };
                 await identityRepository.CreateUserAsync(user, "@$8^5#QqsX8K");
+            }
+
+            var adminUser = await userManager.FindByNameAsync("admin");
+            if (!await userManager.IsInRoleAsync(adminUser, "admin"))
+            {
+                await userManager.AddToRoleAsync(adminUser, "admin");
             }
         }
     }

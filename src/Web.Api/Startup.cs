@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -27,6 +29,9 @@ using Web.Api.Extensions;
 using Web.Api.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Web.Api.Core.Mappers;
+using Web.Api.Core.Mappers.Import;
+using Web.Api.Mappers;
 
 namespace Web.Api
 {
@@ -43,8 +48,9 @@ namespace Web.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.ConfigureCoreServices()
-                //.ConfigureInMemoryDbContext();
                 .ConfigureSqlDbContext(Configuration);
+
+            services.AddAutoMapper(typeof(ApiMappers).Assembly, typeof(ImportMapper).Assembly);
 
             services.AddApiAuthentication(Configuration);
               
@@ -75,11 +81,12 @@ namespace Web.Api
                 {
                     options.UseDefaultAction = true;
                     options.UseDefaultSubject = true;
+                    options.Source = "Web";
                 })
                 .AddDefaultHttpEventData(subjectOptions =>
                 {
-                    subjectOptions.SubjectIdentifierClaim = ClaimsConsts.Sub;
-                    subjectOptions.SubjectNameClaim = ClaimsConsts.Name;
+                    subjectOptions.SubjectIdentifierClaim = ClaimTypes.NameIdentifier;
+                    subjectOptions.SubjectNameClaim = ClaimTypes.Name;
                 })
                 .AddDefaultStore(options => options.UseSqlServer(
                     Configuration.GetConnectionString(ConfigurationConsts.ApplicationDbConnectionStringKey), sql =>

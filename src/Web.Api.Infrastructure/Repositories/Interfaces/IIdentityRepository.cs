@@ -16,6 +16,7 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
         Task<PagedList<User>> GetUsersAsync(string search, int page = 1, int pageSize = 10);
         Task<User> GetUserAsync(Guid userId);
         Task<(IdentityResult identityResult, Guid userId)> CreateUserAsync(User user, string password);
+        Task<IdentityResult> DeleteUserAsync(User user);
         Task<User> FindByNameAsync(string username);
         Task<bool> CheckPassword(User user, string password);
     }
@@ -58,7 +59,18 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
         {
             var identityResult = await _userManager.CreateAsync(user, password);
 
+            // basic access by default
+            await _userManager.AddToRoleAsync(user, "basic");
+
             return (identityResult, Guid.Parse(user.Id));
+        }
+
+        public async Task<IdentityResult> DeleteUserAsync(User user)
+        {
+            // Add check for existing user
+            // Add role deletion
+            var identityResult = await _userManager.DeleteAsync(user);
+            return identityResult;
         }
 
         public async Task<User> FindByNameAsync(string username)
