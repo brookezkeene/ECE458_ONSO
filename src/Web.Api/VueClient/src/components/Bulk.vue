@@ -89,7 +89,7 @@
 
         <v-dialog v-model="importModelWizard" max-width="500px">
             <v-card>
-                <import-wizard type="models" v-on:close-file-chooser="closeImport"></import-wizard>
+                <import-wizard type="models" v-on:close-file-chooser="closeImport" @import-error="throwError(e)"></import-wizard>
             </v-card>
         </v-dialog>
 
@@ -116,6 +116,20 @@
         <v-dialog v-model="exportNetworkDialog" max-width="300px">
             <export-network-wizard v-on:close-network-export="closeExport('network')"></export-network-wizard>
         </v-dialog>
+
+        <v-snackbar v-model="updateSnackbar.show"
+                    :bottom=true
+                    class="black--text"
+                    :color="updateSnackbar.color"
+                    :timeout=5000>
+            {{updateSnackbar.message}}
+            <v-btn dark
+                   class="black--text"
+                   text
+                   @click="updateSnackbar.show = false">
+                Close
+            </v-btn>
+        </v-snackbar>
     </v-card>
 </template>
 
@@ -143,6 +157,12 @@ export default {
             exportModelDialog: false,
             exportAssetDialog: false,
             exportNetworkDialog: false,
+            
+            updateSnackbar: {
+                show: false,
+                message: '',
+                color: 'red lighten-2'
+            }
         };
     },
     computed: {
@@ -223,6 +243,12 @@ export default {
         startExportNetworks() {
             this.exportNetworkDialog = true
         },
+        throwError(e) {
+            // this.updateSnackbar.message = e; ERROR IS UNDEFINED
+            this.updateSnackbar.message = e + 'Error importing models';
+            this.updateSnackbar.color = "red lighten-2";
+            this.updateSnackbar.show = true;
+        }
     }
 }
 </script>
