@@ -15,33 +15,31 @@
                                         item-value=""
                                         :return-object="false"
                                         label="Vendor"
-                                        placeholder="Please enter a vendor (i.e. Dell)" 
+                                        placeholder="Please enter a vendor (i.e. Dell)"
                                         :rules="[rules.vendorRules]"
                                         counter="50"
                                         required></v-combobox>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model="newItem.modelNumber" 
-                                      label="Model Number" 
-                                      placeholder="Please enter a model number (i.e. R710)" 
-                                      :rules="[rules.modelRules]"
-                                      counter="50"></v-text-field>
+                            <v-text-field v-model="newItem.modelNumber"
+                                          label="Model Number"
+                                          placeholder="Please enter a model number (i.e. R710)"
+                                          :rules="[rules.modelRules]"
+                                          counter="50"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model.number="newItem.height" 
-                                          label="Height (in Rack U)" 
+                            <v-text-field v-model.number="newItem.height"
+                                          label="Height (in Rack U)"
                                           placeholder="Please enter a height"
-                                          type="number" 
+                                          type="number"
                                           :rules="[rules.heightRules]"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model.number="newItem.ethernetPorts" label="Network Ports" type="number" @change="networkPortNum"
-                                          :rules="[rules.ethernetPortRules]"></v-text-field>
+                            <v-text-field v-model.number="newItem.ethernetPorts" label="Network Ports" type="number" @change="networkPortNum"></v-text-field>
                             <a href="#" @click="openNamesDialog">Add Network Port Names</a>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model.number="newItem.powerPorts" label="Power Ports" type="number"
-                                          :rules="[rules.powerPortRules]"></v-text-field>
+                            <v-text-field v-model.number="newItem.powerPorts" label="Power Ports" type="number"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model="newItem.cpu" label="CPU" placeholder="i.e. Intel Xeon E5520 2.2GHz" counter="50"></v-text-field>
@@ -83,8 +81,8 @@
                             <v-card-text>
                                 <v-container fluid>
                                     <div v-for="(n, index) in newItem.ethernetPorts" :key="index">
-                                        <v-text-field v-model="networkPortNames[index]" 
-                                                      label="Network Port" 
+                                        <v-text-field v-model="networkPortNames[index]"
+                                                      label="Network Port"
                                                       placeholder="port name"
                                                       :rules="[rules.networkPortRules]"
                                                       :value="n"></v-text-field>
@@ -187,11 +185,10 @@
                 if (typeof this.id !== 'undefined') {
                     this.newItem.displayColor = this.color.substring(0, 7);
                     var resultUpdate = await this.modelRepository.update(this.newItem);
-
                     if (this.validationCreateAndUpdate(resultUpdate) != 0) {
                         return;
                     }
-                   
+
                 } else {
                     this.newItem.displayColor = this.color.substring(0, 7);
                     var resultCreate = await this.modelRepository.create(this.newItem);
@@ -211,7 +208,7 @@
                 //either 1) creating a model, populating ports with default names
                 // 2) updating the networkPortNames with the newItem.ethernetPorts from memory
                 if (typeof this.id === 'undefined') {
-                    var j; 
+                    var j;
                     for (j = 0; j < this.newItem.ethernetPorts; j++) {
                         if (this.networkPortNames[j] == null) {
                             this.networkPortNames[j] = (j + 1).toString();
@@ -237,7 +234,7 @@
             openNamesDialog() {
                 this.namesDialog = true;
             },
-            /*here is where networkPortNames modifies the newItem.networkPorts 
+            /*here is where networkPortNames modifies the newItem.networkPorts
               to update the values of the item*/
             saveNames() {
 
@@ -257,7 +254,7 @@
                 if (this.newItem.networkPorts.length > this.newItem.ethernetPorts) {
                     this.newItem.networkPorts = this.newItem.networkPorts.slice(0, this.newItem.ethernetPorts);
                 }
-                
+
                 this.namesDialog = false;
             },
             closeNamesDialog() {
@@ -282,6 +279,18 @@
                     this.updateSnackbar.show = true;
                     this.updateSnackbar.color = 'red lighten-4';
                     this.updateSnackbar.message = this.updateSnackbar.message + 'The height of the model must be a valid number greater than 0 and less than 42. ';
+                    count++
+                }
+                if (item.ethernetPorts < 0 || !(/^[0-9]*$/.test(item.ethernetPorts))) {
+                    this.updateSnackbar.show = true;
+                    this.updateSnackbar.color = 'red lighten-4';
+                    this.updateSnackbar.message = this.updateSnackbar.message + 'The number of network ports of the model must be a valid number greater than -1. ';
+                    count++
+                }
+                if (item.powerPorts < 0 || !(/^[0-9]*$/.test(item.powerPorts))) {
+                    this.updateSnackbar.show = true;
+                    this.updateSnackbar.color = 'red lighten-4';
+                    this.updateSnackbar.message = this.updateSnackbar.message + 'The number of network ports of the model must be a valid number greater than -1. ';
                     count++
                 }
                 if (item.cpu < 0 || !(/^[0-9]*$/.test(item.cpu))) {
@@ -310,7 +319,7 @@
                     this.updateSnackbar.color = 'red lighten-4';
                     this.updateSnackbar.message = 'Failed to create model. Model vendor and model number must be unique';
                     return 1;
-                } 
+                }
                 return 0;
             }
         }
