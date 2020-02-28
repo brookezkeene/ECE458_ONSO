@@ -41,6 +41,16 @@ namespace Web.Api.Core.Mappers
             return modelDto == null ? null : Mapper.Map<Model>(modelDto);
         }
 
+        public static ModelNetworkPortDto ToDto(this ModelNetworkPort modelNetworkPort)
+        {
+            return Mapper.Map<ModelNetworkPortDto>(modelNetworkPort);
+        }
+
+        public static List<ModelNetworkPortDto> ToDto(this List<ModelNetworkPort> list)
+        {
+            return Mapper.Map<List<ModelNetworkPortDto>>(list);
+        }
+
         public static AssetDto ToDto(this Asset asset)
         {
             return asset == null ? null : Mapper.Map<AssetDto>(asset);

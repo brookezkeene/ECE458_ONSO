@@ -40,6 +40,7 @@ namespace Web.Api.Extensions
             services.AddTransient<IRackService, RackService>();
             services.AddTransient<IDatacenterService, DatacenterService>();
             services.AddTransient<IAuditLogService, AuditLogService>();
+            services.AddTransient<IModelImportService, ModelImportService>();
             services.AddHttpClient<PowerService>();
 
             // etc
@@ -55,6 +56,7 @@ namespace Web.Api.Extensions
             services.AddTransient<IAssetRepository, AssetRepository>();
             services.AddTransient<IIdentityRepository, IdentityRepository>();
             services.AddTransient<IDatacenterRepository, DatacenterRepository>();
+            services.AddTransient<IImportRepository, ImportRepository>();
 
             return services;
         }
