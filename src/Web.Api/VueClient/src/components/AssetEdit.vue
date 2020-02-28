@@ -336,17 +336,13 @@
         methods: {
             save() {
                 if (this.editedItem.id.length != 0) {
-                    /* eslint-disable no-unused-vars, no-console */
-                    console.log(this.selectedModel);
-                    console.log('printing out the selected model')
+
                     for (var j = 0; j < this.editedItem.networkPorts.length; j++) {
                         this.editedItem.networkPorts[j].modelNetworkPortId = this.selectedModel.networkPorts[j].id;
                     }
                     console.log(this.editedItem);
                     this.assetRepository.update(this.editedItem).then(this.close());
                 } else {
-                                        console.log(this.selectedModel);
-                    console.log('printing out the selected model')
                     for (var i = 0; i < this.editedItem.networkPorts.length; i++) {
                         this.editedItem.networkPorts[i].modelNetworkPortId = this.selectedModel.networkPorts[i].id;
                     }
@@ -371,6 +367,7 @@
             },
             async updateRacks() {
                 if (this.datacenterID != this.editedItem.datacenterId) {
+
                     this.datacenterID = this.editedItem.datacenterId;
                     this.racks = await this.rackRepository.list(this.datacenterID);
                     this.sendNetworkPortRequest();

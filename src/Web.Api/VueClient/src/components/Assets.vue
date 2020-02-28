@@ -13,6 +13,16 @@
 
             <template v-slot:top>
                 <v-toolbar flat>
+                    <v-select v-model="selectedDatacenter"
+                              :items="datacenters"
+                              item-text="description"
+                              item-value=""
+                              :return-object="false"
+                              label="Datacenter"
+                              placeholder="Select a datacenter or all datacenters"
+                              class="pt-8 pl-4"
+                              @change="datacenterSearch()">
+                    </v-select>
                     <!-- ADDED AUTOCOMPLETE TO THE MODEL SEARCH -->
                     <v-container fluid align="left">
                         <v-row>
@@ -131,13 +141,14 @@
   export default {
     components: {
     },
-    inject: ['assetRepository','modelRepository','userRepository'],
+    inject: ['assetRepository','modelRepository','userRepository', 'datacenterRepository'],
     data() {
-      return {
+        return {
+          selectedDatacenter: 'All Datacenters',
         // Filter values.
         startRackValue: '',
         endRackValue: '',
-
+        datacenters: [],
         instructionsDialog: false,
         loading: true,
         search: '',
@@ -199,14 +210,20 @@
     },
   
     methods: {
-      async initialize () {
-        this.assets = await this.assetRepository.list();
-            /*eslint-disable*/
-            console.log(this.assets);
-        this.models = await this.modelRepository.list();
-        this.users = await this.userRepository.list();
+        async initialize() {
+            
+            this.models = await this.modelRepository.list();
+            this.users = await this.userRepository.list();
 
-        this.loading = false;
+            this.datacenters = await this.datacenterRepository.list();
+                var datacenter = {
+                    description: "All Datacenters",
+                    name: "All",
+                }
+            this.datacenters.push(datacenter);
+            this.assets = await this.assetRepository.list();
+
+            this.loading = false;
 
         },
         deleteItem (item) {
@@ -216,6 +233,10 @@
                         await this.initialize();
                     })
         },
+        async datacenterSearch() {
+                var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
+                this.racks = await this.rackRepository.list(searchDatacenter.id); 
+            },
         editItem(item) {
             this.editing = true;
             this.$router.push({ name: 'asset-edit', params: { id: item.id } })

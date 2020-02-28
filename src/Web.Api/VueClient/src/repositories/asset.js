@@ -25,8 +25,12 @@ export default {
                 console.log(error);
             });
     },
-    list() {
-        return axios.get(`${resource}`, { params: { pageSize: 2000000000 } })
+    list(datacenter) {
+        const query = {
+            datacenterId: datacenter,
+            pageSize: 2000000000
+        }
+        return axios.get(`${resource}`, { params: query })
             .then(response => {
                 return response.data.data;
             });
