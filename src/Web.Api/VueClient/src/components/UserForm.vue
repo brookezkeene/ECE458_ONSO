@@ -107,17 +107,55 @@ export default {
     },
     methods: {
         async save() {
+            if (this.validationInputs(this.editedItem) != 0) {
+                return;
+            }
+
             var result = await this.userRepository.create(this.editedItem)
-            if (result != null && (result.id == null || result.id.length == 0)) {
-                this.updateSnackbar.show = true;
-                this.updateSnackbar.color = 'red lighten-4';
-                this.updateSnackbar.message = 'Failed to create users. Users cannot have the same username';
+            if (this.validationAfterReturning(result) != 0) {
                 return;
             }
             this.close()
         },
         close() {
             this.$router.push({name: 'users'})
+        },
+        validationAfterReturning(result) {
+            if (result != null && (result.id == null || result.id.length == 0)) {
+                this.updateSnackbar.show = true;
+                this.updateSnackbar.color = 'red lighten-4';
+                this.updateSnackbar.message = 'Failed to create users. Users cannot have the same username';
+                return 1;
+            }
+            return 0;
+        },
+        validationInputs(item) {
+            var count = 0;
+            if (item.firstName == null || item.firstName.length == 0) {
+                this.updateSnackbar.show = true;
+                this.updateSnackbar.color = 'red lighten-4';
+                this.updateSnackbar.message = 'First name is required. ';
+                count++;
+            }
+            if (item.lastName == null || item.lastName.length == 0) {
+                this.updateSnackbar.show = true;
+                this.updateSnackbar.color = 'red lighten-4';
+                this.updateSnackbar.message = this.updateSnackbar.message + 'Last name is required. ';
+                count++;
+            }
+            if (item.email == null || item.email.length == 0 || !(/.+@.+\..+/.test(item.email))) {
+                this.updateSnackbar.show = true;
+                this.updateSnackbar.color = 'red lighten-4';
+                this.updateSnackbar.message = this.updateSnackbar.message + 'A valid email address is required. ';
+                count++;
+            }
+            if (item.username == null || item.username.length == 0) {
+                this.updateSnackbar.show = true;
+                this.updateSnackbar.color = 'red lighten-4';
+                this.updateSnackbar.message = this.updateSnackbar.message + 'A username is required. ';
+                count++;
+            }
+            return count;
         }
     }
 }
