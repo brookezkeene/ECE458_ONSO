@@ -70,10 +70,16 @@ export default {
                 return response.data;
             }).catch(error => error);
     },
-    getPdus(rackid) {
+    getPdus(rackid, location) {
         return axios.get(`${resource}/${rackid}/pdus`)
             .then(response => {
-                return response.data;
+                if (location === 'left') {
+                    /*eslint-disable*/
+                    console.log(response.data.left);
+                    return response.data.left;
+                } else {
+                    return response.data.right;
+                }
             }).catch (error => error);
     }
 }

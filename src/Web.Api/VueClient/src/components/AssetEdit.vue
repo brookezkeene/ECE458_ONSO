@@ -148,10 +148,10 @@
                                         flat
                                         v-if="index===3">
                                     <div>
-                                        <p v-if="(selectedRack && selectedModelBool)">Enter the PDU and PDU Number for each Power Port below.</p>
+                                        <p v-if="(selectedRack && selectedModelBool) || (id!=undefined)">Enter the PDU and PDU Number for each Power Port below.</p>
                                         <p v-else>No model or rack selected. Please select a model and a rack first.</p>
                                     </div>
-                                    <div v-if="(selectedRack && selectedModelBool) || id">
+                                    <div v-if="(selectedRack && selectedModelBool) || (id!=undefined)">
                                         <v-container fluid
                                                      fill
                                                      v-for="(port, index) in powerPorts" :key="index">
@@ -162,16 +162,16 @@
                                                 <v-spacer></v-spacer>
                                                 <v-btn-toggle v-model="port.pduLocation"
                                                               mandatory>
-                                                    <v-btn value="left">
+                                                    <v-btn @click="setLocation('left')" value="left">
                                                         Left
                                                     </v-btn>
-                                                    <v-btn value="right">
+                                                    <v-btn @click="setLocation('right')" value="right">
                                                         Right
                                                     </v-btn>
                                                 </v-btn-toggle>
                                                 <v-spacer></v-spacer>
                                                 <v-combobox v-model="editedItem.powerPorts[index].number"
-                                                              :items = "powerPortLocations"
+                                                              :items = "availablePortsInRack"
                                                               typeof="number"
                                                               placeholder="PDU Number">
                                                 </v-combobox>
@@ -251,9 +251,10 @@
                 //networkPortConnections: [],
                 toggle_exclusive: undefined,
                 namesDialog: false,
-                availablePortsInRack: [],
                 selectedRack: false,
                 selectedModelBool: false,
+                sidePortIsOn: '',
+                availablePortsInRack: [],
                 rules: {
                     macAddressRules: v => /^([0-9A-Fa-f]{2}[\W_]*){5}([0-9A-Fa-f]{2})$/.test(v) || 'Invalid MAC Address.'
                 },
@@ -276,6 +277,9 @@
                 this.selectedModel = await this.modelRepository.find(this.editedItem.modelId);
                 this.makeNetworkPorts(this.selectedModel)
                 this.makePowerPorts(this.selectedModel)
+                this.selectedModelBool = true;
+                this.selectedRack = true;
+                await this.rackSelected();
             }
 
         },
@@ -292,23 +296,6 @@
                 }
                 return arr;
             },
-            powerPortLocations() {
-            /*eslint-disable*/
-                var pduLocations = [];
-                if (this.selectedRack) {
-                    console.log(this.powerPorts);
-                    this.powerPorts.forEach(port => {
-                        if (port.pduLocation === 'L') {
-                            pduLocations.push(this.availablePortsInRack.Left);
-                        } else {
-                            pduLocations.push(this.availablePortsInRack.Right);
-                        }
-                    });
-                    console.log(this.availablePortsInRack);
-                    console.log(pduLocations);
-                }
-                return pduLocations;
-            }
         },
         methods: {
             save() {
@@ -328,12 +315,12 @@
                     }
                     this.assetRepository.create(this.editedItem).then(this.close());
                 }
-                this.rackSelected = false;
+                this.selectedRack = false;
                 this.selectedModelBool = false;
             },
             close() {
                 this.$router.push({ name: 'assets' })
-                this.rackSelected = false;
+                this.selectedRack = false;
                 this.selectedModelBool = false;
             },
             async sendNetworkPortRequest() {
@@ -361,11 +348,12 @@
                 this.makePowerPorts(this.selectedModel);
             },
             async rackSelected() {
-                console.log(this.selectedRack);
                 this.selectedRack = true;
-                console.log(this.editedItem.rackId);
-                this.availablePortsInRack = await this.rackRepository.getPdus(this.editedItem.rackId);
-                console.log(this.availablePortsInRack);
+                let availablePorts = await this.rackRepository.getPdus(this.editedItem.rackId, this.sidePortIsOn);
+                availablePorts.forEach(port => {
+                    this.availablePortsInRack.push(+port.number);
+                });
+                this.availablePortsInRack.sort((a,b)=>a-b);
             },
             makeNetworkPorts(model) {
                 this.networkPorts = [];
@@ -416,7 +404,11 @@
                     }
                     this.editedItem.powerPorts = powerPortsArray;
                 }
+            },
+            setLocation(side) {
+                this.sidePortIsOn = side;
             }
         },
+
     }
 </script>
