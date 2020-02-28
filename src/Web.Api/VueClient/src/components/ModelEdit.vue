@@ -6,7 +6,6 @@
             </v-card-title>
 
             <v-container>
-
                 <v-form v-model="valid">
                     <v-row>
                         <v-col cols="12" sm="6" md="4">
@@ -16,20 +15,22 @@
                                         item-value=""
                                         :return-object="false"
                                         label="Vendor"
-                                        placeholder="i.e. Dell" 
+                                        placeholder="Please enter a vendor (i.e. Dell)" 
                                         :rules="[rules.vendorRules]"
-                                        counter="50"></v-combobox>
+                                        counter="50"
+                                        required></v-combobox>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model="newItem.modelNumber" 
                                       label="Model Number" 
-                                      placeholder="i.e. R710" 
+                                      placeholder="Please enter a model number (i.e. R710)" 
                                       :rules="[rules.modelRules]"
                                       counter="50"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model.number="newItem.height" 
                                           label="Height (in Rack U)" 
+                                          placeholder="Please enter a height"
                                           type="number" 
                                           :rules="[rules.heightRules]"></v-text-field>
                         </v-col>
