@@ -16,44 +16,22 @@
 
                     <!-- ADDED AUTOCOMPLETE TO THE MODEL SEARCH -->
                     <v-container fluid align="left">
-
                         <v-row>
+                            <v-col class="pt-6 mt-6" cols="2">
+                                <v-label>Filter by ... </v-label>
+                            </v-col>
                             <v-col cols="6">
-                                <v-row>
-                                    <v-autocomplete prepend-inner-icon="mdi-magnify"
-                                                    :items="assets"
-                                                    :search-input.sync="search"
-                                                    cache-items
-                                                    class="mt-3 pt-3"
-                                                    flat
-                                                    hide-no-data
-                                                    hide-details
-                                                    item-text="vendor"
-                                                    label="Search by keyword on model and hostname"
-                                                    single-line
-                                                    solo-inverted></v-autocomplete>
-
-                                </v-row>
+                                <v-select v-model="selectedDatacenter"
+                                          :items="datacenters"
+                                          item-text="description"
+                                          item-value=""
+                                          :return-object="false"
+                                          label="Datacenter"
+                                          placeholder="Select a datacenter or all datacenters"
+                                          class="pt-8 pl-4"
+                                          @change="datacenterSearch()">
+                                </v-select>
                             </v-col>
-                            <v-spacer></v-spacer>
-                            <!-- Custom filters; sorts between rack ranges -->
-                            <v-col cols="4">
-                                <v-row class="mt-4 pt-6">
-                                    <v-text-field v-model="startRackValue"
-                                                  placeholder="Start"
-                                                  type="text"
-                                                  label="Rack Range"
-                                                  style="width:0">
-                                    </v-text-field>
-
-                                    <v-text-field v-model="endRackValue"
-                                                  type="text"
-                                                  placeholder="End"
-                                                  style="width:0">
-                                    </v-text-field>
-                                </v-row>
-                            </v-col>
-                            <v-spacer></v-spacer>
                         </v-row>
                     </v-container>
 
@@ -71,17 +49,44 @@
 
                 </v-toolbar>
                 <v-row>
-                    <v-select v-model="selectedDatacenter"
-                              :items="datacenters"
-                              item-text="description"
-                              item-value=""
-                              :return-object="false"
-                              label="Datacenter"
-                              placeholder="Select a datacenter or all datacenters"
-                              class="pt-8 pl-4"
-                              @change="datacenterSearch()">
-                    </v-select>
+                    <v-col cols="6">
+                        <v-row class="pl-10 pt-1">
+                            <v-autocomplete prepend-inner-icon="mdi-magnify"
+                                            :items="assets"
+                                            :search-input.sync="search"
+                                            cache-items
+                                            class="mt-3 pt-3"
+                                            flat
+                                            hide-no-data
+                                            hide-details
+                                            item-text="vendor"
+                                            label="Search by keyword on model and hostname"
+                                            single-line
+                                            solo-inverted></v-autocomplete>
+
+                        </v-row>
+                    </v-col>
+                    <v-spacer></v-spacer>
+                    <!-- Custom filters; sorts between rack ranges -->
+                    <v-col cols="4">
+                        <v-row class="mt-4 pt-2">
+                            <v-text-field v-model="startRackValue"
+                                          placeholder="Start"
+                                          type="text"
+                                          label="Rack Range"
+                                          style="width:0">
+                            </v-text-field>
+
+                            <v-text-field v-model="endRackValue"
+                                          type="text"
+                                          placeholder="End"
+                                          style="width:0">
+                            </v-text-field>
+                        </v-row>
+                    </v-col>
+                    <v-spacer></v-spacer>
                 </v-row>
+                
 
             </template>
 
