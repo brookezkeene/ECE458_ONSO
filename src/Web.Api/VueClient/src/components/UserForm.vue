@@ -2,7 +2,7 @@
     <div>
         <v-card flat>
             <v-card-title>
-            <span class="headline">New User</span>
+                <span class="headline">New User</span>
             </v-card-title>
 
             <v-card-text>
@@ -45,6 +45,19 @@
                 </v-card-actions>
 
             </v-card-text>
+            <v-snackbar v-model="updateSnackbar.show"
+                        :bottom=true
+                        class="black--text"
+                        :color="updateSnackbar.color"
+                        :timeout=5000>
+                {{updateSnackbar.message}}
+                <v-btn dark
+                       class="black--text"
+                       text
+                       @click="updateSnackbar.show = false">
+                    Close
+                </v-btn>
+            </v-snackbar>
         </v-card>
     </div>
 </template>
@@ -58,6 +71,11 @@ export default {
     },
     data () {
         return {
+            updateSnackbar: {
+                    show: false,
+                    message: '',
+                    color: ''
+             },
             show: false,
             valid: true,
             email: '',
@@ -88,11 +106,15 @@ export default {
         };
     },
     methods: {
-        save() {
-            this.userRepository.create(this.editedItem)
-                .then(() => {
-                    this.close()
-                });
+        async save() {
+            var result = await this.userRepository.create(this.editedItem)
+            if (result != null && (result.id == null || result.id.length == 0)) {
+                this.updateSnackbar.show = true;
+                this.updateSnackbar.color = 'red lighten-4';
+                this.updateSnackbar.message = 'Failed to create users. Users cannot have the same username';
+                return;
+            }
+            this.close()
         },
         close() {
             this.$router.push({name: 'users'})
