@@ -6,7 +6,6 @@ export default {
     find(id) {
         return axios.get(`${resource}/${id}`)
             .then(response => {
-                console.log(response);
                 return response.data;
             });
     },
@@ -29,7 +28,6 @@ export default {
     delete(item) {
         return axios.delete(`${resource}/${item.id}`)
             .then(response => {
-                console.log(response);
                 return response.data;
             }).catch(error => error);
     },

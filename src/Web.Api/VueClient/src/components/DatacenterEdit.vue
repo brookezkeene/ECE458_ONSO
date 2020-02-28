@@ -6,10 +6,13 @@
             </v-card-title>
 
             <v-container>
-                <v-form>
+                <v-form v-model="valid">
                     <v-row>
                         <v-col>
-                            <v-text-field v-model="newItem.description" label="Datacenter Name" counter="50"></v-text-field>
+                            <v-text-field v-model="newItem.description" 
+                                          label="Datacenter Name" 
+                                          :rules="[rules.nameRules]"
+                                          counter="50"></v-text-field>
                         </v-col>
                     </v-row>
                     <v-row>
@@ -20,8 +23,8 @@
 
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn text @click="close">Cancel</v-btn>
-                        <v-btn color="primary" text @click="save">Save</v-btn>
+                        <v-btn @click="close">Cancel</v-btn>
+                        <v-btn color="primary" :disabled="!valid" @click="save">Save</v-btn>
                     </v-card-actions>'
                 </v-form>
             </v-container>
@@ -44,6 +47,10 @@
                     description: '',
                     HasNetworkManagedPower: false
                 },
+                rules: {
+                    nameRules: v => /^(?=\s*\S).*$/.test(v) || 'Name is required',
+                },
+                valid: true
             };
         },
         editedIndex: -1,
