@@ -72,7 +72,8 @@
                             </v-card>
                         </v-scroll>
 
-                        <v-btn small class="mt-4" color="primary" outlined v-if="!viewNames" @click="showNeighborhood">View Network Neighborhood</v-btn>
+                        <v-btn small class="mt-4" color="primary" outlined v-if="!showNeighborhood" @click="showNeighborhood = true">View Network Neighborhood</v-btn>
+                        <v-btn small class="mt-4" color="primary" outlined v-if="showNeighborhood" @click="showNeighborhood = false">Hide Network Neighborhood</v-btn>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <!--power port connections-->
@@ -94,7 +95,9 @@
                         </div>
                     </v-col>
                 </v-row>
-
+                <v-row v-if="showNeighborhood">
+                    <network-neighborhood v-bind:id="asset.id" @click="nodeClicked"></network-neighborhood>
+                </v-row>
             </v-card-text>
 
             <v-spacer />
@@ -143,10 +146,14 @@
 </style>
 
 <script>
+    import NetworkNeighborhood from "./NetworkNeighborhood"
     export default {
         name: 'asset-details',
         inject: ['assetRepository'],
         item: null,
+        components: {
+            NetworkNeighborhood
+        },
         props: ['id'],
         data() {
             return {
@@ -165,6 +172,7 @@
                 ownerPresent: true, // in case the asset does not have an owner, don't need null pointer bc not required.
                 viewNames: false,
                 powerPorts: {},
+                showNeighborhood: false
             };
         },
         created() {
@@ -209,9 +217,12 @@
             hideNames() {
                 this.viewNames = false;
             },
-            showNeighborhood() {
-                
+            nodeClicked(e) {
+                /* eslint-disable no-unused-vars, no-console */
+                console.log('clicked');
+                this.$router.push({ name: 'asset-details', params: { id: e } });
             }
+
         }
     }
 </script>
