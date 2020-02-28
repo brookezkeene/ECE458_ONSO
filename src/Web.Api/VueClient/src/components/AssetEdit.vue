@@ -158,23 +158,37 @@
                                             <v-layout align-center
                                                       justify-bottom>
                                                 <v-spacer></v-spacer>
+                                                <v-spacer></v-spacer>
                                                 <p>Power Port {{index+1}}</p>
                                                 <v-spacer></v-spacer>
                                                 <v-btn-toggle v-model="port.pduLocation"
                                                               mandatory>
-                                                    <v-btn @click="setLocation('left')" value="left">
+                                                    <v-btn @click="setLocation('left')" value="true">
                                                         Left
                                                     </v-btn>
-                                                    <v-btn @click="setLocation('right')" value="right">
+                                                    <v-btn @click="setLocation('right')" value="false">
                                                         Right
                                                     </v-btn>
                                                 </v-btn-toggle>
                                                 <v-spacer></v-spacer>
-                                                <v-combobox v-model="editedItem.powerPorts[index].number"
-                                                              :items = "availablePortsInRack"
-                                                              typeof="number"
-                                                              placeholder="PDU Number">
-                                                </v-combobox>
+                                                <v-autocomplete v-if="port.pduLocation" 
+                                                            v-model="editedItem.powerPorts[index].pduPortId"
+                                                            :items="availablePortsInRack.right"
+                                                            item-text ="number"
+                                                            item-value ="id"
+                                                            :return-object="false"
+                                                            typeof="number"
+                                                            placeholder="PDU Number">
+                                                </v-autocomplete>
+                                                <v-autocomplete v-if="!port.pduLocation" 
+                                                            v-model="editedItem.powerPorts[index].pduPortId"
+                                                            :items="availablePortsInRack.left"
+                                                            item-text="number"
+                                                            item-value="id"
+                                                            :return-object="false"
+                                                            typeof="number"
+                                                            placeholder="PDU Number">
+                                                </v-autocomplete>
                                                 <v-spacer></v-spacer>
                                             </v-layout>
                                         </v-container>
@@ -253,7 +267,7 @@
                 namesDialog: false,
                 selectedRack: false,
                 selectedModelBool: false,
-                sidePortIsOn: '',
+                sidePortIsOn: 'left',
                 availablePortsInRack: [],
                 rules: {
                     macAddressRules: v => /^([0-9A-Fa-f]{2}[\W_]*){5}([0-9A-Fa-f]{2})$/.test(v) || 'Invalid MAC Address.'
@@ -274,12 +288,14 @@
 
             if (typeof this.id !== 'undefined') {
                 this.editedItem = await this.assetRepository.find(this.id);
+                /*eslint-disable*/
+                console.log(this.editedItem);
                 this.selectedModel = await this.modelRepository.find(this.editedItem.modelId);
-                this.makeNetworkPorts(this.selectedModel)
-                this.makePowerPorts(this.selectedModel)
+                this.makeNetworkPorts(this.selectedModel);
+                this.makePowerPorts(this.selectedModel);
                 this.selectedModelBool = true;
                 this.selectedRack = true;
-                await this.rackSelected();
+                this.rackSelected();
             }
 
         },
@@ -306,6 +322,7 @@
                     for (var j = 0; j < this.editedItem.networkPorts.length; j++) {
                         this.editedItem.networkPorts[j].modelNetworkPortId = this.selectedModel.networkPorts[j].id;
                     }
+                    console.log(this.editedItem);
                     this.assetRepository.update(this.editedItem).then(this.close());
                 } else {
                                         console.log(this.selectedModel);
@@ -349,11 +366,14 @@
             },
             async rackSelected() {
                 this.selectedRack = true;
-                let availablePorts = await this.rackRepository.getPdus(this.editedItem.rackId, this.sidePortIsOn);
-                availablePorts.forEach(port => {
-                    this.availablePortsInRack.push(+port.number);
-                });
-                this.availablePortsInRack.sort((a,b)=>a-b);
+                let availablePorts = {};
+                availablePorts = await this.rackRepository.getPdus(this.editedItem.rackId);
+/*                for (var i = 0; i < availablePorts.length; i++) {
+                    availablePorts[i].number = +port.number;
+                }*/
+/*                availablePorts.sort(a, b => a - b); //sorting port numbers so that they are easier to see in frontend
+*/              this.availablePortsInRack = availablePorts;
+                console.log(this.availablePortsInRack);
             },
             makeNetworkPorts(model) {
                 this.networkPorts = [];
@@ -387,7 +407,7 @@
                 for (i = 0; i < numPowerPorts; i++) {
 
                     const pduInfo = {
-                        pduLocation: 'L',
+                        pduLocation: true,
                     }
                     this.powerPorts[i] = Object.assign({}, pduInfo);
                 }

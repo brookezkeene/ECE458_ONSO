@@ -73,13 +73,7 @@ export default {
     getPdus(rackid, location) {
         return axios.get(`${resource}/${rackid}/pdus`)
             .then(response => {
-                if (location === 'left') {
-                    /*eslint-disable*/
-                    console.log(response.data.left);
-                    return response.data.left;
-                } else {
-                    return response.data.right;
-                }
+                return response.data;
             }).catch (error => error);
     }
 }
