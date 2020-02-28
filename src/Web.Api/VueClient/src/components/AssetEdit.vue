@@ -359,9 +359,8 @@
             async sendNetworkPortRequest() {
                 this.networks = await this.datacenterRepository.networkPorts(this.datacenterID);
                 for (const network of this.networks) {
-                    network.nameRackAssetNum = "NAME: " + network.name +
-                        " " + "HOSTNAME: " + network.assetHostname +
-                        " " + "RACK: " + network.rowLetter + network.rackNumber.toString();
+                    network.nameRackAssetNum = "Port name: " + network.name +
+                        ",  " + "Hostname: " + network.assetHostname;
 
                 }
             },
