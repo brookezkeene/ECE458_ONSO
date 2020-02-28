@@ -35,11 +35,13 @@
                                           :rules="[rules.heightRules]"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model.number="newItem.ethernetPorts" label="Network Ports" type="number" @change="networkPortNum"></v-text-field>
+                            <v-text-field v-model.number="newItem.ethernetPorts" label="Network Ports" type="number" @change="networkPortNum"
+                                          :rules="[rules.ethernetPortRules]"></v-text-field>
                             <a href="#" @click="openNamesDialog">Add Network Port Names</a>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model.number="newItem.powerPorts" label="Power Ports" type="number"></v-text-field>
+                            <v-text-field v-model.number="newItem.powerPorts" label="Power Ports" type="number"
+                                          :rules="[rules.powerPortRules]"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model="newItem.cpu" label="CPU" placeholder="i.e. Intel Xeon E5520 2.2GHz" counter="50"></v-text-field>
@@ -279,18 +281,6 @@
                     this.updateSnackbar.show = true;
                     this.updateSnackbar.color = 'red lighten-4';
                     this.updateSnackbar.message = this.updateSnackbar.message + 'The height of the model must be a valid number greater than 0 and less than 42. ';
-                    count++
-                }
-                if (item.ethernetPorts < 0 || !(/^[0-9]*$/.test(item.ethernetPorts))) {
-                    this.updateSnackbar.show = true;
-                    this.updateSnackbar.color = 'red lighten-4';
-                    this.updateSnackbar.message = this.updateSnackbar.message + 'The number of network ports of the model must be a valid number greater than -1. ';
-                    count++
-                }
-                if (item.powerPorts < 0 || !(/^[0-9]*$/.test(item.powerPorts))) {
-                    this.updateSnackbar.show = true;
-                    this.updateSnackbar.color = 'red lighten-4';
-                    this.updateSnackbar.message = this.updateSnackbar.message + 'The number of network ports of the model must be a valid number greater than -1. ';
                     count++
                 }
                 if (item.cpu < 0 || !(/^[0-9]*$/.test(item.cpu))) {
