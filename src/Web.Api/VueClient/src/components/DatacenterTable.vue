@@ -47,6 +47,19 @@
                 <v-btn color="primary" @click="initialize">Refresh</v-btn>
             </template>
         </v-data-table>
+        <v-snackbar v-model="updateSnackbar.show"
+                    :bottom=true
+                    class="black--text"
+                    :color="updateSnackbar.color"
+                    :timeout=5000>
+            {{updateSnackbar.message}}
+            <v-btn dark
+                   class="black--text"
+                   text
+                   @click="updateSnackbar.show = false">
+                Close
+            </v-btn>
+        </v-snackbar>
     </v-card>
 </template>
 
@@ -55,10 +68,15 @@
 
     export default {
         name: 'datacenter-table',
-        inject: ['datacenterRepository'],
+        inject: ['datacenterRepository', 'rackRepository'],
         item: null,
         data () {
             return {
+                updateSnackbar: {
+                    show: false,
+                    message: '',
+                    color: ''
+                },
                 loading: true,
                 headers: [
                     { text: 'Name', value: 'description'},
@@ -95,7 +113,15 @@
             editItem(item) {
                 this.$router.push({ name: 'datacenter-edit', params: { id: item.id } })
             },
-            async deleteItem (item) {
+            async deleteItem(item) {
+                var ifRacks = await this.rackRepository.list(item.id)
+                if (ifRacks != null && ifRacks.length > 0) {
+
+                    this.updateSnackbar.show = true;
+                    this.updateSnackbar.color = 'red lighten-4';
+                    this.updateSnackbar.message = 'Racks of this datacenter exist, cannot delete';
+                    return;
+                }
                 confirm('Are you sure you want to delete this item?') && this.datacenterRepository.delete(item)
                     .then(async () => {
                         await this.initialize();
