@@ -35,11 +35,13 @@
                                           :rules="[rules.heightRules]"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model.number="newItem.ethernetPorts" label="Network Ports" type="number" @change="networkPortNum"></v-text-field>
+                            <v-text-field v-model.number="newItem.ethernetPorts" label="Network Ports" type="number" @change="networkPortNum"
+                                          :rules="[rules.ethernetPortRules]"></v-text-field>
                             <a href="#" @click="openNamesDialog">Add Network Port Names</a>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model.number="newItem.powerPorts" label="Power Ports" type="number"></v-text-field>
+                            <v-text-field v-model.number="newItem.powerPorts" label="Power Ports" type="number"
+                                          :rules="[rules.powerPortRules]"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model="newItem.cpu" label="CPU" placeholder="i.e. Intel Xeon E5520 2.2GHz" counter="50"></v-text-field>
@@ -67,7 +69,6 @@
                         <v-btn @click="close">Cancel</v-btn>
                         <v-btn color="primary" :disabled="!valid" @click="save">Save</v-btn>
                     </v-card-actions>'
-
                 </v-form>
             </v-container>
 
@@ -152,11 +153,13 @@
                 //names dialog, the newItem will still have original value from database
                 networkPortNames: [],
                 rules: {
-<<<<<<< HEAD
                     vendorRules: v => /^(?=\s*\S).*$/.test(v) || 'Vendor is required',
                     modelRules: v => /^(?!\s*$).+/.test(v) || 'Model Number is required',
                     heightRules: v => /^(?=\s*\S).*$/.test(v) && v > 0 || 'Height is required',
-                    networkPortRules: v => /^[a-zA-Z0-9]*$/.test(v) || 'Network port name cannot contain whitespace'
+                    networkPortRules: v => /^[a-zA-Z0-9]*$/.test(v) || 'Network port name cannot contain whitespace',
+                    ethernetPortRules: v => /^(?=\s*\S).*$/.test(v) || 'Number of ethernet ports must be a positive valid number.',
+                    powerPortRules: v => /^(?=\s*\S).*$/.test(v) || 'Number of power ports must be a positive valid number.'
+
 
                 },
                 valid: true
@@ -182,13 +185,6 @@
                     return;
                 }
                 if (typeof this.id !== 'undefined') {
-<<<<<<< HEAD
-                    this.newItem.displayColor = this.newItem.displayColor.substring(0, 7);
-                    this.modelRepository.update(this.newItem);
-                } else {
-                    this.newItem.displayColor = this.newItem.displayColor.substring(0, 7);
-                    this.modelRepository.create(this.newItem);
-=======
                     this.newItem.displayColor = this.color.substring(0, 7);
                     var resultUpdate = await this.modelRepository.update(this.newItem);
 
@@ -202,7 +198,6 @@
                     if (this.validationCreateAndUpdate(resultCreate) != 0) {
                         return;
                     }
->>>>>>> added validation to models
                 }
                 this.close()
             },
@@ -245,6 +240,7 @@
             /*here is where networkPortNames modifies the newItem.networkPorts 
               to update the values of the item*/
             saveNames() {
+
                 var i;
                 for (i = 0; i < this.networkPortNames.length; i++) {
                     if (typeof this.id === 'undefined' && this.newItem.networkPorts.length == 0) {
@@ -286,18 +282,6 @@
                     this.updateSnackbar.show = true;
                     this.updateSnackbar.color = 'red lighten-4';
                     this.updateSnackbar.message = this.updateSnackbar.message + 'The height of the model must be a valid number greater than 0 and less than 42. ';
-                    count++
-                }
-                if (item.ethernetPorts < 0 || !(/^[0-9]*$/.test(item.ethernetPorts))) {
-                    this.updateSnackbar.show = true;
-                    this.updateSnackbar.color = 'red lighten-4';
-                    this.updateSnackbar.message = this.updateSnackbar.message + 'The number of network ports of the model must be a valid number greater than -1. ';
-                    count++
-                }
-                if (item.powerPorts < 0 || !(/^[0-9]*$/.test(item.powerPorts))) {
-                    this.updateSnackbar.show = true;
-                    this.updateSnackbar.color = 'red lighten-4';
-                    this.updateSnackbar.message = this.updateSnackbar.message + 'The number of network ports of the model must be a valid number greater than -1. ';
                     count++
                 }
                 if (item.cpu < 0 || !(/^[0-9]*$/.test(item.cpu))) {
