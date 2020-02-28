@@ -56,7 +56,8 @@
                                                                     label="Rack Number"
                                                                     :items="racks"
                                                                     item-text="address"
-                                                                    item-value="id">
+                                                                    item-value="id"
+                                                                    @change="rackSelected()">
                                                     </v-autocomplete>
                                                 </v-col>
                                                 <v-col cols="12" sm="6" md="4">
@@ -148,7 +149,7 @@
                                         v-if="index===3">
                                     <div>
                                         <p v-if="editedItem.powerPorts.length > 0">Enter the PDU and PDU Number for each Power Port below.</p>
-                                        <p v-else>No model selected. Please select a model first.</p>
+                                        <p v-else>No model or rack selected. Please select a model and a rack first.</p>
                                     </div>
                                     <v-container fluid 
                                                  fill 
@@ -168,10 +169,10 @@
                                                     </v-btn>
                                                 </v-btn-toggle>
                                                 <v-spacer></v-spacer>
-                                                <v-text-field v-model="editedItem.powerPorts[index].number"
+                                                <v-combobox v-model="availablePortsInRack[index].number"
                                                               typeof="number"
                                                               placeholder="PDU Number">
-                                                </v-text-field>
+                                                </v-combobox>
                                                 <v-spacer></v-spacer>
                                         </v-layout>
                                     </v-container>
@@ -245,6 +246,7 @@
                 //networkPortConnections: [],
                 toggle_exclusive: undefined,
                 namesDialog: false,
+                availablePortsInRack: [],
                 rules: {
                     macAddressRules: v => /^([0-9A-Fa-f]{2}[\W_]*){5}([0-9A-Fa-f]{2})$/.test(v) || 'Invalid MAC Address.'
                 },
@@ -327,6 +329,10 @@
                 this.selectedModel = await this.modelRepository.find(this.editedItem.modelId);
                 this.makeNetworkPorts(this.selectedModel);
                 this.makePowerPorts(this.selectedModel);
+            },
+            async rackSelected() {
+                this.availablePortsInRack = await this.rackRepository.getPdus(this.editedItem.rackId);
+                console.log(this.availablePortsInRack);
             },
             makeNetworkPorts(model) {
                 var networkPortsArray = new Array();

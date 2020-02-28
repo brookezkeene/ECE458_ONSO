@@ -145,7 +145,7 @@
 <script>
     export default {
         name: 'asset-details',
-        inject: ['assetRepository'],
+        inject: ['assetRepository', 'rackRepository'],
         item: null,
         props: ['id'],
         data() {
