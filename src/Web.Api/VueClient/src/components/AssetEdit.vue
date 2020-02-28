@@ -8,7 +8,7 @@
                 <v-container>
                     <v-expansion-panels multiple :hover=true :value="panel">
                         <v-expansion-panel v-for="(title, index) in titles"
-                                            :key="title">
+                                           :key="title">
                             <v-expansion-panel-header>{{title}}</v-expansion-panel-header>
                             <v-expansion-panel-content>
                                 <v-card flat v-if="index===0">
@@ -42,7 +42,7 @@
                                         <div>
                                             <v-row>
                                                 <v-col cols="12" sm="6" md="4">
-                                                    <v-autocomplete v-model="editedItem.datacenter"
+                                                    <v-autocomplete v-model="editedItem.datacenterId"
                                                                     label="Data Center"
                                                                     :items="datacenters"
                                                                     item-text="name"
@@ -51,7 +51,7 @@
                                                 </v-col>
                                                 <!-- Will need to update to show only racks from the selected datacenter -->
                                                 <v-col cols="12" sm="6" md="4">
-                                                    <v-autocomplete v-if="!editedItem.datacenter.length==0 && updateRacks()"
+                                                    <v-autocomplete v-if="!editedItem.datacenterId.length==0 && updateRacks()"
                                                                     v-model="editedItem.rackId"
                                                                     label="Rack Number"
                                                                     :items="racks"
@@ -60,10 +60,10 @@
                                                     </v-autocomplete>
                                                 </v-col>
                                                 <v-col cols="12" sm="6" md="4">
-                                                    <v-text-field v-if="!editedItem.datacenter.length==0 && updateRacks()"
-                                                                    v-model.number="editedItem.rackPosition"
-                                                                    label="Rack Position"
-                                                                    type="number">
+                                                    <v-text-field v-if="!editedItem.datacenterId.length==0 && updateRacks()"
+                                                                  v-model.number="editedItem.rackPosition"
+                                                                  label="Rack Position"
+                                                                  type="number">
                                                     </v-text-field>
                                                 </v-col>
                                             </v-row>
@@ -90,7 +90,7 @@
                                 <!-- MAC Addresses -->
                                 <v-card class="overflow-y-auto"
                                         max-height="500px"
-                                        flat 
+                                        flat
                                         v-if="index===1">
                                     <div>
                                         <p v-if="editedItem.networkPorts.length > 0">Enter the MAC Address for each Network Port below.</p>
@@ -115,15 +115,15 @@
                                 <!-- Network Port Connections -->
                                 <v-card class="overflow-y-auto"
                                         max-height="500px"
-                                        flat 
+                                        flat
                                         v-if="index===2">
                                     <div>
                                         <p v-if="editedItem.networkPorts.length > 0">Select another Network Port to connect to for each Network Port below.</p>
                                         <p v-else>No model selected. Please select a model first.</p>
                                     </div>
-                                    <v-container fluid 
-                                                 fill 
-                                                  v-for="(port, index) in networkPorts" :key="index">
+                                    <v-container fluid
+                                                 fill
+                                                 v-for="(port, index) in networkPorts" :key="index">
                                         <v-layout align-center
                                                   justify-bottom>
                                             <v-spacer></v-spacer>
@@ -144,35 +144,35 @@
                                 <!-- Power Ports and PDUs -->
                                 <v-card class="overflow-y-auto"
                                         max-height="500px"
-                                        flat 
+                                        flat
                                         v-if="index===3">
                                     <div>
                                         <p v-if="editedItem.powerPorts.length > 0">Enter the PDU and PDU Number for each Power Port below.</p>
                                         <p v-else>No model selected. Please select a model first.</p>
                                     </div>
-                                    <v-container fluid 
-                                                 fill 
+                                    <v-container fluid
+                                                 fill
                                                  v-for="(port, index) in powerPorts" :key="index">
                                         <v-layout align-center
                                                   justify-bottom>
-                                                <v-spacer></v-spacer>
-                                                <p>Power Port {{index+1}}</p>
-                                                <v-spacer></v-spacer>
-                                                <v-btn-toggle v-model="port.pduLocation"
-                                                                mandatory>
-                                                    <v-btn value="left">
-                                                        Left
-                                                    </v-btn>
-                                                    <v-btn value="right">
-                                                        Right
-                                                    </v-btn>
-                                                </v-btn-toggle>
-                                                <v-spacer></v-spacer>
-                                                <v-text-field v-model="editedItem.powerPorts[index].number"
-                                                              typeof="number"
-                                                              placeholder="PDU Number">
-                                                </v-text-field>
-                                                <v-spacer></v-spacer>
+                                            <v-spacer></v-spacer>
+                                            <p>Power Port {{index+1}}</p>
+                                            <v-spacer></v-spacer>
+                                            <v-btn-toggle v-model="port.pduLocation"
+                                                          mandatory>
+                                                <v-btn value="left">
+                                                    Left
+                                                </v-btn>
+                                                <v-btn value="right">
+                                                    Right
+                                                </v-btn>
+                                            </v-btn-toggle>
+                                            <v-spacer></v-spacer>
+                                            <v-text-field v-model="editedItem.powerPorts[index].number"
+                                                          typeof="number"
+                                                          placeholder="PDU Number">
+                                            </v-text-field>
+                                            <v-spacer></v-spacer>
                                         </v-layout>
                                     </v-container>
                                 </v-card>
@@ -193,8 +193,9 @@
 
 <style>
     .main-div {
-        position:relative; 
+        position: relative;
     }
+
     .bottom-div {
         vertical-align: bottom;
     }
@@ -230,6 +231,7 @@
                     id: '',
                     rackId: '',
                     datacenter: '',
+                    datacenterId: '',
                     hostname: '',
                     comment: '',
                     rackPosition: 0,
@@ -249,7 +251,7 @@
                     macAddressRules: v => /^([0-9A-Fa-f]{2}[\W_]*){5}([0-9A-Fa-f]{2})$/.test(v) || 'Invalid MAC Address.'
                 },
             }
-        }, 
+        },
 
         async created() {
             this.models = await this.modelRepository.list();
@@ -258,13 +260,16 @@
             this.racks = await this.rackRepository.list();
             this.datacenters = await this.datacenterRepository.list();
 
-            const existingItem = await this.assets.find(o => o.id === this.id);
-            if (typeof existingItem !== 'undefined') {
-                this.editedItem = Object.assign({}, existingItem);
-            }
-
             for (const model of this.models) {
                 model.vendorModelNo = model.vendor + " " + model.modelNumber;
+            }
+
+            const existingItem = await this.assetRepository.find(this.id);
+            if (typeof existingItem !== 'undefined') {
+                this.editedItem = Object.assign({}, existingItem);
+                this.selectedModel = await this.modelRepository.find(existingItem.modelId);
+                this.makeNetworkPorts(this.selectedModel)
+                this.makePowerPorts(this.selectedModel)
             }
 
         },
@@ -285,16 +290,17 @@
         },
         methods: {
             save() {
-                /* eslint-disable no-unused-vars, no-console */
-                        console.log(this.selectedModel.networkPorts[0].id);
-                        console.log('is this not being hit1');
-                if (typeof this.id !== 'undefined') {
+                if (this.editedItem.id.length != 0) {
+                    /* eslint-disable no-unused-vars, no-console */
+                    console.log(this.selectedModel);
+                    console.log('printing out the selected model')
                     for (var j = 0; j < this.editedItem.networkPorts.length; j++) {
-                        this.editedItem.networkPorts[j].modelNetworkPortId = this.selectedModel.networkPorts[i].id;
+                        this.editedItem.networkPorts[j].modelNetworkPortId = this.selectedModel.networkPorts[j].id;
                     }
                     this.assetRepository.update(this.editedItem).then(this.close());
                 } else {
-
+                                        console.log(this.selectedModel);
+                    console.log('printing out the selected model')
                     for (var i = 0; i < this.editedItem.networkPorts.length; i++) {
                         this.editedItem.networkPorts[i].modelNetworkPortId = this.selectedModel.networkPorts[i].id;
                     }
@@ -306,17 +312,16 @@
             },
             async sendNetworkPortRequest() {
                 this.networks = await this.datacenterRepository.networkPorts(this.datacenterID);
-                /* eslint-disable no-unused-vars, no-console */
-                console.log(this.networks);
                 for (const network of this.networks) {
                     network.nameRackAssetNum = "NAME: " + network.name +
                         " " + "HOSTNAME: " + network.assetHostname +
                         " " + "RACK: " + network.rowLetter + network.rackNumber.toString();
+
                 }
             },
             async updateRacks() {
-                if (this.datacenterID != this.editedItem.datacenter) {
-                    this.datacenterID = this.editedItem.datacenter;
+                if (this.datacenterID != this.editedItem.datacenterId) {
+                    this.datacenterID = this.editedItem.datacenterId;
                     this.racks = await this.rackRepository.list(this.datacenterID);
                     this.sendNetworkPortRequest();
                     return true;
@@ -329,45 +334,54 @@
                 this.makePowerPorts(this.selectedModel);
             },
             makeNetworkPorts(model) {
-                var networkPortsArray = new Array();
                 this.networkPorts = [];
-                var j;
-                for (j = 0; j < model.networkPorts.length; j++) {
+                for (var j = 0; j < model.networkPorts.length; j++) {
                     const portInfo = {
                         name: model.networkPorts[j].name,
                         number: model.networkPorts[j].number,
                     }
                     this.networkPorts[j] = Object.assign({}, portInfo);
-
-                    const newPortInfo = {
-                        id: '',
-                        macAddress: '',
-                        connectedPortId: null,
-                    }
-                    networkPortsArray.push(Object.assign({}, newPortInfo));
                 }
-                this.editedItem.networkPorts = networkPortsArray;
+
+                if (this.editedItem.id.length == 0) {
+                    var networkPortsArray = new Array();
+                    for (j = 0; j < model.networkPorts.length; j++) {
+                        const newPortInfo = {
+                            id: '',
+                            macAddress: '',
+                            connectedPortId: null,
+                        }
+                        networkPortsArray.push(Object.assign({}, newPortInfo));
+                    }
+                    this.editedItem.networkPorts = networkPortsArray;
+                }
             },
             makePowerPorts(model) {
+
                 var numPowerPorts = model.powerPorts;
-                var powerPortsArray = new Array();
+                
                 this.powerPorts = [];
                 var i;
                 for (i = 0; i < numPowerPorts; i++) {
+
                     const pduInfo = {
                         pduLocation: '',
                     }
                     this.powerPorts[i] = Object.assign({}, pduInfo);
-
-                    const powerPortInfo = {
-                        
-                        id: '',
-                        number: 0,
-                        pduPortId: null
-                    };
-                    powerPortsArray.push(Object.assign({}, powerPortInfo));
                 }
-                this.editedItem.powerPorts = powerPortsArray;
+
+                if (this.editedItem.id.length == 0) {
+                    var powerPortsArray = new Array();
+                    for (i = 0; i < numPowerPorts; i++) {
+                        const powerPortInfo = {
+                            id: '',
+                            number: 0,
+                            pduPortId: null
+                        };
+                        powerPortsArray.push(Object.assign({}, powerPortInfo));
+                    }
+                    this.editedItem.powerPorts = powerPortsArray;
+                }
             }
         }
     }
