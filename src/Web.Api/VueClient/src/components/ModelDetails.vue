@@ -43,8 +43,8 @@
                         <v-btn dark small color="primary" outlined v-else href @click="hideNames">Hide Network Port Names</v-btn>
 
                         <div v-if="viewNames">
-                            <v-card max-height="300px" class="overflow-y-auto" outlined=true flat>
-                                <v-card-text v-for="port in model.networkPorts" :key="port"> Port {{port.number}}: {{port.name}} </v-card-text>
+                            <v-card max-height="300px" class="overflow-y-auto" outlined flat>
+                                <v-card-text v-for="(port, index) in model.networkPorts" :key="index"> Port {{port.number}}: {{port.name}} </v-card-text>
                             </v-card>
                         </div>
                     </v-col>
@@ -77,7 +77,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="item in model.assets" :key="item.name">
+                            <tr v-for="(item, index) in model.assets" :key="index">
                                 <td @click="goToAssetDetails(item.id)">
                                     {{item.assetId}}
                                     <v-icon small>mdi-open-in-new</v-icon>
