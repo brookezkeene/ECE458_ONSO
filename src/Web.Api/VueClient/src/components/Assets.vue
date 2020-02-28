@@ -13,18 +13,10 @@
 
             <template v-slot:top>
                 <v-toolbar flat>
-                    <v-select v-model="selectedDatacenter"
-                              :items="datacenters"
-                              item-text="description"
-                              item-value=""
-                              :return-object="false"
-                              label="Datacenter"
-                              placeholder="Select a datacenter or all datacenters"
-                              class="pt-8 pl-4"
-                              @change="datacenterSearch()">
-                    </v-select>
+
                     <!-- ADDED AUTOCOMPLETE TO THE MODEL SEARCH -->
                     <v-container fluid align="left">
+
                         <v-row>
                             <v-col cols="6">
                                 <v-row>
@@ -78,7 +70,18 @@
                     </v-dialog>
 
                 </v-toolbar>
-
+                <v-row>
+                    <v-select v-model="selectedDatacenter"
+                              :items="datacenters"
+                              item-text="description"
+                              item-value=""
+                              :return-object="false"
+                              label="Datacenter"
+                              placeholder="Select a datacenter or all datacenters"
+                              class="pt-8 pl-4"
+                              @change="datacenterSearch()">
+                    </v-select>
+                </v-row>
 
             </template>
 
@@ -235,7 +238,7 @@
         },
         async datacenterSearch() {
                 var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
-                this.racks = await this.rackRepository.list(searchDatacenter.id); 
+                this.assets = await this.assetRepository.list(searchDatacenter.id); 
             },
         editItem(item) {
             this.editing = true;
