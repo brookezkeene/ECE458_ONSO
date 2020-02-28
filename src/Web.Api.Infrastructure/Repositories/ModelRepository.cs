@@ -164,7 +164,7 @@ namespace Web.Api.Infrastructure.Repositories
             }  else if (model.EthernetPorts > model.NetworkPorts.Count())
             {
                 int portCount = model.NetworkPorts.Count();
-                for (int i = portCount; i < model.EthernetPorts; i++)
+                for (int i = portCount+1; i <= model.EthernetPorts; i++)
                 {
                     model.NetworkPorts.Add(new ModelNetworkPort { Number = i, Name = i.ToString() });
                 }

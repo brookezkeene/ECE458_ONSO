@@ -16,30 +16,31 @@
                                         item-value=""
                                         :return-object="false"
                                         label="Vendor"
+                                        placeholder="i.e. Dell" 
                                         counter="50"
                                         clearable></v-combobox>
                         </v-col>
                         <v-col>
-                        <v-text-field v-model="newItem.modelNumber" label="Model Number" counter="50"></v-text-field>
+                        <v-text-field v-model="newItem.modelNumber" label="Model Number" placeholder="i.e. R710" counter="50"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model.number="newItem.height" label="Height" type="number"></v-text-field>
+                            <v-text-field v-model.number="newItem.height" label="Height (in Rack U)" type="number"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model.number="newItem.ethernetPorts" label="Network Ports" type="number"></v-text-field> <!--networkPorts-->
+                            <v-text-field v-model.number="newItem.ethernetPorts" label="Network Ports" type="number" @change="networkPortNum"></v-text-field>
                             <a href="#" @click="openNamesDialog">Add Network Port Names</a>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model.number="newItem.powerPorts" label="Power Ports" type="number"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model="newItem.cpu" label="CPU" counter="50"></v-text-field>
+                            <v-text-field v-model="newItem.cpu" label="CPU" placeholder="i.e. Intel Xeon E5520 2.2GHz" counter="50"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model.number="newItem.memory" label="Memory" type="number"></v-text-field>
+                            <v-text-field v-model.number="newItem.memory" label="Memory (in GB)" type="number"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model="newItem.storage" label="Storage"></v-text-field>
+                            <v-text-field v-model="newItem.storage" label="Storage" placeholder="2x500GB SSD RAID1"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model="newItem.comment" label="Comment" multiLine textarea></v-text-field>
@@ -71,7 +72,7 @@
                             </v-card-title>
                             <v-card-text>
                                 <v-container fluid>
-                                    <div v-for="(n, index) in this.networkPortNames" :key="index">
+                                    <div v-for="(n, index) in newItem.ethernetPorts" :key="index">
                                         <v-text-field v-model="networkPortNames[index]" 
                                                       label="Network Port" 
                                                       placeholder="port name"
@@ -110,10 +111,10 @@
                     modelNumber: '',
                     height: 0,
                     displayColor: '',
-                    ethernetPorts: 0, // networkPorts: 0,
+                    ethernetPorts: 0, 
                     powerPorts: 0,
                     cpu: '',
-                    memory: undefined,
+                    memory: 0,
                     storage: '',
                     comment: '',
                     networkPorts: []
@@ -159,7 +160,7 @@
                     this.$router.push({ name: 'models' })
                 }, 300)
             },
-            openNamesDialog() {
+            networkPortNum() {
                 //setting default values of the networkPortNames
                 //either 1) creating a model, populating ports with default names
                 // 2) updating the networkPortNames with the newItem.ethernetPorts from memory
@@ -186,14 +187,13 @@
                         this.networkPortNames = this.networkPortNames.slice(0, this.newItem.ethernetPorts);
                     }
                 }
+            },
+            openNamesDialog() {
                 this.namesDialog = true;
             },
             /*here is where networkPortNames modifies the newItem.networkPorts 
               to update the values of the item*/
             saveNames() {
-                 /* eslint-disable no-unused-vars, no-console */
-                console.log(this.networkPortNames);
-
                 var i;
                 for (i = 0; i < this.networkPortNames.length; i++) {
                     if (typeof this.id === 'undefined' && this.newItem.networkPorts.length == 0) {

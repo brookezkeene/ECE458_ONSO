@@ -52,23 +52,6 @@
                                         <v-col cols="3">
                                             <v-row>
                                                 <v-col cols="6">
-                                                    <v-text-field v-model="startMemoryValue"
-                                                                  placeholder="from"
-                                                                  type="number"
-                                                                  label="Memory">
-                                                    </v-text-field>
-                                                </v-col>
-                                                <v-col cols="6">
-                                                    <v-text-field v-model="endMemoryValue"
-                                                                  type="number"
-                                                                  placeholder="to">
-                                                    </v-text-field>
-                                                </v-col>
-                                            </v-row>
-                                        </v-col>
-                                        <v-col cols="3">
-                                            <v-row>
-                                                <v-col cols="6">
                                                     <v-text-field v-model="startNetworkValue"
                                                                   placeholder="from"
                                                                   type="number"
@@ -94,6 +77,23 @@
                                                 </v-col>
                                                 <v-col cols="6">
                                                     <v-text-field v-model="endPowerValue"
+                                                                  type="number"
+                                                                  placeholder="to">
+                                                    </v-text-field>
+                                                </v-col>
+                                            </v-row>
+                                        </v-col>
+                                        <v-col cols="3">
+                                            <v-row>
+                                                <v-col cols="6">
+                                                    <v-text-field v-model="startMemoryValue"
+                                                                  placeholder="from"
+                                                                  type="number"
+                                                                  label="Memory">
+                                                    </v-text-field>
+                                                </v-col>
+                                                <v-col cols="6">
+                                                    <v-text-field v-model="endMemoryValue"
                                                                   type="number"
                                                                   placeholder="to">
                                                     </v-text-field>
@@ -249,8 +249,6 @@
                     })
             },
             showDetails(item) {
-                /*eslint-disable*/
-                console.log(item);
                 if (this.editedIndex === -1 && !this.deleting && !this.editing) {
                     this.$router.push({ name: 'model-details', params: {id: item.id } })
                 }
