@@ -29,39 +29,51 @@ export default {
         ];
 
         // Create Nodes and Links
-
+        var seen = new Array();
         // Start with main asset
         var asset = await assetRepository.find(assetId);
         graphNodes.push({ id: asset.id, name: asset.hostname });
-        console.log(asset.networkPorts);
+        seen.push(asset.id);
         // Find assets 1 level of separation away
         var i, j;
         for (i = 0; i < asset.networkPorts.length; i++) {
-            //var asset1 = await assetRepository.find(asset.networkPorts[i].connectedId);
-            //console.log(asset1);
+            if (asset.networkPorts[i].connectedPort != null) {
+                var asset1 = await assetRepository.find(asset.networkPorts[i].connectedPort.assetId);
+                if (!seen.includes(asset1.id)) {
+                    seen.push(asset1.id);
 
-            // add new node
-            graphNodes.push({ id: i, name: i });//asset1.id, name: asset1.hostname });
-            // add new connection
-            graphLinks.push({ sid: asset.id, tid: i });//asset1.id });
+                    if (asset1 != null) {
+                        // add new node
+                        graphNodes.push({ id: asset1.id, name: asset1.hostname });
+                        // add new connection
+                        graphLinks.push({ sid: asset.id, tid: asset1.id });
 
-            // Find assets 2 levels of separation away
-            //for (j = 0; j < asset1.networkPorts.length; j++) {
-                //var asset2 = await assetRepository.find(asset1.networkPorts[j].connectedId);
-                //console.log(asset2);
+                        // Find assets 2 levels of separation away
+                        for (j = 0; j < asset1.networkPorts.length; j++) {
+                            if (asset1.networkPorts[j].connectedPort != null) {
+                                var asset2 = await assetRepository.find(asset1.networkPorts[j].connectedPort.assetId);
+                                if (!seen.includes(asset2.id)) {
+                                    seen.push(asset2.id);
 
-                // add new node
-                //graphNodes.push({ id: asset2.id, name: asset2.hostname });
-                // add new connection
-                //graphLinks.push({ sid: asset1.id, tid: asset2.id });
-            //}
+                                    if (asset2 != null) {
+                                        // add new node
+                                        graphNodes.push({ id: asset2.id, name: asset2.hostname });
+                                        // add new connection
+                                        graphLinks.push({ sid: asset1.id, tid: asset2.id });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         var response = {
             nodes: graphNodes,
             links: graphLinks,
         };
-
+        console.log(response);
         return response;
     },
 }
