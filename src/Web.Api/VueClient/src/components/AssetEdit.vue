@@ -6,203 +6,217 @@
             </v-card-title>
             <v-card-text>
                 <v-container>
-                    <v-expansion-panels multiple :hover=true :value="panel">
-                        <v-expansion-panel v-for="(title, index) in titles"
-                                           :key="title">
-                            <v-expansion-panel-header>{{title}}</v-expansion-panel-header>
-                            <v-expansion-panel-content>
-                                <v-card flat v-if="index===0">
-                                    <div align="center">
-                                        <div>
-                                            <v-row>
-                                                <v-col cols="12" sm="6" md="4">
-                                                    <v-autocomplete v-model="editedItem.modelId"
-                                                                    :items="models"
-                                                                    item-text="vendorModelNo"
-                                                                    item-value="id"
-                                                                    label="Model"
-                                                                    @change="modelSelected()">
-                                                    </v-autocomplete>
-                                                </v-col>
-                                                <v-col cols="12" sm="6" md="4">
-                                                    <v-text-field v-model="editedItem.hostname"
-                                                                  label="Host Name"
-                                                                  counter="255">
-                                                    </v-text-field>
-                                                </v-col>
-                                                <v-col cols="12" sm="6" md="4">
-                                                    <v-text-field v-model="editedItem.assetNumber"
-                                                                  label="Asset Number"
-                                                                  counter="6">
-                                                    </v-text-field>
-                                                </v-col>
-                                            </v-row>
-                                        </div>
+                    <v-form v-model="valid">
+                        <v-expansion-panels multiple :hover=true :value="panel">
+                            <v-expansion-panel v-for="(title, index) in titles"
+                                               :key="title">
+                                <v-expansion-panel-header>{{title}}</v-expansion-panel-header>
+                                <v-expansion-panel-content>
+                                    <v-card flat v-if="index===0">
+                                        <div align="center">
+                                            <div>
+                                                <v-row>
+                                                    <v-col cols="12" sm="6" md="4">
+                                                        <v-autocomplete v-model="editedItem.modelId"
+                                                                        :items="models"
+                                                                        item-text="vendorModelNo"
+                                                                        item-value="id"
+                                                                        label="Model"
+                                                                        placeholder="Please select an existing model"
+                                                                        :rules="[rules.modelRules]"
+                                                                        @change="modelSelected()">
+                                                        </v-autocomplete>
+                                                    </v-col>
+                                                    <v-col cols="12" sm="6" md="4">
+                                                        <v-text-field v-model="editedItem.hostname"
+                                                                      label="Host Name"
+                                                                      counter="255">
+                                                        </v-text-field>
+                                                    </v-col>
+                                                    <v-col cols="12" sm="6" md="4">
+                                                        <v-text-field v-model="editedItem.assetNumber"
+                                                                      label="Asset Number"
+                                                                      placeholder="Please enter a 6 digit serial number"
+                                                                      :rules="[rules.assetRules]"
+                                                                      counter="6">
+                                                        </v-text-field>
+                                                    </v-col>
+                                                </v-row>
+                                            </div>
 
-                                        <div>
-                                            <v-row>
-                                                <v-col cols="12" sm="6" md="4">
-                                                    <v-autocomplete v-model="editedItem.datacenterId"
-                                                                    label="Data Center"
-                                                                    :items="datacenters"
-                                                                    item-text="name"
-                                                                    item-value="id">
-                                                    </v-autocomplete>
-                                                </v-col>
-                                                <!-- Will need to update to show only racks from the selected datacenter -->
-                                                <v-col cols="12" sm="6" md="4">
-                                                    <v-autocomplete v-if="!editedItem.datacenterId.length==0 && updateRacks()"
-                                                                    v-model="editedItem.rackId"
-                                                                    label="Rack Number"
-                                                                    :items="racks"
-                                                                    item-text="address"
-                                                                    item-value="id"
-                                                                    @change="rackSelected()">
-                                                    </v-autocomplete>
-                                                </v-col>
-                                                <v-col cols="12" sm="6" md="4">
-                                                    <v-text-field v-if="!editedItem.datacenterId.length==0 && updateRacks()"
-                                                                  v-model.number="editedItem.rackPosition"
-                                                                  label="Rack Position"
-                                                                  type="number">
-                                                    </v-text-field>
-                                                </v-col>
-                                            </v-row>
-                                        </div>
+                                            <div>
+                                                <v-row>
+                                                    <v-col cols="12" sm="6" md="4">
+                                                        <v-autocomplete v-model="editedItem.datacenterId"
+                                                                        label="Data Center"
+                                                                        placeholder="Please select an existing datacenter"
+                                                                        :rules="[rules.datacenterRules]"
+                                                                        :items="datacenters"
+                                                                        item-text="name"
+                                                                        item-value="id">
+                                                        </v-autocomplete>
+                                                    </v-col>
+                                                    <!-- Will need to update to show only racks from the selected datacenter -->
+                                                    <v-col cols="12" sm="6" md="4">
+                                                        <v-autocomplete v-if="!editedItem.datacenterId.length==0 && updateRacks()"
+                                                                        v-model="editedItem.rackId"
+                                                                        label="Rack Number"
+                                                                        placeholder="Please select a rack"
+                                                                        :rules="[rules.rackRules]"
+                                                                        :items="racks"
+                                                                        item-text="address"
+                                                                        item-value="id"
+                                                                        @change="rackSelected">
+                                                        </v-autocomplete>
+                                                    </v-col>
+                                                    <v-col cols="12" sm="6" md="4">
+                                                        <v-text-field v-if="!editedItem.datacenterId.length==0 && updateRacks()"
+                                                                      v-model.number="editedItem.rackPosition"
+                                                                      placeholder="Please enter a rack U for the asset"
+                                                                      :rules="[rules.rackuRules]"
+                                                                      label="Rack Position"
+                                                                      type="number">
+                                                        </v-text-field>
+                                                    </v-col>
+                                                </v-row>
+                                            </div>
 
-                                        <div>
-                                            <v-row>
-                                                <v-col cols="12" sm="6" md="4">
-                                                    <v-autocomplete v-model=editedItem.ownerId
-                                                                    :items="users"
-                                                                    item-text="username"
-                                                                    item-value="id"
-                                                                    label="Owner User Name"
-                                                                    persistent-hint>
-                                                    </v-autocomplete>
-                                                </v-col>
-                                                <v-col cols="12" sm="6" md="4">
-                                                    <v-text-field v-model="editedItem.comment" label="Comment"></v-text-field>
-                                                </v-col>
-                                            </v-row>
+                                            <div>
+                                                <v-row>
+                                                    <v-col cols="12" sm="6" md="4">
+                                                        <v-autocomplete v-model=editedItem.ownerId
+                                                                        :items="users"
+                                                                        item-text="username"
+                                                                        item-value="id"
+                                                                        label="Owner User Name"
+                                                                        persistent-hint>
+                                                        </v-autocomplete>
+                                                    </v-col>
+                                                    <v-col cols="12" sm="6" md="4">
+                                                        <v-text-field v-model="editedItem.comment" label="Comment"></v-text-field>
+                                                    </v-col>
+                                                </v-row>
+                                            </div>
                                         </div>
-                                    </div>
-                                </v-card>
-                                <!-- MAC Addresses -->
-                                <v-card class="overflow-y-auto"
-                                        max-height="500px"
-                                        flat
-                                        v-if="index===1">
-                                    <div>
-                                        <p v-if="editedItem.networkPorts.length > 0">Enter the MAC Address for each Network Port below.</p>
-                                        <p v-else>No model selected. Please select a model first.</p>
-                                    </div>
-                                    <v-container fluid
-                                                 fill
-                                                 v-for="(port, index) in networkPorts" :key="index">
-                                        <v-layout align-center
-                                                  justify-bottom>
-                                            <v-spacer></v-spacer>
-                                            <p>{{port.name}}</p>
-                                            <v-spacer></v-spacer>
-                                            <v-text-field v-model="editedItem.networkPorts[index].macAddress"
-                                                          placeholder="Please enter a 6-byte hexadecimal string"
-                                                          :rules="[rules.macAddressRules]">
-                                            </v-text-field>
-                                            <v-spacer></v-spacer>
-                                        </v-layout>
-                                    </v-container>
-                                </v-card>
-                                <!-- Network Port Connections -->
-                                <v-card class="overflow-y-auto"
-                                        max-height="500px"
-                                        flat
-                                        v-if="index===2">
-                                    <div>
-                                        <p v-if="editedItem.networkPorts.length > 0">Select another Network Port to connect to for each Network Port below.</p>
-                                        <p v-else>No model selected. Please select a model first.</p>
-                                    </div>
-                                    <v-container fluid
-                                                 fill
-                                                 v-for="(port, index) in networkPorts" :key="index">
-                                        <v-layout align-center
-                                                  justify-bottom>
-                                            <v-spacer></v-spacer>
-                                            <p>{{port.name}}</p>
-                                            <v-spacer></v-spacer>
-                                            <v-autocomplete v-model="editedItem.networkPorts[index].connectedPortId"
-                                                            :items="networks"
-                                                            item-text="nameRackAssetNum"
-                                                            item-value="id"
-                                                            label="Connected Network Port"
-                                                            persistent-hint
-                                                            class="overflow-x-auto">
-                                            </v-autocomplete>
-                                            <v-spacer></v-spacer>
-                                        </v-layout>
-                                    </v-container>
-                                </v-card>
-                                <!-- Power Ports and PDUs -->
-                                <v-card class="overflow-y-auto"
-                                        max-height="500px"
-                                        flat
-                                        v-if="index===3">
-                                    <div>
-                                        <p v-if="(selectedRack && selectedModelBool) || (id!=undefined)">Enter the PDU and PDU Number for each Power Port below.</p>
-                                        <p v-else>No model or rack selected. Please select a model and a rack first.</p>
-                                    </div>
-                                    <div v-if="(selectedRack && selectedModelBool) || (id!=undefined)">
+                                    </v-card>
+                                    <!-- MAC Addresses -->
+                                    <v-card class="overflow-y-auto"
+                                            max-height="500px"
+                                            flat
+                                            v-if="index===1">
+                                        <div>
+                                            <p v-if="editedItem.networkPorts.length > 0">Enter the MAC Address for each Network Port below.</p>
+                                            <p v-else>No model selected. Please select a model first.</p>
+                                        </div>
                                         <v-container fluid
                                                      fill
-                                                     v-for="(port, index) in powerPorts" :key="index">
+                                                     v-for="(port, index) in networkPorts" :key="index">
                                             <v-layout align-center
                                                       justify-bottom>
                                                 <v-spacer></v-spacer>
+                                                <p>{{port.name}}</p>
                                                 <v-spacer></v-spacer>
-                                                <p>Power Port {{index+1}}</p>
+                                                <v-text-field v-model="editedItem.networkPorts[index].macAddress"
+                                                              placeholder="Please enter a 6-byte hexadecimal string"
+                                                              :rules="[rules.macAddressRules]">
+                                                </v-text-field>
                                                 <v-spacer></v-spacer>
-                                                <v-btn-toggle v-model="port.pduLocation"
-                                                              mandatory>
-                                                    <v-btn @click="setLocation('left')" value="true">
-                                                        Left
-                                                    </v-btn>
-                                                    <v-btn @click="setLocation('right')" value="false">
-                                                        Right
-                                                    </v-btn>
-                                                </v-btn-toggle>
+                                            </v-layout>
+                                        </v-container>
+                                    </v-card>
+                                    <!-- Network Port Connections -->
+                                    <v-card class="overflow-y-auto"
+                                            max-height="500px"
+                                            flat
+                                            v-if="index===2">
+                                        <div>
+                                            <p v-if="editedItem.networkPorts.length > 0">Select another Network Port to connect to for each Network Port below.</p>
+                                            <p v-else>No model selected. Please select a model first.</p>
+                                        </div>
+                                        <v-container fluid
+                                                     fill
+                                                     v-for="(port, index) in networkPorts" :key="index">
+                                            <v-layout align-center
+                                                      justify-bottom>
                                                 <v-spacer></v-spacer>
-                                                <v-autocomplete v-if="port.pduLocation" 
-                                                            v-model="editedItem.powerPorts[index].pduPortId"
-                                                            :items="availablePortsInRack.right"
-                                                            item-text ="number"
-                                                            item-value ="id"
-                                                            :return-object="false"
-                                                            typeof="number"
-                                                            placeholder="PDU Number">
-                                                </v-autocomplete>
-                                                <v-autocomplete v-if="!port.pduLocation" 
-                                                            v-model="editedItem.powerPorts[index].pduPortId"
-                                                            :items="availablePortsInRack.left"
-                                                            item-text="number"
-                                                            item-value="id"
-                                                            :return-object="false"
-                                                            typeof="number"
-                                                            placeholder="PDU Number">
+                                                <p>{{port.name}}</p>
+                                                <v-spacer></v-spacer>
+                                                <v-autocomplete v-model="editedItem.networkPorts[index].connectedPortId"
+                                                                :items="networks"
+                                                                item-text="nameRackAssetNum"
+                                                                item-value="id"
+                                                                label="Connected Network Port"
+                                                                persistent-hint
+                                                                class="overflow-x-auto">
                                                 </v-autocomplete>
                                                 <v-spacer></v-spacer>
                                             </v-layout>
                                         </v-container>
-                                    </div>
-                                </v-card>
+                                    </v-card>
+                                    <!-- Power Ports and PDUs -->
+                                    <v-card class="overflow-y-auto"
+                                            max-height="500px"
+                                            flat
+                                            v-if="index===3">
+                                        <div>
+                                            <p v-if="(selectedRack && selectedModelBool) || (id!=undefined)">Enter the PDU and PDU Number for each Power Port below.</p>
+                                            <p v-else>No model or rack selected. Please select a model and a rack first.</p>
+                                        </div>
+                                        <div v-if="(selectedRack && selectedModelBool) || (id!=undefined)">
+
+                                            <v-container fluid
+                                                         fill
+                                                         v-for="(port, index) in powerPorts" :key="index">
+                                                <v-layout align-center
+                                                          justify-bottom>
+                                                    <v-spacer></v-spacer>
+                                                    <v-spacer></v-spacer>
+
+                                                    <p>Power Port {{index+1}}</p>
+                                                    <v-spacer></v-spacer>
+                                                    <v-btn-toggle v-model="port.pduLocation"
+                                                                  mandatory>
+                                                        <v-btn @click="setLocation('left')" value="true">
+                                                            Left
+                                                        </v-btn>
+                                                        <v-btn @click="setLocation('right')" value="false">
+                                                            Right
+                                                        </v-btn>
+                                                    </v-btn-toggle>
+                                                    <v-spacer></v-spacer>
+                                                    <v-autocomplete v-if="port.pduLocation" 
+                                                                v-model="editedItem.powerPorts[index].pduPortId"
+                                                                :items="availablePortsInRack.right"
+                                                                item-text ="number"
+                                                                item-value ="id"
+                                                                :return-object="false"
+                                                                typeof="number"
+                                                                placeholder="PDU Number">
+                                                    </v-autocomplete>
+                                                    <v-autocomplete v-if="!port.pduLocation" 
+                                                                v-model="editedItem.powerPorts[index].pduPortId"
+                                                                :items="availablePortsInRack.left"
+                                                                item-text="number"
+                                                                item-value="id"
+                                                                :return-object="false"
+                                                                typeof="number"
+                                                                placeholder="PDU Number">
+                                                    </v-autocomplete>
+                                                    <v-spacer></v-spacer>
+                                                </v-layout>
+                                            </v-container>
+                                        </div>
+                                    </v-card>
                             </v-expansion-panel-content>
                         </v-expansion-panel>
                     </v-expansion-panels>
 
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn text @click="close">Cancel</v-btn>
-                        <v-btn color="primary" text @click="save">Save</v-btn>
-                    </v-card-actions>'
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn @click="close">Cancel</v-btn>
+                            <v-btn color="primary" :disabled="!valid" @click="save">Save</v-btn>
+                        </v-card-actions>'
+                        </v-form>
                 </v-container>
             </v-card-text>
         </v-card>
@@ -255,7 +269,7 @@
                     rackPosition: 0,
                     ownerId: '',
                     modelId: '',
-                    assetNumber: '000000'
+                    assetNumber: ''
                 },
                 selectedModel: [],
                 datacenterID: '',
@@ -270,8 +284,14 @@
                 sidePortIsOn: 'left',
                 availablePortsInRack: [],
                 rules: {
-                    macAddressRules: v => /^([0-9A-Fa-f]{2}[\W_]*){5}([0-9A-Fa-f]{2})$/.test(v) || 'Invalid MAC Address.'
+                    modelRules: v => /^(?!\s*$).+/.test(v) || 'Model is required',
+                    assetRules: v => /^(?!\s*$).+/.test(v) || 'Asset Number is required',
+                    datacenterRules: v => /^(?!\s*$).+/.test(v) || 'Datacenter is required',
+                    rackRules: v => /^(?!\s*$).+/.test(v) || 'Rack is required',
+                    rackuRules: v => /^(?!\s*$).+/.test(v) || 'Rack U is required',
+                    macAddressRules: v => (/^([0-9A-Fa-f]{2}[\W_]*){5}([0-9A-Fa-f]{2})$/.test(v) || /^$/.test(v)) || 'Invalid MAC Address.'
                 },
+                valid: true
             }
         },
 

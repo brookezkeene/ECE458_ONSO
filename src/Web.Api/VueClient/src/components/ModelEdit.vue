@@ -5,9 +5,8 @@
                 <span class="headline">{{formTitle}}</span>
             </v-card-title>
 
-            <v-card-text>
-
-                <v-container>
+            <v-container>
+                <v-form v-model="valid">
                     <v-row>
                         <v-col cols="12" sm="6" md="4">
                             <v-combobox v-model="newItem.vendor"
@@ -16,30 +15,40 @@
                                         item-value=""
                                         :return-object="false"
                                         label="Vendor"
+                                        placeholder="Please enter a vendor (i.e. Dell)" 
+                                        :rules="[rules.vendorRules]"
                                         counter="50"
-                                        clearable></v-combobox>
-                        </v-col>
-                        <v-col>
-                        <v-text-field v-model="newItem.modelNumber" label="Model Number" counter="50"></v-text-field>
+                                        required></v-combobox>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model.number="newItem.height" label="Height" type="number"></v-text-field>
+                            <v-text-field v-model="newItem.modelNumber" 
+                                      label="Model Number" 
+                                      placeholder="Please enter a model number (i.e. R710)" 
+                                      :rules="[rules.modelRules]"
+                                      counter="50"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model.number="newItem.ethernetPorts" label="Network Ports" type="number"></v-text-field> <!--networkPorts-->
+                            <v-text-field v-model.number="newItem.height" 
+                                          label="Height (in Rack U)" 
+                                          placeholder="Please enter a height"
+                                          type="number" 
+                                          :rules="[rules.heightRules]"></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                            <v-text-field v-model.number="newItem.ethernetPorts" label="Network Ports" type="number" @change="networkPortNum"></v-text-field>
                             <a href="#" @click="openNamesDialog">Add Network Port Names</a>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model.number="newItem.powerPorts" label="Power Ports" type="number"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model="newItem.cpu" label="CPU" counter="50"></v-text-field>
+                            <v-text-field v-model="newItem.cpu" label="CPU" placeholder="i.e. Intel Xeon E5520 2.2GHz" counter="50"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model.number="newItem.memory" label="Memory" type="number"></v-text-field>
+                            <v-text-field v-model.number="newItem.memory" label="Memory (in GB)" type="number"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model="newItem.storage" label="Storage"></v-text-field>
+                            <v-text-field v-model="newItem.storage" label="Storage" placeholder="2x500GB SSD RAID1"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model="newItem.comment" label="Comment" multiLine textarea></v-text-field>
@@ -55,12 +64,12 @@
 
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn text @click="close">Cancel</v-btn>
-                        <v-btn color="primary" text @click="save">Save</v-btn>
+                        <v-btn @click="close">Cancel</v-btn>
+                        <v-btn color="primary" :disabled="!valid" @click="save">Save</v-btn>
                     </v-card-actions>'
 
-                </v-container>
-            </v-card-text>
+                </v-form>
+            </v-container>
 
             <template> <!-- dialog to set network port names -->
                 <div class="text-center">
@@ -71,7 +80,7 @@
                             </v-card-title>
                             <v-card-text>
                                 <v-container fluid>
-                                    <div v-for="(n, index) in this.networkPortNames" :key="index">
+                                    <div v-for="(n, index) in newItem.ethernetPorts" :key="index">
                                         <v-text-field v-model="networkPortNames[index]" 
                                                       label="Network Port" 
                                                       placeholder="port name"
@@ -109,10 +118,10 @@
                     modelNumber: '',
                     height: 0,
                     displayColor: '',
-                    ethernetPorts: 0, // networkPorts: 0,
+                    ethernetPorts: 0, 
                     powerPorts: 0,
                     cpu: '',
-                    memory: undefined,
+                    memory: 0,
                     storage: '',
                     comment: '',
                     networkPorts: []
@@ -124,8 +133,12 @@
                 //names dialog, the newItem will still have original value from database
                 networkPortNames: [],
                 rules: {
+                    vendorRules: v => /^(?=\s*\S).*$/.test(v) || 'Vendor is required',
+                    modelRules: v => /^(?!\s*$).+/.test(v) || 'Model Number is required',
+                    heightRules: v => /^(?=\s*\S).*$/.test(v) && v > 0 || 'Height is required',
                     networkPortRules: v => /^[a-zA-Z0-9]*$/.test(v) || 'Network port name cannot contain whitespace'
                 },
+                valid: true
             };
         },
 
@@ -158,7 +171,7 @@
                     this.$router.push({ name: 'models' })
                 }, 300)
             },
-            openNamesDialog() {
+            networkPortNum() {
                 //setting default values of the networkPortNames
                 //either 1) creating a model, populating ports with default names
                 // 2) updating the networkPortNames with the newItem.ethernetPorts from memory
@@ -185,14 +198,13 @@
                         this.networkPortNames = this.networkPortNames.slice(0, this.newItem.ethernetPorts);
                     }
                 }
+            },
+            openNamesDialog() {
                 this.namesDialog = true;
             },
             /*here is where networkPortNames modifies the newItem.networkPorts 
               to update the values of the item*/
             saveNames() {
-                 /* eslint-disable no-unused-vars, no-console */
-                console.log(this.networkPortNames);
-
                 var i;
                 for (i = 0; i < this.networkPortNames.length; i++) {
                     if (typeof this.id === 'undefined' && this.newItem.networkPorts.length == 0) {
