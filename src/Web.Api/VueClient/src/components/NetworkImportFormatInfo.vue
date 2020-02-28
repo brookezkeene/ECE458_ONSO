@@ -11,29 +11,44 @@
                 • Each field may or may not be enclosed in double quotes. <br>
                 • Fields containing a line-break, double-quote, or commas must be quoted. <br>
                 • If double-quotes are used to enclose fields, then a double quote appearing inside a field must be escaped by preceding it with another double quote. <br>
-                For example: “aaa”, “b””bb”, “ccc”<br>
+                For example: “aaa”, “b””bb”, “ccc”<br> <br>
+                • A header row is NOT optional. See Section 2 for a list of valid column headers. <br>
+                • On import, both *nix (LF) and Windows-style (CRLF) line endings will be accepted. <br>
+                On export, Windows-style line endings (CRLF) will be emitted in conformance to the
+                standard. <br>
+                – The same rules apply to line breaks within multi-line string values, i.e. Model →
+                Comment and Asset → Comment.<br>
+                • For both import and export, the UTF-8 charset will be used.<br>
+                – Double quotes should use code U+0022 QUOTATION MARK.<br>
+                – Commas should use code U+002C COMMA.<br>
+                • Both files containing and not containing a BOM character at the beginning of the file
+                will be accepted on import, but a BOM will not be included on export<br>
+
             </v-card-text>
-            <v-card-title> Asset Format </v-card-title>
+
+            <v-card-title> Network Port Format </v-card-title>
             <v-card-text>
-                • hostname – required always; RFC-1034-compliant string<br>
-                • rack – required always; string; the address of a rack is by a row letter (A-Z) and rack number (positive integer); there is no separator between the row letter and rack number<br>
-                • rack position – required always; positive integer; refers to the vertical location (on a rack, measured in U) of the bottom of the equipment<br>
-                • vendor – required always; string; refers to the vendor of the model with which this asset is associated<br>
-                • model number – required always; string; refers to the model number of the model with which this asset is associated<br>
-                • owner – optional; string; refers to the username of an existing user in the system who owns this equipment<br>
-                • comment – optional; string; must be enclosed by double quotes if value contains line breaks<br>
+                • src_hostname – string; matches the hostname of an existing asset in the system <br>
+                • src_port – string; matches a network port name defined by the source asset’s model <br>
+                • src_mac – six-byte MAC address; format must comply with Requirement 2.2.1.5; sets
+                this value for the associated src port <br>
+                • dest_hostname – string; matches the hostname of an existing asset in the system;
+                leaving blank will disconnect src port if it’s currently connected <br>
+                • dest_port – string; matches a network port name defined by the destination asset’s
+                model; must be given a value if a value is given for dest hostname; must be left blank
+                if dest hostname is left blank <br>
             </v-card-text>
         </v-card>
     </div>
 </template>
 
 <script>
-export default {
-    name: 'network-input-format-info',
-    data () {
-        return {
-            loading: false,
-        };
+    export default {
+        name: 'model-input-format-info',
+        data() {
+            return {
+                loading: false,
+            };
+        }
     }
-}
 </script>
