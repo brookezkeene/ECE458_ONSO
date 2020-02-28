@@ -84,13 +84,13 @@
             </template>
 
             <template v-slot:item.power="{ item }">
-                <v-row >
+                <v-row v-if="item.hasNetworkManagedPower">
                     <v-item-group dense
                                   light
                                   tile>
                         <v-btn color ="green lighten-1" 
                                @click="turnOn(item)"
-                               small=true
+                               small
                                width="30%"
                                min-width="30px"
                                depressed>
@@ -99,13 +99,13 @@
                         <v-btn color ="red lighten-1" 
                                @click="turnOff(item)"
                                min-width="30px"
-                               small=true
+                               small
                                width="30%"
                                depressed>
                             OFF
                         </v-btn>
                         <v-btn color = "grey lighten-2"
-                               small=true
+                               small
                                min-width="60px"
                                width="30%"
                                @click="cycle(item)"
@@ -201,6 +201,8 @@
     methods: {
       async initialize () {
         this.assets = await this.assetRepository.list();
+            /*eslint-disable*/
+            console.log(this.assets);
         this.models = await this.modelRepository.list();
         this.users = await this.userRepository.list();
 
