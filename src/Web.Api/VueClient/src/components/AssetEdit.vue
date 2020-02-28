@@ -151,7 +151,7 @@
                                         <p v-if="(selectedRack && selectedModelBool)">Enter the PDU and PDU Number for each Power Port below.</p>
                                         <p v-else>No model or rack selected. Please select a model and a rack first.</p>
                                     </div>
-                                    <div v-if="(selectedRack && selectedModelBool)">
+                                    <div v-if="(selectedRack && selectedModelBool) || id">
                                         <v-container fluid
                                                      fill
                                                      v-for="(port, index) in powerPorts" :key="index">
@@ -271,10 +271,9 @@
                 model.vendorModelNo = model.vendor + " " + model.modelNumber;
             }
 
-            const existingItem = await this.assetRepository.find(this.id);
-            if (typeof existingItem !== 'undefined') {
-                this.editedItem = Object.assign({}, existingItem);
-                this.selectedModel = await this.modelRepository.find(existingItem.modelId);
+            if (typeof this.id !== 'undefined') {
+                this.editedItem = await this.assetRepository.find(this.id);
+                this.selectedModel = await this.modelRepository.find(this.editedItem.modelId);
                 this.makeNetworkPorts(this.selectedModel)
                 this.makePowerPorts(this.selectedModel)
             }
