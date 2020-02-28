@@ -17,6 +17,7 @@ namespace Web.Api.Infrastructure.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("Relational:Sequence:.AssetNumberSequence", "'AssetNumberSequence', '', '100000', '1', '', '999999', 'Int32', 'False'")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -150,19 +151,23 @@ namespace Web.Api.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Web.Api.Infrastructure.Entities.Instance", b =>
+            modelBuilder.Entity("Web.Api.Infrastructure.Entities.Asset", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("AssetNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValueSql("NEXT VALUE FOR AssetNumberSequence");
+
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Hostname")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(255)")
-                        .HasMaxLength(255);
+                        .HasColumnType("nvarchar(63)")
+                        .HasMaxLength(63);
 
                     b.Property<Guid>("ModelId")
                         .HasColumnType("uniqueidentifier");
@@ -178,7 +183,7 @@ namespace Web.Api.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Hostname")
+                    b.HasIndex("AssetNumber")
                         .IsUnique();
 
                     b.HasIndex("ModelId");
@@ -187,7 +192,99 @@ namespace Web.Api.Infrastructure.Migrations
 
                     b.HasIndex("RackId");
 
-                    b.ToTable("Instances");
+                    b.ToTable("Assets");
+                });
+
+            modelBuilder.Entity("Web.Api.Infrastructure.Entities.AssetNetworkPort", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AssetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ConnectedPortId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("MacAddress")
+                        .HasColumnType("nvarchar(17)")
+                        .HasMaxLength(17);
+
+                    b.Property<Guid>("ModelNetworkPortId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssetId");
+
+                    b.HasIndex("ConnectedPortId");
+
+                    b.HasIndex("ModelNetworkPortId");
+
+                    b.ToTable("AssetNetworkPort");
+                });
+
+            modelBuilder.Entity("Web.Api.Infrastructure.Entities.AssetPowerPort", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AssetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Number")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("PduPortId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssetId");
+
+                    b.ToTable("AssetPowerPort");
+                });
+
+            modelBuilder.Entity("Web.Api.Infrastructure.Entities.Datacenter", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("HasNetworkManagedPower")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(6)")
+                        .HasMaxLength(6);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Datacenters");
+                });
+
+            modelBuilder.Entity("Web.Api.Infrastructure.Entities.ImportFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Data")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ImportFiles");
                 });
 
             modelBuilder.Entity("Web.Api.Infrastructure.Entities.Model", b =>
@@ -241,6 +338,82 @@ namespace Web.Api.Infrastructure.Migrations
                     b.ToTable("Models");
                 });
 
+            modelBuilder.Entity("Web.Api.Infrastructure.Entities.ModelNetworkPort", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ModelId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(10)")
+                        .HasMaxLength(10);
+
+                    b.Property<int>("Number")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ModelId", "Name")
+                        .IsUnique();
+
+                    b.HasIndex("ModelId", "Number")
+                        .IsUnique();
+
+                    b.ToTable("ModelNetworkPort");
+                });
+
+            modelBuilder.Entity("Web.Api.Infrastructure.Entities.Pdu", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Location")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumPorts")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("RackId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RackId");
+
+                    b.ToTable("Pdu");
+                });
+
+            modelBuilder.Entity("Web.Api.Infrastructure.Entities.PduPort", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AssetPowerPortId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Number")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("PduId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssetPowerPortId")
+                        .IsUnique()
+                        .HasFilter("[AssetPowerPortId] IS NOT NULL");
+
+                    b.HasIndex("PduId");
+
+                    b.ToTable("PduPort");
+                });
+
             modelBuilder.Entity("Web.Api.Infrastructure.Entities.Rack", b =>
                 {
                     b.Property<Guid>("Id")
@@ -250,13 +423,16 @@ namespace Web.Api.Infrastructure.Migrations
                     b.Property<int>("Column")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("DatacenterId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Row")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Row", "Column")
+                    b.HasIndex("DatacenterId", "Row", "Column")
                         .IsUnique();
 
                     b.ToTable("Racks");
@@ -386,10 +562,10 @@ namespace Web.Api.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Web.Api.Infrastructure.Entities.Instance", b =>
+            modelBuilder.Entity("Web.Api.Infrastructure.Entities.Asset", b =>
                 {
                     b.HasOne("Web.Api.Infrastructure.Entities.Model", "Model")
-                        .WithMany("Instances")
+                        .WithMany("Assets")
                         .HasForeignKey("ModelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -399,8 +575,76 @@ namespace Web.Api.Infrastructure.Migrations
                         .HasForeignKey("OwnerId");
 
                     b.HasOne("Web.Api.Infrastructure.Entities.Rack", "Rack")
-                        .WithMany("Instances")
+                        .WithMany("Assets")
                         .HasForeignKey("RackId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Web.Api.Infrastructure.Entities.AssetNetworkPort", b =>
+                {
+                    b.HasOne("Web.Api.Infrastructure.Entities.Asset", "Asset")
+                        .WithMany("NetworkPorts")
+                        .HasForeignKey("AssetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Web.Api.Infrastructure.Entities.AssetNetworkPort", "ConnectedPort")
+                        .WithMany()
+                        .HasForeignKey("ConnectedPortId");
+
+                    b.HasOne("Web.Api.Infrastructure.Entities.ModelNetworkPort", "ModelNetworkPort")
+                        .WithMany()
+                        .HasForeignKey("ModelNetworkPortId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Web.Api.Infrastructure.Entities.AssetPowerPort", b =>
+                {
+                    b.HasOne("Web.Api.Infrastructure.Entities.Asset", "Asset")
+                        .WithMany("PowerPorts")
+                        .HasForeignKey("AssetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Web.Api.Infrastructure.Entities.ModelNetworkPort", b =>
+                {
+                    b.HasOne("Web.Api.Infrastructure.Entities.Model", "Model")
+                        .WithMany("NetworkPorts")
+                        .HasForeignKey("ModelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Web.Api.Infrastructure.Entities.Pdu", b =>
+                {
+                    b.HasOne("Web.Api.Infrastructure.Entities.Rack", "Rack")
+                        .WithMany("Pdus")
+                        .HasForeignKey("RackId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Web.Api.Infrastructure.Entities.PduPort", b =>
+                {
+                    b.HasOne("Web.Api.Infrastructure.Entities.AssetPowerPort", "AssetPowerPort")
+                        .WithOne("PduPort")
+                        .HasForeignKey("Web.Api.Infrastructure.Entities.PduPort", "AssetPowerPortId");
+
+                    b.HasOne("Web.Api.Infrastructure.Entities.Pdu", "Pdu")
+                        .WithMany("Ports")
+                        .HasForeignKey("PduId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Web.Api.Infrastructure.Entities.Rack", b =>
+                {
+                    b.HasOne("Web.Api.Infrastructure.Entities.Datacenter", "Datacenter")
+                        .WithMany("Racks")
+                        .HasForeignKey("DatacenterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

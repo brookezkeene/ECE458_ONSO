@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
-using Bogus;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Web.Api.Configuration;
-using Web.Api.Core.UnitTests.Mappers;
 using Web.Api.Infrastructure.DbContexts;
 using Web.Api.Infrastructure.Entities;
 using Web.Api.Infrastructure.Repositories.Interfaces;
@@ -16,75 +16,54 @@ namespace Web.Api.Helpers
 {
     public static class DbMigrationHelper
     {
-        public static void EnsureSeedData(IHost host)
+        public static async Task EnsureSeedData(IHost host)
         {
             using var serviceScope = host.Services.CreateScope();
             var services = serviceScope.ServiceProvider;
-            EnsureSeedData(services);
+            await EnsureSeedData(services);
         }
 
-        public static void EnsureSeedData(IServiceProvider serviceProvider)
+        public static async Task EnsureSeedData(IServiceProvider serviceProvider)
         {
             using var scope = serviceProvider.GetRequiredService<IServiceScopeFactory>()
                 .CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            var seedDataConfiguration = scope.ServiceProvider.GetRequiredService<SeedDataConfiguration>();
-
-            EnsureSeedData(context, seedDataConfiguration);
+            var identityRepository = scope.ServiceProvider.GetRequiredService<IIdentityRepository>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+            await EnsureSeedData(context, identityRepository, roleManager, userManager);
         }
 
-        public static void EnsureSeedData(ApplicationDbContext context, SeedDataConfiguration seedDataConfiguration)
+        public static async Task EnsureSeedData(ApplicationDbContext context, IIdentityRepository identityRepository, RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
         {
-            if (!context.Racks.Any())
+            if (!await roleManager.RoleExistsAsync("basic"))
             {
-                foreach (var rack in seedDataConfiguration.Racks)
-                {
-                    context.Add(rack);
-                }
-
-                context.SaveChanges();
+                await roleManager.CreateAsync(new IdentityRole("basic"));
             }
 
-            if (!context.Models.Any())
+            if (!await roleManager.RoleExistsAsync("admin"))
             {
-                foreach (var model in seedDataConfiguration.Models)
-                {
-                    context.Add(model);
-                }
-
-                context.SaveChanges();
+                var adminRole = new IdentityRole("admin");
+                await roleManager.CreateAsync(adminRole);
+                await roleManager.AddClaimAsync(adminRole, new Claim("owner:asset", "all"));
             }
 
-            if (!context.Users.Any())
+            if (await identityRepository.FindByNameAsync("admin") == null)
             {
-                foreach (var user in seedDataConfiguration.Users)
+                var user = new User
                 {
-                    context.Add(user);
-                }
-
-                context.SaveChanges();
+                    FirstName = "Admin",
+                    LastName = "User",
+                    Email = "admin@test.com",
+                    UserName = "admin"
+                };
+                await identityRepository.CreateUserAsync(user, "@$8^5#QqsX8K");
             }
 
-            if (!context.Instances.Any())
+            var adminUser = await userManager.FindByNameAsync("admin");
+            if (!await userManager.IsInRoleAsync(adminUser, "admin"))
             {
-                foreach (var instance in seedDataConfiguration.Instances)
-                {
-                    // prevent attempts to track entities with the same Id multiple times (causes exceptions)
-                    var model = context.Set<Model>()
-                        .SingleOrDefault(o => o.Id == instance.Model.Id);
-                    if (model != null) instance.Model = model;
-
-                    var rack = context.Set<Rack>()
-                        .SingleOrDefault(o => o.Id == instance.Rack.Id);
-                    if (rack != null) instance.Rack = rack;
-
-                    var user = context.Set<User>()
-                        .SingleOrDefault(o => o.Id == instance.Owner.Id);
-                    if (user != null) instance.Owner = user;
-
-                    context.Add(instance);
-                }
-                context.SaveChanges();
+                await userManager.AddToRoleAsync(adminUser, "admin");
             }
         }
     }

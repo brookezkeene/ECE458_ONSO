@@ -2,124 +2,197 @@
     <v-card flat>
         <v-card-title>Users</v-card-title>
         <v-container>
-        <v-card>
-            <v-data-table
-                :headers="headers"
-                :items="users"
-                :search="search"
-                multi-sort
-            >
-                <template v-slot:top>
-                <v-toolbar flat color="white">
-                    <v-autocomplete
-                      :loading="loading"
-                      :items="users"
-                      :search-input.sync="search"
-                      prepend-inner-icon="mdi-magnify"
-                      cache-items
-                      flat
-                      hide-no-data
-                      hide-details
-                      item-text="username"
-                      label="Search"
-                      single-line
-                      solo-inverted
-                    ></v-autocomplete>
-                    <v-spacer></v-spacer>
-                    <v-dialog v-model="dialog" max-width="500px">
-                        <template v-slot:activator="{ on }">
-                            <v-btn v-if="admin" color="primary" dark class="mb-2" v-on="on">Add User</v-btn>
-                        </template>
-                        <v-card>
-                            <user-form v-bind:editedItem="editedItem"></user-form>
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn color="primary" text @click="close">Cancel</v-btn>
-                                <v-btn color="primary" text @click="save">Create User</v-btn>
-                            </v-card-actions>
-                        </v-card>
-                    </v-dialog>
-                </v-toolbar>
-                </template>
-            </v-data-table>
-        </v-card>
+            <v-card>
+                <v-data-table :headers="filteredHeaders"
+                              :items="users"
+                              :search="search"
+                              class="pa-10"
+                              multi-sort>
+                    <template v-slot:top>
+                        <v-toolbar flat color="white">
+                            <v-autocomplete :loading="loading"
+                                            :items="users"
+                                            :search-input.sync="search"
+                                            prepend-inner-icon="mdi-magnify"
+                                            cache-items
+                                            flat
+                                            hide-no-data
+                                            hide-details
+                                            item-text="username"
+                                            label="Search"
+                                            single-line
+                                            solo-inverted></v-autocomplete>
+                            <v-spacer></v-spacer>
+
+                            <v-btn v-if="admin" color="primary" dark class="mb-2" @click="openCreateUser">Add User</v-btn>
+
+                        </v-toolbar>
+
+                        <div class="text-center">
+                            <v-dialog v-model="permissionsDialog" width="35%">
+                                <v-card>
+                                    <v-card-title>
+                                        Edit Permission Level for {{editedItem.username}}
+                                    </v-card-title>
+                                    <v-card-text>
+                                        <v-container fluid>
+                                            <v-checkbox label="Basic"
+                                                        v-model="editedRoles"
+                                                        disabled
+                                                        value="basic"></v-checkbox>
+                                            <v-checkbox label="Administrator"
+                                                        v-model="editedRoles"
+                                                        value="admin"></v-checkbox>
+                                        </v-container>
+                                    </v-card-text>
+                                    <v-card-actions>
+                                        <v-spacer></v-spacer>
+                                        <v-btn color="primary" text @click="closeDialog">Close</v-btn>
+                                        <v-btn color="primary" text @click="savePermissions">Save</v-btn>
+                                    </v-card-actions>
+                                </v-card>
+                            </v-dialog>
+                        </div>
+                    </template>
+
+                    <template v-slot:item.role="{ item }">
+                        <v-row class="pl-3">
+                            {{item.role}}
+                        </v-row>
+                    </template>
+
+                    <template v-if="admin" v-slot:item.action="{ item }">
+                        <v-row class="pl-5">
+                            <v-icon v-if="showActionsForUser(item)"
+                                    medium
+                                    class="mr-2"
+                                    @click="editPermissions(item)">mdi-pencil</v-icon>
+                            <v-icon v-if="showActionsForUser(item)"
+                                    medium
+                                    class="mr-2"
+                                    @click="deleteItem(item)">mdi-delete</v-icon>
+                        </v-row>
+                    </template>
+                </v-data-table>
+            </v-card>
         </v-container>
+        <v-snackbar v-model="updateSnackbar.show"
+                    :bottom=true
+                    class="black--text"
+                    :color="updateSnackbar.color"
+                    :timeout=5000>
+            {{updateSnackbar.message}}
+            <v-btn dark
+                   class="black--text"
+                   text
+                   @click="updateSnackbar.show = false">
+                Close
+            </v-btn>
+        </v-snackbar>
     </v-card>
 </template>
 
 <script>
-import UserForm from "./UserForm"
 import Auth from "../auth"
 
   export default {
     components: {
-      UserForm
     },
     inject: ['userRepository'],
     data () {
-      return {
+        return {
+          updateSnackbar: {
+                    show: false,
+                    message: '',
+                    color: ''
+                },
         dialog: false,
         loading: true,
         search: '',
         headers: [
-        { text: 'First Name', value: 'firstName' },
-        { text: 'Last Name', value: 'lastName' },
-          { text: 'Username', value: 'username' },
-          { text: 'Email', value: 'email' },
+            { text: 'First Name', value: 'firstName' },
+            { text: 'Last Name', value: 'lastName' },
+            { text: 'Username', value: 'username' },
+            { text: 'Email', value: 'email' },
+            { text: 'Actions', value: 'action', sortable: false },
         ],
         users: [],
         editedIndex: -1,
         editedItem: {
             firstName: '',
             lastName: '',
-          email: '',
-          username: '',
-          password: ''
+            email: '',
+            username: '',
+            password: ''
         },
         defaultItem: {
-          firstName: '',
+            firstName: '',
             lastName: '',
-          email: '',
-          username: '',
-          password: ''
-        }, 
+            email: '',
+            username: '',
+            password: ''
+        },
+        editedRoles: [],
+        permissionsDialog: false,
       }
     },
     computed: {
         admin() {
             return Auth.isAdmin()
         },
-    },
-
-    watch: {
-      dialog (val) {
-        val || this.close()
-      },
+        filteredHeaders() {
+                return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
+        },
     },
 
     async created() {
         this.initialize()
     },
 
-        methods: {
-            async initialize() {
-                      this.users = await this.userRepository.list();
-      this.loading = false;
-            },
-      close () {
-        this.dialog = false
-        setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        }, 300)
-      },
+    methods: {
+        showActionsForUser(item) {
+            return !['admin', Auth.username()].includes(item.username);
+        },
+        async initialize() {
+            this.loading = true
+            this.users = await this.userRepository.list();
+            this.loading = false;
+        },
+        openCreateUser() {
+            this.$router.push({ name: 'users-create' });
+        },
+        async deleteItem(item) {
+            var split = (item.email).split("@");
 
-      save () {
-        this.userRepository.create(this.editedItem)                      .then(async () => {
-                            await this.initialize();
-                        })
-        this.close()
-      },
+            if (split[1].toUpperCase() === 'DUKE.EDU') {
+                this.updateSnackbar.show = true;
+                this.updateSnackbar.color = 'red lighten-4';
+                this.updateSnackbar.message = 'Cannot delete duke students.';
+                return;
+            }
+            confirm('Are you sure you want to delete this user?') && this.userRepository.delete(item.id)
+                .then(async () => {
+                    await this.initialize();
+                })
+        },
+        editPermissions(item) {
+            this.editedItem = item;
+            this.userRepository.findRole(item.id)
+                .then((roles) => {
+                    this.editedRoles = roles;
+                    this.permissionsDialog = true;
+                })
+        },
+        savePermissions() {
+            this.userRepository.updateUserRoles(this.editedItem.id, { roles: this.editedRoles } )
+                .then(async () => {
+                    this.closeDialog();
+                    await this.initialize();
+                })
+        },
+        closeDialog() {
+            this.permissionsDialog = false;
+        }
     },
   }
 </script>

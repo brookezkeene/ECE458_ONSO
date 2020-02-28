@@ -1,15 +1,26 @@
-﻿import rackRepository from '@/repositories/mock/rack';
+﻿/* eslint-disable no-unused-vars, no-console */
+import rackRepository from '@/repositories/rack';
+
+const splitAddress = (address) => {
+    if (!validAddress(address))
+        return {};
+    const groups = address.match(/^([a-zA-Z])(\d+)$/);
+    return { rowLetter: groups[1].toUpperCase(), rackNumber: parseInt(groups[2]) }
+}
+
+const validAddress = (address) => {
+    return /^[a-zA-Z]\d+$/.test(address);
+}
 
 export default {
 
     async createRacksByRows(start, end) {
 
-        var racksInRange;
-        
-        racksInRange = await rackRepository.findInRange(start, end);
+        var racksInRange = await rackRepository.findInRange(start, end);
+        console.log(racksInRange)
        
-        const { rowLetter: startRow, rackNumber: startCol } = rackRepository.splitAddress(start);
-        const { rowLetter: endRow, rackNumber: endCol } = rackRepository.splitAddress(end);
+        const { rowLetter: startRow, rackNumber: startCol } = splitAddress(start);
+        const { rowLetter: endRow, rackNumber: endCol } = splitAddress(end);
         var racksByRows = [];
 
         var rackIndex = 0;
@@ -20,7 +31,7 @@ export default {
             };
             for (var col = startCol; col <= endCol; col++) {
 
-                var slot = this.createSlot(racksInRange[rackIndex].instances);
+                var slot = this.createSlot(racksInRange[rackIndex].assets);
                 var rack = {
                     address: racksInRange[rackIndex].address,
                     slots: slot
@@ -33,7 +44,7 @@ export default {
 
         return racksByRows;
     },
-    createSlot(instances) {
+    createSlot(assets) {
         //creating base rows of a single rack diagram
         var rows = [];
         for (var i = 0; i < 42; i++) {
@@ -44,18 +55,15 @@ export default {
             };
             rows.push(row);
         }
-        //filling the rack diagram with instance data  
-        var instances_length = Object.keys(instances).length;
-        for (var j = 0; j < instances_length; j++) {
-            var rackU = instances[j].rackPosition - 1;
-            var color = instances[j].model.displayColor;
-            rows[rackU].style = { color: 'black', backgroundColor: color };
-            rows[rackU].value = instances[j].model.vendor + ' ' + instances[j].model.modelNumber + ' ' + instances[j].hostname;
+        //filling the rack diagram with asset data  
+        var assets_length = Object.keys(assets).length;
+        for (var j = 0; j < assets_length; j++) {
+            var rackU = assets[j].rackPosition - 1;
+            var color = assets[j].displayColor;
+            rows[rackU].value = { text: assets[j].vendor + ' ' + assets[j].modelNumber + ' ' + assets[j].hostname, id: assets[j].id };
 
-            var model_height = instances[j].model.height
-            for (var k = 1; k < model_height; k++) {
-                var position = rackU + k;
-                rows[position].style = { color: 'black', backgroundColor: color };
+            for (const k of assets[j].slotsOccupied) {
+                rows[k - 1].style = { color: 'black', backgroundColor: color };
             }
         }
         return rows.reverse();

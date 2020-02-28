@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -19,14 +20,17 @@ namespace Web.Api.Infrastructure.Repositories
         {
             _dbContext = dbContext;
         }
+        
 
         public async Task<PagedList<Model>> GetModelsAsync(string search, int page = 1, int pageSize = 10)
         {
             var pagedList = new PagedList<Model>();
-            Expression<Func<Model, bool>> searchCondition = x => x.ModelNumber.Contains(search);
+            //if 
+            Expression<Func<Model, bool>> searchCondition = x => (x.ModelNumber.Contains(search) || x.Vendor.Contains(search));
 
             var models = await _dbContext.Models
                 .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
+                .Include(x => x.NetworkPorts)
                 .PageBy(x => x.ModelNumber, page, pageSize)
                 .AsNoTracking()
                 .ToListAsync();
@@ -40,11 +44,24 @@ namespace Web.Api.Infrastructure.Repositories
 
             return pagedList;
         }
+        public async Task<List<Model>> GetModelExportAsync(string search)
+        {
+            Expression<Func<Model, bool>> searchCondition = x => (x.ModelNumber.ToUpper().Contains(search) || x.Vendor.ToUpper().Contains(search));
 
+            var models = await _dbContext.Models
+                .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
+                .Include(x => x.NetworkPorts)
+                .AsNoTracking()
+                .ToListAsync();
+            //models = models.Where(x => x.ModelNumber.Contains(search) || x.Vendor.Contains(search)).ToList();
+            return models;
+
+        }
         public async Task<Model> GetModelAsync(Guid modelId)
         {
             return await _dbContext.Models
-                .Include(x => x.Instances)
+                .Include(x => x.Assets)
+                .Include(x => x.NetworkPorts)
                 .Where(x => x.Id == modelId)
                 .AsNoTracking()
                 .SingleAsync();
@@ -60,12 +77,14 @@ namespace Web.Api.Infrastructure.Repositories
 
         public async Task<int> AddModelAsync(Model model)
         {
+            NetworkPortsSameNumberAsEthernetPorts(model);
             _dbContext.Models.Add(model);
             return await _dbContext.SaveChangesAsync();
         }
 
         public async Task<int> UpdateModelAsync(Model model)
         {
+            NetworkPortsSameNumberAsEthernetPorts(model);
             _dbContext.Models.Update(model);
             return await _dbContext.SaveChangesAsync();
         }
@@ -78,7 +97,21 @@ namespace Web.Api.Infrastructure.Repositories
 
         public async Task<bool> CanUpdateModelAsync(Model model)
         {
-            return await HeightChangeConstraint(model) && await UniquenessConstraint(model);
+            return await MeetsHeightChangeCriteriaAsync(model) && await UniquenessConstraint(model);
+        }
+
+        public async Task<bool> AssetsOfModelExistAsync(Model model)
+        {
+            return await _dbContext.Assets.Where(x => x.Model == model)
+                .AnyAsync();
+        }
+
+        public async Task<bool> ModelIsUniqueAsync(string vendor, string modelNumber, Guid id = default)
+        {
+            return !await _dbContext.Models
+                .Where(x => x.Vendor == vendor && x.ModelNumber == modelNumber)
+                .WhereIf(id != default, x => x.Id != id)
+                .AnyAsync();
         }
 
         private async Task<bool> UniquenessConstraint(Model model)
@@ -90,22 +123,64 @@ namespace Web.Api.Infrastructure.Repositories
             return conflict == null;
         }
 
-        private async Task<bool> HeightChangeConstraint(Model model)
+        public async Task<bool> MeetsHeightChangeCriteriaAsync(Model model)
         {
             if (model.Id != default)
             {
                 var currentData = await GetModelAsync(model.Id);
 
-                // disallow height change if model has instances
+                // disallow height change if model has assets
                 if (model.Height == currentData.Height) return true;
 
-                var hasInstances = await _dbContext.Instances.Where(x => x.Model == model)
+                var hasAssets = await _dbContext.Assets.Where(x => x.Model == model)
                     .AnyAsync();
 
-                return !hasInstances;
+                return !hasAssets;
             }
 
             return true;
+        }
+
+        public async Task<bool> ModelExistsAsync(string vendor, string modelNumber, Guid id)
+        {
+            return await _dbContext.Models
+                // lookup by id if we were given one
+                .WhereIf(id != default, x => x.Id == id)
+                // otherwise lookup by vendor & model number
+                .WhereIf(id == default, x => x.Vendor == vendor && x.ModelNumber == modelNumber)
+                .AnyAsync();
+        }
+
+        public Model GetModel(string vendor, string modelNumber)
+        {
+            return _dbContext.Models
+                .Include(model => model.NetworkPorts)
+                .AsNoTracking()
+                .SingleOrDefault(model => model.Vendor == vendor && model.ModelNumber == modelNumber);
+        }
+
+        private static void NetworkPortsSameNumberAsEthernetPorts(Model model)
+        {
+            // 1. sort by port number ascending
+            var ports = model.NetworkPorts.OrderBy(o => o.Number).ToList();
+
+            // 2. remove all ports in excess of # dictated by property
+            ports = ports.Take(model.EthernetPorts.GetValueOrDefault()).ToList();
+
+            // 3. add ports as necessary
+            var missingPorts = Enumerable.Range(1, model.EthernetPorts.GetValueOrDefault())
+                .Where(n => model.NetworkPorts.SingleOrDefault(o => o.Number == n) == null)
+                .Select(n => new ModelNetworkPort {Number = n, Name = n.ToString()});
+            ports.AddRange(missingPorts);
+
+            // 4. default empty port names to the port number
+            foreach (var port in ports.Where(port => string.IsNullOrWhiteSpace(port.Name)))
+            {
+                port.Name = port.Number.ToString();
+            }
+
+            // 5. done
+            model.NetworkPorts = ports;
         }
     }
 }

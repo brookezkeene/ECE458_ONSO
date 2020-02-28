@@ -30,17 +30,38 @@
                     <v-card-title class="justify-center">
                         <v-icon v-if="admin" color="white">mdi-information</v-icon>
                         <v-spacer></v-spacer>
-                        Instances
+                        Assets
                         <v-spacer></v-spacer>
-                        <v-icon v-if="admin" @click="showInstanceInfo">mdi-information</v-icon>
+                        <v-icon v-if="admin" @click="showAssetInfo">mdi-information</v-icon>
                     </v-card-title>
                     <v-card-actions class="justify-center">
                         <v-container>
                             <v-row align="center" justify="center">
-                                <v-btn v-if="admin" color="primary" class="mb-2" @click="openImportInstances">Import</v-btn>
+                                <v-btn v-if="admin" color="primary" class="mb-2" @click="openImportAssets">Import</v-btn>
                             </v-row>
                             <v-row align="center" justify="center">
-                                <v-btn color="primary" class="mb-2" @click="startExportInstances">Export</v-btn>
+                                <v-btn color="primary" class="mb-2" @click="startExportAssets">Export</v-btn>
+                            </v-row>
+                        </v-container>
+                    </v-card-actions>
+                </v-card>
+            </v-col>
+            <v-col>
+                <v-card>
+                    <v-card-title class="justify-center">
+                        <v-icon v-if="admin" color="white">mdi-information</v-icon>
+                        <v-spacer></v-spacer>
+                        Networks
+                        <v-spacer></v-spacer>
+                        <v-icon v-if="admin" @click="showNetworkInfo">mdi-information</v-icon>
+                    </v-card-title>
+                    <v-card-actions class="justify-center">
+                        <v-container>
+                            <v-row align="center" justify="center">
+                                <v-btn v-if="admin" color="primary" class="mb-2" @click="openImportNetworks">Import</v-btn>
+                            </v-row>
+                            <v-row align="center" justify="center">
+                                <v-btn color="primary" class="mb-2" @click="startExportNetworks">Export</v-btn>
                             </v-row>
                         </v-container>
                     </v-card-actions>
@@ -54,34 +75,46 @@
             </v-card>
         </v-dialog>
 
-        <v-dialog v-model="extrainfoinstance">
+        <v-dialog v-model="extrainfoasset">
             <v-card>
-                <instance-import-format-info></instance-import-format-info>
+                <asset-import-format-info></asset-import-format-info>
+            </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="extrainfonetwork">
+            <v-card>
+                <network-import-format-info></network-import-format-info>
             </v-card>
         </v-dialog>
 
         <v-dialog v-model="importModelWizard" max-width="500px">
             <v-card>
-                <import-wizard v-on:close-file-chooser="closeImport" v-bind:forModel="forModel"></import-wizard>
+                <import-wizard type="models" v-on:close-file-chooser="closeImport"></import-wizard>
             </v-card>
         </v-dialog>
 
-        <v-dialog v-model="importInstanceWizard" max-width="500px">
+        <v-dialog v-model="importAssetWizard" max-width="500px">
             <v-card>
-                <import-wizard v-on:close-file-chooser="closeImport" v-bind:forModel="forModel"></import-wizard>
+                <import-wizard v-on:close-file-chooser="closeImport"></import-wizard>
             </v-card>
         </v-dialog>
 
-        <v-dialog v-model="exportDialog" max-width="300px">
+        <v-dialog v-model="importNetworkWizard" max-width="500px">
             <v-card>
-                <v-container fill-height fluid>
-                    <v-card-title class="justify-center">
-                        Exporting .csv file... 
-                    </v-card-title>
-                    <v-progress-circular indeterminate
-                                         color="primary"></v-progress-circular>
-                </v-container>
+                <import-wizard v-on:close-file-chooser="closeImport"></import-wizard>
             </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="exportModelDialog" max-width="300px">
+            <export-model-wizard v-on:close-model-export="closeExport('model')"></export-model-wizard>
+        </v-dialog>
+
+        <v-dialog v-model="exportAssetDialog" max-width="300px">
+            <export-asset-wizard v-on:close-asset-export="closeExport('asset')"></export-asset-wizard>
+        </v-dialog>
+
+        <v-dialog v-model="exportNetworkDialog" max-width="300px">
+            <export-network-wizard v-on:close-network-export="closeExport('network')"></export-network-wizard>
         </v-dialog>
     </v-card>
 </template>
@@ -89,8 +122,12 @@
 <script>
 
 import ModelImportFormatInfo from "./ModelImportFormatInfo"
-import InstanceImportFormatInfo from "./InstanceImportFormatInfo"
+import AssetImportFormatInfo from "./AssetImportFormatInfo"
+import NetworkImportFormatInfo from "./NetworkImportFormatInfo"
 import ImportWizard from "./ImportWizard"
+import ExportModelWizard from "./ExportModelWizard"
+import ExportAssetWizard from "./ExportAssetWizard"
+import ExportNetworkWizard from "./ExportNetworkWizard"
 import Auth from "../auth"
 
 export default {
@@ -98,11 +135,14 @@ export default {
         return {
             loading: false,       
             extrainfomodel: false,
-            extrainfoinstance: false,
+            extrainfoasset: false,
+            extrainfonetwork: false,
             importModelWizard: false,
-            importInstanceWizard: false,
-            exportDialog: false,
-            forModel: false,
+            importAssetWizard: false,
+            importNetworkWizard: false,
+            exportModelDialog: false,
+            exportAssetDialog: false,
+            exportNetworkDialog: false,
         };
     },
     computed: {
@@ -114,8 +154,11 @@ export default {
         importModelWizard(val) {
             val || this.closeImport("model")
         },
-        importInstanceWizard(val) {
-            val || this.closeImport("instance")
+        importAssetWizard(val) {
+            val || this.closeImport("asset")
+        },
+        importNetworkWizard(val) {
+            val || this.closeImport("network")
         },
         exportDialog(val) {
             val || this.closeExport()
@@ -123,42 +166,63 @@ export default {
     },
     components: {
       ModelImportFormatInfo,
-      InstanceImportFormatInfo,
-      ImportWizard
+      AssetImportFormatInfo,
+      NetworkImportFormatInfo,
+      ImportWizard,
+      ExportModelWizard,
+      ExportAssetWizard,
+      ExportNetworkWizard
     },
     methods: {
         showModelInfo() {
             this.extrainfomodel = true
         },
-        showInstanceInfo() {
-            this.extrainfoinstance = true
+        showAssetInfo() {
+            this.extrainfoasset = true
+        },
+        showNetworkInfo() {
+            this.extrainfonetwork = true
         },
         openImportModels() {
             this.importModelWizard = true
-            this.forModel = true
         },
-        openImportInstances() {
-            this.importInstanceWizard = true
-            this.forModel = false
-
+        openImportAssets() {
+            this.importAssetWizard = true
+        },
+        openImportNetworks() {
+            this.importNetworkWizard = true
         },
         closeImport(type) {
             if (type === "model") {
                 this.importModelWizard = false
             }
+            else if (type === "asset") {
+                this.importAssetWizard = false
+            }
             else {
-                this.importInstanceWizard = false
+                this.importNetworkWizard = false
+            }
+        },
+        closeExport(type) {
+            if (type === "model") {
+                this.exportModelDialog = false
+            }
+            else if (type === "asset") {
+                this.exportAssetDialog = false
+            }
+            else {
+                this.exportNetworkDialog = false
             }
         },
         startExportModels() {
-            this.exportDialog = true
+            this.exportModelDialog = true
         },
-        startExportInstances() {
-            this.exportDialog = true
+        startExportAssets() {
+            this.exportAssetDialog = true
         },
-        closeExport() {
-            this.exportDialog = false
-        }
+        startExportNetworks() {
+            this.exportNetworkDialog = true
+        },
     }
 }
 </script>

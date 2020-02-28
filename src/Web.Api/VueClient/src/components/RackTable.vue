@@ -3,17 +3,27 @@
         <v-data-table
           :headers="filteredHeaders"
           :items="racks"
+          class="pa-10"
+          multi-sort
           >
             <template v-slot:top>
 
-            <v-toolbar flat color="white">
-                <v-toolbar-title>Existing Racks</v-toolbar-title>
-                <v-divider
-                class="mx-4"
-                inset
-                vertical
-                ></v-divider>
-            </v-toolbar>
+                <v-toolbar flat color="white">
+                    <v-toolbar-title>Existing Racks from </v-toolbar-title>
+
+                    <v-select v-model="selectedDatacenter"
+                              :items="datacenters"
+                              item-text="description"
+                              item-value=""
+                              :return-object="false"
+                              label="Datacenter"
+                              placeholder="Select a datacenter or all datacenters"
+                              class="pt-8 pl-4"
+                              @change="datacenterSearch()">
+                    </v-select>
+                    <v-spacer></v-spacer>
+                    <v-spacer></v-spacer>
+                </v-toolbar>
 
             </template>
 
@@ -25,7 +35,7 @@
             </template>
 
             <template v-slot:no-data>
-                <v-btn color="primary" @click="initialize">Reset</v-btn>
+                <v-btn color="primary" @click="initialize">Refresh</v-btn>
             </template>
         </v-data-table>
     </v-card>
@@ -36,43 +46,63 @@
 
     export default {
         name: 'rack-table',
-        inject: ['rackRepository'],
+        inject: ['rackRepository', 'datacenterRepository'],
+        props: ['updateData'],
         item: null,
-        props: {
-            editedItem:Object
-        },
         data () {
             return {
-                admin: false,
                 loading: true,
                 headers: [
                     { text: 'Address', value: 'address'},
-                    { text: 'Row Letter', value: 'position.row' },
-                    { text: 'Rack Number', value: 'position.column' },
+                    { text: 'Datacenter', value: 'datacenter.description' },
                     { text: 'Actions', value: 'action', sortable: false },
                 ],
                 racks: [],
+                datacenters: [],
+                selectedDatacenter: 'All Datacenters'
             };
         },
+        watch: { // This might slow things down if we have a lot of racks to get from the backend !!!
+            updateData(val) {
+                this.updateRacks() || val;
+            },
+        },
         computed: {
-            isAdmin() {
+            admin() {
                 return Auth.isAdmin()
             },
             filteredHeaders() {
-                return (this.isAdmin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
+                return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
             },
         },
         async created () {
             this.initialize()
         },
         methods: {
-            async initialize () {
+            async initialize() {
                 this.racks = await this.rackRepository.list();
+                this.datacenters = await this.datacenterRepository.list();
+                var datacenter = {
+                    description: "All Datacenters",
+                    name: "All",
+                }
+                this.datacenters.push(datacenter);
                 this.loading = false;
             },
-            deleteItem (item) {
-                confirm('Are you sure you want to delete this item?') && this.rackRepository.deleteInRange(item.address, item.address)
+            deleteItem(item) {
+                confirm('Are you sure you want to delete this item?') && this.rackRepository.deleteInRange(item.address, item.address, item.datacenterId)
+                    .then(async () => {
+                        this.datacenterSearch();
+                    })
             },
+            async datacenterSearch() {
+                var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
+                this.racks = await this.rackRepository.list(searchDatacenter.id); 
+            },
+            async updateRacks() { // This might slow things down if we have a lot of racks to get from the backend !!!
+                this.$emit('updated');
+                this.datacenterSearch(); // re-call with same datacenter name if racks were added or deleted
+            }
         }
     }
 </script>

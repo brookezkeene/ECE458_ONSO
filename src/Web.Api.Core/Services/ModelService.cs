@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Skoruba.AuditLogging.Services;
 using Web.Api.Common;
 using Web.Api.Core.Dtos;
+using Web.Api.Core.Events.Model;
 using Web.Api.Core.ExceptionHandling;
 using Web.Api.Core.Mappers;
-using Web.Api.Core.Resources;
 using Web.Api.Core.Services.Interfaces;
 using Web.Api.Infrastructure.Repositories.Interfaces;
 
@@ -13,18 +16,25 @@ namespace Web.Api.Core.Services
     public class ModelService : IModelService
     {
         private readonly IModelRepository _repository;
-        private readonly IModelServiceResources _resources;
+        private readonly IAuditEventLogger _auditEventLogger;
 
-        public ModelService(IModelRepository repository, IModelServiceResources resources)
+        public ModelService(IModelRepository repository, IAuditEventLogger auditEventLogger)
         {
             _repository = repository;
-            _resources = resources;
+            _auditEventLogger = auditEventLogger;
         }
 
-        public async Task<PagedList<FlatModelDto>> GetModelsAsync(string search, int page = 1, int pageSize = 10)
+        public async Task<PagedList<ModelDto>> GetModelsAsync(string search, int page = 1, int pageSize = 10)
         {
             var pagedList = await _repository.GetModelsAsync(search, page, pageSize);
-            return pagedList.ToFlatDto();
+            return pagedList.ToDto();
+        }
+
+        public async Task<List<ModelDto>> GetModelExportAsync(ModelExportQuery query)
+        {
+            query = query.ToUpper();
+            var models = await _repository.GetModelExportAsync(query.Search);
+            return models.ToDto();
         }
 
         public async Task<ModelDto> GetModelAsync(Guid modelId)
@@ -34,37 +44,30 @@ namespace Web.Api.Core.Services
             return model.ToDto();
         }
 
-        public async Task<int> UpdateModelAsync(FlatModelDto modelDto)
+        public async Task<int> UpdateModelAsync(ModelDto model)
         {
-            if (!await CanUpdateModelAsync(modelDto))
-            {
-                var error = _resources.GeneralConstraintViolation();
-                throw new UserFriendlyException(error.Description, error.Code, modelDto);
-            }
+            var entity = model.ToEntity();
+            var updated = await _repository.UpdateModelAsync(entity);
 
-            var model = modelDto.ToEntity();
-            var updated = await _repository.UpdateModelAsync(model);
-
+            await _auditEventLogger.LogEventAsync(new ModelUpdatedEvent(model));
             return updated;
         }
 
-        public async Task<Guid> CreateModelAsync(FlatModelDto modelDto)
+        public async Task<int> CreateModelAsync(ModelDto model)
         {
-            var entity = modelDto.ToEntity();
-            await _repository.AddModelAsync(entity);
-            return entity.Id;
+            var entity = model.ToEntity();
+            var added = await _repository.AddModelAsync(entity);
+
+            await _auditEventLogger.LogEventAsync(new ModelCreatedEvent(model));
+            return added;
         }
 
-        public async Task DeleteModelAsync(Guid modelId)
+        public async Task DeleteModelAsync(ModelDto model)
         {
-            var entity = await _repository.GetModelAsync(modelId);
+            var entity = model.ToEntity();
             await _repository.DeleteModelAsync(entity);
-        }
 
-        private async Task<bool> CanUpdateModelAsync(FlatModelDto modelDto)
-        {
-            var entity = modelDto.ToEntity();
-            return await _repository.CanUpdateModelAsync(entity);
+            await _auditEventLogger.LogEventAsync(new ModelDeletedEvent(model));
         }
     }
 }

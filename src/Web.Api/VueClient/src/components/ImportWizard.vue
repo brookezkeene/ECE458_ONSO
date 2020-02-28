@@ -22,12 +22,12 @@
                         <v-file-input accept=".csv"
                                       label="Click here to add a .csv file"
                                       outlined
-                                      @change="fileUpload"
+                                      @change="fileChanged"
                                       ></v-file-input>
                     </v-card>
                     <v-btn color="primary"
-                           small="true"
-                           @click="step = 2">Continue</v-btn>
+                           small
+                           @click="stepTwo">Continue</v-btn>
                 </v-stepper-content>
 
                 <v-stepper-content step="2">
@@ -48,22 +48,20 @@
                             No Errors
                         </v-card-text>
                     </v-card>
-                    <v-btn class="mr-4" @click.native="step = 1" small="true">Previous</v-btn>
-                    <v-btn color="primary" @click="step = 3" small="true">Continue</v-btn>
+                    <v-btn class="mr-4" @click.native="stepOne" small>Previous</v-btn>
+                    <v-btn color="primary" @click="stepThree" small>Continue</v-btn>
                 </v-stepper-content>
 
                 <v-stepper-content step="3">
                     <v-card flat class="overflow-y-auto"  style="height: 300px">
-                        <v-data-table :headers="headers"
-                                      :items="records"
-                                      disable-pagination="true">
-                        </v-data-table>
+                        <v-card-title>Import successful</v-card-title>
                         <v-card-text>
-                            Total Number of Records Added: {{numRecords}}
+                            # Added: {{ result.added }}
+                            # Updated: {{ result.updated }}
                         </v-card-text>
                     </v-card>
-                    <v-btn class="mr-4" @click="step = 2" small="true">Previous</v-btn>
-                    <v-btn color="primary" @click.prevent="close" small="true">Save</v-btn>
+                    <v-btn class="mr-4" @click="stepTwo" small>Previous</v-btn>
+                    <v-btn color="primary" @click.prevent="close" small>Save</v-btn>
                 </v-stepper-content>
             </v-stepper-items>
         </v-stepper>
@@ -71,42 +69,67 @@
 </template>
 
 <script>
+    import axios from 'axios';
 export default {
     name: 'import-wizard',
-    inject: ['modelRepository', 'instanceRepository'],
-    props: ['importWizard'],
+    inject: ['modelRepository', 'assetRepository'],
+    props: {
+        type: String
+    },
     data () {
         return {
             loading: false,
             step: 1,
-            fileChosen: false,
-            warnings: [ "warning1",
-                        "warning2",
-                        "warning3",
-                        "warning4",
-                        "warning5",
-            ],   // array to store all warnings, empty if none
-            errors: [],     // array to store all errors, empty if none
-            headers: [
-                { text: 'Record', value: '' },
-                { text: 'Status', value: '' },
-            ],
-            records: [],
-            numRecords: 0,
+            file: null,
+            importId: null,
+            warnings: [],
+            errors: [],
+            result: {
+                added: 0,
+                updated: 0
+            }
         };
     },
     methods: {
-        fileUpload(e) { // not working
-            var files = e.target.files || e.dataTransfer.files;
-            if (files.length > 0) {
-                this.fileChosen = true;
-                // API call?
-            }
-            
+        fileChanged(file) {
+            this.file = file;
         },
-        // API calls to get warnings and errors and records/statuses
+        stepOne() {
+            this.file = null;
+            this.warnings = [];
+            this.errors = [];
+            this.step = 1;
+        },
+        stepTwo() {
+            if (this.file) {
+                let formData = new FormData();
+                formData.append('file', this.file);
+                axios.post(`/import/${this.type}`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }).then(response => {
+                    this.importId = response.data.id;
+                    this.warnings = response.data.warnings;
+                    this.errors = response.data.errors;
+                    this.step = 2;
+                }).catch(error => {
+                    this.errors = [error];
+                });
+            }
+        },
+        stepThree() {
+            if (this.importId) {
+                axios.get(`/import/${this.type}/${this.importId}`)
+                    .then(response => {
+                        this.result = response.data;
+                        this.step = 3;
+                    }).catch(error => {
+                        this.failureMessage = error.toJSON();
+                    })
+            }
+        },
         close() {
-            alert('Data Successfully Imported.');
             this.$emit('close-file-chooser');
             this.step = 1;
         }
