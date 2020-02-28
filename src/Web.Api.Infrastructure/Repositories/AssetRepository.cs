@@ -21,24 +21,22 @@ namespace Web.Api.Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<PagedList<Asset>> GetAssetsAsync(string search, int page = 1, int pageSize = 10)
+        public async Task<PagedList<Asset>> GetAssetsAsync(Guid? datacenterId, int page = 1, int pageSize = 10)
         {
             var pagedList = new PagedList<Asset>();
-            Expression<Func<Asset, bool>> searchCondition = x => x.Hostname.Contains(search);
 
             var assets = await _dbContext.Assets
                 .Include(x => x.Model)
                 .Include(x => x.Owner)
                 .Include(x => x.Rack)
                 .ThenInclude(x => x.Datacenter)
-                .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
+                .WhereIf(datacenterId != null, x => x.Rack.Datacenter.Id == datacenterId)
                 .PageBy(x => x.Hostname, page, pageSize)
                 .AsNoTracking()
                 .ToListAsync();
 
             pagedList.AddRange(assets);
             pagedList.TotalCount = await _dbContext.Assets
-                .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
                 .CountAsync();
             pagedList.PageSize = pageSize;
             pagedList.CurrentPage = page;

@@ -30,6 +30,8 @@
                                                     <v-col cols="12" sm="6" md="4">
                                                         <v-text-field v-model="editedItem.hostname"
                                                                       label="Host Name"
+                                                                      placeholder="Please enter a RFC 1034 compliant hostname"
+                                                                      :rules="[rules.hostnameRules]"
                                                                       counter="255">
                                                         </v-text-field>
                                                     </v-col>
@@ -92,8 +94,10 @@
                                                                         persistent-hint>
                                                         </v-autocomplete>
                                                     </v-col>
-                                                    <v-col cols="12" sm="6" md="4">
-                                                        <v-text-field v-model="editedItem.comment" label="Comment"></v-text-field>
+                                                </v-row>
+                                                <v-row>
+                                                    <v-col cols="6">
+                                                        <v-textarea v-model="editedItem.comment" label="Comment" multi-line textarea></v-textarea>
                                                     </v-col>
                                                 </v-row>
                                             </div>
@@ -285,7 +289,8 @@
                 availablePortsInRack: [],
                 rules: {
                     modelRules: v => /^(?!\s*$).+/.test(v) || 'Model is required',
-                    assetRules: v => /^(?!\s*$).+/.test(v) || 'Asset Number is required',
+                    hostnameRules: v => /^(?![0-9]+$)(?!.*-$)(?!-)[a-zA-Z0-9-]{1,63}$/.test(v) || 'Valid hostname is required',
+                    assetRules: v => /^[1-9]\d{5}$/.test(v) || 'Valid asset number is required',
                     datacenterRules: v => /^(?!\s*$).+/.test(v) || 'Datacenter is required',
                     rackRules: v => /^(?!\s*$).+/.test(v) || 'Rack is required',
                     rackuRules: v => /^(?!\s*$).+/.test(v) || 'Rack U is required',
@@ -336,17 +341,13 @@
         methods: {
             save() {
                 if (this.editedItem.id.length != 0) {
-                    /* eslint-disable no-unused-vars, no-console */
-                    console.log(this.selectedModel);
-                    console.log('printing out the selected model')
+
                     for (var j = 0; j < this.editedItem.networkPorts.length; j++) {
                         this.editedItem.networkPorts[j].modelNetworkPortId = this.selectedModel.networkPorts[j].id;
                     }
                     console.log(this.editedItem);
                     this.assetRepository.update(this.editedItem).then(this.close());
                 } else {
-                                        console.log(this.selectedModel);
-                    console.log('printing out the selected model')
                     for (var i = 0; i < this.editedItem.networkPorts.length; i++) {
                         this.editedItem.networkPorts[i].modelNetworkPortId = this.selectedModel.networkPorts[i].id;
                     }
@@ -363,14 +364,14 @@
             async sendNetworkPortRequest() {
                 this.networks = await this.datacenterRepository.networkPorts(this.datacenterID);
                 for (const network of this.networks) {
-                    network.nameRackAssetNum = "NAME: " + network.name +
-                        " " + "HOSTNAME: " + network.assetHostname +
-                        " " + "RACK: " + network.rowLetter + network.rackNumber.toString();
+                    network.nameRackAssetNum = "Port name: " + network.name +
+                        ",  " + "Hostname: " + network.assetHostname;
 
                 }
             },
             async updateRacks() {
                 if (this.datacenterID != this.editedItem.datacenterId) {
+
                     this.datacenterID = this.editedItem.datacenterId;
                     this.racks = await this.rackRepository.list(this.datacenterID);
                     this.sendNetworkPortRequest();

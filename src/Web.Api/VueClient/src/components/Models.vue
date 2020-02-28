@@ -13,17 +13,23 @@
                         <template v-slot:top v-slot:item.action="{ item }">
 
                             <v-toolbar flat color="white">
-                                <v-autocomplete prepend-inner-icon="mdi-magnify"
-                                                :search-input.sync="search"
-                                                cache-items
-                                                flat
-                                                hide-no-data
-                                                hide-details
-                                                label="Search"
-                                                single-line
-                                                solo-inverted></v-autocomplete>
-                                <v-spacer></v-spacer>
-
+                                <v-row>
+                                    <v-col class="pt-3 mt-4" cols="2">
+                                        <v-label>Filter by ...</v-label>
+                                    </v-col>
+                                    <v-col cols="6">
+                                        <v-autocomplete prepend-inner-icon="mdi-magnify"
+                                                        :search-input.sync="search"
+                                                        cache-items
+                                                        flat
+                                                        hide-no-data
+                                                        hide-details
+                                                        label="Search"
+                                                        single-line
+                                                        solo-inverted></v-autocomplete>
+                                    </v-col>
+                                </v-row>
+                                
                                 <v-btn v-if="admin" color="primary" dark class="mb-2" @click="addItem">Add Model</v-btn>
 
                             </v-toolbar>

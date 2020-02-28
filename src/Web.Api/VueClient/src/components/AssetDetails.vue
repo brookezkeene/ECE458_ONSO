@@ -46,7 +46,7 @@
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Comment</v-label>
-                        <v-card-text> {{asset.comment}} </v-card-text>
+                        <v-textarea :value="asset.comment" disabled>  </v-textarea>
                     </v-col>
                 </v-row>
                 <v-row>

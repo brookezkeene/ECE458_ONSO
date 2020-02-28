@@ -9,7 +9,7 @@ namespace Web.Api.Core.Services.Interfaces
 {
     public interface IAssetService
     {
-        Task<PagedList<AssetDto>> GetAssetsAsync(string search, int page = 1, int pageSize = 10);
+        Task<PagedList<AssetDto>> GetAssetsAsync(Guid? datacenterId, int page = 1, int pageSize = 10);
         Task<AssetDto> GetAssetAsync(Guid assetId);
         Task<List<AssetDto>> GetAssetExportAsync(AssetExportQuery query);
         Task<List<AssetNetworkPortDto>> GetNetworkPortExportAsync(NetworkPortExportQuery query);

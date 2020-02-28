@@ -11,19 +11,19 @@
 
             <v-stepper-items>
                 <v-stepper-content step="1">
-                    <v-card flat class="overflow-y-auto"  style="height: 300px">
+                    <v-card flat class="overflow-y-auto" style="height: 300px">
                         <v-card-text>
                             Upload a CSV file matching the specifications outlined in the following
                             <a target="_blank"
                                rel="noopener noreferrer"
                                href="https://drive.google.com/file/d/1UB8J9E_cKlezRtgtk3g10ikO9Iqz5lGN/view?usp=sharing">
-                            document</a>.
+                                document
+                            </a>.
                         </v-card-text>
                         <v-file-input accept=".csv"
                                       label="Click here to add a .csv file"
                                       outlined
-                                      @change="fileChanged"
-                                      ></v-file-input>
+                                      @change="fileChanged"></v-file-input>
                     </v-card>
                     <v-btn color="primary"
                            small
@@ -53,15 +53,17 @@
                 </v-stepper-content>
 
                 <v-stepper-content step="3">
-                    <v-card flat class="overflow-y-auto"  style="height: 300px">
-                        <v-card-title>Import successful</v-card-title>
-                        <v-card-text>
-                            # Added: {{ result.added }}
-                            # Updated: {{ result.updated }}
-                        </v-card-text>
+                    <v-card flat class="overflow-y-auto" style="height: 300px">
+                        <div>
+                            <v-card-title>Import Complete</v-card-title>
+                            <v-card-text>
+                                # Added: {{ result.added }}
+                                # Updated: {{ result.updated }}
+                            </v-card-text>
+                        </div>
                     </v-card>
                     <v-btn class="mr-4" @click="stepTwo" small>Previous</v-btn>
-                    <v-btn color="primary" @click.prevent="close" small>Save</v-btn>
+                    <v-btn color="primary" @click.prevent="close" small>Finish</v-btn>
                 </v-stepper-content>
             </v-stepper-items>
         </v-stepper>
@@ -87,7 +89,7 @@ export default {
             result: {
                 added: 0,
                 updated: 0
-            }
+            },
         };
     },
     methods: {
@@ -125,7 +127,7 @@ export default {
                         this.result = response.data;
                         this.step = 3;
                     }).catch(error => {
-                        this.failureMessage = error.toJSON();
+                        this.$emit('import-error', error);
                     })
             }
         },

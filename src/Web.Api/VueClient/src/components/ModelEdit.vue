@@ -52,9 +52,15 @@
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model="newItem.storage" label="Storage" placeholder="2x500GB SSD RAID1"></v-text-field>
                         </v-col>
-                        <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model="newItem.comment" label="Comment" multiLine textarea></v-text-field>
+                    </v-row>
+
+                    <v-row>
+                        <v-col cols="6">
+                            <v-textarea v-model="newItem.comment" label="Comment" multi-line textarea></v-textarea>
                         </v-col>
+                    </v-row>
+
+                    <v-row>
                         <v-col cols="12" sm="6" md="4">
                             <v-label>
                                 Display Color
