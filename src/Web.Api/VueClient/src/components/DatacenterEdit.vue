@@ -5,9 +5,8 @@
                 <span class="headline">{{formTitle}}</span>
             </v-card-title>
 
-            <v-card-text>
-
-                <v-container fluid class="justify-center">
+            <v-container>
+                <v-form>
                     <v-row>
                         <v-col>
                             <v-text-field v-model="newItem.description" label="Datacenter Name" counter="50"></v-text-field>
@@ -24,9 +23,8 @@
                         <v-btn text @click="close">Cancel</v-btn>
                         <v-btn color="primary" text @click="save">Save</v-btn>
                     </v-card-actions>'
-
-                </v-container>
-            </v-card-text>
+                </v-form>
+            </v-container>
         </v-card>
     </div>
 </template>
