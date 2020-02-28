@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic.CompilerServices;
 using Web.Api.Common;
 using Web.Api.Common.Extensions;
 using Web.Api.Infrastructure.DbContexts;
@@ -33,6 +31,10 @@ namespace Web.Api.Infrastructure.Repositories
                 .PageBy(x => x.Id, page, pageSize)
                 .WhereIf(datacenterId != null, x => x.DatacenterId == datacenterId)
                 .Include(x => x.Datacenter)
+                .Include(x => x.Assets)
+                    .ThenInclude(x => x.Model)
+                .Include(x => x.Assets)
+                    .ThenInclude(x => x.Owner)
                 .AsNoTracking();
             var racks = await query.ToListAsync();
 

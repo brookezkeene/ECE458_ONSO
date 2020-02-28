@@ -26,7 +26,7 @@
                 nodes: [],
                 links: [],
                 options: {
-                    force: 1000,
+                    force: 3000,
                     forces: {
                         X: 0,
                         Y: 0,

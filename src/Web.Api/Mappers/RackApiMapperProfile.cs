@@ -19,7 +19,8 @@ namespace Web.Api.Mappers
         {
             CreateMap<RackDto, GetRacksApiDto>();
             CreateMap<AssetDto, GetRackAssetApiDto>()
-                .IncludeMembers(o => o.Model);
+                .IncludeMembers(o => o.Model)
+                .ForMember(o => o.Owner, opts => opts.MapFrom(src => src.Owner.Username));
             CreateMap<ModelDto, GetRackAssetApiDto>(MemberList.None);
             CreateMap<DatacenterDto, RackDatacenterApiDto>();
 

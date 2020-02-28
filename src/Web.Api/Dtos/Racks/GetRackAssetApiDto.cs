@@ -13,6 +13,8 @@ namespace Web.Api.Dtos.Racks
         public string DisplayColor { get; set; }
         public Guid Id { get; set; }
         public string Hostname { get; set; }
+        public string Owner { get; set; }
+        public int Height { get; set; }
         public int RackPosition { get; set; }
         public IEnumerable<int> SlotsOccupied { get; set; }
         public int AssetNumber { get; set; }
