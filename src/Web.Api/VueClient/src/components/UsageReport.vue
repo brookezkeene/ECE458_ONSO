@@ -51,23 +51,21 @@
                         </div>
 
                         <v-simple-table y-slot:default>
-                            <template>
-                                <thead>
-                                    <tr>
-                                        <th>Vendor</th>
-                                        <th>Rackspace Allocated (in U)</th>
-                                        <th>Rackspace Allocated (%)</th>
-                                    </tr>
-                                </thead>
+                            <thead>
+                                <tr>
+                                    <th>Vendor</th>
+                                    <th>Rackspace Allocated (in U)</th>
+                                    <th>Rackspace Allocated (%)</th>
+                                </tr>
+                            </thead>
 
-                                <tbody>
-                                    <tr v-for="(vendor, index) in vendors" :key="vendor[0]">
-                                        <td>{{vendor[0]}}</td>
-                                        <td>{{vendor[1]}}</td>
-                                        <td>{{vendorsP[index][1]}}</td>
-                                    </tr>
+                            <tbody>
+                                <tr v-for="(vendor, index) in vendors" :key="vendor[0]">
+                                    <td>{{vendor[0]}}</td>
+                                    <td>{{vendor[1]}}</td>
+                                    <td>{{vendorsP[index][1]}}</td>
+                                </tr>
                                 </tbody>
-                            </template>
                         </v-simple-table>
                     </v-card>
 
@@ -83,23 +81,21 @@
                             </v-progress-circular>
                         </div>
                         <v-simple-table y-slot:default>
-                            <template>
-                                <thead>
-                                    <tr>
-                                        <th>Model</th>
-                                        <th>Rackspace Allocated (in U)</th>
-                                        <th>Rackspace Allocated (%)</th>
-                                    </tr>
-                                </thead>
+                            <thead>
+                                <tr>
+                                    <th>Model</th>
+                                    <th>Rackspace Allocated (in U)</th>
+                                    <th>Rackspace Allocated (%)</th>
+                                </tr>
+                            </thead>
 
-                                <tbody>
-                                    <tr v-for="(model, index) in models" :key="model[0]">
-                                        <td>{{model[0]}}</td>
-                                        <td>{{model[1]}}</td>
-                                        <td>{{modelsP[index][1]}}</td>
-                                    </tr>
-                                </tbody>
-                            </template>
+                            <tbody>
+                                <tr v-for="(model, index) in models" :key="model[0]">
+                                    <td>{{model[0]}}</td>
+                                    <td>{{model[1]}}</td>
+                                    <td>{{modelsP[index][1]}}</td>
+                                </tr>
+                            </tbody>
                         </v-simple-table>
                     </v-card>
 
@@ -115,23 +111,21 @@
                             </v-progress-circular>
                         </div>
                         <v-simple-table y-slot:default>
-                            <template>
-                                <thead>
-                                    <tr>
-                                        <th>Owner</th>
-                                        <th>Rackspace Allocated (in U)</th>
-                                        <th>Rackspace Allocated (%)</th>
-                                    </tr>
-                                </thead>
+                            <thead>
+                                <tr>
+                                    <th>Owner</th>
+                                    <th>Rackspace Allocated (in U)</th>
+                                    <th>Rackspace Allocated (%)</th>
+                                </tr>
+                            </thead>
 
-                                <tbody>
-                                    <tr v-for="(owner, index) in owners" :key="owner[0]">
-                                        <td>{{owner[0]}}</td>
-                                        <td>{{owner[1]}}</td>
-                                        <td>{{ownersP[index][1]}}</td>
-                                    </tr>
-                                </tbody>
-                            </template>
+                            <tbody>
+                                <tr v-for="(owner, index) in owners" :key="owner[0]">
+                                    <td>{{owner[0]}}</td>
+                                    <td>{{owner[1]}}</td>
+                                    <td>{{ownersP[index][1]}}</td>
+                                </tr>
+                            </tbody>
                         </v-simple-table>
                     </v-card>
                 </v-expansion-panel-content>
@@ -150,7 +144,7 @@
 <script>
     export default {
         name: 'usage-report',
-        inject: ['reportRepository', 'datacenterRepository'],
+        inject: ['reportRepository', 'rackRepository', 'datacenterRepository'],
         data() {
             return {
                 loading: true,
@@ -203,26 +197,23 @@
         methods: {
             async initialize() {
                 /* eslint-disable no-unused-vars, no-console */
-
-                this.usage = await this.reportRepository.generate(null);
                 this.datacenters = await this.datacenterRepository.list();
                 var datacenter = {
                     description: "All Datacenters",
                     name: "All",
                 }
                 this.datacenters.push(datacenter);
+
+                this.racks = await this.rackRepository.list();
+                this.usage = this.reportRepository.calculateStatistics(this.racks);
                 console.log(this.usage);
                 this.loading = false;
             },
             async datacenterSearch() {
                 var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
-                if (this.selectedDatacenter != "Research Triangle Park Lab 1") {
-                    this.usage = {}
-                }
-                else {
-                    this.usage = await this.reportRepository.generate(searchDatacenter.id); 
-                }
-                
+                this.racks = await this.rackRepository.list(searchDatacenter.id);
+                this.usage = this.reportRepository.calculateStatistics(this.racks);
+                console.log(this.usage);
             },
         }
     }
