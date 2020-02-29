@@ -7,6 +7,7 @@ import axios from 'axios';
 import router from './router';
 import serviceContainer from './service-container';
 import JsonCSV from 'vue-json-excel'
+import store from './store/store'
 
 Vue.component('downloadCsv', JsonCSV)
 Vue.config.productionTip = false;
@@ -23,6 +24,7 @@ new Vue({
   components: {App},
   vuetify,
   provide: serviceContainer,
+  store,
   render: h => h(App),
 }).$mount('#app')
  
