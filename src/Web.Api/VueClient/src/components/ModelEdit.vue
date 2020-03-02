@@ -291,22 +291,10 @@
                     this.updateSnackbar.message = this.updateSnackbar.message + 'The height of the model must be a valid number greater than 0 and less than 42. ';
                     count++
                 }
-                if (item.cpu < 0 || !(/^[0-9]*$/.test(item.cpu))) {
-                    this.updateSnackbar.show = true;
-                    this.updateSnackbar.color = 'red lighten-4';
-                    this.updateSnackbar.message = this.updateSnackbar.message + 'The CPU must be a valid number greater than -1. ';
-                    count++
-                }
                 if (item.memory < 0 || !(/^[0-9]*$/.test(item.memory))) {
                     this.updateSnackbar.show = true;
                     this.updateSnackbar.color = 'red lighten-4';
                     this.updateSnackbar.message = this.updateSnackbar.message + 'Memory must be a valid number greater than -1. ';
-                    count++
-                }
-                if (item.storage < 0 || !(/^[0-9]*$/.test(item.storage))) {
-                    this.updateSnackbar.show = true;
-                    this.updateSnackbar.color = 'red lighten-4';
-                    this.updateSnackbar.message = this.updateSnackbar.message + 'Storage must be a valid number greater than -1. ';
                     count++
                 }
                 return count;
