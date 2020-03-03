@@ -204,7 +204,7 @@
             return Auth.isAdmin()
         },
         filteredHeaders() {
-            return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
+            return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions" && h.text !== "Power")
         },
     },
     watch: {
