@@ -166,6 +166,7 @@
           { text: 'Model Vendor', value: 'vendor' },
           { text: 'Model Number', value: 'modelNumber', },
           { text: 'Hostname', value: 'hostname' },
+          { text: 'Datacenter', value: 'datacenter'},
           { text: 'Rack', value: 'rack', filter: this.rackFilter },
           { text: 'Rack U', value: 'rackPosition', },
           { text: 'Owner Username', value: 'owner' },
