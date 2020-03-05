@@ -1,5 +1,6 @@
 ﻿<template>
     <v-app>
+        <appbar></appbar>
         <v-navigation-drawer v-model="drawer"
                              class="noPrint"
                              :mini-variant.sync="mini"
@@ -60,8 +61,14 @@
 
 <script>
 
-    import auth from "../auth"
+    import auth from "../auth";
+    import appbar from "./AppBar";
+
     export default {
+
+        components: {
+            appbar
+        },
 
         name: 'Dashboard',
         data() {
@@ -77,7 +84,7 @@
                     { title: 'Users', path: '/users', icon: 'mdi-account' },
                     { title: 'Reports', path: '/reports', icon: 'mdi-chart-pie' },
                     { title: 'Import/Export', path: '/importexport', icon: 'mdi-file-upload' },
-                    { title: 'System Log', path: '/log', icon: 'mdi-post'},
+                    { title: 'System Log', path: '/log', icon: 'mdi-post' },
                 ]
             }
         },
