@@ -32,7 +32,7 @@ const routes = [
         meta: { requiresAuth: true },
         children: [
             {
-                path: '/',
+                path: '',
                 name: 'dashboard',
                 component: Models,
             },
