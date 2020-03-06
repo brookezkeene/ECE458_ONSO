@@ -36,13 +36,17 @@
                                     </v-card-title>
                                     <v-card-text>
                                         <v-container fluid>
-                                            <v-checkbox label="Basic"
-                                                        v-model="editedRoles"
-                                                        disabled
-                                                        value="basic"></v-checkbox>
-                                            <v-checkbox label="Administrator"
-                                                        v-model="editedRoles"
-                                                        value="admin"></v-checkbox>
+                                            <v-row v-for="(role, index) in editingRoles" :key="index">
+                                                <v-checkbox :label="role.label"
+                                                            :v-model="role.value"
+                                                            :value="role.value"></v-checkbox>
+                                                <v-tooltip right>
+                                                    <template v-slot:activator="{ on }">
+                                                        <v-icon class="pl-2" color="primary" v-on="on">mdi-information-outline</v-icon>
+                                                    </template>
+                                                    <span>{{role.description}}</span>
+                                                </v-tooltip>
+                                            </v-row>
                                         </v-container>
                                     </v-card-text>
                                     <v-card-actions>
@@ -141,7 +145,19 @@ import Auth from "../auth"
             return Auth.isAdmin()
         },
         filteredHeaders() {
-                return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
+            return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
+        },
+        editingRoles() {
+            // TODO: update if user has existing permissions
+            var roles = [
+                { name: 'model', label: 'Model Management Permission', description: 'Allows creation, modification, and deletion of models.', value: false }, 
+                { name: 'asset', label: 'Asset Management Permission', description: 'Allows creation, modification, decommissioning, and deletion of assets. May be conferred globally or per-datacenter.', value: false },
+                { name: 'power', label: 'Power Permission', description: 'Allows power control of assets for users that are not the explicit owners of the asset in question', value: false },
+                { name: 'audit', label: 'Audit Permission', description: 'Allows reading of the audit log.', value: false },
+                { name: 'admin', label: 'Administrator Permission', description: 'Inherits all of the abilities of the other permissions. Can also confer or revoke permissions onto users.', value: false },
+            ]
+
+            return roles
         },
     },
 
