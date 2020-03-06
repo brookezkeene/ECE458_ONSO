@@ -33,7 +33,7 @@ const routes = [
         children: [
             {
                 path: '/',
-                name: 'models',
+                name: 'dashboard',
                 component: Models,
             },
             {

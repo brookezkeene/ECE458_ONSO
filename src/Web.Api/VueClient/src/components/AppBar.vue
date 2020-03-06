@@ -34,13 +34,17 @@
 </template>
 
 <script>
-    import auth from "../auth";
 
     export default {
         name: 'app-bar',
+        created() {
+          this.$store.dispatch('loadUsername');
+        },
         computed: {
             username() {
-                return auth.username()
+                /*eslint-disable*/
+                console.log(this.$store.state.username);
+                return this.$store.state.username;
             },
             hide () {
                 return this.$route.path === '/login';
