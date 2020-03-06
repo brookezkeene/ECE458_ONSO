@@ -1,35 +1,36 @@
 ﻿<template>
-    <v-navigation-drawer v-model="drawer"
-                         class="noPrint"
-                         :mini-variant.sync="mini"
-                         clipped
-                         permanent
-                         expand-on-hover
-                         app>
+    <div v-if="!hide">
+        <v-navigation-drawer v-model="drawer"
+                             class="noPrint"
+                             :mini-variant.sync="mini"
+                             clipped
+                             permanent
+                             expand-on-hover
+                             app>
 
-        <v-list>
-            <v-list-item v-for="item in menuItems"
-                         :key="item.title"
-                         :to="item.path"
-                         color="primary">
-                <v-list-item-icon>
-                    <v-icon>{{ item.icon }}</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                    <v-list-item-title>
-                        {{ item.title }}
-                    </v-list-item-title>
-                </v-list-item-content>
-            </v-list-item>
-        </v-list>
+            <v-list>
+                <v-list-item v-for="item in menuItems"
+                             :key="item.title"
+                             :to="item.path"
+                             color="primary">
+                    <v-list-item-icon>
+                        <v-icon>{{ item.icon }}</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                        <v-list-item-title>
+                            {{ item.title }}
+                        </v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-list>
 
-        <template v-if="!mini" v-slot:append>
-            <div class="pa-2">
-                <v-btn color="primary" block @click="logout">Logout</v-btn>
-            </div>
-        </template>
-    </v-navigation-drawer>
-
+            <template v-if="!mini" v-slot:append>
+                <div class="pa-2">
+                    <v-btn color="primary" block @click="logout">Logout</v-btn>
+                </div>
+            </template>
+        </v-navigation-drawer>
+    </div>
 </template>
 
 <style>
@@ -61,6 +62,11 @@
                     { title: 'Import/Export', path: '/importexport', icon: 'mdi-file-upload' },
                     { title: 'System Log', path: '/log', icon: 'mdi-post' },
                 ]
+            }
+        },
+        computed: {
+            hide () {
+                return this.$route.path === '/login'; 
             }
         },
         methods: {

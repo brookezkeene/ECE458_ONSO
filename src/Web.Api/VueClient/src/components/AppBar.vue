@@ -1,5 +1,5 @@
 ﻿<template>
-    <div>
+    <div v-if="!hide">
         <v-app-bar color="primary"
                    dense
                    dark
@@ -21,9 +21,9 @@
 
             <div>
                 <v-icon small>mdi-account-circle</v-icon>
-                <p class="font-weight-light">
-                    Hello {{username}}!
-                </p>
+                <span class="font-weight-light">
+                    {{username}}
+                </span>
             </div>
 
 
@@ -42,6 +42,9 @@
             username() {
                 return auth.username()
             },
+            hide () {
+                return this.$route.path === '/login';
+            }
         },
         data() {
             return {
