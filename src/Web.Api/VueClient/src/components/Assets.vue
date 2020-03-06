@@ -97,10 +97,10 @@
                             @click="editItem(item)">mdi-pencil</v-icon>
                     <v-icon medium
                             class="mr-2"
-                            @click="deleteItem(item)">mdi-delete</v-icon>
+                            @click="decommissionItem(item)">mdi-archive-arrow-down</v-icon>
                     <v-icon medium
                             class="mr-2"
-                            @click="decommissionItem(item)">mdi-archive-arrow-down</v-icon>
+                            @click="deleteItem(item)">mdi-delete</v-icon>
                 </v-row>
             </template>
 
