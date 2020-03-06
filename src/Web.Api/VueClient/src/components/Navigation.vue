@@ -1,0 +1,73 @@
+﻿<template>
+    <v-navigation-drawer v-model="drawer"
+                         class="noPrint"
+                         :mini-variant.sync="mini"
+                         clipped
+                         permanent
+                         expand-on-hover
+                         app>
+
+        <v-list>
+            <v-list-item v-for="item in menuItems"
+                         :key="item.title"
+                         :to="item.path"
+                         color="primary">
+                <v-list-item-icon>
+                    <v-icon>{{ item.icon }}</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                    <v-list-item-title>
+                        {{ item.title }}
+                    </v-list-item-title>
+                </v-list-item-content>
+            </v-list-item>
+        </v-list>
+
+        <template v-if="!mini" v-slot:append>
+            <div class="pa-2">
+                <v-btn color="primary" block @click="logout">Logout</v-btn>
+            </div>
+        </template>
+    </v-navigation-drawer>
+
+</template>
+
+<style>
+    @media print {
+        .noPrint {
+            display: none;
+        }
+    }
+</style>
+
+<script>
+
+    import auth from "../auth";
+
+    export default {
+
+        name: 'navigation',
+        data() {
+            return {
+                sidebar: false,
+                drawer: true,
+                mini: true,
+                menuItems: [
+                    { title: 'Models', path: '/models', icon: 'mdi-table-large' },
+                    { title: 'Assets', path: '/assets', icon: 'mdi-server' },
+                    { title: 'Datacenters & Racks', path: '/racks', icon: 'mdi-view-day' },
+                    { title: 'Users', path: '/users', icon: 'mdi-account' },
+                    { title: 'Reports', path: '/reports', icon: 'mdi-chart-pie' },
+                    { title: 'Import/Export', path: '/importexport', icon: 'mdi-file-upload' },
+                    { title: 'System Log', path: '/log', icon: 'mdi-post' },
+                ]
+            }
+        },
+        methods: {
+            logout() {
+                auth.logout();
+                this.$router.push({ name: 'login' });
+            },
+        }
+    }
+</script>

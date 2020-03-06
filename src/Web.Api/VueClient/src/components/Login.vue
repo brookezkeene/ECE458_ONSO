@@ -73,7 +73,7 @@ export default {
             if (this.$refs.form.validate()) {
                 Auth.login(this.username, this.password)
                     .then(() => {
-                        this.$router.push(this.$route.query.redirect || { name: 'dashboard' } )
+                        this.$router.push(this.$route.query.redirect || { name: 'App' } )
                     })
                     .catch((error) => {
                         alert(error.message)
