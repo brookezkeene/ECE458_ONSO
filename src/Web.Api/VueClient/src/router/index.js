@@ -13,7 +13,7 @@ import ImportExport from '@/components/Bulk'
 import Users from '@/components/Users'
 import assetEdit from '@/components/AssetEdit'
 import Reports from '@/components/Reports'
-import Dashboard from '@/components/Dashboard'
+import App from '@/App'
 import UsersCreate from '@/components/UserForm'
 import Log from '@/components/Log'
 import auth from '@/auth'
@@ -28,7 +28,7 @@ const routes = [
     },
     {
         path: '/',
-        component: Dashboard,
+        component: App,
         meta: { requiresAuth: true },
         children: [
             {

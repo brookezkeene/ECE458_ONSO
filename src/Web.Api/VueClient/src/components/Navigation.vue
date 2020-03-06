@@ -1,23 +1,12 @@
 ﻿<template>
-    <v-app>
+    <div v-if="!hide">
         <v-navigation-drawer v-model="drawer"
                              class="noPrint"
                              :mini-variant.sync="mini"
+                             clipped
                              permanent
                              expand-on-hover
                              app>
-
-            <v-list-item class="px-2">
-                <v-list-item-avatar>
-                    <v-img src="@/assets/hyposoft_logo.png"></v-img>
-                </v-list-item-avatar>
-
-                <v-list-item-title>
-                    <router-link to="/" tag="span" style="cursor: pointer">
-                        {{ appTitle }}
-                    </router-link>
-                </v-list-item-title>
-            </v-list-item>
 
             <v-list>
                 <v-list-item v-for="item in menuItems"
@@ -41,13 +30,7 @@
                 </div>
             </template>
         </v-navigation-drawer>
-
-        <v-content>
-            <router-view></router-view>
-        </v-content>
-
-    </v-app>
-
+    </div>
 </template>
 
 <style>
@@ -60,13 +43,13 @@
 
 <script>
 
-    import auth from "../auth"
+    import auth from "../auth";
+
     export default {
 
-        name: 'Dashboard',
+        name: 'navigation',
         data() {
             return {
-                appTitle: 'Hyposoft Tool',
                 sidebar: false,
                 drawer: true,
                 mini: true,
@@ -77,8 +60,13 @@
                     { title: 'Users', path: '/users', icon: 'mdi-account' },
                     { title: 'Reports', path: '/reports', icon: 'mdi-chart-pie' },
                     { title: 'Import/Export', path: '/importexport', icon: 'mdi-file-upload' },
-                    { title: 'System Log', path: '/log', icon: 'mdi-post'},
+                    { title: 'System Log', path: '/log', icon: 'mdi-post' },
                 ]
+            }
+        },
+        computed: {
+            hide () {
+                return this.$route.path === '/login'; 
             }
         },
         methods: {
