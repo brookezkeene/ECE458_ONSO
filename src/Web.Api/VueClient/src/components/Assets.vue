@@ -111,7 +111,7 @@
                                   tile>
                         <v-btn color ="green lighten-1" 
                                @click="turnOn(item)"
-                               small
+                               x-small
                                width="30%"
                                min-width="30px"
                                depressed>
@@ -120,14 +120,14 @@
                         <v-btn color ="red lighten-1" 
                                @click="turnOff(item)"
                                min-width="30px"
-                               small
+                               x-small
                                width="30%"
                                depressed>
                             OFF
                         </v-btn>
                         <v-btn color = "grey lighten-2"
-                               small
-                               min-width="60px"
+                               x-small
+                               min-width="40px"
                                width="30%"
                                @click="cycle(item)"
                                depressed>
