@@ -37,8 +37,6 @@
 
                             <v-spacer></v-spacer>
 
-                            <v-btn v-if="admin" color="primary" dark class="mb-2" @click="addItem">Add asset</v-btn>
-
                             <v-dialog v-model="instructionsDialog" max-width="550px">
                                 <v-card>
                                     <v-card-title class="justify-center">
@@ -94,43 +92,7 @@
                         <v-row>
                             <v-icon medium
                                     class="mr-2"
-                                    @click="editItem(item)">mdi-pencil</v-icon>
-                            <v-icon medium
-                                    class="mr-2"
                                     @click="deleteItem(item)">mdi-delete</v-icon>
-                        </v-row>
-                    </template>
-
-                    <template v-slot:item.power="{ item }">
-                        <v-row v-if="item.hasNetworkManagedPower">
-                            <v-item-group dense
-                                          light
-                                          tile>
-                                <v-btn color="green lighten-1"
-                                       @click="turnOn(item)"
-                                       small
-                                       width="30%"
-                                       min-width="30px"
-                                       depressed>
-                                    ON
-                                </v-btn>
-                                <v-btn color="red lighten-1"
-                                       @click="turnOff(item)"
-                                       min-width="30px"
-                                       small
-                                       width="30%"
-                                       depressed>
-                                    OFF
-                                </v-btn>
-                                <v-btn color="grey lighten-2"
-                                       small
-                                       min-width="60px"
-                                       width="30%"
-                                       @click="cycle(item)"
-                                       depressed>
-                                    Cycle
-                                </v-btn>
-                            </v-item-group>
                         </v-row>
                     </template>
 
@@ -170,7 +132,10 @@
           { text: 'Rack', value: 'rack', filter: this.rackFilter },
           { text: 'Rack U', value: 'rackPosition', },
           { text: 'Owner Username', value: 'owner' },
-          { text: 'Power', value: 'power', sortable: false },
+          // todo: get correct data for these
+          { text: 'Decommissioned By', value: 'decommissioner'},
+          { text: 'Time Stamp', value: 'timestamp'},
+          //
           { text: 'Actions', value: 'action', sortable: false },
         ],
         assets: [],
@@ -186,32 +151,15 @@
             comment: '',
             poweredOn: false,
         },
-          detailItem: {
-            id: '',
-            datacenter: '',
-            modelId: '',
-            hostname: '',
-            rackId: '',
-            rackPosition: '',
-            ownerId: '',
-            comment: '',
-        },
         deleting: false,
-        editing: false,
-        powering: false,
       }},
     computed: {
         admin() {
             return Auth.isAdmin()
         },
         filteredHeaders() {
-            return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions" && h.text !== "Power")
+            return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
         },
-    },
-    watch: {
-      instructionsDialog (val) {
-        val || this.closeDetail()
-      },
     },
 
     async created() {
@@ -244,67 +192,10 @@
         async datacenterSearch() {
                 var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
                 this.assets = await this.assetRepository.list(searchDatacenter.id);
-            },
-        editItem(item) {
-            this.editing = true;
-            this.$router.push({ name: 'asset-edit', params: { id: item.id } })
-        },
-        addItem() {
-            this.$router.push({ name: 'asset-new' })
-        },
-        turnOn(item) {
-            /*eslint-disable*/
-            this.powering = true;
-            var powerState = {
-                // 0 is on
-                action: 0,
-            };
-            confirm('Are you sure you would like to turn on this asset?') && this.assetRepository.postPowerState(item.id, powerState)
-                .then(async () => {
-                    console.log(item);
-                    await this.initialize();
-                })
-        },
-        turnOff(item) {
-            this.powering = true;
-            var powerState = {
-                // 1 is off
-                action: 1,
-            };
-            confirm('Are you sure you would like to power off this asset?') && this.assetRepository.postPowerState(item.id, powerState)
-                .then(async () => {
-                    console.log(item);
-                    await this.initialize();
-                })
-        },
-        cycle(item) {
-            this.powering = true;
-            var ret = {
-                // 2 is cycle
-                action: 2,
-            };
-            confirm('Are you sure you would like to cycle this asset?') && this.assetRepository.postPowerState(item.id, powerState)
-                .then(async () => {
-                    console.log(item);
-                    await this.initialize();
-                })
         },
         showInstructions() {
             this.instructionsDialog = true;
         },
-        closeDetail() {
-            this.instructionsDialog = false;
-        },
-        showDetails(item) {
-            if (!this.editing && !this.deleting && !this.powering) {
-            /*eslint-disable*/
-                console.log(item);
-                this.$router.push({ name: 'asset-details', params: {id: item.id } })
-            }
-            this.deleting = false;
-            this.powering = false;
-            this.powering = false;
-      },
 
       /**
        * Filter for calories column.
