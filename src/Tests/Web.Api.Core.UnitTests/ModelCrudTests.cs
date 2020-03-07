@@ -57,6 +57,10 @@ namespace Web.Api.Core.UnitTests
             //checking to see if get works 
             var id = Guid.NewGuid();
             var model = GenerateModel(id);
+
+            var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(model);
+            var json = new JavaScriptSerializer().Serialize(model);
+
             await context.Models.AddAsync(model);
             var numAdded = await context.SaveChangesAsync();
             var getModel = await controller.Get(model.Id);
