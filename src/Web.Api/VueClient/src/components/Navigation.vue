@@ -10,10 +10,10 @@
 
             <v-list>
                 <div v-for="item in menuItems"
-                                 :key="item.title"
-                                 :to="item.path">
+                    :key="item.title">
                     <v-list-item v-if="item.title!='Assets'"
-                                 color="primary">
+                                 color="primary"
+                                 :to="item.path">
                         <v-list-item-icon>
                             <v-icon>{{ item.icon }}</v-icon>
                         </v-list-item-icon>
@@ -39,7 +39,7 @@
                                          color="primary">
 
                                 <v-list-item-content>
-                                    <v-list-item-title>
+                                    <v-list-item-title color="green">
                                         {{ sublink.title }}
                                     </v-list-item-title>
                                 </v-list-item-content>
