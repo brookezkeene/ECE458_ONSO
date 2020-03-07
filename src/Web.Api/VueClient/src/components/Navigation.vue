@@ -9,19 +9,43 @@
                              app>
 
             <v-list>
-                <v-list-item v-for="item in menuItems"
-                             :key="item.title"
-                             :to="item.path"
-                             color="primary">
-                    <v-list-item-icon>
-                        <v-icon>{{ item.icon }}</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                        <v-list-item-title>
-                            {{ item.title }}
-                        </v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
+                <div v-for="item in menuItems"
+                                 :key="item.title"
+                                 :to="item.path">
+                    <v-list-item v-if="item.title!='Assets'"
+                                 color="primary">
+                        <v-list-item-icon>
+                            <v-icon>{{ item.icon }}</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>
+                            <v-list-item-title>
+                                {{ item.title }}
+                            </v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+
+                    <v-list-group v-else
+                                  :prepend-icon="item.icon"
+                                  no-action>
+                            <template v-slot:activator>
+                                <v-list-item-content>
+                                    <v-list-item-title>{{ item.title }}</v-list-item-title>
+                                </v-list-item-content>
+                            </template>
+
+                            <v-list-item v-for="sublink in item.sublinks"
+                                         :key="sublink.title"
+                                         :to="sublink.path"
+                                         color="primary">
+
+                                <v-list-item-content>
+                                    <v-list-item-title>
+                                        {{ sublink.title }}
+                                    </v-list-item-title>
+                                </v-list-item-content>
+                            </v-list-item>
+                    </v-list-group>
+                </div>
             </v-list>
 
             <template v-if="!mini" v-slot:append>
@@ -30,6 +54,7 @@
                 </div>
             </template>
         </v-navigation-drawer>
+
     </div>
 </template>
 
@@ -55,13 +80,16 @@
                 mini: true,
                 menuItems: [
                     { title: 'Models', path: '/models', icon: 'mdi-table-large' },
-                    { title: 'Assets', path: '/assets', icon: 'mdi-server' },
+                    { title: 'Assets', path: '/assets', icon: 'mdi-server', sublinks: [
+                        { title: 'Active Assets', path: '/assets'},
+                        { title: 'Decommissioned Assets', path: '/decommissioned-assets'},
+                    ]},
                     { title: 'Datacenters & Racks', path: '/racks', icon: 'mdi-view-day' },
                     { title: 'Users', path: '/users', icon: 'mdi-account' },
                     { title: 'Reports', path: '/reports', icon: 'mdi-chart-pie' },
                     { title: 'Import/Export', path: '/importexport', icon: 'mdi-file-upload' },
                     { title: 'System Log', path: '/log', icon: 'mdi-post' },
-                ]
+                ],
             }
         },
         computed: {
