@@ -157,6 +157,12 @@ import Auth from "../auth"
                 { name: 'admin', label: 'Administrator Permission', description: 'Inherits all of the abilities of the other permissions. Can also confer or revoke permissions onto users.', value: false },
             ]
 
+            if (roles[4].value == true) {
+                for (var i = 0; i < 4; i++) {
+                    roles[i].value == true;
+                }
+            }
+
             return roles
         },
     },
@@ -200,6 +206,15 @@ import Auth from "../auth"
                 })
         },
         savePermissions() {
+            /* eslint-disable no-unused-vars, no-console */
+            console.log(this.editingRoles);
+            this.editedRoles = [];
+            for (var i = 0; i < this.editingRoles.length; i++) {
+                if (this.editingRoles[i].value) {
+                    this.editedRoles.push(this.editingRoles[i].name)
+                }
+            }
+            console.log(this.editedRoles);
             this.userRepository.updateUserRoles(this.editedItem.id, { roles: this.editedRoles } )
                 .then(async () => {
                     this.closeDialog();
