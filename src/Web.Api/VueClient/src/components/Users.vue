@@ -36,17 +36,32 @@
                                     </v-card-title>
                                     <v-card-text>
                                         <v-container fluid>
-                                            <v-row v-for="(role, index) in editingRoles" :key="index">
-                                                <v-checkbox :label="role.label"
-                                                            :v-model="role.value"
-                                                            :value="role.value"></v-checkbox>
-                                                <v-tooltip right>
-                                                    <template v-slot:activator="{ on }">
-                                                        <v-icon class="pl-2" color="primary" v-on="on">mdi-information-outline</v-icon>
-                                                    </template>
-                                                    <span>{{role.description}}</span>
-                                                </v-tooltip>
-                                            </v-row>
+                                            <div v-for="(role, index) in editingRoles" :key="index">
+                                                <v-row>
+                                                    <v-checkbox :label="role.label"
+                                                                :value="role.name"
+                                                                v-model="editedRoles"
+                                                                @change="checkAdmin"></v-checkbox>
+                                                    <v-tooltip right>
+                                                        <template v-slot:activator="{ on }">
+                                                            <v-icon class="pl-2" color="primary" v-on="on">mdi-information-outline</v-icon>
+                                                        </template>
+                                                        <span>{{role.description}}</span>
+                                                    </v-tooltip>
+                                                </v-row>
+                                                <v-row v-if="role.name === 'asset' && editedRoles.includes('asset')">
+                                                    <v-select v-model="selectedDatacenters"
+                                                              :items="datacenters"
+                                                              item-text="description"
+                                                              item-value=""
+                                                              :return-object="false"
+                                                              multiple
+                                                              label="Please select which datacenter(s) this extends to"
+                                                              placeholder="Select a datacenter or all datacenters"
+                                                              class="pt-8 pl-4">
+                                                    </v-select>
+                                                </v-row>
+                                            </div>
                                         </v-container>
                                     </v-card-text>
                                     <v-card-actions>
@@ -61,16 +76,55 @@
 
                     <template v-slot:item.role="{ item }">
                         <v-row class="pl-3">
-                            {{item.role}}
+
+                            <v-tooltip right v-if="editingRoles[0].value && !editingRoles[4].value">
+                                <template v-slot:activator="{ on }">
+                                    <v-icon small v-on="on">mdi-table-large</v-icon>
+                                </template>
+                                <span>User has {{editingRoles[0].label}}</span>
+                            </v-tooltip>
+
+                            <v-tooltip right v-if="editingRoles[1].value && !editingRoles[4].value">
+                                <template v-slot:activator="{ on }">
+                                    <v-icon small v-on="on">mdi-server</v-icon>
+                                </template>
+                                <span>User has {{editingRoles[1].label}}</span>
+                            </v-tooltip>
+
+                            <v-tooltip right v-if="editingRoles[2].value && !editingRoles[4].value">
+                                <template v-slot:activator="{ on }">
+                                    <v-icon small v-on="on">mdi-power</v-icon>
+                                </template>
+                                <span>User has {{editingRoles[2].label}}</span>
+                            </v-tooltip>
+
+                            <v-tooltip right v-if="editingRoles[3].value && !editingRoles[4].value">
+                                <template v-slot:activator="{ on }">
+                                    <v-icon small v-on="on">mdi-post</v-icon>
+                                </template>
+                                <span>User has {{editingRoles[3].label}}</span>
+                            </v-tooltip>
+
+                            <v-tooltip right v-if="editingRoles[4].value==true">
+                                <template v-slot:activator="{ on }">
+                                    <v-icon small v-on="on">mdi-shield-account</v-icon>
+                                </template>
+                                <span>User has {{editingRoles[4].label}}</span>
+                            </v-tooltip>
+
+                            <v-btn v-if="showActionsForUser(item)"
+                                   class="mr-2"
+                                   color="primary"
+                                   text
+                                   small
+                                   @click="editPermissions(item)"
+                                   >edit</v-btn>
                         </v-row>
                     </template>
 
                     <template v-if="admin" v-slot:item.action="{ item }">
                         <v-row class="pl-5">
-                            <v-icon v-if="showActionsForUser(item)"
-                                    medium
-                                    class="mr-2"
-                                    @click="editPermissions(item)">mdi-pencil</v-icon>
+                            
                             <v-icon v-if="showActionsForUser(item)"
                                     medium
                                     class="mr-2"
@@ -101,8 +155,8 @@ import Auth from "../auth"
 
   export default {
     components: {
-    },
-    inject: ['userRepository'],
+        },
+    inject: ['userRepository', 'datacenterRepository'],
     data () {
         return {
           updateSnackbar: {
@@ -118,6 +172,7 @@ import Auth from "../auth"
             { text: 'Last Name', value: 'lastName' },
             { text: 'Username', value: 'username' },
             { text: 'Email', value: 'email' },
+            { text: 'Permissions', value: 'role', sortable: false },
             { text: 'Actions', value: 'action', sortable: false },
         ],
         users: [],
@@ -138,6 +193,8 @@ import Auth from "../auth"
         },
         editedRoles: [],
         permissionsDialog: false,
+        datacenters: [],
+        selectedDatacenters: [],
       }
     },
     computed: {
@@ -149,19 +206,14 @@ import Auth from "../auth"
         },
         editingRoles() {
             // TODO: update if user has existing permissions
-            var roles = [
-                { name: 'model', label: 'Model Management Permission', description: 'Allows creation, modification, and deletion of models.', value: false }, 
-                { name: 'asset', label: 'Asset Management Permission', description: 'Allows creation, modification, decommissioning, and deletion of assets. May be conferred globally or per-datacenter.', value: false },
-                { name: 'power', label: 'Power Permission', description: 'Allows power control of assets for users that are not the explicit owners of the asset in question', value: false },
-                { name: 'audit', label: 'Audit Permission', description: 'Allows reading of the audit log.', value: false },
-                { name: 'admin', label: 'Administrator Permission', description: 'Inherits all of the abilities of the other permissions. Can also confer or revoke permissions onto users.', value: false },
-            ]
 
-            if (roles[4].value == true) {
-                for (var i = 0; i < 4; i++) {
-                    roles[i].value == true;
-                }
-            }
+            var roles = [
+                { name: 'model', label: 'Model Management Permission', description: 'Allows creation, modification, and deletion of models.' }, 
+                { name: 'asset', label: 'Asset Management Permission', description: 'Allows creation, modification, decommissioning, and deletion of assets. May be conferred globally or per-datacenter.' },
+                { name: 'power', label: 'Power Permission', description: 'Allows power control of assets for users that are not the explicit owners of the asset in question' },
+                { name: 'audit', label: 'Audit Permission', description: 'Allows reading of the audit log.' },
+                { name: 'admin', label: 'Administrator Permission', description: 'Inherits all of the abilities of the other permissions. Can also confer or revoke permissions onto users.' },
+            ]
 
             return roles
         },
@@ -178,6 +230,7 @@ import Auth from "../auth"
         async initialize() {
             this.loading = true
             this.users = await this.userRepository.list();
+            this.datacenters = await this.datacenterRepository.list();
             this.loading = false;
         },
         openCreateUser() {
@@ -205,16 +258,26 @@ import Auth from "../auth"
                     this.permissionsDialog = true;
                 })
         },
-        savePermissions() {
+        checkAdmin() {
             /* eslint-disable no-unused-vars, no-console */
-            console.log(this.editingRoles);
+
+            if (this.editedRoles.includes('admin')) {
+                for (var i = 0; i < this.editingRoles.length; i++) {
+                    if (!this.editingRoles.includes(this.editingRoles[i].name)) {
+                        this.editedRoles.push(this.editingRoles[i].name);
+                    }
+                }
+            }
+
+            console.log(this.editedRoles)
+        },
+        savePermissions() {
             this.editedRoles = [];
             for (var i = 0; i < this.editingRoles.length; i++) {
                 if (this.editingRoles[i].value) {
                     this.editedRoles.push(this.editingRoles[i].name)
                 }
             }
-            console.log(this.editedRoles);
             this.userRepository.updateUserRoles(this.editedItem.id, { roles: this.editedRoles } )
                 .then(async () => {
                     this.closeDialog();
