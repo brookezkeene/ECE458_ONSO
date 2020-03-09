@@ -36,16 +36,22 @@ namespace Web.Api.Helpers
 
         public static async Task EnsureSeedData(ApplicationDbContext context, IIdentityRepository identityRepository, RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
         {
-            if (!await roleManager.RoleExistsAsync("basic"))
+            var allRoles = new[] { "model", "asset", "power", "audit", "admin" };
+            for (var i = 0; i < 5; i++)
             {
-                await roleManager.CreateAsync(new IdentityRole("basic"));
-            }
+                if (!await roleManager.RoleExistsAsync(allRoles[i]))
+                {
+                    if (allRoles[i] != "admin")
+                    {
+                        await roleManager.CreateAsync(new IdentityRole(allRoles[i]));
 
-            if (!await roleManager.RoleExistsAsync("admin"))
-            {
-                var adminRole = new IdentityRole("admin");
-                await roleManager.CreateAsync(adminRole);
-                await roleManager.AddClaimAsync(adminRole, new Claim("owner:asset", "all"));
+                    } else
+                    {
+                        var adminRole = new IdentityRole("admin");
+                        await roleManager.CreateAsync(adminRole);
+                        await roleManager.AddClaimAsync(adminRole, new Claim("owner:asset", "all"));
+                    }
+                }
             }
 
             if (await identityRepository.FindByNameAsync("admin") == null)
