@@ -30,7 +30,7 @@
                                     </v-col>
                                 </v-row>
                                 
-                                <v-btn v-if="admin" color="primary" dark class="mb-2" @click="addItem">Add Model</v-btn>
+                                <v-btn v-if="permission" color="primary" dark class="mb-2" @click="addItem">Add Model</v-btn>
 
                             </v-toolbar>
 
@@ -119,7 +119,7 @@
                             </v-icon>
                         </template>
 
-                        <template v-if="admin" v-slot:item.action="{ item }">
+                        <template v-if="permission" v-slot:item.action="{ item }">
                             <v-row>
                                 <v-icon medium
                                         class="mr-2"
@@ -232,11 +232,11 @@
             formTitle() {
                 return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
             },
-            admin() {
-                return Auth.isAdmin()
-            },
             filteredHeaders() {
-                return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
+                return (this.permission) ? this.headers : this.headers.filter(h => h.text !== "Actions")
+            },
+            permission() {
+                return this.$store.getters.hasModelPermission || Auth.isAdmin()
             },
         },
         watch: {
@@ -255,6 +255,8 @@
             async initialize() {
                 this.models = await this.modelRepository.list();
                 this.loading = false;
+            /* eslint-disable no-unused-vars, no-console */
+                console.log(this.permission)
             },
             editItem(item) {
                 this.editing = true
