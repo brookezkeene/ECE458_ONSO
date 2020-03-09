@@ -36,7 +36,7 @@
                                     </v-card-title>
                                     <v-card-text>
                                         <v-container fluid>
-                                            <div v-for="(role, index) in editingRoles" :key="index">
+                                            <div v-for="(role, index) in allRoles" :key="index">
                                                 <v-row>
                                                     <v-checkbox :label="role.label"
                                                                 :value="role.name"
@@ -75,41 +75,40 @@
                     </template>
 
                     <template v-slot:item.role="{ item }">
-                        <v-row class="pl-3">
-
-                            <v-tooltip right v-if="editingRoles[0].value && !editingRoles[4].value">
+                        <v-row class="pl-3" v-if="item.hasOwnProperty('permissions')">
+                            <v-tooltip right v-if="item.permissions.includes('model') && !item.permissions.includes('admin')">
                                 <template v-slot:activator="{ on }">
                                     <v-icon small v-on="on">mdi-table-large</v-icon>
                                 </template>
-                                <span>User has {{editingRoles[0].label}}</span>
+                                <span>User has {{allRoles[0].label}}</span>
                             </v-tooltip>
 
-                            <v-tooltip right v-if="editingRoles[1].value && !editingRoles[4].value">
+                            <v-tooltip right v-if="item.permissions.includes('asset') && !item.permissions.includes('admin')">
                                 <template v-slot:activator="{ on }">
                                     <v-icon small v-on="on">mdi-server</v-icon>
                                 </template>
-                                <span>User has {{editingRoles[1].label}}</span>
+                                <span>User has {{allRoles[1].label}}</span>
                             </v-tooltip>
 
-                            <v-tooltip right v-if="editingRoles[2].value && !editingRoles[4].value">
+                            <v-tooltip right v-if="item.permissions.includes('power') && !item.permissions.includes('admin')">
                                 <template v-slot:activator="{ on }">
                                     <v-icon small v-on="on">mdi-power</v-icon>
                                 </template>
-                                <span>User has {{editingRoles[2].label}}</span>
+                                <span>User has {{allRoles[2].label}}</span>
                             </v-tooltip>
 
-                            <v-tooltip right v-if="editingRoles[3].value && !editingRoles[4].value">
+                            <v-tooltip right v-if="item.permissions.includes('audit') && !item.permissions.includes('admin')">
                                 <template v-slot:activator="{ on }">
                                     <v-icon small v-on="on">mdi-post</v-icon>
                                 </template>
-                                <span>User has {{editingRoles[3].label}}</span>
+                                <span>User has {{allRoles[3].label}}</span>
                             </v-tooltip>
 
-                            <v-tooltip right v-if="editingRoles[4].value==true">
+                            <v-tooltip right v-if="item.permissions.includes('admin')">
                                 <template v-slot:activator="{ on }">
                                     <v-icon small v-on="on">mdi-shield-account</v-icon>
                                 </template>
-                                <span>User has {{editingRoles[4].label}}</span>
+                                <span>User has {{allRoles[4].label}}</span>
                             </v-tooltip>
 
                             <v-btn v-if="showActionsForUser(item)"
@@ -192,6 +191,13 @@ import Auth from "../auth"
             password: ''
         },
         editedRoles: [],
+        allRoles: [
+            { name: 'model', label: 'Model Management Permission', description: 'Allows creation, modification, and deletion of models.' }, 
+            { name: 'asset', label: 'Asset Management Permission', description: 'Allows creation, modification, decommissioning, and deletion of assets. May be conferred globally or per-datacenter.' },
+            { name: 'power', label: 'Power Permission', description: 'Allows power control of assets for users that are not the explicit owners of the asset in question' },
+            { name: 'audit', label: 'Audit Permission', description: 'Allows reading of the audit log.' },
+            { name: 'admin', label: 'Administrator Permission', description: 'Inherits all of the abilities of the other permissions. Can also confer or revoke permissions onto users.' },
+        ],
         permissionsDialog: false,
         datacenters: [],
         selectedDatacenters: [],
@@ -204,19 +210,6 @@ import Auth from "../auth"
         filteredHeaders() {
             return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
         },
-        editingRoles() {
-            // TODO: update if user has existing permissions
-
-            var roles = [
-                { name: 'model', label: 'Model Management Permission', description: 'Allows creation, modification, and deletion of models.' }, 
-                { name: 'asset', label: 'Asset Management Permission', description: 'Allows creation, modification, decommissioning, and deletion of assets. May be conferred globally or per-datacenter.' },
-                { name: 'power', label: 'Power Permission', description: 'Allows power control of assets for users that are not the explicit owners of the asset in question' },
-                { name: 'audit', label: 'Audit Permission', description: 'Allows reading of the audit log.' },
-                { name: 'admin', label: 'Administrator Permission', description: 'Inherits all of the abilities of the other permissions. Can also confer or revoke permissions onto users.' },
-            ]
-
-            return roles
-        },
     },
 
     async created() {
@@ -224,14 +217,19 @@ import Auth from "../auth"
     },
 
     methods: {
-        showActionsForUser(item) {
-            return !['admin', Auth.username()].includes(item.username);
-        },
         async initialize() {
+            /* eslint-disable no-unused-vars, no-console */
             this.loading = true
             this.users = await this.userRepository.list();
+            for (var i = 0; i < this.users.length; i++) {
+                var userRoles = await this.userRepository.findRole(this.users[i].id);
+                this.users[i]["permissions"] = userRoles;
+            }
             this.datacenters = await this.datacenterRepository.list();
             this.loading = false;
+        },
+        showActionsForUser(item) {
+            return !['admin', Auth.username()].includes(item.username);
         },
         openCreateUser() {
             this.$router.push({ name: 'users-create' });
@@ -260,29 +258,24 @@ import Auth from "../auth"
         },
         checkAdmin() {
             /* eslint-disable no-unused-vars, no-console */
-
             if (this.editedRoles.includes('admin')) {
-                for (var i = 0; i < this.editingRoles.length; i++) {
-                    if (!this.editingRoles.includes(this.editingRoles[i].name)) {
-                        this.editedRoles.push(this.editingRoles[i].name);
+                for (var i = 0; i < this.allRoles.length; i++) {
+                    if (!this.editedRoles.includes(this.allRoles[i].name)) {
+                        this.editedRoles.push(this.allRoles[i].name);
                     }
                 }
             }
-
-            console.log(this.editedRoles)
         },
         savePermissions() {
-            this.editedRoles = [];
-            for (var i = 0; i < this.editingRoles.length; i++) {
-                if (this.editingRoles[i].value) {
-                    this.editedRoles.push(this.editingRoles[i].name)
-                }
-            }
             this.userRepository.updateUserRoles(this.editedItem.id, { roles: this.editedRoles } )
                 .then(async () => {
                     this.closeDialog();
                     await this.initialize();
                 })
+            
+            this.updateSnackbar.show = true;
+            this.updateSnackbar.color = 'green lighten-4';
+            this.updateSnackbar.message = 'Successfully updated user\'s permissions.';
         },
         closeDialog() {
             this.permissionsDialog = false;
