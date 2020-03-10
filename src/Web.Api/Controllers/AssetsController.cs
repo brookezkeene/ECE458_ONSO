@@ -103,15 +103,13 @@ namespace Web.Api.Controllers
         [HttpPost("decommission")]
         public async Task<IActionResult> Get([FromQuery] DecommissionedAssetQuery query)
         {
-            var assetDto = await _assetService.GetAssetForDecommissioning(query);
+            var assetDto = await _assetService.GetAssetForDecommissioning(query.Id);
             var decommissionedAsset  = assetDto.MapTo<CreateDecommissionedAsset>();
-            //TODO: hostname stuff may need to be figured out here
 
             //adding time stamp, decommissioner name, and network graph to the asset
             decommissionedAsset.TimeStamp = query.TimeStamp;
             decommissionedAsset.Decommissioner = query.Decommissioner;
             decommissionedAsset.NetworkPortGraph = query.NetworkPortGraph;
-
 
             //deleting asset from active asset column
             var asset = await _assetService.GetAssetAsync(query.Id);

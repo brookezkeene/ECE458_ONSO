@@ -78,9 +78,9 @@ namespace Web.Api.Core.Services
             await _auditEventLogger.LogEventAsync(new AssetUpdatedEvent(asset));
             return updated;
         }
-        public async Task<AssetDto> GetAssetForDecommissioning(DecommissionedAssetQuery query)
+        public async Task<AssetDto> GetAssetForDecommissioning(Guid assetId)
         {
-            var decommissionedAsset = await _repository.GetAssetForDecommissioning(query.Id);
+            var decommissionedAsset = await _repository.GetAssetForDecommissioning(assetId);
             return decommissionedAsset.ToDto();
 
         }

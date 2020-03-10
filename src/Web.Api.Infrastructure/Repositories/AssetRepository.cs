@@ -144,8 +144,6 @@ namespace Web.Api.Infrastructure.Repositories
                     .ThenInclude(x => x.Datacenter)
                 .Include(x => x.NetworkPorts)
                     .ThenInclude(x => x.ModelNetworkPort)
-                //including the connected network port's asset; it will create a cyclic dependency if 
-                //the connected port is on the same asset as the original network port
                 .Include(x => x.NetworkPorts)
                     .ThenInclude(x => x.ConnectedPort)
                         .ThenInclude(x => x.Asset)

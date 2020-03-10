@@ -59,7 +59,6 @@ namespace Web.Api.Core.UnitTests
             var model = GenerateModel(id);
 
             var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(model);
-            var json = new JavaScriptSerializer().Serialize(model);
 
             await context.Models.AddAsync(model);
             var numAdded = await context.SaveChangesAsync();
