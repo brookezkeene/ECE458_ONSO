@@ -78,8 +78,6 @@ namespace Web.Api.Infrastructure.Repositories
                 .Include(x => x.Asset).ThenInclude(x => x.Rack).ThenInclude(x => x.Datacenter)
                 .Include(x => x.ConnectedPort).ThenInclude(x => x.ModelNetworkPort)
                 .Include(x => x.ConnectedPort).ThenInclude(x => x.Asset)
-                //.Where(x => x.Asset.Rack.Column >= colStart)
-                //.Where(x => x.Asset.Rack.Column <= colEnd)
                 .WhereIf(!string.IsNullOrEmpty(search), modelCondition)
                 .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
                 .AsNoTracking()
@@ -89,7 +87,8 @@ namespace Web.Api.Infrastructure.Repositories
             return ports;
         }
 
-        public async Task<Asset> GetAssetAsync(Guid assetId)
+
+            public async Task<Asset> GetAssetAsync(Guid assetId)
         {
             return await _dbContext.Assets
                 .Include(x => x.Model)
@@ -134,6 +133,33 @@ namespace Web.Api.Infrastructure.Repositories
                 .Where(x => x.Hostname == hostname)
                 .WhereIf(id != default, x => x.Id != id)
                 .AnyAsync();
+        }
+
+        public async Task<Asset> GetAssetForDecommissioning(Guid assetId)
+        {
+            return await _dbContext.Assets
+                .Include(x => x.Model)
+                .Include(x => x.Owner)
+                .Include(x => x.Rack)
+                    .ThenInclude(x => x.Datacenter)
+                .Include(x => x.NetworkPorts)
+                    .ThenInclude(x => x.ModelNetworkPort)
+                //including the connected network port's asset; it will create a cyclic dependency if 
+                //the connected port is on the same asset as the original network port
+                .Include(x => x.NetworkPorts)
+                    .ThenInclude(x => x.ConnectedPort)
+                        .ThenInclude(x => x.Asset)
+                 .Include(x => x.NetworkPorts)
+                    .ThenInclude(x => x.ConnectedPort)
+                        .ThenInclude(x => x.ModelNetworkPort)
+                .Include(x => x.PowerPorts)
+                    .ThenInclude(x => x.PduPort)
+                        .ThenInclude(x => x.Pdu)
+                            .ThenInclude(x => x.Rack)
+                                .ThenInclude(x => x.Datacenter)
+                .Where(x => x.Id == assetId)
+                .AsNoTracking()
+                .SingleOrDefaultAsync();
         }
     }
 }

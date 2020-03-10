@@ -12,13 +12,20 @@ namespace Web.Api.Dtos.Assets.Create
         public string Comment { get; set; }
         public int RackPosition { get; set; }
         public string OwnerName { get; set; }
-        public string DecommissionedOwnerName { get; set; }
+        public string Decommissioner { get; set; }
         public string TimeStamp { get; set; }
         public string Datacenter { get; set; }
         public int? AssetNumber { get; set; }
-        public string RackNumber { get; set; }
+        public CreateDecommissionedRack Rack {get; set;}
         public CreateDecommissionedModel Model { get; set; }
         public List<CreateDecommissionedNetworkPort> NetworkPorts { get; set; }
+        public List<CreateDecommissionedPowerPort> PowerPorts { get; set; }
+        public string NetworkPortGraph { get; set; }
+    }
+    public class CreateDecommissionedRack
+    {
+        public int RackLetter { get; set; }
+    public string RackNumber { get; set; }
     }
     public class CreateDecommissionedModel
     {
@@ -33,6 +40,10 @@ namespace Web.Api.Dtos.Assets.Create
         public int Number { get; set; }
         public string Name { get; set; }
         public CreateDecommissionedNetworkPort ConnectedPort { get; set; }
+    }
+    public class CreateDecommissionedPowerPort
+    {
+
     }
 
 }
