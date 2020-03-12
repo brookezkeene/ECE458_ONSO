@@ -38,7 +38,8 @@
     export default {
         name: 'app-bar',
         created() {
-          this.$store.dispatch('loadUsername');
+            this.$store.dispatch('loadUsername');
+            this.$store.dispatch('loadPermissions');
         },
         computed: {
             username() {

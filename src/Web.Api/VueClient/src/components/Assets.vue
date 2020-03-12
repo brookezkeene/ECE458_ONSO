@@ -37,7 +37,7 @@
 
                     <v-spacer></v-spacer>
 
-                    <v-btn v-if="admin" color="primary" dark class="mb-2" @click="addItem">Add asset</v-btn>
+                    <v-btn v-if="permission" color="primary" dark class="mb-2" @click="addItem">Add asset</v-btn>
 
                     <v-dialog v-model="instructionsDialog" max-width="550px">
                         <v-card>
@@ -90,7 +90,7 @@
 
             </template>
 
-            <template v-if="admin" v-slot:item.action="{ item }">
+            <template v-if="permission" v-slot:item.action="{ item }">
                 <v-row>
                     <v-icon medium
                             class="mr-2"
@@ -144,8 +144,6 @@
 </template>
 
 <script>
-    import Auth from "../auth"
-
   export default {
     components: {
     },
@@ -201,11 +199,11 @@
         powering: false,
       }},
     computed: {
-        admin() {
-            return Auth.isAdmin()
+        permission() {
+            return this.$store.getters.hasAssetPermission || this.$store.getters.isAdmin
         },
         filteredHeaders() {
-            return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions" && h.text !== "Power")
+            return (this.permission) ? this.headers : this.headers.filter(h => h.text !== "Actions" && h.text !== "Power")
         },
     },
     watch: {

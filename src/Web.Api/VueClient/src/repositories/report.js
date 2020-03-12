@@ -25,10 +25,8 @@ export default {
         var owners = {};
 
         racks.forEach(rack => {
-            console.log(rack);
             numRacks++;
             rack.assets.forEach(asset => {
-                console.log(asset);
                 // calculate free vs. used space
                 usedSpace += asset.height;
                 // calculate allocated per vendor
