@@ -97,6 +97,9 @@
                             @click="editItem(item)">mdi-pencil</v-icon>
                     <v-icon medium
                             class="mr-2"
+                            @click="decommissionItem(item)">mdi-archive-arrow-down</v-icon>
+                    <v-icon medium
+                            class="mr-2"
                             @click="deleteItem(item)">mdi-delete</v-icon>
                 </v-row>
             </template>
@@ -108,7 +111,7 @@
                                   tile>
                         <v-btn color ="green lighten-1" 
                                @click="turnOn(item)"
-                               small
+                               x-small
                                width="30%"
                                min-width="30px"
                                depressed>
@@ -117,14 +120,14 @@
                         <v-btn color ="red lighten-1" 
                                @click="turnOff(item)"
                                min-width="30px"
-                               small
+                               x-small
                                width="30%"
                                depressed>
                             OFF
                         </v-btn>
                         <v-btn color = "grey lighten-2"
-                               small
-                               min-width="60px"
+                               x-small
+                               min-width="40px"
                                width="30%"
                                @click="cycle(item)"
                                depressed>
@@ -194,9 +197,7 @@
             ownerId: '',
             comment: '',
         },
-        deleting: false,
         editing: false,
-        powering: false,
       }},
     computed: {
         permission() {
@@ -233,9 +234,18 @@
 
         },
         deleteItem (item) {
-        this.deleting = true;
-        confirm('Are you sure you want to delete this item?') && this.assetRepository.delete(item)
+        this.editing = true;
+        confirm('Are you sure you want to delete this asset?') && this.assetRepository.delete(item)
                     .then(async () => {
+                        await this.initialize();
+                    })
+        },
+        decommissionItem (item) {
+        this.editing = true;
+        confirm('Are you sure you want to decommission this asset?')// && this.assetRepository.decommission(item)
+                    .then(async () => {
+                        /*eslint-disable*/
+                        console.log(item);
                         await this.initialize();
                     })
         },
@@ -252,7 +262,7 @@
         },
         turnOn(item) {
             /*eslint-disable*/
-            this.powering = true;
+            this.editing = true;
             var powerState = {
                 // 0 is on
                 action: 0,
@@ -264,7 +274,7 @@
                 })
         },
         turnOff(item) {
-            this.powering = true;
+            this.editing = true;
             var powerState = {
                 // 1 is off
                 action: 1,
@@ -276,7 +286,7 @@
                 })
         },
         cycle(item) {
-            this.powering = true;
+            this.editing = true;
             var ret = {
                 // 2 is cycle
                 action: 2,
@@ -294,14 +304,12 @@
             this.instructionsDialog = false;
         },
         showDetails(item) {
-            if (!this.editing && !this.deleting && !this.powering) {
+            if (!this.editing) {
             /*eslint-disable*/
                 console.log(item);
                 this.$router.push({ name: 'asset-details', params: {id: item.id } })
             }
-            this.deleting = false;
-            this.powering = false;
-            this.powering = false;
+            this.editing = false;
       },
 
       /**
