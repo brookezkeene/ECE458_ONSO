@@ -29,6 +29,18 @@ export default new Vuex.Store({
     getters: {
         hasModelPermission: state => {
             return state.myPermissions.includes("model")
+        },
+        hasAssetPermission: state => {
+            return state.myPermissions.includes("asset")
+        },
+        hasPowerPermission: state => {
+            return state.myPermissions.includes("power")
+        },
+        hasAuditPermission: state => {
+            return state.myPermissions.includes("audit")
+        },
+        isAdmin: state => {
+            return state.myPermissions.includes("admin")
         }
     },
 

@@ -154,8 +154,6 @@
 
 
 <script>
-    import Auth from "../auth"
-
     export default {
         components: {
         },
@@ -229,14 +227,14 @@
             }
         },
         computed: {
+            permission() {
+                return this.$store.getters.hasModelPermission || this.$store.getters.isAdmin
+            },
             formTitle() {
                 return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
             },
             filteredHeaders() {
                 return (this.permission) ? this.headers : this.headers.filter(h => h.text !== "Actions")
-            },
-            permission() {
-                return this.$store.getters.hasModelPermission || Auth.isAdmin()
             },
         },
         watch: {

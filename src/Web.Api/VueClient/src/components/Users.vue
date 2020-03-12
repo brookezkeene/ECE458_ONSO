@@ -205,7 +205,7 @@ import Auth from "../auth"
     },
     computed: {
         admin() {
-            return Auth.isAdmin()
+            return this.$store.getters.isAdmin
         },
         filteredHeaders() {
             return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
@@ -229,7 +229,7 @@ import Auth from "../auth"
             this.loading = false;
         },
         showActionsForUser(item) {
-            return !['admin', Auth.username()].includes(item.username);
+            return !['admin', Auth.username()].includes(item.username) && this.isAdmin;
         },
         openCreateUser() {
             this.$router.push({ name: 'users-create' });
