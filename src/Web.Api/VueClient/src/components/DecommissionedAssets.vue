@@ -7,7 +7,7 @@
                 <v-data-table :headers="filteredHeaders"
                               :items="assets"
                               :search="search"
-                              class="pa-10"
+                              class="elevation-1"
                               multi-sort
                               @click:row="showDetails">
 
@@ -84,16 +84,6 @@
                             </v-col>
                             <v-spacer></v-spacer>
                         </v-row>
-
-
-                    </template>
-
-                    <template v-if="admin" v-slot:item.action="{ item }">
-                        <v-row>
-                            <v-icon medium
-                                    class="mr-2"
-                                    @click="deleteItem(item)">mdi-delete</v-icon>
-                        </v-row>
                     </template>
 
                     <template v-slot:no-data>
@@ -106,119 +96,131 @@
 </template>
 
 <script>
-    import Auth from "../auth"
-
-  export default {
-    components: {
-    },
-    inject: ['assetRepository','modelRepository','userRepository', 'datacenterRepository'],
-    data() {
-        return {
-          selectedDatacenter: 'All Datacenters',
-        // Filter values.
-        startRackValue: '',
-        endRackValue: '',
-        datacenters: [],
-        instructionsDialog: false,
-        loading: true,
-        search: '',
-
-        // Table data.
-        headers: [
-          { text: 'Model Vendor', value: 'vendor' },
-          { text: 'Model Number', value: 'modelNumber', },
-          { text: 'Hostname', value: 'hostname' },
-          { text: 'Datacenter', value: 'datacenter'},
-          { text: 'Rack', value: 'rack', filter: this.rackFilter },
-          { text: 'Rack U', value: 'rackPosition', },
-          { text: 'Owner Username', value: 'owner' },
-          // todo: get correct data for these
-          { text: 'Decommissioned By', value: 'decommissioner'},
-          { text: 'Time Stamp', value: 'timestamp'},
-          //
-          { text: 'Actions', value: 'action', sortable: false },
-        ],
-        assets: [],
-        models: [],
-          defaultItem: {
-            id: '',
-            datacenter: '',
-            modelId: '',
-            hostname: '',
-            rackId: '',
-            rackPosition: '',
-            ownerId: '',
-            comment: '',
-            poweredOn: false,
+    export default {
+        components: {
         },
-        deleting: false,
-      }},
-    computed: {
-        admin() {
-            return Auth.isAdmin()
+        inject: ['assetRepository', 'modelRepository', 'userRepository', 'datacenterRepository'],
+        data() {
+            return {
+                selectedDatacenter: 'All Datacenters',
+                // Filter values.
+                startRackValue: '',
+                endRackValue: '',
+                datacenters: [],
+                instructionsDialog: false,
+                loading: true,
+                search: '',
+
+                // Table data.
+                headers: [
+                    { text: 'Model Vendor', value: 'vendor' },
+                    { text: 'Model Number', value: 'modelNumber', },
+                    { text: 'Hostname', value: 'hostname' },
+                    { text: 'Datacenter', value: 'datacenter' },
+                    { text: 'Rack', value: 'rack', filter: this.rackFilter },
+                    { text: 'Rack U', value: 'rackPosition', },
+                    { text: 'Owner Username', value: 'owner' },
+                ],
+                assets: [],
+                models: [],
+                defaultItem: {
+                    id: '',
+                    datacenter: '',
+                    modelId: '',
+                    hostname: '',
+                    rackId: '',
+                    rackPosition: '',
+                    ownerId: '',
+                    comment: '',
+                    poweredOn: false,
+                },
+                detailItem: {
+                    id: '',
+                    datacenter: '',
+                    modelId: '',
+                    hostname: '',
+                    rackId: '',
+                    rackPosition: '',
+                    ownerId: '',
+                    comment: '',
+                },
+                editing: false,
+            }
         },
-        filteredHeaders() {
-            return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
+        computed: {
+            permission() {
+                return this.$store.getters.hasAssetPermission || this.$store.getters.isAdmin
+            },
+            filteredHeaders() {
+                return (this.permission) ? this.headers : this.headers.filter(h => h)
+            },
         },
-    },
+        watch: {
+            instructionsDialog(val) {
+                val || this.closeDetail()
+            },
+        },
 
-    async created() {
-      this.initialize()
-    },
+        async created() {
+            this.initialize()
+        },
 
-    methods: {
-        async initialize() {
-            this.assets = await this.assetRepository.list();
-            this.models = await this.modelRepository.list();
-            this.users = await this.userRepository.list();
+        methods: {
+            async initialize() {
+                this.assets = await this.assetRepository.list();
+                this.models = await this.modelRepository.list();
+                this.users = await this.userRepository.list();
 
-            this.datacenters = await this.datacenterRepository.list();
+                this.datacenters = await this.datacenterRepository.list();
                 var datacenter = {
                     description: "All Datacenters",
                     name: "All",
                 }
-            this.datacenters.push(datacenter);
+                this.datacenters.push(datacenter);
 
-            this.loading = false;
+                this.loading = false;
 
-        },
-        deleteItem (item) {
-        this.deleting = true;
-        confirm('Are you sure you want to delete this item?') && this.assetRepository.delete(item)
-                    .then(async () => {
-                        await this.initialize();
-                    })
-        },
-        async datacenterSearch() {
+            },
+            async datacenterSearch() {
                 var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
                 this.assets = await this.assetRepository.list(searchDatacenter.id);
-        },
-        showInstructions() {
-            this.instructionsDialog = true;
-        },
+            },
+            showInstructions() {
+                this.instructionsDialog = true;
+            },
+            closeDetail() {
+                this.instructionsDialog = false;
+            },
+            showDetails(item) {
+                if (!this.editing) {
+                    /*eslint-disable*/
+                    console.log(item);
+                    this.$router.push({ name: 'asset-details', params: { id: item.id } })
+                }
+                this.editing = false;
+            },
 
-      /**
-       * Filter for calories column.
-       * @param value Value to be tested; in this case the rack value.
-       * @returns {boolean} based on the start and end rack value inputs
-       */
-      rackFilter(value) {
-        // If this filter has no value we just skip the entire filter.
-        if (!this.startRackValue && !this.endRackValue) {
-          return true;
-        // If only one filter has a value, leans entirely on that one filter
-        } else if (!this.endRackValue) {
-          return value.toLowerCase() >= this.startRackValue.toLowerCase();
-        } else if (!this.startRackValue) {
-          return value.toLowerCase() <= this.endRackValue.toLowerCase();
-        }
-        // Check if the current loop value (The rack value)
-        // is between the rack values inputted
-        return value.toLowerCase() >= this.startRackValue.toLowerCase()
-                && value.toLowerCase() <= this.endRackValue.toLowerCase();
-      },
+            /**
+             * Filter for calories column.
+             * @param value Value to be tested; in this case the rack value.
+             * @returns {boolean} based on the start and end rack value inputs
+             */
+            rackFilter(value) {
+                // If this filter has no value we just skip the entire filter.
+                if (!this.startRackValue && !this.endRackValue) {
+                    return true;
+                    // If only one filter has a value, leans entirely on that one filter
+                } else if (!this.endRackValue) {
+                    return value.toLowerCase() >= this.startRackValue.toLowerCase();
+                } else if (!this.startRackValue) {
+                    return value.toLowerCase() <= this.endRackValue.toLowerCase();
+                }
+                // Check if the current loop value (The rack value)
+                // is between the rack values inputted
+                return value.toLowerCase() >= this.startRackValue.toLowerCase()
+                    && value.toLowerCase() <= this.endRackValue.toLowerCase();
+            },
 
-    },
-  }
+        },
+    }
 </script>
-
