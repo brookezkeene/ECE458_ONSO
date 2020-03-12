@@ -1,4 +1,7 @@
-﻿import Vue from 'vue'
+﻿/* eslint-disable no-unused-vars, no-console */
+
+
+import Vue from 'vue'
 import Vuex from 'vuex'
 import auth from "../auth"
 
@@ -17,13 +20,28 @@ export default new Vuex.Store({
         dialogType: null,       // specify dialog type
         updateData: false,      // for updating tables
         username: '',
+        myPermissions: [],      // for tracking user permissions
     },
 
     /*Defines Computed Properties for our Store
      Documentation: https://vuex.vuejs.org/guide/getters.html
      */
     getters: {
-
+        hasModelPermission: state => {
+            return state.myPermissions.includes("model")
+        },
+        hasAssetPermission: state => {
+            return state.myPermissions.includes("asset")
+        },
+        hasPowerPermission: state => {
+            return state.myPermissions.includes("power")
+        },
+        hasAuditPermission: state => {
+            return state.myPermissions.includes("audit")
+        },
+        isAdmin: state => {
+            return state.myPermissions.includes("admin")
+        }
     },
 
     /*Defines functions that Change the App State
@@ -46,8 +64,11 @@ export default new Vuex.Store({
         },
         SAVE_USER(state, username) {
             state.username = username;
-        /*eslint-disable*/
             console.log(username);
+        },
+        SAVE_ROLES(state, roles) {
+            state.myPermissions = roles;
+            console.log(roles);
         }
     },
 
@@ -58,6 +79,13 @@ export default new Vuex.Store({
     actions: {
         loadUsername({ commit }) {
             commit('SAVE_USER', auth.username());
-        }
+        },
+        loadPermissions({ commit }) {
+            Vue.axios.get(`/users/${auth.id()}/roles`).then(response => {
+                commit('SAVE_ROLES', response.data);
+            }).catch(error => {
+                throw new Error(`API ${error}`);
+            });
+        },
     },
 })

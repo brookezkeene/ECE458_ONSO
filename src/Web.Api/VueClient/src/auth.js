@@ -43,6 +43,14 @@ export default {
             return typeof role !== 'undefined';
         }
     },
+    id() {
+        let cookie = Cookies.get(loginCookie);
+        if (typeof cookie != 'undefined') {
+            cookie = JSON.parse(cookie);
+            var id = cookie.find(o => o.type === claimsType.NameIdentifier);
+            return id.value;
+        }
+    },
     username() {
         let cookie = Cookies.get(loginCookie);
         if (typeof cookie !== 'undefined') {
