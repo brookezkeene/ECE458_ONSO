@@ -113,6 +113,8 @@
 
                 // Table data.
                 headers: [
+                    { text: 'Time Decommissioned', value: 'timestamp' },
+                    { text: 'Decomissioned By User', value: 'decommissionUser'},
                     { text: 'Model Vendor', value: 'vendor' },
                     { text: 'Model Number', value: 'modelNumber', },
                     { text: 'Hostname', value: 'hostname' },
