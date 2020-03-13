@@ -17,6 +17,7 @@ import App from '@/App'
 import UsersCreate from '@/components/UserForm'
 import Log from '@/components/Log'
 import auth from '@/auth'
+import DecommissionedAssets from '@/components/DecommissionedAssets'
 
 Vue.use(Router)
 
@@ -65,6 +66,11 @@ const routes = [
                 path: '/assets',
                 name: 'assets',
                 component: assets,
+            },
+            {
+                path: '/decommissioned-assets',
+                name: 'decommissioned-assets',
+                component: DecommissionedAssets,
             },
             {
                 path: '/assets/:id',

@@ -7,7 +7,7 @@
         <v-data-table :headers="filteredHeaders"
                       :items="assets"
                       :search="search"
-                      class="pa-10"
+                      class="elevation-1"
                       multi-sort
                       @click:row="showDetails">
 
@@ -92,15 +92,47 @@
 
             <template v-if="permission" v-slot:item.action="{ item }">
                 <v-row>
-                    <v-icon medium
-                            class="mr-2"
-                            @click="editItem(item)">mdi-pencil</v-icon>
-                    <v-icon medium
-                            class="mr-2"
-                            @click="decommissionItem(item)">mdi-archive-arrow-down</v-icon>
-                    <v-icon medium
-                            class="mr-2"
-                            @click="deleteItem(item)">mdi-delete</v-icon>
+                    <v-tooltip top>
+                        <template v-slot:activator="{ on }">
+                            <v-btn icon v-on="on"
+                                   @click="editItem(item)">
+                                <v-icon medium
+                                        class="mr-2">
+                                    mdi-pencil
+                                </v-icon>
+                            </v-btn>
+                        </template>
+
+                        <span>Edit Asset</span>
+                    </v-tooltip>
+
+                    <v-tooltip top>
+                        <template v-slot:activator="{ on }">
+                            <v-btn icon v-on="on"
+                                   @click="decommissionItem(item)">
+                                <v-icon medium
+                                        class="mr-2">
+                                    mdi-archive-arrow-down
+                                </v-icon>
+                            </v-btn>
+                        </template>
+
+                        <span>Decommission Asset</span>
+                    </v-tooltip>
+
+                    <v-tooltip top>
+                        <template v-slot:activator="{ on }">
+                            <v-btn icon v-on="on"
+                                   @click="deleteItem(item)">
+                                <v-icon medium
+                                        class="mr-2">
+                                    mdi-delete
+                                </v-icon>
+                            </v-btn>
+                        </template>
+
+                        <span>Delete Asset</span>
+                    </v-tooltip>
                 </v-row>
             </template>
 
