@@ -17,5 +17,7 @@ namespace Web.Api.Core.Services.Interfaces
         Task DeleteAssetAsync(AssetDto asset);
         Task<int> UpdateAssetAsync(AssetDto asset);
         Task<AssetDto> GetAssetForDecommissioning(Guid assetId);
+        Task<Guid> CreateDecommissionedAssetAsync(DecommissionedAssetDto asset);
+        Task<DecommissionedAssetDto> GetDecommissionedAssetAsync(Guid assetId);
     }
 }

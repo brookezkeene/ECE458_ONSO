@@ -54,6 +54,7 @@ namespace Web.Api.Controllers
             return Ok(response);
         }
 
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateAssetApiDto assetApiDto)
         {
@@ -101,7 +102,7 @@ namespace Web.Api.Controllers
         }
 
         [HttpPost("decommission")]
-        public async Task<IActionResult> Get([FromQuery] DecommissionedAssetQuery query)
+        public async Task<IActionResult> Post([FromQuery] DecommissionedAssetQuery query)
         {
             var assetDto = await _assetService.GetAssetForDecommissioning(query.Id);
             var decommissionedAsset  = assetDto.MapTo<CreateDecommissionedAsset>();
@@ -115,8 +116,23 @@ namespace Web.Api.Controllers
             var asset = await _assetService.GetAssetAsync(query.Id);
             await _assetService.DeleteAssetAsync(asset);
 
+            //creating a new decommissionedAssetDto and adding it into the database
+            var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(decommissionedAsset);
+            var decommisioned = new DecommissionedAssetDto { Id = decommissionedAsset.Id, OtherColumn = jsonString };
+
+            await _assetService.CreateDecommissionedAssetAsync(decommisioned);
             return Ok();
         }
-
+        [HttpGet("{id}/decommission")]
+        public async Task<ActionResult<DecommissionedAssetDto>> GetDecommissioned(Guid id)
+        {
+            var asset = await _assetService.GetDecommissionedAssetAsync(id);
+            return Ok(asset);
+        }
+        /*[HttpGet]
+        public async Task<ActionResult<PagedList<DecommissionedAssetDto>>> GetManyDecommissioned(Guid? datacenterId, int page = 1, int pageSize = 10)
+        {
+            
+        }*/
     }
 }

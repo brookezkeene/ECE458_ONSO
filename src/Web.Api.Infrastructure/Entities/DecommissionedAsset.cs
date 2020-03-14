@@ -10,6 +10,6 @@ namespace Web.Api.Infrastructure.Entities
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
-        public string Decommisioned { get; set; }
+        public string OtherColumn { get; set; }
     }
 }

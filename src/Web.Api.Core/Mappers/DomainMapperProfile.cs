@@ -35,7 +35,8 @@ namespace Web.Api.Core.Mappers
 
             CreateMap<Datacenter, DatacenterDto>()
                 .ReverseMap();
-
+            CreateMap<DecommissionedAsset, DecommissionedAssetDto>()
+                .ReverseMap();
             CreateMap<Rack, RackDto>()
                 .ForMember(o => o.RowLetter, opts => opts.MapFrom(src => src.Row))
                 .ForMember(o => o.RackNumber, opts => opts.MapFrom(src => src.Column))

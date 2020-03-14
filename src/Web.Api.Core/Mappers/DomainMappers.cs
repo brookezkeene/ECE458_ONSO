@@ -135,5 +135,13 @@ namespace Web.Api.Core.Mappers
         {
             return datacenterDto == null ? null : Mapper.Map<Datacenter>(datacenterDto);
         }
+        public static DecommissionedAsset ToEntity(this DecommissionedAssetDto decommissionedAssetDto)
+        {
+            return decommissionedAssetDto == null ? null : Mapper.Map<DecommissionedAsset>(decommissionedAssetDto);
+        }
+        public static DecommissionedAssetDto ToDto(this DecommissionedAsset decommissionedAsset)
+        {
+            return decommissionedAsset == null ? null : Mapper.Map<DecommissionedAssetDto>(decommissionedAsset);
+        }
     }
 }

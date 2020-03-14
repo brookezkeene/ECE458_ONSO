@@ -84,5 +84,19 @@ namespace Web.Api.Core.Services
             return decommissionedAsset.ToDto();
 
         }
+        public async Task<Guid> CreateDecommissionedAssetAsync(DecommissionedAssetDto asset)
+        {
+            var entity = asset.ToEntity();
+            await _repository.AddDecomissionedAssetAsync(entity);
+
+            //await _auditEventLogger.LogEventAsync(new AssetCreatedEvent(asset));
+
+            return entity.Id;
+        }
+        public async Task<DecommissionedAssetDto> GetDecommissionedAssetAsync(Guid assetId)
+        {
+            var asset = await _repository.GetDecommissionedAssetAsync(assetId);
+            return asset.ToDto();
+        }
     }
 }

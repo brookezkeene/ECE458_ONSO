@@ -159,5 +159,18 @@ namespace Web.Api.Infrastructure.Repositories
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
         }
+
+        public async Task<int> AddDecomissionedAssetAsync(DecommissionedAsset asset)
+        {
+            _dbContext.DecommissionedAssets.Add(asset);
+            return await _dbContext.SaveChangesAsync();
+        }
+        public async Task<DecommissionedAsset> GetDecommissionedAssetAsync(Guid assetId)
+        {
+            return await _dbContext.DecommissionedAssets
+                .Where(x => x.Id == assetId)
+                .AsNoTracking()
+                .SingleOrDefaultAsync();
+        }
     }
 }
