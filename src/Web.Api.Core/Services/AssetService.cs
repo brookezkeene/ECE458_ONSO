@@ -84,6 +84,12 @@ namespace Web.Api.Core.Services
             return decommissionedAsset.ToDto();
 
         }
+        public async Task<PagedList<DecommissionedAssetDto>> GetDecommissionedAssetsAsync(Guid? datacenterId, int page = 1, int pageSize = 10)
+        {
+            var pagedList = await _repository.GetDecommissionedAssetsAsync(datacenterId, page, pageSize);
+            return pagedList.ToDto();
+        }
+
         public async Task<Guid> CreateDecommissionedAssetAsync(DecommissionedAssetDto asset)
         {
             var entity = asset.ToEntity();

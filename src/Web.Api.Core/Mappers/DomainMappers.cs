@@ -143,5 +143,9 @@ namespace Web.Api.Core.Mappers
         {
             return decommissionedAsset == null ? null : Mapper.Map<DecommissionedAssetDto>(decommissionedAsset);
         }
+        public static PagedList<DecommissionedAssetDto> ToDto(this PagedList<DecommissionedAsset> assets)
+        {
+            return assets == null ? null : Mapper.Map<PagedList<DecommissionedAssetDto>>(assets);
+        }
     }
 }

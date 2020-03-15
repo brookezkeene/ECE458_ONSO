@@ -159,7 +159,23 @@ namespace Web.Api.Infrastructure.Repositories
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
         }
+        public async Task<PagedList<DecommissionedAsset>> GetDecommissionedAssetsAsync(Guid? datacenterId, int page = 1, int pageSize = 10)
+        {
+            var pagedList = new PagedList<DecommissionedAsset>();
 
+            var assets = await _dbContext.DecommissionedAssets
+                .PageBy(x => x.Id, page, pageSize)
+                .AsNoTracking()
+                .ToListAsync();
+
+            pagedList.AddRange(assets);
+            pagedList.TotalCount = await _dbContext.Assets
+                .CountAsync();
+            pagedList.PageSize = pageSize;
+            pagedList.CurrentPage = page;
+
+            return pagedList;
+        }
         public async Task<int> AddDecomissionedAssetAsync(DecommissionedAsset asset)
         {
             _dbContext.DecommissionedAssets.Add(asset);

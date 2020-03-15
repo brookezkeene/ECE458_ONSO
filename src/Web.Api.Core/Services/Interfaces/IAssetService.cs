@@ -19,5 +19,6 @@ namespace Web.Api.Core.Services.Interfaces
         Task<AssetDto> GetAssetForDecommissioning(Guid assetId);
         Task<Guid> CreateDecommissionedAssetAsync(DecommissionedAssetDto asset);
         Task<DecommissionedAssetDto> GetDecommissionedAssetAsync(Guid assetId);
+        Task<PagedList<DecommissionedAssetDto>> GetDecommissionedAssetsAsync(Guid? datacenterId, int page = 1, int pageSize = 10);
     }
 }
