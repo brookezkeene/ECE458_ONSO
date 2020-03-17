@@ -24,7 +24,7 @@
                                         <v-text-field prepend-inner-icon="mdi-magnify"
                                                         :search-input.sync="search"
                                                       v-model="search"
-                                                      v-on:change="getModels"
+                                                      @input="getModels()"
                                                         cache-items
                                                         flat
                                                         hide-no-data
@@ -32,7 +32,7 @@
                                                         label="Search"
                                                         single-line
                                                         solo-inverted>
-
+                                            
                                         </v-text-field>
                                     </v-col>
                                 </v-row>
