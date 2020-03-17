@@ -20,15 +20,20 @@
                                         <v-label>Filter by ...</v-label>
                                     </v-col>
                                     <v-col cols="6">
-                                        <v-autocomplete prepend-inner-icon="mdi-magnify"
+
+                                        <v-text-field prepend-inner-icon="mdi-magnify"
                                                         :search-input.sync="search"
+                                                      v-model="search"
+                                                      v-on:change="getModels"
                                                         cache-items
                                                         flat
                                                         hide-no-data
                                                         hide-details
                                                         label="Search"
                                                         single-line
-                                                        solo-inverted></v-autocomplete>
+                                                        solo-inverted>
+
+                                        </v-text-field>
                                     </v-col>
                                 </v-row>
                                 
@@ -266,7 +271,13 @@
             getDataFromApi() {
                 this.loading = true;
                 const { page, itemsPerPage } = this.options;
-                return this.modelRepository.list(page, itemsPerPage, this.search);
+                return this.modelRepository.tablelist(page, itemsPerPage, this.search);
+            },
+            async getModels() {
+                this.loading = true;
+                const { page, itemsPerPage } = this.options;
+                var info = await this.modelRepository.tablelist(page, itemsPerPage, this.search);
+                this.models = info.data;
             },
             async initialize() {
                 this.models = await this.modelRepository.list();
