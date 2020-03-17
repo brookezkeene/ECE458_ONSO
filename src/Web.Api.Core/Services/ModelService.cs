@@ -26,10 +26,14 @@ namespace Web.Api.Core.Services
 
         public async Task<PagedList<ModelDto>> GetModelsAsync(SearchModelQuery query, int page = 1, int pageSize = 10)
         {
+<<<<<<< HEAD
             query.ToUpper();
             var pagedList = await _repository.GetModelsAsync(query.Vendor, query.Number, query.HeightStart, query.HeightEnd, 
                 query.NetworkRangeStart, query.NetworkRangeEnd, query.PowerRangeStart, query.PowerRangeEnd, 
                 query.MemoryRangeStart, query.MemoryRangeEnd, query.SortBy, query.IsDesc, query.Page, query.PageSize);
+=======
+            var pagedList = await _repository.GetModelsAsync(search, page, pageSize);
+>>>>>>> added pagination for models
             pagedList.CurrentPage = page;
             return pagedList.ToDto();
         }

@@ -53,7 +53,7 @@
 
                                     </v-col>
                                 </v-row>
-                                
+
                                 <v-btn v-if="permission" color="primary" dark class="mb-2" @click="addItem">Add Model</v-btn>
 
                             </v-toolbar>
@@ -215,7 +215,7 @@
                 detailsDialog: false,
                 loading: true,
                 search: '',
-                
+
                 headers: [
                     {
                         text: 'Vendor',
@@ -223,10 +223,10 @@
                         value: 'vendor'
                     },
                     { text: 'Model Number', value: 'modelNumber', },
-                    { text: 'Height', value: 'height'},
+                    { text: 'Height', value: 'height' },
                     { text: 'Display Color', value: 'coloricon', sortable: false },
                     { text: 'Network Ports', value: 'ethernetPorts' }, // TODO: change value to networkPorts!
-                    { text: 'Power Ports', value: 'powerPorts'},
+                    { text: 'Power Ports', value: 'powerPorts' },
                     { text: 'CPU', value: 'cpu' },
                     { text: 'Memory', value: 'memory' },
                     { text: 'Storage', value: 'storage' },
@@ -311,14 +311,14 @@
             },
         },
 
-        mounted () {
+        mounted() {
             this.getDataFromApi()
-              .then(data => {
-                            this.models = data.data;
-                            this.totalItems = data.totalCount;
-                            this.loading = false;
-                        })
-          },
+                .then(data => {
+                    this.models = data.data;
+                    this.totalItems = data.totalCount;
+                    this.loading = false;
+                })
+        },
         methods: {
             async getDataFromApi() {
                 this.loading = true;
@@ -338,7 +338,7 @@
             async initialize() {
                 this.models = await this.modelRepository.tablelist(this.searchQuery);
                 this.loading = false;
-            /* eslint-disable no-unused-vars, no-console */
+                /* eslint-disable no-unused-vars, no-console */
                 console.log(this.permission)
             },
             editItem(item) {
@@ -366,7 +366,7 @@
             },
             showDetails(item) {
                 if (this.editedIndex === -1 && !this.deleting && !this.editing) {
-                    this.$router.push({ name: 'model-details', params: {id: item.id } })
+                    this.$router.push({ name: 'model-details', params: { id: item.id } })
                 }
                 this.deleting = false;
             },
@@ -389,13 +389,13 @@
             parseToInt(value) {
                 if (value == '') {
                     return 0;
-                } 
+                }
                 return parseInt(value);
             },
             parseSort(value) {
                 if (value.length !== 0) {
                     return value[0];
-                } 
+                }
                 return '';
             },
 
