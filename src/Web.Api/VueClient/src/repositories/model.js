@@ -9,7 +9,13 @@ export default {
                 return response.data;
             });
     },
-    list(page, pageSize, search) {
+    list() {
+        return axios.get(`${resource}`, { params: { pageSize: 2000000000 } })
+            .then(response => {
+                return response.data.data;
+            });
+    },
+    tablelist(page, pageSize, search) {
         return axios.get(`${resource}`, { params: { search: search, page: page, pageSize: pageSize } })
             .then(response => {
                 return response.data;
