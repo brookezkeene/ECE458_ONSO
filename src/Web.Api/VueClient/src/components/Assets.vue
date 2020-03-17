@@ -319,7 +319,7 @@
         },
         cycle(item) {
             this.editing = true;
-            var ret = {
+            var powerState = {
                 // 2 is cycle
                 action: 2,
             };
