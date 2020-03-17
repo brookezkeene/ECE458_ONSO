@@ -10,7 +10,7 @@ using Web.Api.Infrastructure.DbContexts;
 namespace Web.Api.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200307010034_DecommissionedAsset")]
+    [Migration("20200317210242_DecommissionedAsset")]
     partial class DecommissionedAsset
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -281,7 +281,28 @@ namespace Web.Api.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("OtherColumn")
+                    b.Property<string>("Data")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Datacenter")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Date")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Decommissioner")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Hostname")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ModelName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ModelNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Rack")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

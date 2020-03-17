@@ -118,7 +118,7 @@ namespace Web.Api.Controllers
 
             //creating a new decommissionedAssetDto and adding it into the database
             var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(decommissionedAsset);
-            var decommisioned = new DecommissionedAssetDto { Id = decommissionedAsset.Id, OtherColumn = jsonString };
+            var decommisioned = new DecommissionedAssetDto { Id = decommissionedAsset.Id, Data = jsonString };
 
             await _assetService.CreateDecommissionedAssetAsync(decommisioned);
             return Ok();

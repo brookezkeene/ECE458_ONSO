@@ -12,7 +12,14 @@ namespace Web.Api.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    OtherColumn = table.Column<string>(nullable: true)
+                    Hostname = table.Column<string>(nullable: true),
+                    Datacenter = table.Column<string>(nullable: true),
+                    ModelName = table.Column<string>(nullable: true),
+                    ModelNumber = table.Column<string>(nullable: true),
+                    Decommissioner = table.Column<string>(nullable: true),
+                    Date = table.Column<string>(nullable: true),
+                    Rack = table.Column<string>(nullable: true),
+                    Data = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
