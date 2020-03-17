@@ -27,6 +27,7 @@ namespace Web.Api.Core.Services
         public async Task<PagedList<ModelDto>> GetModelsAsync(string search, int page = 1, int pageSize = 10)
         {
             var pagedList = await _repository.GetModelsAsync(search, page, pageSize);
+            pagedList.CurrentPage = page;
             return pagedList.ToDto();
         }
 

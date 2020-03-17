@@ -7,6 +7,8 @@
                     <v-data-table :headers="filteredHeaders"
                                   :items="models"
                                   :search="search"
+                                  :options.sync="options"
+                                  :server-items-length="totalItems"
                                   class="pa-10"
                                   multi-sort
                                   @click:row="showDetails">
@@ -160,6 +162,8 @@
         inject: ['modelRepository'],
         data() {
             return {
+                options: {},
+                totalItems: 0,
                 updateSnackbar: {
                     show: false,
                     message: '',
@@ -244,12 +248,26 @@
             detailsDialog(val) {
                 val || this.closeDetail()
             },
-        },
-        async created() {
-            this.initialize()
+            options: {
+                handler() {
+                    this.getDataFromApi()
+                        .then(data => {
+                            this.models = data.data;
+                            this.totalItems = data.totalCount;
+                            this.loading = false;
+                        })
+                },
+                deep: true
+            },
         },
 
+
         methods: {
+            getDataFromApi() {
+                this.loading = true;
+                const { page, itemsPerPage } = this.options;
+                return this.modelRepository.list(page, itemsPerPage, this.search);
+            },
             async initialize() {
                 this.models = await this.modelRepository.list();
                 this.loading = false;

@@ -9,10 +9,10 @@ export default {
                 return response.data;
             });
     },
-    list() {
-        return axios.get(`${resource}`, { params: { pageSize: 2000000000 } })
+    list(page, pageSize, search) {
+        return axios.get(`${resource}`, { params: { search: search, page: page, pageSize: pageSize } })
             .then(response => {
-                return response.data.data;
+                return response.data;
             });
     },
     create(item) {
