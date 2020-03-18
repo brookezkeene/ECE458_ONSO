@@ -22,22 +22,31 @@ namespace Web.Api.Infrastructure.Repositories
         }
         
 
-        public async Task<PagedList<Model>> GetModelsAsync(string search, int page = 1, int pageSize = 10)
+        public async Task<PagedList<Model>> GetModelsAsync(string vendor, string number, int heightStart, int heightEnd,
+                int networkRangeStart, int networkRangeEnd, int powerRangeStart, int powerRangeEnd,
+                int memoryRangeStart, int memoryRangeEnd, int page = 1, int pageSize = 10)
         {
             var pagedList = new PagedList<Model>();
             //if 
-            Expression<Func<Model, bool>> searchCondition = x => (x.ModelNumber.Contains(search) || x.Vendor.Contains(search));
+            Expression<Func<Model, bool>> vendorCondition = x => (x.Vendor.Contains(vendor));
+            Expression<Func<Model, bool>> numberCondition = x => (x.ModelNumber.Contains(number));
 
             var models = await _dbContext.Models
-                .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
+                .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
+                .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
                 .Include(x => x.NetworkPorts)
                 .PageBy(x => x.ModelNumber, page, pageSize)
                 .AsNoTracking()
                 .ToListAsync();
+            models = models.Where(x => x.Height >= heightStart && x.Height <= heightEnd && 
+                x.EthernetPorts >= networkRangeStart && x.EthernetPorts <= networkRangeEnd &&
+               x.PowerPorts >= powerRangeStart && x.PowerPorts <= powerRangeEnd &&
+               x.Memory >= memoryRangeStart && x.Memory <= memoryRangeEnd).ToList();
 
             pagedList.AddRange(models);
             pagedList.TotalCount = await _dbContext.Models
-                .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
+                .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
+                .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
                 .CountAsync();
             pagedList.PageSize = pageSize;
             pagedList.CurrentPage = page;

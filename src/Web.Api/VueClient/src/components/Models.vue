@@ -19,21 +19,39 @@
                                     <v-col class="pt-3 mt-4" cols="2">
                                         <v-label>Filter by ...</v-label>
                                     </v-col>
-                                    <v-col cols="6">
+                                    <v-col cols="4">
 
                                         <v-text-field prepend-inner-icon="mdi-magnify"
-                                                        :search-input.sync="search"
-                                                      v-model="search"
+                                                      :search-input.sync="vendorSearch"
+                                                      v-model="vendorSearch"
                                                       @input="getModels()"
-                                                        cache-items
-                                                        flat
-                                                        hide-no-data
-                                                        hide-details
-                                                        label="Search"
-                                                        single-line
-                                                        solo-inverted>
-                                            
+                                                      cache-items
+                                                      flat
+                                                      hide-no-data
+                                                      hide-details
+                                                      label="Search Vendor"
+                                                      single-line
+                                                      solo-inverted>
+
                                         </v-text-field>
+
+                                    </v-col>
+                                    <v-col cols="4">
+
+                                        <v-text-field prepend-inner-icon="mdi-magnify"
+                                                      :search-input.sync="numberSearch"
+                                                      v-model="numberSearch"
+                                                      @input="getModels()"
+                                                      cache-items
+                                                      flat
+                                                      hide-no-data
+                                                      hide-details
+                                                      label="Search Number"
+                                                      single-line
+                                                      solo-inverted>
+
+                                        </v-text-field>
+
                                     </v-col>
                                 </v-row>
                                 
@@ -183,11 +201,14 @@
                 endNetworkValue: '',
                 startPowerValue: '',
                 endPowerValue: '',
+                vendorSearch: '',
+                numberSearch: '',
 
                 dialog: false,
                 detailsDialog: false,
                 loading: true,
                 search: '',
+                
                 headers: [
                     {
                         text: 'Vendor',
@@ -233,6 +254,18 @@
                 },
                 deleting: false,
                 editing: false,
+                query: {
+                    vendor: '',
+                    number: '',
+                    heightStart: 0,
+                    heightEnd: 0,
+                    networkRangeStart: 0,
+                    networkRangeEnd: 0,
+                    powerRangeStart: 0,
+                    powerRangeEnd: 0,
+                    memoryRangeStart: 0,
+                    memoryRangeEnd: 0,
+                },
             }
         },
         computed: {
@@ -276,7 +309,11 @@
             async getModels() {
                 this.loading = true;
                 const { page, itemsPerPage } = this.options;
-                var info = await this.modelRepository.tablelist(page, itemsPerPage, this.search);
+                //fill the query with all the values in the filters
+                this.fillQuery();
+                /* eslint-disable no-unused-vars, no-console */
+                console.log(this.query)
+                var info = await this.modelRepository.tablelist(page, itemsPerPage, this.vendorSearch);
                 this.models = info.data;
             },
             async initialize() {
@@ -313,6 +350,18 @@
                     this.$router.push({ name: 'model-details', params: {id: item.id } })
                 }
                 this.deleting = false;
+            },
+            fillQuery() {
+                this.query.vendor = this.vendorSearch;
+                this.query.number = this.numberSearch;
+                this.query.heightStart = 0//this.startHeightValue;
+                this.query.heightEnd = 0//this.endHeightValue;
+                this.query.memoryRangeStart = 0//this.startMemoryValue;
+                this.query.memoryRangeEnd = 0//this.endMemoryValue;
+                this.query.networkRangeStart = 0//this.startNetworkValue;
+                this.query.networkRangeEnd = 0//this.endNetworkValue;
+                this.query.powerRangeStart = 0//this.startPowerValue;
+                this.query.powerRangeEnd = 0//this.endPowerValue;
             },
             /**
              * Filter code below; TODO: refactor this
