@@ -105,22 +105,23 @@ namespace Web.Api.Controllers
         public async Task<IActionResult> Post([FromQuery] DecommissionedAssetQuery query)
         {
             var assetDto = await _assetService.GetAssetForDecommissioning(query.Id);
-            var decommissionedAsset  = assetDto.MapTo<CreateDecommissionedAsset>();
+            var createDecommissionedAsset  = assetDto.MapTo<CreateDecommissionedAsset>();
 
-            //adding time stamp, decommissioner name, and network graph to the asset
-            decommissionedAsset.TimeStamp = query.TimeStamp;
-            decommissionedAsset.Decommissioner = query.Decommissioner;
-            decommissionedAsset.NetworkPortGraph = query.NetworkPortGraph;
+            //adding network graph to the asset
+            createDecommissionedAsset.NetworkPortGraph = query.NetworkPortGraph;
+
+            //creating a new decommissionedAssetDto from assetDto, filling in the data, decommissioner, and date
+            var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(createDecommissionedAsset);
+            var decommisionedAsset = assetDto.MapTo<DecommissionedAssetDto>();
+            decommisionedAsset.Data = jsonString;
+            decommisionedAsset.Decommissioner = query.Decommissioner;
+            decommisionedAsset.Date = DateTime.Now.ToString("yyyy-MM-dd");
 
             //deleting asset from active asset column
             var asset = await _assetService.GetAssetAsync(query.Id);
             await _assetService.DeleteAssetAsync(asset);
 
-            //creating a new decommissionedAssetDto and adding it into the database
-            var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(decommissionedAsset);
-            var decommisioned = new DecommissionedAssetDto { Id = decommissionedAsset.Id, Data = jsonString };
-
-            await _assetService.CreateDecommissionedAssetAsync(decommisioned);
+            await _assetService.CreateDecommissionedAssetAsync(decommisionedAsset);
             return Ok();
         }
         [HttpGet("{id}/decommission")]

@@ -8,13 +8,9 @@ namespace Web.Api.Dtos.Assets.Create
     public class CreateDecommissionedAsset
     {
         public Guid Id { get; set; }
-        public string Hostname { get; set; }
         public string Comment { get; set; }
         public int RackPosition { get; set; }
         public string OwnerName { get; set; }
-        public string Decommissioner { get; set; }
-        public string TimeStamp { get; set; }
-        public string Datacenter { get; set; }
         public int? AssetNumber { get; set; }
         public CreateDecommissionedRack Rack {get; set;}
         public CreateDecommissionedModel Model { get; set; }

@@ -65,7 +65,6 @@ namespace Web.Api.Mappers
 
             CreateMap<AssetDto, CreateDecommissionedAsset>()
                 .ForMember(o => o.OwnerName, opts => opts.MapFrom(src => src.Owner.Username))
-                .ForMember(o => o.Datacenter, opts => opts.MapFrom(src => src.Rack.Datacenter.Name))
                 .ReverseMap();
             CreateMap<RackDto, CreateDecommissionedRack>()
                  .ReverseMap();
@@ -77,6 +76,13 @@ namespace Web.Api.Mappers
                 .ForMember(o => o.Name, opts => opts.MapFrom(src => src.ModelNetworkPort.Name))
                 .ReverseMap();
             CreateMap<AssetPowerPortDto, CreateDecommissionedPowerPort>();
+            CreateMap<AssetDto, DecommissionedAssetDto>()
+                .ForMember(o => o.Datacenter, opts => opts.MapFrom(src => src.Rack.Datacenter.Name))
+                .ForMember(o => o.Rack, opts => opts.MapFrom(src => src.Rack.Address))
+                .ForMember(o => o.ModelName, opts => opts.MapFrom(src => src.Model.Vendor))
+                .ForMember(o => o.ModelNumber, opts => opts.MapFrom(src => src.Model.ModelNumber))
+                .ForMember(o => o.Hostname, opts => opts.MapFrom(src => src.Hostname))
+                .ReverseMap();
         }
     }
 }

@@ -8,7 +8,6 @@ namespace Web.Api.Core.Dtos
     {
         public string NetworkPortGraph { get; set; }
         public Guid Id { get; set; }
-        public string TimeStamp { get; set; }
         public string Decommissioner { get; set; }
     }
 
