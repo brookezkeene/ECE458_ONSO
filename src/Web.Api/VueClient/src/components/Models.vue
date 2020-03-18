@@ -265,7 +265,10 @@
                     powerRangeEnd: 0,
                     memoryRangeStart: 0,
                     memoryRangeEnd: 0,
+                    page: 0,
+                    pageSize: 0,
                 },
+
             }
         },
         computed: {
@@ -304,16 +307,19 @@
             getDataFromApi() {
                 this.loading = true;
                 const { page, itemsPerPage } = this.options;
-                return this.modelRepository.tablelist(page, itemsPerPage, this.search);
+                this.query.page = page;
+                this.query.pageSize = itemsPerPage;
+                this.fillQuery();
+                return this.modelRepository.tablelist( this.query);
             },
             async getModels() {
                 this.loading = true;
                 const { page, itemsPerPage } = this.options;
+                this.query.page = page;
+                this.query.pageSize = itemsPerPage;
                 //fill the query with all the values in the filters
                 this.fillQuery();
-                /* eslint-disable no-unused-vars, no-console */
-                console.log(this.query)
-                var info = await this.modelRepository.tablelist(page, itemsPerPage, this.vendorSearch);
+                var info = await this.modelRepository.tablelist(this.query);
                 this.models = info.data;
             },
             async initialize() {

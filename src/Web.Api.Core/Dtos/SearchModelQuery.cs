@@ -17,11 +17,23 @@ namespace Web.Api.Core.Dtos
         public int PowerRangeEnd { get; set; }
         public int MemoryRangeStart { get; set; }
         public int MemoryRangeEnd { get; set; }
+        public int Page { get; set; }
+        public int PageSize { get; set; }
     }
     public static class SearchModelQueryExtensions
     {
         public static void ToUpper(this SearchModelQuery query)
         {
+            //setting defaults for page size
+            if(query.Page == 0)
+            {
+                query.PowerRangeEnd = 1;
+            }
+            if (query.PageSize == 0)
+            {
+                query.PowerRangeEnd = 10;
+            }
+            //setting defaults for model vendor and number search
             if (!string.IsNullOrEmpty(query.Vendor))
             {
                 query.Vendor = query.Vendor.ToUpper();

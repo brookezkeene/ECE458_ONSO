@@ -15,11 +15,12 @@ export default {
                 return response.data.data;
             });
     },
-    tablelist(page, pageSize, search) {
-        return axios.get(`${resource}`, { params: { search: search, page: page, pageSize: pageSize } })
+    tablelist(query) {
+        //query contains page and pagesize
+        return axios.get(`${resource}`, { params: query })
             .then(response => {
                 return response.data;
-            });
+            }).catch(error => error);
     },
     create(item) {
         return axios.post(`${resource}`, item).then(response => response.data).catch(error => error);
