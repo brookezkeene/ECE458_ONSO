@@ -159,7 +159,7 @@ namespace Web.Api.Infrastructure.Repositories
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
         }
-        public async Task<PagedList<DecommissionedAsset>> GetDecommissionedAssetsAsync(Guid? datacenterId, int page = 1, int pageSize = 10)
+        public async Task<PagedList<DecommissionedAsset>> GetDecommissionedAssetsAsync( int page = 1, int pageSize = 10)
         {
             var pagedList = new PagedList<DecommissionedAsset>();
 

@@ -39,7 +39,8 @@ namespace Web.Api.Dtos.Assets.Create
     }
     public class CreateDecommissionedPowerPort
     {
-
+        public int Number { get; set; }
+        public string PduPort { get; set; }
     }
 
 }

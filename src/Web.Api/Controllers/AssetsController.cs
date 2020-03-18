@@ -131,9 +131,9 @@ namespace Web.Api.Controllers
             return Ok(asset);
         }
         [HttpGet]
-        public async Task<ActionResult<PagedList<DecommissionedAssetDto>>> GetManyDecommissioned(Guid? datacenterId, int page = 1, int pageSize = 10)
+        public async Task<ActionResult<PagedList<DecommissionedAssetDto>>> GetManyDecommissioned(int page = 1, int pageSize = 10)
         {
-            var assets = await _assetService.GetDecommissionedAssetsAsync(datacenterId, page, pageSize);
+            var assets = await _assetService.GetDecommissionedAssetsAsync( page, pageSize);
 
             var response = assets.MapTo<PagedList<DecommissionedAssetDto>>();
             return Ok(response);
