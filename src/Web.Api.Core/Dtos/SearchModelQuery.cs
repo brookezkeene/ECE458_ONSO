@@ -26,7 +26,6 @@ namespace Web.Api.Core.Dtos
     {
         public static void ToUpper(this SearchModelQuery query)
         {
-            //setting defaults for model vendor and number search
             if (!string.IsNullOrEmpty(query.Vendor))
             {
                 query.Vendor = query.Vendor.ToUpper();
