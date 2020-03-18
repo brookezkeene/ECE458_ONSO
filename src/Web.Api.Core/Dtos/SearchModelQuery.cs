@@ -24,15 +24,6 @@ namespace Web.Api.Core.Dtos
     {
         public static void ToUpper(this SearchModelQuery query)
         {
-            //setting defaults for page size
-            if(query.Page == 0)
-            {
-                query.PowerRangeEnd = 1;
-            }
-            if (query.PageSize == 0)
-            {
-                query.PowerRangeEnd = 10;
-            }
             //setting defaults for model vendor and number search
             if (!string.IsNullOrEmpty(query.Vendor))
             {

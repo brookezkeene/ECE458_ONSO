@@ -309,7 +309,7 @@
                 const { page, itemsPerPage } = this.options;
                 this.query.page = page;
                 this.query.pageSize = itemsPerPage;
-                this.fillQuery();
+                //this.fillQuery();
                 return this.modelRepository.tablelist( this.query);
             },
             async getModels() {
@@ -319,6 +319,8 @@
                 this.query.pageSize = itemsPerPage;
                 //fill the query with all the values in the filters
                 this.fillQuery();
+                /* eslint-disable no-unused-vars, no-console */
+                console.log(this.query)
                 var info = await this.modelRepository.tablelist(this.query);
                 this.models = info.data;
             },
@@ -360,14 +362,20 @@
             fillQuery() {
                 this.query.vendor = this.vendorSearch;
                 this.query.number = this.numberSearch;
-                this.query.heightStart = 0//this.startHeightValue;
-                this.query.heightEnd = 0//this.endHeightValue;
-                this.query.memoryRangeStart = 0//this.startMemoryValue;
-                this.query.memoryRangeEnd = 0//this.endMemoryValue;
-                this.query.networkRangeStart = 0//this.startNetworkValue;
-                this.query.networkRangeEnd = 0//this.endNetworkValue;
-                this.query.powerRangeStart = 0//this.startPowerValue;
-                this.query.powerRangeEnd = 0//this.endPowerValue;
+                this.query.heightStart = this.parseToInt(this.startHeightValue);
+                this.query.heightEnd = this.parseToInt(this.endHeightValue);
+                this.query.memoryRangeStart = this.parseToInt(this.startMemoryValue);
+                this.query.memoryRangeEnd = this.parseToInt(this.endMemoryValue);
+                this.query.networkRangeStart = this.parseToInt(this.startNetworkValue);
+                this.query.networkRangeEnd = this.parseToInt(this.endNetworkValue);
+                this.query.powerRangeStart = this.parseToInt(this.startPowerValue);
+                this.query.powerRangeEnd =this.parseToInt(this.endPowerValue);
+            },
+            parseToInt(value) {
+                if (value == '') {
+                    return 0;
+                } 
+                return parseInt(value);
             },
             /**
              * Filter code below; TODO: refactor this
