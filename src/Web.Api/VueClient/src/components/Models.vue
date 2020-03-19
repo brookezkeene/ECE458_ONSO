@@ -69,13 +69,15 @@
                                                     <v-text-field v-model="startHeightValue"
                                                                   placeholder="from"
                                                                   type="number"
-                                                                  label="Height">
+                                                                  label="Height"
+                                                                  @input="getModels()">
                                                     </v-text-field>
                                                 </v-col>
                                                 <v-col cols="6">
                                                     <v-text-field v-model="endHeightValue"
                                                                   type="number"
-                                                                  placeholder="to">
+                                                                  placeholder="to"
+                                                                  @input="getModels()">
                                                     </v-text-field>
                                                 </v-col>
                                             </v-row>
@@ -86,13 +88,15 @@
                                                     <v-text-field v-model="startNetworkValue"
                                                                   placeholder="from"
                                                                   type="number"
-                                                                  label="Network Ports">
+                                                                  label="Network Ports"
+                                                                  @input="getModels()">
                                                     </v-text-field>
                                                 </v-col>
                                                 <v-col cols="6">
                                                     <v-text-field v-model="endNetworkValue"
                                                                   type="number"
-                                                                  placeholder="to">
+                                                                  placeholder="to"
+                                                                  @input="getModels()">
                                                     </v-text-field>
                                                 </v-col>
                                             </v-row>
@@ -103,13 +107,15 @@
                                                     <v-text-field v-model="startPowerValue"
                                                                   placeholder="from"
                                                                   type="number"
-                                                                  label="Power Ports">
+                                                                  label="Power Ports"
+                                                                  @input="getModels()">
                                                     </v-text-field>
                                                 </v-col>
                                                 <v-col cols="6">
                                                     <v-text-field v-model="endPowerValue"
                                                                   type="number"
-                                                                  placeholder="to">
+                                                                  placeholder="to"
+                                                                  @input="getModels()">
                                                     </v-text-field>
                                                 </v-col>
                                             </v-row>
@@ -120,13 +126,15 @@
                                                     <v-text-field v-model="startMemoryValue"
                                                                   placeholder="from"
                                                                   type="number"
-                                                                  label="Memory">
+                                                                  label="Memory"
+                                                                  @input="getModels()">
                                                     </v-text-field>
                                                 </v-col>
                                                 <v-col cols="6">
                                                     <v-text-field v-model="endMemoryValue"
                                                                   type="number"
-                                                                  placeholder="to">
+                                                                  placeholder="to"
+                                                                  @input="getModels()">
                                                     </v-text-field>
                                                 </v-col>
                                             </v-row>
@@ -309,7 +317,6 @@
                 const { page, itemsPerPage } = this.options;
                 this.query.page = page;
                 this.query.pageSize = itemsPerPage;
-                //this.fillQuery();
                 return this.modelRepository.tablelist( this.query);
             },
             async getModels() {
@@ -319,8 +326,6 @@
                 this.query.pageSize = itemsPerPage;
                 //fill the query with all the values in the filters
                 this.fillQuery();
-                /* eslint-disable no-unused-vars, no-console */
-                console.log(this.query)
                 var info = await this.modelRepository.tablelist(this.query);
                 this.models = info.data;
             },
