@@ -13,7 +13,7 @@ namespace Web.Api.Core.Dtos
         public string ModelNumber { get; set; }
         public string Decommissioner { get; set; }
         public string Date { get; set; }
-        public string Rack { get; set; }
+        public string RackAddress { get; set; }
         public string Data { get; set; }
     }
 }
