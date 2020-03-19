@@ -10,7 +10,6 @@
                                   :options.sync="options"
                                   :server-items-length="totalItems"
                                   class="pa-10"
-                                  multi-sort
                                   @click:row="showDetails">
                         <template v-slot:top v-slot:item.action="{ item }">
 
@@ -24,7 +23,7 @@
                                         <v-text-field prepend-inner-icon="mdi-magnify"
                                                       :search-input.sync="vendorSearch"
                                                       v-model="vendorSearch"
-                                                      @input="getModels()"
+                                                      @input="getDataFromApi()"
                                                       cache-items
                                                       flat
                                                       hide-no-data
@@ -41,7 +40,7 @@
                                         <v-text-field prepend-inner-icon="mdi-magnify"
                                                       :search-input.sync="numberSearch"
                                                       v-model="numberSearch"
-                                                      @input="getModels()"
+                                                      @input="getDataFromApi()"
                                                       cache-items
                                                       flat
                                                       hide-no-data
@@ -70,14 +69,14 @@
                                                                   placeholder="from"
                                                                   type="number"
                                                                   label="Height"
-                                                                  @input="getModels()">
+                                                                  @input="getDataFromApi()">
                                                     </v-text-field>
                                                 </v-col>
                                                 <v-col cols="6">
                                                     <v-text-field v-model="endHeightValue"
                                                                   type="number"
                                                                   placeholder="to"
-                                                                  @input="getModels()">
+                                                                  @input="getDataFromApi()">
                                                     </v-text-field>
                                                 </v-col>
                                             </v-row>
@@ -89,14 +88,14 @@
                                                                   placeholder="from"
                                                                   type="number"
                                                                   label="Network Ports"
-                                                                  @input="getModels()">
+                                                                  @input="getDataFromApi()">
                                                     </v-text-field>
                                                 </v-col>
                                                 <v-col cols="6">
                                                     <v-text-field v-model="endNetworkValue"
                                                                   type="number"
                                                                   placeholder="to"
-                                                                  @input="getModels()">
+                                                                  @input="getDataFromApi()">
                                                     </v-text-field>
                                                 </v-col>
                                             </v-row>
@@ -108,14 +107,14 @@
                                                                   placeholder="from"
                                                                   type="number"
                                                                   label="Power Ports"
-                                                                  @input="getModels()">
+                                                                  @input="getDataFromApi()">
                                                     </v-text-field>
                                                 </v-col>
                                                 <v-col cols="6">
                                                     <v-text-field v-model="endPowerValue"
                                                                   type="number"
                                                                   placeholder="to"
-                                                                  @input="getModels()">
+                                                                  @input="getDataFromApi()">
                                                     </v-text-field>
                                                 </v-col>
                                             </v-row>
@@ -127,14 +126,14 @@
                                                                   placeholder="from"
                                                                   type="number"
                                                                   label="Memory"
-                                                                  @input="getModels()">
+                                                                  @input="getDataFromApi()">
                                                     </v-text-field>
                                                 </v-col>
                                                 <v-col cols="6">
                                                     <v-text-field v-model="endMemoryValue"
                                                                   type="number"
                                                                   placeholder="to"
-                                                                  @input="getModels()">
+                                                                  @input="getDataFromApi()">
                                                     </v-text-field>
                                                 </v-col>
                                             </v-row>
@@ -310,24 +309,28 @@
             },
         },
 
-
+        mounted () {
+            this.getDataFromApi()
+              .then(data => {
+                            this.models = data.data;
+                            this.totalItems = data.totalCount;
+                            this.loading = false;
+                        })
+          },
         methods: {
-            getDataFromApi() {
+            async getDataFromApi() {
                 this.loading = true;
-                const { page, itemsPerPage } = this.options;
+                const { sortBy, sortDesc, page, itemsPerPage } = this.options;
                 this.query.page = page;
                 this.query.pageSize = itemsPerPage;
-                return this.modelRepository.tablelist( this.query);
-            },
-            async getModels() {
-                this.loading = true;
-                const { page, itemsPerPage } = this.options;
-                this.query.page = page;
-                this.query.pageSize = itemsPerPage;
-                //fill the query with all the values in the filters
+                /* eslint-disable no-unused-vars, no-console */
+                console.log(sortBy)
+                console.log(sortDesc)
+                console.log("this is the sorting stuff")
                 this.fillQuery();
                 var info = await this.modelRepository.tablelist(this.query);
                 this.models = info.data;
+                return info;
             },
             async initialize() {
                 this.models = await this.modelRepository.list();
