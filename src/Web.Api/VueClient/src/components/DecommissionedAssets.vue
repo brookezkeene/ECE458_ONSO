@@ -113,15 +113,15 @@
 
                 // Table data.
                 headers: [
-                    { text: 'Time Decommissioned', value: 'timestamp' },
-                    { text: 'Decomissioned By User', value: 'decommissionUser'},
-                    { text: 'Model Vendor', value: 'vendor' },
+                    { text: 'Time Decommissioned', value: 'date' },
+                    { text: 'Decomissioned By User', value: 'decommissioner'},
+                    { text: 'Model Vendor', value: 'modelName' },
                     { text: 'Model Number', value: 'modelNumber', },
                     { text: 'Hostname', value: 'hostname' },
                     { text: 'Datacenter', value: 'datacenter' },
-                    { text: 'Rack', value: 'rack', filter: this.rackFilter },
-                    { text: 'Rack U', value: 'rackPosition', },
-                    { text: 'Owner Username', value: 'owner' },
+                    { text: 'Rack', value: 'rackAddress', filter: this.rackFilter },
+                    { text: 'Rack U', value: 'data.Rack.RackNumber', },
+                    { text: 'Owner Username', value: 'data.OwnerName' },
                 ],
                 assets: [],
                 models: [],
@@ -173,8 +173,13 @@
                 this.assets = await this.assetRepository.getDecommissionedAssets();
                 this.models = await this.modelRepository.list();
                 this.users = await this.userRepository.list();
-
                 this.datacenters = await this.datacenterRepository.list();
+
+                this.assets.forEach(e => {
+                    var assetInfo = JSON.parse(e.data);
+                    e.data = assetInfo;
+                })
+
                 var datacenter = {
                     description: "All Datacenters",
                     name: "All",
