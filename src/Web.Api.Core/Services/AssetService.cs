@@ -78,5 +78,31 @@ namespace Web.Api.Core.Services
             await _auditEventLogger.LogEventAsync(new AssetUpdatedEvent(asset));
             return updated;
         }
+        public async Task<AssetDto> GetAssetForDecommissioning(Guid assetId)
+        {
+            var decommissionedAsset = await _repository.GetAssetForDecommissioning(assetId);
+            return decommissionedAsset.ToDto();
+
+        }
+        public async Task<PagedList<DecommissionedAssetDto>> GetDecommissionedAssetsAsync( int page = 1, int pageSize = 10)
+        {
+            var pagedList = await _repository.GetDecommissionedAssetsAsync( page, pageSize);
+            return pagedList.ToDto();
+        }
+
+        public async Task<Guid> CreateDecommissionedAssetAsync(DecommissionedAssetDto asset)
+        {
+            var entity = asset.ToEntity();
+            await _repository.AddDecomissionedAssetAsync(entity);
+
+            //await _auditEventLogger.LogEventAsync(new AssetCreatedEvent(asset));
+
+            return entity.Id;
+        }
+        public async Task<DecommissionedAssetDto> GetDecommissionedAssetAsync(Guid assetId)
+        {
+            var asset = await _repository.GetDecommissionedAssetAsync(assetId);
+            return asset.ToDto();
+        }
     }
 }

@@ -16,6 +16,9 @@ namespace Web.Api.Core.Services.Interfaces
         Task<Guid> CreateAssetAsync(AssetDto asset);
         Task DeleteAssetAsync(AssetDto asset);
         Task<int> UpdateAssetAsync(AssetDto asset);
-
+        Task<AssetDto> GetAssetForDecommissioning(Guid assetId);
+        Task<Guid> CreateDecommissionedAssetAsync(DecommissionedAssetDto asset);
+        Task<DecommissionedAssetDto> GetDecommissionedAssetAsync(Guid assetId);
+        Task<PagedList<DecommissionedAssetDto>> GetDecommissionedAssetsAsync( int page = 1, int pageSize = 10);
     }
 }

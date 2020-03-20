@@ -16,5 +16,9 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
         Task<List<Asset>> GetAssetExportAsync(string search, string hostname, string rowStart, int colStart, string rowEnd, int colEnd);
         Task<bool> AssetIsUniqueAsync(string hostname, Guid id = default);
         Task<List<AssetNetworkPort>> GetNetworkPortExportAsync(string search, string hostname, string rowStart, int colStart, string rowEnd, int colEnd);
+        Task<Asset> GetAssetForDecommissioning(Guid assetId);
+        Task<int> AddDecomissionedAssetAsync(DecommissionedAsset asset);
+        Task<DecommissionedAsset> GetDecommissionedAssetAsync(Guid assetId);
+        Task<PagedList<DecommissionedAsset>> GetDecommissionedAssetsAsync( int page = 1, int pageSize = 10);
     }
 }

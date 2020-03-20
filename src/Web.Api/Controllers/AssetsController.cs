@@ -54,6 +54,7 @@ namespace Web.Api.Controllers
             return Ok(response);
         }
 
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateAssetApiDto assetApiDto)
         {
@@ -100,5 +101,42 @@ namespace Web.Api.Controllers
             return Ok(response);
         }
 
+        [HttpPost("decommission")]
+        public async Task<IActionResult> Post([FromQuery] DecommissionedAssetQuery query)
+        {
+            var assetDto = await _assetService.GetAssetForDecommissioning(query.Id);
+            var createDecommissionedAsset  = assetDto.MapTo<CreateDecommissionedAsset>();
+
+            //adding network graph to the asset
+            createDecommissionedAsset.NetworkPortGraph = query.NetworkPortGraph;
+
+            //creating a new decommissionedAssetDto from assetDto, filling in the data, decommissioner, and date
+            var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(createDecommissionedAsset);
+            var decommisionedAsset = assetDto.MapTo<DecommissionedAssetDto>();
+            decommisionedAsset.Data = jsonString;
+            decommisionedAsset.Decommissioner = query.Decommissioner;
+            decommisionedAsset.Date = DateTime.Now.ToString("yyyy-MM-dd");
+
+            //deleting asset from active asset column
+            var asset = await _assetService.GetAssetAsync(query.Id);
+            await _assetService.DeleteAssetAsync(asset);
+
+            await _assetService.CreateDecommissionedAssetAsync(decommisionedAsset);
+            return Ok();
+        }
+        [HttpGet("{id}/decommission")]
+        public async Task<ActionResult<DecommissionedAssetDto>> GetDecommissioned(Guid id)
+        {
+            var asset = await _assetService.GetDecommissionedAssetAsync(id);
+            return Ok(asset);
+        }
+        [HttpGet("{decommission")]
+        public async Task<ActionResult<PagedList<DecommissionedAssetDto>>> GetManyDecommissioned(int page = 1, int pageSize = 10)
+        {
+            var assets = await _assetService.GetDecommissionedAssetsAsync( page, pageSize);
+
+            var response = assets.MapTo<PagedList<DecommissionedAssetDto>>();
+            return Ok(response);
+        }
     }
 }
