@@ -13,7 +13,6 @@
     import D3Network from 'vue-d3-network'
     import networkNeighborhood from '@/networkNeighborhood';
 
-
     export default {
         name: 'network-neighborhood',
         components: {

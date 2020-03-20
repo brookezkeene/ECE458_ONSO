@@ -164,7 +164,8 @@
         },
 
         async created() {
-            this.initialize()
+            this.initialize();
+            this.$store.dispatch('loadUsername');
         },
 
         methods: {

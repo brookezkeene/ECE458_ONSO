@@ -169,7 +169,7 @@
                     modelNumber: '',
                     powerPorts: [],
                 },
-                ownerPresent: true, // in case the asset does not have an owner, don't need null pointer bc not required.
+                ownerPresent: true, // in case the asset does not have an owner, don't need null pointer bc not a required field.
                 viewNames: false,
                 viewPowerPorts: false,
                 powerPorts: {},

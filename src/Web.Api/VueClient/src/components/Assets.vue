@@ -179,7 +179,11 @@
 </template>
 
 <script>
-  export default {
+
+    import networkNeighborhood from '@/networkNeighborhood';
+
+    export default {
+
     components: {
     },
     inject: ['assetRepository','modelRepository','userRepository', 'datacenterRepository'],
@@ -268,21 +272,25 @@
         deleteItem (item) {
         this.editing = true;
         confirm('Are you sure you want to delete this asset?') && this.assetRepository.delete(item)
-                    .then(async () => {
-                        await this.initialize();
-                    })
+                .then(async () => {
+                    await this.initialize();
+                })
         },
-        decommissionItem (item) {
-        this.editing = true;
-        confirm('Are you sure you want to decommission this asset? \n This will remove the asset from the assets table, and instead added to the decommissioned assets table.') && this.assetRepository.decommission(item)
-                    .then(async () => {
+        async decommissionItem (item) {
+            this.editing = true;
+            var graph = await networkNeighborhood.createGraph(item.id);
+            var query = { Id: item.id, NetworkPortGraph: graph, Decommissioner: this.$store.state.username }
+        /*eslint-disable*/
+            console.log(query);
+            confirm('Are you sure you want to decommission this asset? \nThis will remove the asset from the assets table, and instead add it to the decommissioned assets table.') && this.assetRepository.decommission(query)
+                .then(async () => {
                         await this.initialize();
-                    })
+                })
         },
         async datacenterSearch() {
                 var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
                 this.assets = await this.assetRepository.list(searchDatacenter.id); 
-            },
+        },
         editItem(item) {
             this.editing = true;
             this.$router.push({ name: 'asset-edit', params: { id: item.id } })
@@ -298,7 +306,6 @@
             };
             confirm('Are you sure you would like to turn on this asset?') && this.assetRepository.postPowerState(item.id, powerState)
                 .then(async () => {
-                    console.log(item);
                     await this.initialize();
                 })
         },
@@ -310,7 +317,6 @@
             };
             confirm('Are you sure you would like to power off this asset?') && this.assetRepository.postPowerState(item.id, powerState)
                 .then(async () => {
-                    console.log(item);
                     await this.initialize();
                 })
         },
@@ -322,7 +328,6 @@
             };
             confirm('Are you sure you would like to cycle this asset?') && this.assetRepository.postPowerState(item.id, powerState)
                 .then(async () => {
-                    console.log(item);
                     await this.initialize();
                 })
         },

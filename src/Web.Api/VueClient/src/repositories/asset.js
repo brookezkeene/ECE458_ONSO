@@ -2,7 +2,6 @@
 
 import axios from 'axios';
 const resource = '/assets';
-const decom = '/decommission';
 
 export default {
     find(id) {
@@ -45,10 +44,13 @@ export default {
     delete(item) {
         return axios.delete(`${resource}/${item.id}`).then(response => { return response.data; }).catch(error => error);
     },
-    decommission(item) {
-        return axios.post(`${decom}`, item).then(response => response.data).catch(error => error);
+    decommission(query) {
+        return axios.post(`${resource}/decommission`, { params: query })
+            .then(response => {
+                return response.data;
+            }).catch(error => error);
     },
-    getDecommissionedAssets(item) {
-        return axios.get(`${decom}`, item).then(response => response.data).catch(error => error);
+    getDecommissionedAssets(query) {
+        return axios.get(`${resource}/decommission`, { params: query }).then(response => response.data).catch(error => error);
     },
 }
