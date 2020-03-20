@@ -29,7 +29,6 @@ namespace Web.Api.Infrastructure.Repositories
             Expression<Func<Asset, bool>> vendorCondition = x => (x.Model.Vendor.Contains(vendor));
             Expression<Func<Asset, bool>> numberCondition = x => (x.Model.ModelNumber.Contains(number));
 
-
             var assets = await _dbContext.Assets
                 .Include(x => x.Model)
                 .Include(x => x.Owner)
@@ -198,6 +197,7 @@ namespace Web.Api.Infrastructure.Repositories
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
         }
+
         private static List<Asset> Sort(List<Asset> assets, string sortBy, string isDesc)
         {
             if (string.IsNullOrEmpty(sortBy))

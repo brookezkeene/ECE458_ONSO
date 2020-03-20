@@ -12,7 +12,7 @@ namespace Web.Api.Core.Dtos
         public string RackStart { get; set; }
         public string RackEnd { get; set; }
         public string Hostname { get; set; }
-        public int Page { get; set; }
+        public int Page { get; set; } 
         public int PageSize { get; set; }
         public string IsDesc { get; set; }
         public string SortBy { get; set; }
@@ -57,8 +57,9 @@ namespace Web.Api.Core.Dtos
             if (string.IsNullOrEmpty(query.RackEnd))
             {
                 query.RackEnd = "Z" + int.MaxValue.ToString();
-                
-            } else if (query.RackEnd.Length == 1)
+
+            }
+            else if (query.RackEnd.Length == 1)
             {
                 query.RackEnd = query.RackEnd.ToUpper() + int.MaxValue.ToString();
             }
@@ -79,3 +80,4 @@ namespace Web.Api.Core.Dtos
         }
     }
 }
+ 
