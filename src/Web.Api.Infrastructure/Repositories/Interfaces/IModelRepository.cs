@@ -10,7 +10,7 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
     {
         Task<PagedList<Model>> GetModelsAsync(string vendor, string number, int heightStart, int heightEnd,
                 int networkRangeStart, int networkRangeEnd, int powerRangeStart, int powerRangeEnd,
-                int memoryRangeStart, int memoryRangeEnd, int page = 1, int pageSize = 10);
+                int memoryRangeStart, int memoryRangeEnd, string sortBy, string isDesc, int page = 1, int pageSize = 10);
         Task<List<Model>> GetModelExportAsync(string search);
         Task<Model> GetModelAsync(Guid modelId);
         Task<int> AddModelAsync(Model model);

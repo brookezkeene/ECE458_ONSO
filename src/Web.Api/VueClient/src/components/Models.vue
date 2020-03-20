@@ -274,6 +274,8 @@
                     memoryRangeEnd: 0,
                     page: 0,
                     pageSize: 0,
+                    isDesc: '',
+                    sortBy: '',
                 },
 
             }
@@ -321,13 +323,14 @@
             async getDataFromApi() {
                 this.loading = true;
                 const { sortBy, sortDesc, page, itemsPerPage } = this.options;
-                this.query.page = page;
-                this.query.pageSize = itemsPerPage;
+                this.fillQuery(sortBy, sortDesc, page, itemsPerPage);
+
                 /* eslint-disable no-unused-vars, no-console */
                 console.log(sortBy)
                 console.log(sortDesc)
                 console.log("this is the sorting stuff")
-                this.fillQuery();
+                console.log(this.query);
+
                 var info = await this.modelRepository.tablelist(this.query);
                 this.models = info.data;
                 return info;
@@ -367,7 +370,7 @@
                 }
                 this.deleting = false;
             },
-            fillQuery() {
+            fillQuery(sortBy, sortDesc, page, itemsPerPage) {
                 this.query.vendor = this.vendorSearch;
                 this.query.number = this.numberSearch;
                 this.query.heightStart = this.parseToInt(this.startHeightValue);
@@ -377,13 +380,23 @@
                 this.query.networkRangeStart = this.parseToInt(this.startNetworkValue);
                 this.query.networkRangeEnd = this.parseToInt(this.endNetworkValue);
                 this.query.powerRangeStart = this.parseToInt(this.startPowerValue);
-                this.query.powerRangeEnd =this.parseToInt(this.endPowerValue);
+                this.query.powerRangeEnd = this.parseToInt(this.endPowerValue);
+                this.query.page = page;
+                this.query.pageSize = itemsPerPage;
+                this.query.sortBy = this.parseSort(sortBy);
+                this.query.isDesc = this.parseSort(sortDesc);
             },
             parseToInt(value) {
                 if (value == '') {
                     return 0;
                 } 
                 return parseInt(value);
+            },
+            parseSort(value) {
+                if (value.length !== 0) {
+                    return value[0];
+                } 
+                return '';
             },
             /**
              * Filter code below; TODO: refactor this

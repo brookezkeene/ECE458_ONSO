@@ -24,7 +24,7 @@ namespace Web.Api.Infrastructure.Repositories
 
         public async Task<PagedList<Model>> GetModelsAsync(string vendor, string number, int heightStart, int heightEnd,
                 int networkRangeStart, int networkRangeEnd, int powerRangeStart, int powerRangeEnd,
-                int memoryRangeStart, int memoryRangeEnd, int page = 1, int pageSize = 10)
+                int memoryRangeStart, int memoryRangeEnd, string sortBy, string isDesc, int page = 1, int pageSize = 10)
         {
             var pagedList = new PagedList<Model>();
             //if 
@@ -42,7 +42,7 @@ namespace Web.Api.Infrastructure.Repositories
                 x.EthernetPorts >= networkRangeStart && x.EthernetPorts <= networkRangeEnd &&
                x.PowerPorts >= powerRangeStart && x.PowerPorts <= powerRangeEnd &&
                x.Memory >= memoryRangeStart && x.Memory <= memoryRangeEnd).ToList();
-
+            models = Sort(models, sortBy, isDesc);
             pagedList.AddRange(models);
             pagedList.TotalCount = await _dbContext.Models
                 .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
@@ -50,7 +50,6 @@ namespace Web.Api.Infrastructure.Repositories
                 .CountAsync();
             pagedList.PageSize = pageSize;
             pagedList.CurrentPage = page;
-
             return pagedList;
         }
         public async Task<List<Model>> GetModelExportAsync(string search)
@@ -190,6 +189,91 @@ namespace Web.Api.Infrastructure.Repositories
 
             // 5. done
             model.NetworkPorts = ports;
+        }
+        private static List<Model> Sort(List<Model> models, string sortBy, string isDesc)
+        {
+            if (string.IsNullOrEmpty(sortBy))
+            {
+                return models ;
+            }
+            else if (sortBy.Equals("vendor"))
+            {
+                if(isDesc.Equals("false"))
+                {
+                    return models.OrderBy(q => q.Vendor).ToList();
+                } 
+                else if (isDesc.Equals("true"))
+                {
+                    return models.OrderByDescending(q => q.Vendor).ToList();
+                }
+            }
+            else if (sortBy.Equals("modelNumber"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return models.OrderBy(q => q.ModelNumber).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return models.OrderByDescending(q => q.ModelNumber).ToList();
+                }
+            }
+            else if (sortBy.Equals("height"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return models.OrderBy(q => q.Height).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return models.OrderByDescending(q => q.Height).ToList();
+                }
+            }
+            else if (sortBy.Equals("ethernetPorts"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return models.OrderBy(q => q.EthernetPorts).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return models.OrderByDescending(q => q.EthernetPorts).ToList();
+                }
+            }
+            else if (sortBy.Equals("powerPorts"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return models.OrderBy(q => q.PowerPorts).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return models.OrderByDescending(q => q.PowerPorts).ToList();
+                }
+            }
+            else if (sortBy.Equals("cpu"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return models.OrderBy(q => q.Cpu).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return models.OrderByDescending(q => q.Cpu).ToList();
+                }
+            }
+            else if (sortBy.Equals("memory"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return models.OrderBy(q => q.Memory).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return models.OrderByDescending(q => q.Memory).ToList();
+                }
+            }
+            return models;
         }
     }
 }
