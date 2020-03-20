@@ -26,8 +26,8 @@ namespace Web.Api.Infrastructure.Repositories
         {
             var pagedList = new PagedList<Asset>();
             Expression<Func<Asset, bool>> hostnameCondition = x => (x.Hostname.Contains(hostname));
-            Expression<Func<Asset, bool>> vendorCondition = x => (x.Hostname.Contains(vendor));
-            Expression<Func<Asset, bool>> numberCondition = x => (x.Hostname.Contains(number));
+            Expression<Func<Asset, bool>> vendorCondition = x => (x.Model.Vendor.Contains(vendor));
+            Expression<Func<Asset, bool>> numberCondition = x => (x.Model.ModelNumber.Contains(number));
 
 
             var assets = await _dbContext.Assets

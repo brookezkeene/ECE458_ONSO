@@ -57,6 +57,9 @@ namespace Web.Api.Core.Dtos
             if (!string.IsNullOrEmpty(query.RackEnd))
             {
                 query.RackEnd = query.RackEnd.ToUpper();
+            } else if (query.RackEnd.Length == 1)
+            {
+                query.RackEnd = query.RackEnd.ToUpper() + int.MaxValue.ToString();
             }
             else
             {
