@@ -26,10 +26,16 @@ export default {
             });
     },
     list(datacenter) {
-        const query = {
+        var query = {
             datacenter: datacenter,
-            pageSize: 2000000000
-        }
+            hostname: '',
+            rackStart: '',
+            rackEnd: '',
+            page: 0,
+            pageSize: 2000000000,
+            isDesc: '',
+            sortBy: '',
+        };
         return axios.get(`${resource}`, { params: query })
             .then(response => {
                 return response.data.data;

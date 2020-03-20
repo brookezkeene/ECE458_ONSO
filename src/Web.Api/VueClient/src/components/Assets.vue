@@ -30,7 +30,7 @@
                                           label="Datacenter"
                                           placeholder="Select a datacenter or all datacenters"
                                           class="pt-8 pl-4"
-                                          @change="getAssetsFromApi()">
+                                          @change="datacenterSearch()">
                                 </v-select>
                             </v-col>
                         </v-row>
@@ -202,6 +202,8 @@
         loading: true,
             search: '',
             options: {},
+            totalItems: 0,
+
 
         // Table data.
         headers: [
@@ -297,7 +299,7 @@
                 console.log("this is the sorting stuff")
                 console.log(this.assetSearchQuery);
 
-                var info = await this.assetRepository.tablelist(this.assetSearchQuery);
+                var info = await this.assetRepository.list();
                 this.assets = info.data;
                 return info;
         },
