@@ -28,13 +28,7 @@ export default {
     list(datacenter) {
         var query = {
             datacenter: datacenter,
-            hostname: '',
-            rackStart: '',
-            rackEnd: '',
-            page: 0,
             pageSize: 2000000000,
-            isDesc: '',
-            sortBy: '',
         };
         return axios.get(`${resource}`, { params: query })
             .then(response => {

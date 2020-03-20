@@ -55,7 +55,7 @@
                             <v-autocomplete prepend-inner-icon="mdi-magnify"
                                             :items="assets"
                                             :search-input.sync="search"
-                                            @input="getDataFromApi()"
+                                            @input="getAssetsFromApi()"
                                             cache-items
                                             class="mt-3 pt-3"
                                             flat
@@ -73,7 +73,7 @@
                     <v-col cols="4">
                         <v-row class="mt-4 pt-2">
                             <v-text-field v-model="startRackValue"
-                                          @input="getDataFromApi()"
+                                          @input="getAssetsFromApi()"
                                           placeholder="Start"
                                           type="text"
                                           label="Rack Range"
@@ -81,7 +81,7 @@
                             </v-text-field>
 
                             <v-text-field v-model="endRackValue"
-                                          @input="getDataFromApi()"
+                                          @input="getAssetsFromApi()"
                                           type="text"
                                           placeholder="End"
                                           style="width:0">
@@ -299,12 +299,17 @@
                 console.log("this is the sorting stuff")
                 console.log(this.assetSearchQuery);
 
-                var info = await this.assetRepository.list();
+                var info = await this.assetRepository.tablelist(this.assetSearchQuery);
                 this.assets = info.data;
                 return info;
         },
-        fillQuery(sortBy, sortDesc, page, itemsPerPage) {
-            this.assetSearchQuery.datacenter = this.selectedDatacenter;
+        async fillQuery(sortBy, sortDesc, page, itemsPerPage) {
+            var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
+            if (typeof searchDatacenter === 'undefined') {
+                this.assetSearchQuery.datacenter = '' ;
+            } else {
+                this.assetSearchQuery.datacenter = searchDatacenter.id;
+            }
                 this.assetSearchQuery.hostname = this.search;
                 this.assetSearchQuery.rackStart = this.startRackValue;
                 this.assetSearchQuery.rackEnd = this.endRackValue;
@@ -353,7 +358,7 @@
                 })
         },
         async datacenterSearch() {
-                var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
+            var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
                 this.assets = await this.assetRepository.list(searchDatacenter.id); 
         },
         editItem(item) {
