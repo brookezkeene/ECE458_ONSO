@@ -130,7 +130,7 @@ namespace Web.Api.Controllers
             var asset = await _assetService.GetDecommissionedAssetAsync(id);
             return Ok(asset);
         }
-        [HttpGet("{decommission")]
+        [HttpGet("decommission")]
         public async Task<ActionResult<PagedList<DecommissionedAssetDto>>> GetManyDecommissioned(int page = 1, int pageSize = 10)
         {
             var assets = await _assetService.GetDecommissionedAssetsAsync( page, pageSize);
