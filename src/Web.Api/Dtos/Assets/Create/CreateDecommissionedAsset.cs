@@ -20,8 +20,8 @@ namespace Web.Api.Dtos.Assets.Create
     }
     public class CreateDecommissionedRack
     {
-        public int RackLetter { get; set; }
-        public string RackNumber { get; set; }
+        public string RackLetter { get; set; }
+        public int RackNumber { get; set; }
     }
     public class CreateDecommissionedModel
     {
