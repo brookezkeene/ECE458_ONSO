@@ -53,7 +53,7 @@ namespace Web.Api
             services.AddAutoMapper(typeof(ApiMappers).Assembly, typeof(ImportMapper).Assembly);
 
             services.AddApiAuthentication(Configuration);
-              
+
             services.AddSpaStaticFiles(options => options.RootPath = "VueClient/dist");
 
             services.AddControllers()
@@ -72,17 +72,17 @@ namespace Web.Api
 
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v1", new OpenApiInfo {Title = "Hyposoft API", Version = "v1"});
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Hyposoft API", Version = "v1" });
             });
             services.AddSwaggerGenNewtonsoftSupport();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddAuditLogging(options =>
-                {
-                    options.UseDefaultAction = true;
-                    options.UseDefaultSubject = true;
-                    options.Source = "Web";
-                })
+            {
+                options.UseDefaultAction = true;
+                options.UseDefaultSubject = true;
+                options.Source = "Web";
+            })
                 .AddDefaultHttpEventData(subjectOptions =>
                 {
                     subjectOptions.SubjectIdentifierClaim = ClaimTypes.NameIdentifier;
