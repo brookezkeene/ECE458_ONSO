@@ -274,10 +274,8 @@
         },
         decommissionItem (item) {
         this.editing = true;
-        confirm('Are you sure you want to decommission this asset?')// && this.assetRepository.decommission(item)
+        confirm('Are you sure you want to decommission this asset? \n This will remove the asset from the assets table, and instead added to the decommissioned assets table.') && this.assetRepository.decommission(item)
                     .then(async () => {
-                        /*eslint-disable*/
-                        console.log(item);
                         await this.initialize();
                     })
         },
@@ -293,7 +291,6 @@
             this.$router.push({ name: 'asset-new' })
         },
         turnOn(item) {
-            /*eslint-disable*/
             this.editing = true;
             var powerState = {
                 // 0 is on
@@ -337,8 +334,6 @@
         },
         showDetails(item) {
             if (!this.editing) {
-            /*eslint-disable*/
-                console.log(item);
                 this.$router.push({ name: 'asset-details', params: {id: item.id } })
             }
             this.editing = false;

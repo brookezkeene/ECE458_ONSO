@@ -169,7 +169,7 @@
 
         methods: {
             async initialize() {
-                this.assets = await this.assetRepository.list();
+                this.assets = await this.assetRepository.getDecommissionedAssets();
                 this.models = await this.modelRepository.list();
                 this.users = await this.userRepository.list();
 
