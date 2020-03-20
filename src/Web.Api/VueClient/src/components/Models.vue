@@ -223,12 +223,12 @@
                         value: 'vendor'
                     },
                     { text: 'Model Number', value: 'modelNumber', },
-                    { text: 'Height', value: 'height', filter: this.heightFilter },
+                    { text: 'Height', value: 'height'},
                     { text: 'Display Color', value: 'coloricon', sortable: false },
-                    { text: 'Network Ports', value: 'ethernetPorts', filter: this.networkFilter }, // TODO: change value to networkPorts!
-                    { text: 'Power Ports', value: 'powerPorts', filter: this.powerFilter },
+                    { text: 'Network Ports', value: 'ethernetPorts' }, // TODO: change value to networkPorts!
+                    { text: 'Power Ports', value: 'powerPorts'},
                     { text: 'CPU', value: 'cpu' },
-                    { text: 'Memory', value: 'memory', filter: this.memoryFilter },
+                    { text: 'Memory', value: 'memory' },
                     { text: 'Storage', value: 'storage' },
                     { text: 'Actions', value: 'action', sortable: false },
 
@@ -261,7 +261,7 @@
                 },
                 deleting: false,
                 editing: false,
-                query: {
+                searchQuery: {
                     vendor: '',
                     number: '',
                     heightStart: 0,
@@ -329,14 +329,14 @@
                 console.log(sortBy)
                 console.log(sortDesc)
                 console.log("this is the sorting stuff")
-                console.log(this.query);
+                console.log(this.searchQuery);
 
-                var info = await this.modelRepository.tablelist(this.query);
+                var info = await this.modelRepository.tablelist(this.searchQuery);
                 this.models = info.data;
                 return info;
             },
             async initialize() {
-                this.models = await this.modelRepository.list();
+                this.models = await this.modelRepository.tablelist(this.searchQuery);
                 this.loading = false;
             /* eslint-disable no-unused-vars, no-console */
                 console.log(this.permission)
@@ -371,20 +371,20 @@
                 this.deleting = false;
             },
             fillQuery(sortBy, sortDesc, page, itemsPerPage) {
-                this.query.vendor = this.vendorSearch;
-                this.query.number = this.numberSearch;
-                this.query.heightStart = this.parseToInt(this.startHeightValue);
-                this.query.heightEnd = this.parseToInt(this.endHeightValue);
-                this.query.memoryRangeStart = this.parseToInt(this.startMemoryValue);
-                this.query.memoryRangeEnd = this.parseToInt(this.endMemoryValue);
-                this.query.networkRangeStart = this.parseToInt(this.startNetworkValue);
-                this.query.networkRangeEnd = this.parseToInt(this.endNetworkValue);
-                this.query.powerRangeStart = this.parseToInt(this.startPowerValue);
-                this.query.powerRangeEnd = this.parseToInt(this.endPowerValue);
-                this.query.page = page;
-                this.query.pageSize = itemsPerPage;
-                this.query.sortBy = this.parseSort(sortBy);
-                this.query.isDesc = this.parseSort(sortDesc);
+                this.searchQuery.vendor = this.vendorSearch;
+                this.searchQuery.number = this.numberSearch;
+                this.searchQuery.heightStart = this.parseToInt(this.startHeightValue);
+                this.searchQuery.heightEnd = this.parseToInt(this.endHeightValue);
+                this.searchQuery.memoryRangeStart = this.parseToInt(this.startMemoryValue);
+                this.searchQuery.memoryRangeEnd = this.parseToInt(this.endMemoryValue);
+                this.searchQuery.networkRangeStart = this.parseToInt(this.startNetworkValue);
+                this.searchQuery.networkRangeEnd = this.parseToInt(this.endNetworkValue);
+                this.searchQuery.powerRangeStart = this.parseToInt(this.startPowerValue);
+                this.searchQuery.powerRangeEnd = this.parseToInt(this.endPowerValue);
+                this.searchQuery.page = page;
+                this.searchQuery.pageSize = itemsPerPage;
+                this.searchQuery.sortBy = this.parseSort(sortBy);
+                this.searchQuery.isDesc = this.parseSort(sortDesc);
             },
             parseToInt(value) {
                 if (value == '') {
@@ -398,64 +398,6 @@
                 } 
                 return '';
             },
-            /**
-             * Filter code below; TODO: refactor this
-             * end/start values are the filter inputs
-             * @param value is the value of the table entry
-             */
-            heightFilter(value) {
-                // If this filter has no value we just skip the entire filter.
-                if (!this.startHeightValue && !this.endHeightValue) {
-                    return true;
-                    // If only one filter has a value, leans entirely on that one filter
-                } else if (!this.endHeightValue) {
-                    return (value) >= parseInt(this.startHeightValue);
-                } else if (!this.startHeightValue) {
-                    return (value) <= parseInt(this.endHeightValue);
-                }
-
-                // Check if the current loop value (The Height value)
-                // is between the Height values inputted
-                return (value) >= parseInt(this.startHeightValue)
-                    && (value) <= parseInt(this.endHeightValue);
-            },
-            memoryFilter(value) {
-                if (!this.startMemoryValue && !this.endMemoryValue) {
-                    return true;
-                } else if (!this.endMemoryValue) {
-                    return (value) >= parseInt(this.startMemoryValue);
-                } else if (!this.startMemoryValue) {
-                    return (value) <= parseInt(this.endMemoryValue);
-                }
-
-                return (value) >= parseInt(this.startMemoryValue)
-                    && (value) <= parseInt(this.endMemoryValue);
-            },
-            networkFilter(value) {
-                if (!this.startNetworkValue && !this.endNetworkValue) {
-                    return true;
-                } else if (!this.endNetworkValue) {
-                    return (value) >= parseInt(this.startNetworkValue);
-                } else if (!this.startNetworkValue) {
-                    return (value) <= parseInt(this.endNetworkValue);
-                }
-
-                return (value) >= parseInt(this.startNetworkValue)
-                    && (value) <= parseInt(this.endNetworkValue);
-            },
-            powerFilter(value) {
-                if (!this.startPowerValue && !this.endPowerValue) {
-                    return true;
-                } else if (!this.endPowerValue) {
-                    return (value) >= parseInt(this.startPowerValue);
-                } else if (!this.startPowerValue) {
-                    return (value) <= parseInt(this.endPowerValue);
-                }
-
-                return (value) >= parseInt(this.startPowerValue)
-                    && (value) <= parseInt(this.endPowerValue);
-            },
-
 
         },
     }

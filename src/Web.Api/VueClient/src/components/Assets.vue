@@ -8,9 +8,10 @@
                       :items="assets"
                       :search="search"
                       class="elevation-1"
-                      multi-sort
-                      @click:row="showDetails">
-
+                      @click:row="showDetails"
+                      :server-items-length="totalItems"
+                      :options.sync="options">
+                      
             <template v-slot:top>
                 <v-toolbar flat>
 
@@ -29,7 +30,7 @@
                                           label="Datacenter"
                                           placeholder="Select a datacenter or all datacenters"
                                           class="pt-8 pl-4"
-                                          @change="datacenterSearch()">
+                                          @change="getAssetsFromApi()">
                                 </v-select>
                             </v-col>
                         </v-row>
@@ -54,6 +55,7 @@
                             <v-autocomplete prepend-inner-icon="mdi-magnify"
                                             :items="assets"
                                             :search-input.sync="search"
+                                            @input="getDataFromApi()"
                                             cache-items
                                             class="mt-3 pt-3"
                                             flat
@@ -71,6 +73,7 @@
                     <v-col cols="4">
                         <v-row class="mt-4 pt-2">
                             <v-text-field v-model="startRackValue"
+                                          @input="getDataFromApi()"
                                           placeholder="Start"
                                           type="text"
                                           label="Rack Range"
@@ -78,6 +81,7 @@
                             </v-text-field>
 
                             <v-text-field v-model="endRackValue"
+                                          @input="getDataFromApi()"
                                           type="text"
                                           placeholder="End"
                                           style="width:0">
@@ -196,7 +200,8 @@
         datacenters: [],
         instructionsDialog: false,
         loading: true,
-        search: '',
+            search: '',
+            options: {},
 
         // Table data.
         headers: [
@@ -232,7 +237,17 @@
             rackPosition: '',
             ownerId: '',
             comment: '',
-        },
+            },
+            assetSearchQuery: {
+                datacenter: '',
+                hostname: '',
+                rackStart: '',
+                rackEnd: '',
+                page: 0,
+                pageSize: 0,
+                isDesc: '',
+                sortBy: '',
+            },
         editing: false,
       }},
     computed: {
@@ -246,14 +261,62 @@
     watch: {
       instructionsDialog (val) {
         val || this.closeDetail()
-      },
-    },
+        },
+        options: {
+                handler() {
+                    this.getAssetsFromApi()
+                        .then(data => {
+                            this.assets = data.data;
+                            this.totalItems = data.totalCount;
+                            this.loading = false;
+                        })
+                },
+                deep: true
+            },
+        },
+        mounted () {
+            this.getAssetsFromApi()
+              .then(data => {
+                            this.assets = data.data;
+                            this.totalItems = data.totalCount;
+                            this.loading = false;
+                        })
+          },
 
     async created() {
       this.initialize()
     },
   
     methods: {
+        async getAssetsFromApi() {
+                this.loading = true;
+                const {  sortBy, sortDesc, page, itemsPerPage } = this.options;
+
+                this.fillQuery(sortBy, sortDesc, page, itemsPerPage);
+                /* eslint-disable no-unused-vars, no-console */
+                console.log("this is the sorting stuff")
+                console.log(this.assetSearchQuery);
+
+                var info = await this.assetRepository.tablelist(this.assetSearchQuery);
+                this.assets = info.data;
+                return info;
+        },
+        fillQuery(sortBy, sortDesc, page, itemsPerPage) {
+            this.assetSearchQuery.datacenter = this.selectedDatacenter;
+                this.assetSearchQuery.hostname = this.search;
+                this.assetSearchQuery.rackStart = this.startRackValue;
+                this.assetSearchQuery.rackEnd = this.endRackValue;
+                this.assetSearchQuery.page = page;
+                this.assetSearchQuery.pageSize = itemsPerPage;
+                this.assetSearchQuery.sortBy = this.parseSort(sortBy);
+                this.assetSearchQuery.isDesc = this.parseSort(sortDesc);
+            },
+            parseSort(value) {
+                if (value.length !== 0) {
+                    return value[0];
+                } 
+                return '';
+            },
         async initialize() {
             this.assets = await this.assetRepository.list();
             this.models = await this.modelRepository.list();

@@ -21,20 +21,24 @@ namespace Web.Api.Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<PagedList<Asset>> GetAssetsAsync(Guid? datacenterId, int page = 1, int pageSize = 10)
+        public async Task<PagedList<Asset>> GetAssetsAsync(Guid? datacenterId, string hostname, string rackStart, string rackEnd,
+                    string sortBy, string isDesc, int page, int pageSize)
         {
             var pagedList = new PagedList<Asset>();
-
+            Expression<Func<Asset, bool>> hostnameCondition = x => (x.Hostname.Contains(hostname));
             var assets = await _dbContext.Assets
                 .Include(x => x.Model)
                 .Include(x => x.Owner)
                 .Include(x => x.Rack)
                 .ThenInclude(x => x.Datacenter)
                 .WhereIf(datacenterId != null, x => x.Rack.Datacenter.Id == datacenterId)
+                .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
                 .PageBy(x => x.Hostname, page, pageSize)
                 .AsNoTracking()
                 .ToListAsync();
-
+            assets = assets.Where(x => String.Compare($"{x.Rack.Row.ToUpper()}{x.Rack.Column}", rackStart) >= 0 &&
+                                  String.Compare($"{x.Rack.Row.ToUpper()}{x.Rack.Column}", rackEnd) <= 0).ToList();
+            assets = Sort(assets, sortBy, isDesc);
             pagedList.AddRange(assets);
             pagedList.TotalCount = await _dbContext.Assets
                 .CountAsync();
@@ -187,6 +191,91 @@ namespace Web.Api.Infrastructure.Repositories
                 .Where(x => x.Id == assetId)
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
+        }
+        private static List<Asset> Sort(List<Asset> assets, string sortBy, string isDesc)
+        {
+            if (string.IsNullOrEmpty(sortBy))
+            {
+                return assets;
+            }
+            else if (sortBy.Equals("vendor"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(q => q.Model.Vendor).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(q => q.Model.Vendor).ToList();
+                }
+            }
+            else if (sortBy.Equals("modelNumber"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(q => q.Model.ModelNumber).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(q => q.Model.ModelNumber).ToList();
+                }
+            }
+            else if (sortBy.Equals("hostname"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(q => q.Hostname).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(q => q.Hostname).ToList();
+                }
+            }
+            else if (sortBy.Equals("datacenter"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(q => q.Rack.Datacenter.Name).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(q => q.Rack.Datacenter.Name).ToList();
+                }
+            }
+            else if (sortBy.Equals("rack"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(c => c.Rack.Row).ThenBy(c => c.Rack.Column).ThenBy(c => c.RackPosition).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(c => c.Rack.Row).ThenByDescending(c => c.Rack.Column).ThenByDescending(c => c.RackPosition).ToList();
+                }
+            }
+            else if (sortBy.Equals("rackPosition"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(q => q.RackPosition).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(q => q.RackPosition).ToList();
+                }
+            }
+            else if (sortBy.Equals("owner"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(q => q.Owner.UserName).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(q => q.Owner.UserName).ToList();
+                }
+            }
+            return assets;
         }
     }
 }

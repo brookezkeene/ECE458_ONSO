@@ -24,9 +24,10 @@ namespace Web.Api.Core.Services
             _auditEventLogger = auditEventLogger;
         }
 
-        public async Task<PagedList<AssetDto>> GetAssetsAsync(Guid? datacenterId, int page = 1, int pageSize = 10)
+        public async Task<PagedList<AssetDto>> GetAssetsAsync(SearchAssetQuery query, int page = 1, int pageSize = 10)
         {
-            var pagedList = await _repository.GetAssetsAsync(datacenterId, page, pageSize);
+            var pagedList = await _repository.GetAssetsAsync(query.Datacenter, query.Hostname, query.RackStart, query.RackEnd,
+                    query.SortBy, query.IsDesc, page, pageSize);
             return pagedList.ToDto();
         }
 

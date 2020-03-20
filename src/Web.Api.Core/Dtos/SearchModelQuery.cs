@@ -60,6 +60,14 @@ namespace Web.Api.Core.Dtos
             if(query.MemoryRangeEnd == 0)
             {
                 query.MemoryRangeEnd = int.MaxValue;
+            } 
+            if(query.Page == 0)
+            {
+                query.Page = 1;
+            }
+            if (query.PageSize == 0)
+            {
+                query.PageSize = 10;
             }
 
         }

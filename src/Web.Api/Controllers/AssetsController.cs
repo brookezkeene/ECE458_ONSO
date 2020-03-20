@@ -37,9 +37,9 @@ namespace Web.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedList<GetAssetsApiDto>>> GetMany(Guid? datacenterId, int page = 1, int pageSize = 10)
+        public async Task<ActionResult<PagedList<GetAssetsApiDto>>> GetMany(SearchAssetQuery query)
         {
-            var assets = await _assetService.GetAssetsAsync(datacenterId, page, pageSize);
+            var assets = await _assetService.GetAssetsAsync(query, query.Page, query.PageSize);
 
             var response = assets.MapTo<PagedList<GetAssetsApiDto>>();
             return Ok(response);
