@@ -28,7 +28,7 @@ export default {
     list(datacenter) {
         var query = {
             datacenter: datacenter,
-            pageSize: 2000000000,
+            pageSize: 2000000000, 
         };
         return axios.get(`${resource}`, { params: query })
             .then(response => {
