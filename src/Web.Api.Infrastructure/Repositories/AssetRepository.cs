@@ -19,7 +19,7 @@ namespace Web.Api.Infrastructure.Repositories
         public AssetRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
-        }
+        } 
 
         public async Task<PagedList<Asset>> GetAssetsAsync(Guid? datacenterId, string vendor, string number, string hostname, string rackStart, string rackEnd,
                     string sortBy, string isDesc, int page, int pageSize)

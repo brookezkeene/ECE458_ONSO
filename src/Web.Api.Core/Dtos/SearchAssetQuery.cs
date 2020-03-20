@@ -69,7 +69,7 @@ namespace Web.Api.Core.Dtos
             }
 
             if (query.Page == 0)
-            {
+            {  
                 query.Page = 1;
             }
             if (query.PageSize == 0)
