@@ -57,7 +57,7 @@
                                                     flat
                                                     hide-no-data
                                                     hide-details
-                                                    item-text="vendor"
+                                                    item-text="modelName"
                                                     label="Search by keyword on model and hostname"
                                                     single-line
                                                     solo-inverted></v-autocomplete>
