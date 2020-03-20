@@ -50,28 +50,67 @@
 
                 </v-toolbar>
                 <v-row>
-                    <v-col cols="6">
+                    <v-col cols="4">
                         <v-row class="pl-10 pt-1">
-                            <v-autocomplete prepend-inner-icon="mdi-magnify"
-                                            :items="assets"
-                                            :search-input.sync="search"
-                                            @input="getAssetsFromApi()"
-                                            cache-items
-                                            class="mt-3 pt-3"
-                                            flat
-                                            hide-no-data
-                                            hide-details
-                                            item-text="vendor"
-                                            label="Search by keyword on model and hostname"
-                                            single-line
-                                            solo-inverted></v-autocomplete>
+                            <v-text-field prepend-inner-icon="mdi-magnify"
+                                          :search-input.sync="vendorSearch"
+                                          v-model="vendorSearch"
+                                          @input="getAssetsFromApi()"
+                                          cache-items
+                                          flat
+                                          hide-no-data
+                                          hide-details
+                                          label="Search Vendor"
+                                          single-line
+                                          solo-inverted>
+
+                            </v-text-field>
 
                         </v-row>
                     </v-col>
-                    <v-spacer></v-spacer>
-                    <!-- Custom filters; sorts between rack ranges -->
                     <v-col cols="4">
-                        <v-row class="mt-4 pt-2">
+                        <v-row class="pl-5 pt-1">
+                            <v-text-field prepend-inner-icon="mdi-magnify"
+                                          :search-input.sync="numberSearch"
+                                          v-model="numberSearch"
+                                          @input="getAssetsFromApi()"
+                                          cache-items
+                                          flat
+                                          hide-no-data
+                                          hide-details
+                                          label="Search Number"
+                                          single-line
+                                          solo-inverted>
+
+                            </v-text-field>
+
+                        </v-row>
+                    </v-col>
+
+                    <v-col cols="4">
+                        <v-row class="pl-5 pt-1 pr-10">
+                            <v-text-field prepend-inner-icon="mdi-magnify"
+                                          :search-input.sync="hostnameSearch"
+                                          v-model="hostnameSearch"
+                                          @input="getAssetsFromApi()"
+                                          cache-items
+                                          flat
+                                          hide-no-data
+                                          hide-details
+                                          label="Search Hostname"
+                                          single-line
+                                          solo-inverted>
+
+                            </v-text-field>
+
+                        </v-row>
+                    </v-col>
+                   
+                    <!-- Custom filters; sorts between rack ranges -->
+                </v-row>
+                <v-row>
+                    <v-col cols="6">
+                        <v-row class="pl-10 pt-1">
                             <v-text-field v-model="startRackValue"
                                           @input="getAssetsFromApi()"
                                           placeholder="Start"
@@ -79,7 +118,6 @@
                                           label="Rack Range"
                                           style="width:0">
                             </v-text-field>
-
                             <v-text-field v-model="endRackValue"
                                           @input="getAssetsFromApi()"
                                           type="text"
@@ -90,7 +128,7 @@
                     </v-col>
                     <v-spacer></v-spacer>
                 </v-row>
-                
+
 
             </template>
 
@@ -190,7 +228,7 @@
 
     components: {
     },
-    inject: ['assetRepository','modelRepository','userRepository', 'datacenterRepository'],
+    inject: ['assetRepository', 'datacenterRepository'],
     data() {
         return {
           selectedDatacenter: 'All Datacenters',
@@ -218,7 +256,6 @@
           { text: 'Actions', value: 'action', sortable: false },
         ],
         assets: [],
-        models: [],
           defaultItem: {
             id: '',
             datacenter: '',
@@ -245,6 +282,8 @@
                 hostname: '',
                 rackStart: '',
                 rackEnd: '',
+                vendor: '',
+                number: '',
                 page: 0,
                 pageSize: 0,
                 isDesc: '',
@@ -310,7 +349,10 @@
             } else {
                 this.assetSearchQuery.datacenter = searchDatacenter.id;
             }
-                this.assetSearchQuery.hostname = this.search;
+            this.assetSearchQuery.vendor = this.vendorSearch;
+            this.assetSearchQuery.number = this.numberSearch;
+            this.assetSearchQuery.hostname = this.hostnameSearch;
+                this.assetSearchQuery.hostname = this.hostnameSearch;
                 this.assetSearchQuery.rackStart = this.startRackValue;
                 this.assetSearchQuery.rackEnd = this.endRackValue;
                 this.assetSearchQuery.page = page;
@@ -326,8 +368,6 @@
             },
         async initialize() {
             this.assets = await this.assetRepository.list();
-            this.models = await this.modelRepository.list();
-            this.users = await this.userRepository.list();
 
             this.datacenters = await this.datacenterRepository.list();
                 var datacenter = {
