@@ -284,7 +284,7 @@
                 assetSearchQuery: {
                     datacenter: '',
                     hostname: '',
-                    rackStart: '', 
+                    rackStart: '',
                     rackEnd: '',
                     vendor: '',
                     modelNumber: '',
@@ -482,9 +482,10 @@
                 // Check if the current loop value (The rack value)
                 // is between the rack values inputted
                 return value.toLowerCase() >= this.startRackValue.toLowerCase()
-                    && value.toLowerCase() <= this.endRackValue.toLowerCase();
+                    && value.toLowerCase() <= this.endRackValue.toLowerCase(); 
             },
 
         },
     }
 </script>
+ 
