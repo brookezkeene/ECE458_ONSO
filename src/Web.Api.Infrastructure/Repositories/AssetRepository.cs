@@ -21,11 +21,15 @@ namespace Web.Api.Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<PagedList<Asset>> GetAssetsAsync(Guid? datacenterId, string hostname, string rackStart, string rackEnd,
+        public async Task<PagedList<Asset>> GetAssetsAsync(Guid? datacenterId, string vendor, string number, string hostname, string rackStart, string rackEnd,
                     string sortBy, string isDesc, int page, int pageSize)
         {
             var pagedList = new PagedList<Asset>();
             Expression<Func<Asset, bool>> hostnameCondition = x => (x.Hostname.Contains(hostname));
+            Expression<Func<Asset, bool>> vendorCondition = x => (x.Hostname.Contains(vendor));
+            Expression<Func<Asset, bool>> numberCondition = x => (x.Hostname.Contains(number));
+
+
             var assets = await _dbContext.Assets
                 .Include(x => x.Model)
                 .Include(x => x.Owner)
@@ -33,6 +37,8 @@ namespace Web.Api.Infrastructure.Repositories
                 .ThenInclude(x => x.Datacenter)
                 .WhereIf(datacenterId != null, x => x.Rack.Datacenter.Id == datacenterId)
                 .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
+                .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
+                .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
                 .PageBy(x => x.Hostname, page, pageSize)
                 .AsNoTracking()
                 .ToListAsync();

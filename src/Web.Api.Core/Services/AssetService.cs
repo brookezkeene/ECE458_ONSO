@@ -27,8 +27,8 @@ namespace Web.Api.Core.Services
         public async Task<PagedList<AssetDto>> GetAssetsAsync(SearchAssetQuery query, int page = 1, int pageSize = 10)
         {
             query.ToUpper();
-            var pagedList = await _repository.GetAssetsAsync(query.Datacenter, query.Hostname, query.RackStart, query.RackEnd,
-                    query.SortBy, query.IsDesc, page, pageSize);
+            var pagedList = await _repository.GetAssetsAsync(query.Datacenter, query.Vendor, query.ModelNumber, query.Hostname, 
+                    query.RackStart, query.RackEnd, query.SortBy, query.IsDesc, page, pageSize);
             return pagedList.ToDto();
         }
 

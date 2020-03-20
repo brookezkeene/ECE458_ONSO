@@ -283,7 +283,7 @@
                 rackStart: '',
                 rackEnd: '',
                 vendor: '',
-                number: '',
+                modelNumber: '',
                 page: 0,
                 pageSize: 0,
                 isDesc: '',
@@ -350,7 +350,7 @@
                 this.assetSearchQuery.datacenter = searchDatacenter.id;
             }
             this.assetSearchQuery.vendor = this.vendorSearch;
-            this.assetSearchQuery.number = this.numberSearch;
+            this.assetSearchQuery.modelNumber = this.numberSearch;
             this.assetSearchQuery.hostname = this.hostnameSearch;
                 this.assetSearchQuery.hostname = this.hostnameSearch;
                 this.assetSearchQuery.rackStart = this.startRackValue;

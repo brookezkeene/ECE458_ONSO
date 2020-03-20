@@ -8,7 +8,7 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
 {
     public interface IAssetRepository
     {
-        Task<PagedList<Asset>> GetAssetsAsync(Guid? datacenterId, string hostname, string rackStart, string rackEnd,
+        Task<PagedList<Asset>> GetAssetsAsync(Guid? datacenterId, string vendor, string number, string hostname, string rackStart, string rackEnd,
                             string sortBy, string isDesc, int page, int pageSize);
         Task<Asset> GetAssetAsync(Guid assetId);
         Task<int> AddAssetAsync(Asset asset);

@@ -7,6 +7,8 @@ namespace Web.Api.Core.Dtos
     public class SearchAssetQuery
     {
         public Guid? Datacenter { get; set; }
+        public string Vendor { get; set; }
+        public string ModelNumber { get; set; }
         public string RackStart { get; set; }
         public string RackEnd { get; set; }
         public string Hostname { get; set; }
@@ -20,6 +22,22 @@ namespace Web.Api.Core.Dtos
         public static void ToUpper(this SearchAssetQuery query)
         {
             //setting defaults for model vendor and number search
+            if (!string.IsNullOrEmpty(query.Vendor))
+            {
+                query.Vendor = query.Vendor.ToUpper();
+            }
+            else
+            {
+                query.Vendor = "";
+            }
+            if (!string.IsNullOrEmpty(query.ModelNumber))
+            {
+                query.ModelNumber = query.ModelNumber.ToUpper();
+            }
+            else
+            {
+                query.ModelNumber = "";
+            }
             if (!string.IsNullOrEmpty(query.Hostname))
             {
                 query.Hostname = query.Hostname.ToUpper();
