@@ -52,7 +52,7 @@ export default {
                 return response.data;
             }).catch(error => error);
     },
-    getDecommissionedAssets(query) {
-        return axios.get(`${resource}/decommission`, { params: query }).then(response => response.data).catch(error => error);
+    getDecommissionedAssets() {
+        return axios.get(`${resource}/decommission`).then(response => response.data.data).catch(error => error);
     },
 }
