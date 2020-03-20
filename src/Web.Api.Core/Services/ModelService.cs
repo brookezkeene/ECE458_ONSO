@@ -32,7 +32,7 @@ namespace Web.Api.Core.Services
                 query.MemoryRangeStart, query.MemoryRangeEnd, query.SortBy, query.IsDesc, query.Page, query.PageSize);
             pagedList.CurrentPage = page;
             return pagedList.ToDto();
-        }
+        } 
 
         public async Task<List<ModelDto>> GetModelExportAsync(ModelExportQuery query)
         {

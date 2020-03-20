@@ -396,9 +396,10 @@
                 if (value.length !== 0) {
                     return value[0];
                 }
-                return '';
+                return ''; 
             },
 
         },
     }
 </script>
+ 
