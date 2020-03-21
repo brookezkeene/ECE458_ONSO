@@ -22,9 +22,7 @@
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Model Number</v-label>
-                        <v-card-text>
-                            <router-link :to="{ name: 'model-details', params: { id: asset.modelId } }"> {{ asset.modelNumber }} </router-link>
-                        </v-card-text>
+                        <v-card-text> {{ asset.modelNumber }} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Host Name</v-label>
