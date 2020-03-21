@@ -63,8 +63,8 @@
                         <v-label>MAC Addresses</v-label>
                         <v-card flat class="overflow-y-auto">
                             <v-card flat outlined class="overflow-y-auto" max-height="300px">
-                                <div v-for="(port,index) in asset.networkPorts" :key="index">
-                                    <v-card-text>{{port.number}} : {{port.pduPort}}</v-card-text>
+                                <div v-for="(port,index) in asset.data.NetworkPorts" :key="index">
+                                    <v-card-text>{{port.Number}} : {{port.MacAddress}}</v-card-text>
                                 </div>
                             </v-card>
                         </v-card>
@@ -74,8 +74,8 @@
                         <v-label>Network Port Connections</v-label>
                         <v-card flat class="overflow-y-auto">
                             <v-card flat outlined class="overflow-y-auto" max-height="300px">
-                                <div v-for="(port,index) in asset.networkPorts" :key="index">
-                                    <v-card-text>{{port.number}} : {{port.pduPort}}</v-card-text>
+                                <div v-for="(port,index) in asset.data.NetworkPorts" :key="index">
+                                    <v-card-text>{{port.MacAddress}} : {{port.ConnectedPort.MacAddress}}</v-card-text>
                                 </div>
                             </v-card>
                         </v-card>
@@ -88,19 +88,11 @@
                         <v-label>Power Port Connections</v-label>
                         <v-card flat class="overflow-y-auto">
                             <v-card flat outlined class="overflow-y-auto">
-                                <div v-for="(port,index) in asset.powerPorts" :key="index">
-                                    <v-card-text>{{port.number}} : {{port.pduPort}}</v-card-text>
+                                <div v-for="(port,index) in asset.data.PowerPorts" :key="index">
+                                    <v-card-text>{{port.Number}} : {{port.PduPort}}</v-card-text>
                                 </div>
                             </v-card>
                         </v-card>
-
-                        <v-btn small class="mt-4" color="primary" outlined v-if="!viewPowerPorts" @click="showNames">View Power Port Status</v-btn>
-                        <v-btn dark class="mt-4" small color="primary" outlined v-else href @click="hideNames">Hide Power Port Status</v-btn>
-                        <div v-if="viewPowerPorts">
-                            <v-card max-height="300px" class="overflow-y-auto" flat>
-                                <v-card-text v-for="(object,index) in powerPorts.powerPorts" :key="index"> Port {{object.port}}: {{object.status}} </v-card-text>
-                            </v-card>
-                        </div>
                     </v-col>
                 </v-row>
                 <v-row v-if="showNeighborhood">

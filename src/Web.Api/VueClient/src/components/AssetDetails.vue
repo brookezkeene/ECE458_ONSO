@@ -56,7 +56,7 @@
                         <v-card flat class="overflow-y-auto">
                             <v-card flat outlined class="overflow-y-auto"  max-height="300px">
                                 <div v-for="(port,index) in asset.networkPorts" :key="index">
-                                    <v-card-text>{{port.number}} : {{port.pduPort}}</v-card-text>
+                                    <v-card-text>{{port.number}} : {{port.macAddress}}</v-card-text>
                                 </div>
                             </v-card>
                         </v-card>
@@ -67,7 +67,7 @@
                         <v-card flat class="overflow-y-auto">
                             <v-card flat outlined class="overflow-y-auto" max-height="300px">
                                 <div v-for="(port,index) in asset.networkPorts" :key="index">
-                                    <v-card-text>{{port.number}} : {{port.pduPort}}</v-card-text>
+                                    <v-card-text>{{port.number}} : {{port.connectedPort.number}}</v-card-text>
                                 </div>
                             </v-card>
                         </v-card>
@@ -90,7 +90,7 @@
                         <v-btn dark class="mt-4" small color="primary" outlined v-else href @click="hideNames">Hide Power Port Status</v-btn>
                         <div v-if="viewPowerPorts">
                             <v-card max-height="300px" class="overflow-y-auto" flat>
-                                <v-card-text v-for="(object,index) in powerPorts.powerPorts" :key="index"> Port {{object.port}}: {{object.status}} </v-card-text>
+                                <v-card-text v-for="(object,index) in powerPorts.powerPorts" :key="index"> Port {{object.pduPort}}: {{object.status}} </v-card-text>
                             </v-card>
                         </div>
                     </v-col>
