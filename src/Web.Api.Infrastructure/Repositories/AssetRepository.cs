@@ -29,6 +29,7 @@ namespace Web.Api.Infrastructure.Repositories
             Expression<Func<Asset, bool>> vendorCondition = x => (x.Model.Vendor.Contains(vendor));
             Expression<Func<Asset, bool>> numberCondition = x => (x.Model.ModelNumber.Contains(number));
 
+
             var assets = await _dbContext.Assets
                 .Include(x => x.Model)
                 .Include(x => x.Owner)
@@ -52,6 +53,7 @@ namespace Web.Api.Infrastructure.Repositories
 
             return pagedList;
         }
+
 
         public async Task<List<Asset>> GetAssetExportAsync(string search, string hostname, string rowStart, int colStart, string rowEnd, int colEnd)
         {
