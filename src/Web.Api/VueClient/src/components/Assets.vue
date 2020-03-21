@@ -329,7 +329,7 @@
           },
 
     async created() {
-      this.initializeDatacenters()
+        this.initializeDatacenters();
     },
   
     methods: {

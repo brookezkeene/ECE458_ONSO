@@ -29,7 +29,7 @@ namespace Web.Api.Core.Services
             query.ToUpper();
             var pagedList = await _repository.GetModelsAsync(query.Vendor, query.Number, query.HeightStart, query.HeightEnd, 
                 query.NetworkRangeStart, query.NetworkRangeEnd, query.PowerRangeStart, query.PowerRangeEnd, 
-                query.MemoryRangeStart, query.MemoryRangeEnd, query.SortBy, query.IsDesc, page, pageSize);
+                query.MemoryRangeStart, query.MemoryRangeEnd, query.SortBy, query.IsDesc, query.Page, query.PageSize);
             pagedList.CurrentPage = page;
             return pagedList.ToDto();
         }

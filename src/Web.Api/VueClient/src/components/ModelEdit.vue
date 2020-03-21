@@ -10,6 +10,7 @@
                     <v-row>
                         <v-col cols="12" sm="6" md="4">
                             <v-combobox v-model="newItem.vendor"
+                                        :options.sync="options"
                                         :items="models"
                                         item-text="vendor"
                                         item-value=""
@@ -18,7 +19,11 @@
                                         placeholder="Please enter a vendor (i.e. Dell)"
                                         :rules="[rules.vendorRules]"
                                         counter="50"
-                                        required></v-combobox>
+                                        @input="getDataFromApi()"
+                                        required>
+                                
+                            </v-combobox>
+
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model="newItem.modelNumber"
@@ -137,6 +142,7 @@
                     message: '',
                     color: ''
                 },
+                options: {},
                 models: [],
                 loading: false,
                 newItem: {
@@ -168,13 +174,43 @@
 
 
                 },
+                searchQuery: {
+                    vendor: '',
+                    page: 0,
+                    pageSize: 0,
+                },
                 valid: true
             };
         },
-
+            watch: {
+      
+        options: {
+                handler() {
+                    this.getDataFromApi()
+                        .then(data => {
+                            this.models = data.data;
+                            this.totalItems = data.totalCount;
+                            this.loading = false;
+                        })
+                },
+                deep: true
+            },
+        },
+        mounted () {
+            this.getDataFromApi()
+                .then(data => {
+                /* eslint-disable no-unused-vars, no-console */
+                    console.log(data);
+                    console.log("this is the data");
+                            this.models = data.data;
+                            this.totalItems = data.totalCount;
+                            this.loading = false;
+                        })
+          },
         async created() {
-            this.models = await this.modelRepository.list();
-
+            
+        /* eslint-disable no-unused-vars, no-console */
+            
             this.newItem = typeof this.id === 'undefined'
                 ? this.newItem
                 : await this.modelRepository.find(this.id);
@@ -186,6 +222,17 @@
             },
         },
         methods: {
+            async getDataFromApi() {
+                const { page } = this.options;
+                this.searchQuery.page = page;
+                this.searchQuery.pageSize = 20000000;
+                this.searchQuery.vendor = this.newItem.vendor;
+                
+                var info = await this.modelRepository.tablelist(this.searchQuery);
+                this.models = info.data;
+                return info;
+            },
+
             async save() {
                 if (this.validationInputs(this.newItem) > 0) {
                     return;
