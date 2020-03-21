@@ -14,7 +14,7 @@
 
                     <template v-slot:top v-slot:item.action="{ item }">
                         <v-toolbar flat>
-
+                             
                             <!-- ADDED AUTOCOMPLETE TO THE MODEL SEARCH -->
                             <v-container fluid align="left">
                                 <v-row>
@@ -478,7 +478,7 @@
                     return value.toLowerCase() >= this.startRackValue.toLowerCase();
                 } else if (!this.startRackValue) {
                     return value.toLowerCase() <= this.endRackValue.toLowerCase();
-                } 
+                }
                 // Check if the current loop value (The rack value)
                 // is between the rack values inputted
                 return value.toLowerCase() >= this.startRackValue.toLowerCase()
