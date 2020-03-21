@@ -57,7 +57,7 @@
                                                     flat
                                                     hide-no-data
                                                     hide-details
-                                                    item-text="vendor"
+                                                    item-text="modelName"
                                                     label="Search by keyword on model and hostname"
                                                     single-line
                                                     solo-inverted></v-autocomplete>
@@ -113,15 +113,15 @@
 
                 // Table data.
                 headers: [
-                    { text: 'Time Decommissioned', value: 'timestamp' },
-                    { text: 'Decomissioned By User', value: 'decommissionUser'},
-                    { text: 'Model Vendor', value: 'vendor' },
+                    { text: 'Time Decommissioned', value: 'date' },
+                    { text: 'Decomissioned By User', value: 'decommissioner' },
+                    { text: 'Model Vendor', value: 'modelName' },
                     { text: 'Model Number', value: 'modelNumber', },
                     { text: 'Hostname', value: 'hostname' },
                     { text: 'Datacenter', value: 'datacenter' },
-                    { text: 'Rack', value: 'rack', filter: this.rackFilter },
-                    { text: 'Rack U', value: 'rackPosition', },
-                    { text: 'Owner Username', value: 'owner' },
+                    { text: 'Rack', value: 'rackAddress', filter: this.rackFilter },
+                    { text: 'Rack U', value: 'data.RackPosition', },
+                    { text: 'Owner Username', value: 'data.OwnerName' },
                 ],
                 assets: [],
                 models: [],
@@ -164,16 +164,26 @@
         },
 
         async created() {
-            this.initialize()
+            this.initialize();
+            this.$store.dispatch('loadUsername');
         },
 
         methods: {
             async initialize() {
-                this.assets = await this.assetRepository.list();
+                this.assets = await this.assetRepository.getDecommissionedAssets();
                 this.models = await this.modelRepository.list();
                 this.users = await this.userRepository.list();
-
                 this.datacenters = await this.datacenterRepository.list();
+
+                // Turn data blob into fields to be read in table
+                this.assets.forEach(e => {
+                    var assetInfo = JSON.parse(e.data);
+                    e.data = assetInfo;
+                })
+
+                /*eslint-disable*/
+                console.log(this.assets);
+
                 var datacenter = {
                     description: "All Datacenters",
                     name: "All",
@@ -197,7 +207,7 @@
                 if (!this.editing) {
                     /*eslint-disable*/
                     console.log(item);
-                    this.$router.push({ name: 'asset-details', params: { id: item.id } })
+                    this.$router.push({ name: 'decommissioned-asset-details', params: { id: item.id } })
                 }
                 this.editing = false;
             },

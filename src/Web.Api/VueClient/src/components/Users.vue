@@ -80,35 +80,35 @@
                                 <template v-slot:activator="{ on }">
                                     <v-icon small v-on="on">mdi-table-large</v-icon>
                                 </template>
-                                <span>User has {{allRoles[0].label}}</span>
+                                <span>{{allRoles[0].label}}</span>
                             </v-tooltip>
 
                             <v-tooltip right v-if="item.permissions.includes('asset') && !item.permissions.includes('admin')">
                                 <template v-slot:activator="{ on }">
                                     <v-icon small v-on="on">mdi-server</v-icon>
                                 </template>
-                                <span>User has {{allRoles[1].label}}</span>
+                                <span>{{allRoles[1].label}}</span>
                             </v-tooltip>
 
                             <v-tooltip right v-if="item.permissions.includes('power') && !item.permissions.includes('admin')">
                                 <template v-slot:activator="{ on }">
                                     <v-icon small v-on="on">mdi-power</v-icon>
                                 </template>
-                                <span>User has {{allRoles[2].label}}</span>
+                                <span>{{allRoles[2].label}}</span>
                             </v-tooltip>
 
                             <v-tooltip right v-if="item.permissions.includes('audit') && !item.permissions.includes('admin')">
                                 <template v-slot:activator="{ on }">
                                     <v-icon small v-on="on">mdi-post</v-icon>
                                 </template>
-                                <span>User has {{allRoles[3].label}}</span>
+                                <span>{{allRoles[3].label}}</span>
                             </v-tooltip>
 
                             <v-tooltip right v-if="item.permissions.includes('admin')">
                                 <template v-slot:activator="{ on }">
                                     <v-icon small v-on="on">mdi-shield-account</v-icon>
                                 </template>
-                                <span>User has {{allRoles[4].label}}</span>
+                                <span>{{allRoles[4].label}}</span>
                             </v-tooltip>
 
                             <v-btn v-if="showActionsForUser(item)"

@@ -119,9 +119,11 @@ namespace Web.Api.Controllers
 
             //deleting asset from active asset column
             var asset = await _assetService.GetAssetAsync(query.Id);
-            await _assetService.DeleteAssetAsync(asset);
 
             await _assetService.CreateDecommissionedAssetAsync(decommisionedAsset);
+
+            await _assetService.DeleteAssetAsync(asset);
+
             return Ok();
         }
         [HttpGet("{id}/decommission")]

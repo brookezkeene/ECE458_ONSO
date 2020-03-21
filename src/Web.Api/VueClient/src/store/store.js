@@ -19,7 +19,7 @@ export default new Vuex.Store({
         dialogVisible: false,   // to show or hide a dialog
         dialogType: null,       // specify dialog type
         updateData: false,      // for updating tables
-        username: '',
+        username: '',           // for showing who is signed in and saving who decommissioned
         myPermissions: [],      // for tracking user permissions
     },
 
@@ -64,11 +64,9 @@ export default new Vuex.Store({
         },
         SAVE_USER(state, username) {
             state.username = username;
-            console.log(username);
         },
         SAVE_ROLES(state, roles) {
             state.myPermissions = roles;
-            console.log(roles);
         }
     },
 

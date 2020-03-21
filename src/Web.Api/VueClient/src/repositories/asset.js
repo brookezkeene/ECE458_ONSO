@@ -44,4 +44,21 @@ export default {
     delete(item) {
         return axios.delete(`${resource}/${item.id}`).then(response => { return response.data; }).catch(error => error);
     },
+    decommission(query) {
+    /*eslint-disable*/
+        console.log(query);
+        return axios.post(`${resource}/decommission`, null, { params: query })
+            .then(response => {
+                return response.data;
+            }).catch(error => error);
+    },
+    getDecommissionedAsset(id) {
+        return axios.get(`${resource}/${id}/decommission`)
+            .then(response => {
+                return response.data;
+            });
+    },
+    getDecommissionedAssets() {
+        return axios.get(`${resource}/decommission`).then(response => response.data.data).catch(error => error);
+    },
 }
