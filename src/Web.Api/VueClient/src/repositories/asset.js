@@ -26,14 +26,21 @@ export default {
             });
     },
     list(datacenter) {
-        const query = {
-            datacenterId: datacenter,
-            pageSize: 2000000000
-        }
+        var query = {
+            datacenter: datacenter,
+            pageSize: 2000000000, 
+        };
         return axios.get(`${resource}`, { params: query })
             .then(response => {
                 return response.data.data;
             });
+    },
+    tablelist(query) {
+        //query contains page and pagesize
+        return axios.get(`${resource}`, { params: query })
+            .then(response => {
+                return response.data;
+            }).catch(error => error);
     },
     create(item) {
         return axios.post(`${resource}`, item).then(response => response.data).catch(error => error);
@@ -45,7 +52,7 @@ export default {
         return axios.delete(`${resource}/${item.id}`).then(response => { return response.data; }).catch(error => error);
     },
     decommission(query) {
-    /*eslint-disable*/
+        /*eslint-disable*/
         console.log(query);
         return axios.post(`${resource}/decommission`, null, { params: query })
             .then(response => {

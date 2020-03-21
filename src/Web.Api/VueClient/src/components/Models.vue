@@ -7,8 +7,9 @@
                     <v-data-table :headers="filteredHeaders"
                                   :items="models"
                                   :search="search"
+                                  :options.sync="options"
+                                  :server-items-length="totalItems"
                                   class="pa-10"
-                                  multi-sort
                                   @click:row="showDetails">
                         <template v-slot:top v-slot:item.action="{ item }">
 
@@ -17,19 +18,42 @@
                                     <v-col class="pt-3 mt-4" cols="2">
                                         <v-label>Filter by ...</v-label>
                                     </v-col>
-                                    <v-col cols="6">
-                                        <v-autocomplete prepend-inner-icon="mdi-magnify"
-                                                        :search-input.sync="search"
-                                                        cache-items
-                                                        flat
-                                                        hide-no-data
-                                                        hide-details
-                                                        label="Search"
-                                                        single-line
-                                                        solo-inverted></v-autocomplete>
+                                    <v-col cols="4">
+
+                                        <v-text-field prepend-inner-icon="mdi-magnify"
+                                                      :search-input.sync="vendorSearch"
+                                                      v-model="vendorSearch"
+                                                      @input="getDataFromApi()"
+                                                      cache-items
+                                                      flat
+                                                      hide-no-data
+                                                      hide-details
+                                                      label="Search Vendor"
+                                                      single-line
+                                                      solo-inverted>
+
+                                        </v-text-field>
+
+                                    </v-col>
+                                    <v-col cols="4">
+
+                                        <v-text-field prepend-inner-icon="mdi-magnify"
+                                                      :search-input.sync="numberSearch"
+                                                      v-model="numberSearch"
+                                                      @input="getDataFromApi()"
+                                                      cache-items
+                                                      flat
+                                                      hide-no-data
+                                                      hide-details
+                                                      label="Search Number"
+                                                      single-line
+                                                      solo-inverted>
+
+                                        </v-text-field>
+
                                     </v-col>
                                 </v-row>
-                                
+
                                 <v-btn v-if="permission" color="primary" dark class="mb-2" @click="addItem">Add Model</v-btn>
 
                             </v-toolbar>
@@ -44,13 +68,15 @@
                                                     <v-text-field v-model="startHeightValue"
                                                                   placeholder="from"
                                                                   type="number"
-                                                                  label="Height">
+                                                                  label="Height"
+                                                                  @input="getDataFromApi()">
                                                     </v-text-field>
                                                 </v-col>
                                                 <v-col cols="6">
                                                     <v-text-field v-model="endHeightValue"
                                                                   type="number"
-                                                                  placeholder="to">
+                                                                  placeholder="to"
+                                                                  @input="getDataFromApi()">
                                                     </v-text-field>
                                                 </v-col>
                                             </v-row>
@@ -61,13 +87,15 @@
                                                     <v-text-field v-model="startNetworkValue"
                                                                   placeholder="from"
                                                                   type="number"
-                                                                  label="Network Ports">
+                                                                  label="Network Ports"
+                                                                  @input="getDataFromApi()">
                                                     </v-text-field>
                                                 </v-col>
                                                 <v-col cols="6">
                                                     <v-text-field v-model="endNetworkValue"
                                                                   type="number"
-                                                                  placeholder="to">
+                                                                  placeholder="to"
+                                                                  @input="getDataFromApi()">
                                                     </v-text-field>
                                                 </v-col>
                                             </v-row>
@@ -78,13 +106,15 @@
                                                     <v-text-field v-model="startPowerValue"
                                                                   placeholder="from"
                                                                   type="number"
-                                                                  label="Power Ports">
+                                                                  label="Power Ports"
+                                                                  @input="getDataFromApi()">
                                                     </v-text-field>
                                                 </v-col>
                                                 <v-col cols="6">
                                                     <v-text-field v-model="endPowerValue"
                                                                   type="number"
-                                                                  placeholder="to">
+                                                                  placeholder="to"
+                                                                  @input="getDataFromApi()">
                                                     </v-text-field>
                                                 </v-col>
                                             </v-row>
@@ -95,13 +125,15 @@
                                                     <v-text-field v-model="startMemoryValue"
                                                                   placeholder="from"
                                                                   type="number"
-                                                                  label="Memory">
+                                                                  label="Memory"
+                                                                  @input="getDataFromApi()">
                                                     </v-text-field>
                                                 </v-col>
                                                 <v-col cols="6">
                                                     <v-text-field v-model="endMemoryValue"
                                                                   type="number"
-                                                                  placeholder="to">
+                                                                  placeholder="to"
+                                                                  @input="getDataFromApi()">
                                                     </v-text-field>
                                                 </v-col>
                                             </v-row>
@@ -160,6 +192,8 @@
         inject: ['modelRepository'],
         data() {
             return {
+                options: {},
+                totalItems: 0,
                 updateSnackbar: {
                     show: false,
                     message: '',
@@ -174,11 +208,14 @@
                 endNetworkValue: '',
                 startPowerValue: '',
                 endPowerValue: '',
+                vendorSearch: '',
+                numberSearch: '',
 
                 dialog: false,
                 detailsDialog: false,
                 loading: true,
                 search: '',
+
                 headers: [
                     {
                         text: 'Vendor',
@@ -186,12 +223,12 @@
                         value: 'vendor'
                     },
                     { text: 'Model Number', value: 'modelNumber', },
-                    { text: 'Height', value: 'height', filter: this.heightFilter },
+                    { text: 'Height', value: 'height' },
                     { text: 'Display Color', value: 'coloricon', sortable: false },
-                    { text: 'Network Ports', value: 'ethernetPorts', filter: this.networkFilter }, // TODO: change value to networkPorts!
-                    { text: 'Power Ports', value: 'powerPorts', filter: this.powerFilter },
+                    { text: 'Network Ports', value: 'ethernetPorts' }, // TODO: change value to networkPorts!
+                    { text: 'Power Ports', value: 'powerPorts' },
                     { text: 'CPU', value: 'cpu' },
-                    { text: 'Memory', value: 'memory', filter: this.memoryFilter },
+                    { text: 'Memory', value: 'memory' },
                     { text: 'Storage', value: 'storage' },
                     { text: 'Actions', value: 'action', sortable: false },
 
@@ -224,6 +261,23 @@
                 },
                 deleting: false,
                 editing: false,
+                searchQuery: {
+                    vendor: '',
+                    number: '',
+                    heightStart: 0,
+                    heightEnd: 0,
+                    networkRangeStart: 0,
+                    networkRangeEnd: 0,
+                    powerRangeStart: 0,
+                    powerRangeEnd: 0,
+                    memoryRangeStart: 0,
+                    memoryRangeEnd: 0,
+                    page: 0,
+                    pageSize: 0,
+                    isDesc: '',
+                    sortBy: '',
+                },
+
             }
         },
         computed: {
@@ -244,16 +298,47 @@
             detailsDialog(val) {
                 val || this.closeDetail()
             },
-        },
-        async created() {
-            this.initialize()
+            options: {
+                handler() {
+                    this.getDataFromApi()
+                        .then(data => {
+                            this.models = data.data;
+                            this.totalItems = data.totalCount;
+                            this.loading = false;
+                        })
+                },
+                deep: true
+            },
         },
 
+        mounted() {
+            this.getDataFromApi()
+                .then(data => {
+                    this.models = data.data;
+                    this.totalItems = data.totalCount;
+                    this.loading = false;
+                })
+        },
         methods: {
+            async getDataFromApi() {
+                this.loading = true;
+                const { sortBy, sortDesc, page, itemsPerPage } = this.options;
+                this.fillQuery(sortBy, sortDesc, page, itemsPerPage);
+
+                /* eslint-disable no-unused-vars, no-console */
+                console.log(sortBy)
+                console.log(sortDesc)
+                console.log("this is the sorting stuff")
+                console.log(this.searchQuery);
+
+                var info = await this.modelRepository.tablelist(this.searchQuery);
+                this.models = info.data;
+                return info;
+            },
             async initialize() {
-                this.models = await this.modelRepository.list();
+                this.models = await this.modelRepository.tablelist(this.searchQuery);
                 this.loading = false;
-            /* eslint-disable no-unused-vars, no-console */
+                /* eslint-disable no-unused-vars, no-console */
                 console.log(this.permission)
             },
             editItem(item) {
@@ -281,68 +366,38 @@
             },
             showDetails(item) {
                 if (this.editedIndex === -1 && !this.deleting && !this.editing) {
-                    this.$router.push({ name: 'model-details', params: {id: item.id } })
+                    this.$router.push({ name: 'model-details', params: { id: item.id } })
                 }
                 this.deleting = false;
             },
-            /**
-             * Filter code below; TODO: refactor this
-             * end/start values are the filter inputs
-             * @param value is the value of the table entry
-             */
-            heightFilter(value) {
-                // If this filter has no value we just skip the entire filter.
-                if (!this.startHeightValue && !this.endHeightValue) {
-                    return true;
-                    // If only one filter has a value, leans entirely on that one filter
-                } else if (!this.endHeightValue) {
-                    return (value) >= parseInt(this.startHeightValue);
-                } else if (!this.startHeightValue) {
-                    return (value) <= parseInt(this.endHeightValue);
-                }
-
-                // Check if the current loop value (The Height value)
-                // is between the Height values inputted
-                return (value) >= parseInt(this.startHeightValue)
-                    && (value) <= parseInt(this.endHeightValue);
+            fillQuery(sortBy, sortDesc, page, itemsPerPage) {
+                this.searchQuery.vendor = this.vendorSearch;
+                this.searchQuery.number = this.numberSearch;
+                this.searchQuery.heightStart = this.parseToInt(this.startHeightValue);
+                this.searchQuery.heightEnd = this.parseToInt(this.endHeightValue);
+                this.searchQuery.memoryRangeStart = this.parseToInt(this.startMemoryValue);
+                this.searchQuery.memoryRangeEnd = this.parseToInt(this.endMemoryValue);
+                this.searchQuery.networkRangeStart = this.parseToInt(this.startNetworkValue);
+                this.searchQuery.networkRangeEnd = this.parseToInt(this.endNetworkValue);
+                this.searchQuery.powerRangeStart = this.parseToInt(this.startPowerValue);
+                this.searchQuery.powerRangeEnd = this.parseToInt(this.endPowerValue);
+                this.searchQuery.page = page;
+                this.searchQuery.pageSize = itemsPerPage;
+                this.searchQuery.sortBy = this.parseSort(sortBy);
+                this.searchQuery.isDesc = this.parseSort(sortDesc);
             },
-            memoryFilter(value) {
-                if (!this.startMemoryValue && !this.endMemoryValue) {
-                    return true;
-                } else if (!this.endMemoryValue) {
-                    return (value) >= parseInt(this.startMemoryValue);
-                } else if (!this.startMemoryValue) {
-                    return (value) <= parseInt(this.endMemoryValue);
+            parseToInt(value) {
+                if (value == '') {
+                    return 0;
                 }
-
-                return (value) >= parseInt(this.startMemoryValue)
-                    && (value) <= parseInt(this.endMemoryValue);
+                return parseInt(value);
             },
-            networkFilter(value) {
-                if (!this.startNetworkValue && !this.endNetworkValue) {
-                    return true;
-                } else if (!this.endNetworkValue) {
-                    return (value) >= parseInt(this.startNetworkValue);
-                } else if (!this.startNetworkValue) {
-                    return (value) <= parseInt(this.endNetworkValue);
+            parseSort(value) {
+                if (value.length !== 0) {
+                    return value[0];
                 }
-
-                return (value) >= parseInt(this.startNetworkValue)
-                    && (value) <= parseInt(this.endNetworkValue);
+                return '';
             },
-            powerFilter(value) {
-                if (!this.startPowerValue && !this.endPowerValue) {
-                    return true;
-                } else if (!this.endPowerValue) {
-                    return (value) >= parseInt(this.startPowerValue);
-                } else if (!this.startPowerValue) {
-                    return (value) <= parseInt(this.endPowerValue);
-                }
-
-                return (value) >= parseInt(this.startPowerValue)
-                    && (value) <= parseInt(this.endPowerValue);
-            },
-
 
         },
     }
