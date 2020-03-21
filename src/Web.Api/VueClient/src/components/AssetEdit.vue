@@ -302,9 +302,9 @@
 
         async created() {
             this.models = await this.modelRepository.list();
-            this.assets = await this.assetRepository.list();
+            //this.assets = await this.assetRepository.list();
             this.users = await this.userRepository.list();
-            this.racks = await this.rackRepository.list();
+            //this.racks = await this.rackRepository.list();
             this.datacenters = await this.datacenterRepository.list();
 
             for (const model of this.models) {
