@@ -12,7 +12,7 @@
                       :server-items-length="totalItems"
                       :options.sync="options">
                       
-            <template v-slot:top>
+            <template v-slot:top v-slot:item.action="{ item }">
                 <v-toolbar flat>
 
                     <!-- ADDED AUTOCOMPLETE TO THE MODEL SEARCH -->
@@ -233,8 +233,12 @@
         return {
           selectedDatacenter: 'All Datacenters',
         // Filter values.
+            hostnameSearch: '',
+            vendorSearch: '',
+            numberSearch: '',
         startRackValue: '',
-        endRackValue: '',
+            endRackValue: '',
+
         datacenters: [],
         instructionsDialog: false,
         loading: true,
@@ -249,7 +253,7 @@
           { text: 'Model Number', value: 'modelNumber', },
           { text: 'Hostname', value: 'hostname' },
           { text: 'Datacenter', value: 'datacenter'},
-          { text: 'Rack', value: 'rack', filter: this.rackFilter },
+          { text: 'Rack', value: 'rack' },
           { text: 'Rack U', value: 'rackPosition', },
           { text: 'Owner Username', value: 'owner' },
           { text: 'Power', value: 'power', sortable: false },
@@ -325,7 +329,7 @@
           },
 
     async created() {
-      this.initialize()
+      this.initializeDatacenters()
     },
   
     methods: {
@@ -352,7 +356,6 @@
             this.assetSearchQuery.vendor = this.vendorSearch;
             this.assetSearchQuery.modelNumber = this.numberSearch;
             this.assetSearchQuery.hostname = this.hostnameSearch;
-                this.assetSearchQuery.hostname = this.hostnameSearch;
                 this.assetSearchQuery.rackStart = this.startRackValue;
                 this.assetSearchQuery.rackEnd = this.endRackValue;
                 this.assetSearchQuery.page = page;
@@ -360,22 +363,28 @@
                 this.assetSearchQuery.sortBy = this.parseSort(sortBy);
                 this.assetSearchQuery.isDesc = this.parseSort(sortDesc);
             },
-            parseSort(value) {
-                if (value.length !== 0) {
+        parseSort(value) {
+            if (typeof value === 'undefined') {
+                return '';
+            }
+                else if ( value.length !== 0) {
                     return value[0];
                 } 
                 return '';
             },
         async initialize() {
+            
             this.assets = await this.assetRepository.list();
+            this.loading = false;
 
+        },
+        async initializeDatacenters() {
             this.datacenters = await this.datacenterRepository.list();
                 var datacenter = {
                     description: "All Datacenters",
                     name: "All",
                 }
             this.datacenters.push(datacenter);
-
             this.loading = false;
 
         },

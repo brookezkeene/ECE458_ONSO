@@ -54,16 +54,17 @@ namespace Web.Api.Core.Dtos
             {
                 query.RackStart = "A" + 0.ToString();
             }
-            if (!string.IsNullOrEmpty(query.RackEnd))
+            if (string.IsNullOrEmpty(query.RackEnd))
             {
-                query.RackEnd = query.RackEnd.ToUpper();
+                query.RackEnd = "Z" + int.MaxValue.ToString();
+                
             } else if (query.RackEnd.Length == 1)
             {
                 query.RackEnd = query.RackEnd.ToUpper() + int.MaxValue.ToString();
             }
             else
             {
-                query.RackEnd = "Z" + int.MaxValue.ToString();
+                query.RackEnd = query.RackEnd.ToUpper();
             }
 
             if (query.Page == 0)
