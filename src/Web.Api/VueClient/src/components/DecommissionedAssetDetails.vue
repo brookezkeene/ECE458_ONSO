@@ -75,9 +75,11 @@
                         <v-card flat class="overflow-y-auto">
                             <v-card flat outlined class="overflow-y-auto" max-height="300px">
                                 <div v-for="(port,index) in asset.data.NetworkPorts" :key="index">
-                                    <v-card-text>{{port.MacAddress}} : {{port.ConnectedPort.MacAddress}}</v-card-text>
+                                    <div v-if="port.connectedPort!=undefined">
+                                        <v-card-text>{{port.MacAddress}} : {{port.ConnectedPort.MacAddress}}</v-card-text>
+                                    </div>
                                 </div>
-                            </v-card>
+                        </v-card>
                         </v-card>
 
                         <v-btn small class="mt-4" color="primary" outlined v-if="!showNeighborhood" @click="showNeighborhood = true">View Network Neighborhood</v-btn>
