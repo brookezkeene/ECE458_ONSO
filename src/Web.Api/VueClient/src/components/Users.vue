@@ -102,7 +102,7 @@
                                     <v-icon small v-on="on">mdi-post</v-icon>
                                 </template>
                                 <span>{{allRoles[3].label}}</span>
-                            </v-tooltip>
+                            </v-tooltip>edit
 
                             <v-tooltip right v-if="item.permissions.includes('admin')">
                                 <template v-slot:activator="{ on }">
