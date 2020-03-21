@@ -42,7 +42,7 @@
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Rack Position</v-label>
-                        <v-card-text> {{asset.data.Rack.RackNumber}} </v-card-text>
+                        <v-card-text> {{asset.data.RackPosition}} </v-card-text>
                     </v-col>
                 </v-row>
                 <v-row>

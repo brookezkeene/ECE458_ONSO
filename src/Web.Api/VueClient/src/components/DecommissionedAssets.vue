@@ -120,7 +120,7 @@
                     { text: 'Hostname', value: 'hostname' },
                     { text: 'Datacenter', value: 'datacenter' },
                     { text: 'Rack', value: 'rackAddress', filter: this.rackFilter },
-                    { text: 'Rack U', value: 'data.Rack.RackNumber', },
+                    { text: 'Rack U', value: 'data.RackPosition', },
                     { text: 'Owner Username', value: 'data.OwnerName' },
                 ],
                 assets: [],
