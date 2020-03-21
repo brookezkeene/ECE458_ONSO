@@ -9,9 +9,7 @@
                 <v-form v-model="valid">
                     <v-row>
                         <v-col cols="12" sm="6" md="4">
-                            <v-combobox v-model="newItem.vendor"
-                                        :options.sync="options"
-                                        :items="models"
+                            <v-text-field v-model="newItem.vendor"
                                         item-text="vendor"
                                         item-value=""
                                         :return-object="false"
@@ -19,11 +17,7 @@
                                         placeholder="Please enter a vendor (i.e. Dell)"
                                         :rules="[rules.vendorRules]"
                                         counter="50"
-                                        @input="getDataFromApi()"
-                                        required>
-                                
-                            </v-combobox>
-
+                                        required></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model="newItem.modelNumber"
@@ -83,7 +77,8 @@
                 </v-form>
             </v-container>
 
-            <template> <!-- dialog to set network port names -->
+            <template>
+                <!-- dialog to set network port names -->
 
                 <div class="text-center">
                     <v-dialog v-model="namesDialog" width="400">
@@ -142,15 +137,13 @@
                     message: '',
                     color: ''
                 },
-                options: {},
-                models: [],
                 loading: false,
                 newItem: {
                     vendor: '',
                     modelNumber: '',
                     height: 0,
                     displayColor: '',
-                    ethernetPorts: 0, 
+                    ethernetPorts: 0,
                     powerPorts: 0,
                     cpu: '',
                     memory: 0,
@@ -161,7 +154,7 @@
                 namesDialog: false,
                 editedIndex: -1,
                 //making this a separate variable: stores the CURRENT names of network ports
-                //for UPDATE: if the user changes the size of the ethernetports/closes the 
+                //for UPDATE: if the user changes the size of the ethernetports/closes the
                 //names dialog, the newItem will still have original value from database
                 networkPortNames: [],
                 rules: {
@@ -174,43 +167,12 @@
 
 
                 },
-                searchQuery: {
-                    vendor: '',
-                    page: 0,
-                    pageSize: 0,
-                },
                 valid: true
             };
         },
-            watch: {
-      
-        options: {
-                handler() {
-                    this.getDataFromApi()
-                        .then(data => {
-                            this.models = data.data;
-                            this.totalItems = data.totalCount;
-                            this.loading = false;
-                        })
-                },
-                deep: true
-            },
-        },
-        mounted () {
-            this.getDataFromApi()
-                .then(data => {
-                /* eslint-disable no-unused-vars, no-console */
-                    console.log(data);
-                    console.log("this is the data");
-                            this.models = data.data;
-                            this.totalItems = data.totalCount;
-                            this.loading = false;
-                        })
-          },
+
         async created() {
-            
-        /* eslint-disable no-unused-vars, no-console */
-            
+
             this.newItem = typeof this.id === 'undefined'
                 ? this.newItem
                 : await this.modelRepository.find(this.id);
@@ -222,22 +184,11 @@
             },
         },
         methods: {
-            async getDataFromApi() {
-                const { page } = this.options;
-                this.searchQuery.page = page;
-                this.searchQuery.pageSize = 20000000;
-                this.searchQuery.vendor = this.newItem.vendor;
-                
-                var info = await this.modelRepository.tablelist(this.searchQuery);
-                this.models = info.data;
-                return info;
-            },
-
             async save() {
                 if (this.validationInputs(this.newItem) > 0) {
                     return;
                 }
-                 if (typeof this.id !== 'undefined') {
+                if (typeof this.id !== 'undefined') {
                     this.newItem.displayColor = this.newItem.displayColor.substring(0, 7);
 
                     var resultUpdate = await this.modelRepository.update(this.newItem);
