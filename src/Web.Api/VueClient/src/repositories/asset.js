@@ -52,6 +52,12 @@ export default {
                 return response.data;
             }).catch(error => error);
     },
+    getDecommissionedAsset(id) {
+        return axios.get(`${resource}/${id}/decommission`)
+            .then(response => {
+                return response.data;
+            });
+    },
     getDecommissionedAssets() {
         return axios.get(`${resource}/decommission`).then(response => response.data.data).catch(error => error);
     },

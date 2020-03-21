@@ -114,7 +114,7 @@
                 // Table data.
                 headers: [
                     { text: 'Time Decommissioned', value: 'date' },
-                    { text: 'Decomissioned By User', value: 'decommissioner'},
+                    { text: 'Decomissioned By User', value: 'decommissioner' },
                     { text: 'Model Vendor', value: 'modelName' },
                     { text: 'Model Number', value: 'modelNumber', },
                     { text: 'Hostname', value: 'hostname' },
@@ -175,6 +175,7 @@
                 this.users = await this.userRepository.list();
                 this.datacenters = await this.datacenterRepository.list();
 
+                // Turn data blob into fields to be read in table
                 this.assets.forEach(e => {
                     var assetInfo = JSON.parse(e.data);
                     e.data = assetInfo;
@@ -203,7 +204,7 @@
                 if (!this.editing) {
                     /*eslint-disable*/
                     console.log(item);
-                    this.$router.push({ name: 'asset-details', params: { id: item.id } })
+                    this.$router.push({ name: 'decommissioned-asset-details', params: { id: item.id } })
                 }
                 this.editing = false;
             },
