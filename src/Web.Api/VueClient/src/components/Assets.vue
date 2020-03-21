@@ -14,7 +14,7 @@
 
                     <template v-slot:top v-slot:item.action="{ item }">
                         <v-toolbar flat>
-                             
+
                             <!-- ADDED AUTOCOMPLETE TO THE MODEL SEARCH -->
                             <v-container fluid align="left">
                                 <v-row>
@@ -471,7 +471,7 @@
              */
             rackFilter(value) {
                 // If this filter has no value we just skip the entire filter.
-                if (!this.startRackValue && !this.endRackValue) {
+                if (!this.startRackValue && !this.endRackValue) { 
                     return true;
                     // If only one filter has a value, leans entirely on that one filter
                 } else if (!this.endRackValue) {
