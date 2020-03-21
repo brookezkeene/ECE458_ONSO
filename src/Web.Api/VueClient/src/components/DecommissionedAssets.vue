@@ -181,6 +181,9 @@
                     e.data = assetInfo;
                 })
 
+                /*eslint-disable*/
+                console.log(this.assets);
+
                 var datacenter = {
                     description: "All Datacenters",
                     name: "All",

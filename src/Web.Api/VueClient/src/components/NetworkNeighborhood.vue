@@ -19,7 +19,7 @@
             D3Network
         },
         inject: ['assetRepository'],
-        props: ['id'],
+        props: ['id', 'networkJson'],
         data () {
             return {
                 nodes: [],
@@ -40,7 +40,13 @@
             }
         },
         async created() {
-            this.initialize();
+            if (this.id != undefined) {
+                this.initialize();
+            } else {
+                var network = this.parseNetwork(this.networkJson);
+                this.nodes = network.nodes;
+                this.links = network.links;
+            }
         },  
         methods: {
             async initialize() {
@@ -57,6 +63,9 @@
                 //this.$router.push({ name: 'asset-details', params: { id: node.id } })
                 this.$emit('click', node.id);
             },
+            parseNetwork(networkJson){
+                return JSON.parse(networkJson);
+            }
             /*forcesFunc(sim) {
                 sim.force('link', d3.forceLink(this.links).distance(50))
 

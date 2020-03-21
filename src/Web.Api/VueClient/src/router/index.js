@@ -74,7 +74,7 @@ const routes = [
                 component: DecommissionedAssets,
             },
             {
-                path: '/decommissioned-assets/:id',
+                path: '/decommissioned-assets/Lid/:networkJson',
                 name: 'decommissioned-asset-details',
                 component: DecommissionedAssetDetails,
                 props: true,

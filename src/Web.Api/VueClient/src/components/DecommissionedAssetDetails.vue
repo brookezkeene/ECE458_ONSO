@@ -106,7 +106,7 @@
                     </v-col>
                 </v-row>
                 <v-row v-if="showNeighborhood">
-                    <network-neighborhood v-bind:id="asset.id" @click="nodeClicked"></network-neighborhood>
+                    <network-neighborhood v-bind:networkJson="asset.data.NetworkPortGraph" @click="nodeClicked"></network-neighborhood>
                 </v-row>
             </v-card-text>
 
