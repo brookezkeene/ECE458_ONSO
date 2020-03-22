@@ -188,39 +188,39 @@
                                                         </v-btn>
                                                     </v-btn-toggle>
                                                     <v-spacer></v-spacer>
-                                                    <v-autocomplete v-if="port.pduLocation" 
-                                                                v-model="editedItem.powerPorts[index].pduPortId"
-                                                                :items="availablePortsInRack.right"
-                                                                item-text ="number"
-                                                                item-value ="id"
-                                                                :return-object="false"
-                                                                typeof="number"
-                                                                placeholder="PDU Number">
+                                                    <v-autocomplete v-if="port.pduLocation"
+                                                                    v-model="editedItem.powerPorts[index].pduPortId"
+                                                                    :items="availablePortsInRack.right"
+                                                                    item-text="number"
+                                                                    item-value="id"
+                                                                    :return-object="false"
+                                                                    typeof="number"
+                                                                    placeholder="PDU Number">
                                                     </v-autocomplete>
-                                                    <v-autocomplete v-if="!port.pduLocation" 
-                                                                v-model="editedItem.powerPorts[index].pduPortId"
-                                                                :items="availablePortsInRack.left"
-                                                                item-text="number"
-                                                                item-value="id"
-                                                                :return-object="false"
-                                                                typeof="number"
-                                                                placeholder="PDU Number">
+                                                    <v-autocomplete v-if="!port.pduLocation"
+                                                                    v-model="editedItem.powerPorts[index].pduPortId"
+                                                                    :items="availablePortsInRack.left"
+                                                                    item-text="number"
+                                                                    item-value="id"
+                                                                    :return-object="false"
+                                                                    typeof="number"
+                                                                    placeholder="PDU Number">
                                                     </v-autocomplete>
                                                     <v-spacer></v-spacer>
                                                 </v-layout>
                                             </v-container>
                                         </div>
                                     </v-card>
-                            </v-expansion-panel-content>
-                        </v-expansion-panel>
-                    </v-expansion-panels>
+                                </v-expansion-panel-content>
+                            </v-expansion-panel>
+                        </v-expansion-panels>
 
                         <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn @click="close">Cancel</v-btn>
                             <v-btn color="primary" :disabled="!valid" @click="save">Save</v-btn>
                         </v-card-actions>'
-                        </v-form>
+                    </v-form>
                 </v-container>
             </v-card-text>
         </v-card>
@@ -228,6 +228,7 @@
 </template>
 
 <style>
+
     .main-div {
         position: relative;
     }
@@ -429,7 +430,7 @@
             makePowerPorts(model) {
 
                 var numPowerPorts = model.powerPorts;
-                
+
                 this.powerPorts = [];
                 var i;
                 for (i = 0; i < numPowerPorts; i++) {

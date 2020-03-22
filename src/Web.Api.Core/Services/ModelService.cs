@@ -24,11 +24,15 @@ namespace Web.Api.Core.Services
             _auditEventLogger = auditEventLogger;
         }
 
-        public async Task<PagedList<ModelDto>> GetModelsAsync(string search, int page = 1, int pageSize = 10)
+        public async Task<PagedList<ModelDto>> GetModelsAsync(SearchModelQuery query, int page = 1, int pageSize = 10)
         {
-            var pagedList = await _repository.GetModelsAsync(search, page, pageSize);
+            query.ToUpper();
+            var pagedList = await _repository.GetModelsAsync(query.Vendor, query.Number, query.HeightStart, query.HeightEnd, 
+                query.NetworkRangeStart, query.NetworkRangeEnd, query.PowerRangeStart, query.PowerRangeEnd, 
+                query.MemoryRangeStart, query.MemoryRangeEnd, query.SortBy, query.IsDesc, query.Page, query.PageSize);
+            pagedList.CurrentPage = page;
             return pagedList.ToDto();
-        }
+        } 
 
         public async Task<List<ModelDto>> GetModelExportAsync(ModelExportQuery query)
         {

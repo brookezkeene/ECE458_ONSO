@@ -1,4 +1,5 @@
-﻿<template>
+﻿﻿
+<template>
     <v-card flat>
         <v-card-title>Decommissioned Assets</v-card-title>
         <v-container>
