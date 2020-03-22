@@ -341,6 +341,8 @@
         },
         methods: {
             save() {
+                console.log(this.editedItem);
+                console.log(this.selectedModel);
                 if (this.editedItem.id.length != 0) {
 
                     for (var j = 0; j < this.editedItem.networkPorts.length; j++) {
@@ -354,6 +356,7 @@
                     }
                     this.assetRepository.create(this.editedItem).then(this.close());
                 }
+                console.log(this.editedItem);
                 this.selectedRack = false;
                 this.selectedModelBool = false;
             },
@@ -383,6 +386,7 @@
             async modelSelected() {
                 this.selectedModelBool = true;
                 this.selectedModel = await this.modelRepository.find(this.editedItem.modelId);
+                console.log(this.selectedModel);
                 this.makeNetworkPorts(this.selectedModel);
                 this.makePowerPorts(this.selectedModel);
             },
@@ -398,6 +402,7 @@
                 console.log(this.availablePortsInRack);
             },
             makeNetworkPorts(model) {
+                console.log(model);
                 this.networkPorts = [];
                 for (var j = 0; j < model.networkPorts.length; j++) {
                     const portInfo = {
@@ -419,6 +424,8 @@
                     }
                     this.editedItem.networkPorts = networkPortsArray;
                 }
+                console.log(networkPortsArray);
+
             },
             makePowerPorts(model) {
 

@@ -134,6 +134,8 @@
                 if (!this.loading) this.loading = true;
                 this.model = await this.modelRepository.find(this.id);
                 this.loading = false;
+                /*eslint-disable*/
+                console.log(this.model);
             },
             goToAssetDetails(id) {
                 this.$router.push({ name: 'asset-details', params: { id: id } });

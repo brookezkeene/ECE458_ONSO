@@ -49,6 +49,8 @@ namespace Web.Api.Mappers
                 .IncludeAllDerived();
 
             CreateMap<AssetNetworkPortDto, GetAssetNetworkPortApiDto>()
+                .ForMember(o => o.Number, opts => opts.MapFrom(src => src.ModelNetworkPort.Number))
+                .ForMember(o => o.Name, opts => opts.MapFrom(src => src.ModelNetworkPort.Name))
                 .IncludeMembers(o => o.ModelNetworkPort);
             CreateMap<AssetNetworkPortDto, GetAssetNetworkPortShallowApiDto>()
                 .IncludeMembers(o => o.ModelNetworkPort, o => o.Asset);
