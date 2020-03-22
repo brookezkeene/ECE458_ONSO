@@ -97,7 +97,11 @@
                 return this.$route.path === '/login'; 
             },
             filteredMenuItems() {
-                return (this.$store.getters.hasAuditPermission) ? this.menuItems : this.menuItems.filter(h => h.title !== "System Log")
+                var newMenu = this.menuItems;
+                if (!this.$store.getters.hasAuditPermission) {
+                    newMenu = newMenu.filter(h => h.title !== "System Log");
+                }
+                return newMenu
             },
         },
         methods: {
