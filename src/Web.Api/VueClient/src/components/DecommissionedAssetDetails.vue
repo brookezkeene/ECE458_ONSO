@@ -64,7 +64,7 @@
                         <v-card flat class="overflow-y-auto">
                             <v-card flat outlined class="overflow-y-auto" max-height="300px">
                                 <div v-for="(port,index) in asset.data.NetworkPorts" :key="index">
-                                    <v-card-text>{{port.Number}} : {{port.MacAddress}}</v-card-text>
+                                    <v-card-text>{{port.Name}} : {{port.MacAddress}}</v-card-text>
                                 </div>
                             </v-card>
                         </v-card>
@@ -98,7 +98,7 @@
                     </v-col>
                 </v-row>
                 <v-row v-if="showNeighborhood">
-                    <network-neighborhood v-bind:id=undefined v-bind:networkJson="asset.data.NetworkPortGraph" @click="nodeClicked"></network-neighborhood>
+                    <network-neighborhood v-bind:id=undefined v-bind:networkJson="asset.data.NetworkPortGraph"></network-neighborhood>
                 </v-row>
             </v-card-text>
 
@@ -221,11 +221,6 @@
             hideNames() {
                 this.viewPowerPorts = false;
             },
-            nodeClicked(e) {
-                /* eslint-disable no-unused-vars, no-console */
-                console.log('clicked');
-                this.$router.push({ name: 'asset-details', params: { id: e } });
-            }
 
         }
     }
