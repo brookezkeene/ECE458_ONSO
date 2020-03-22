@@ -9,7 +9,7 @@
                              app>
 
             <v-list>
-                <div v-for="item in menuItems"
+                <div v-for="item in filteredMenuItems"
                     :key="item.title">
                     <v-list-item v-if="item.title!='Assets'"
                                  color="primary"
@@ -95,7 +95,10 @@
         computed: {
             hide () {
                 return this.$route.path === '/login'; 
-            }
+            },
+            filteredMenuItems() {
+                return (this.$store.getters.hasAuditPermission) ? this.menuItems : this.menuItems.filter(h => h.title !== "System Log")
+            },
         },
         methods: {
             logout() {
