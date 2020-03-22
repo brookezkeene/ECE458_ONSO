@@ -378,7 +378,7 @@
             },
             async initialize() {
 
-                this.assets = await this.assetRepository.list();
+                this.assets = await this.getAssetsFromApi();
                 this.loading = false;
 
             },

@@ -28,13 +28,13 @@ namespace Web.Api.Infrastructure.Repositories
             var pagedList = new PagedList<Rack>();
 
             var racks = await _dbContext.Racks
-                .PageBy(x => x.Id, page, pageSize)
                 .WhereIf(datacenterId != null, x => x.DatacenterId == datacenterId)
                 .Include(x => x.Datacenter)
                 .Include(x => x.Assets)
                     .ThenInclude(x => x.Model)
                 .Include(x => x.Assets)
                     .ThenInclude(x => x.Owner)
+                .PageBy(x => x.Id, page, pageSize)
                 .AsNoTracking()
                 .ToListAsync();
             racks = Sort(racks, sortBy, isDesc);

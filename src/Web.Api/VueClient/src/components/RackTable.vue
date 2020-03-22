@@ -6,6 +6,7 @@
           :options.sync="options"
           :server-items-length="totalItems"
           class="pa-10"
+                      :key="selectedDatacenter"
           >
             <template v-slot:top>
 
@@ -19,8 +20,7 @@
                               :return-object="false"
                               label="Datacenter"
                               placeholder="Select a datacenter or all datacenters"
-                              class="pt-8 pl-4"
-                              @change="getDataFromApi()">
+                              class="pt-8 pl-4">
                     </v-select>
                     <v-spacer></v-spacer>
                     <v-spacer></v-spacer>
@@ -36,7 +36,7 @@
             </template>
 
             <template v-slot:no-data>
-                <v-btn color="primary" @click="initializeDatacenters">Refresh</v-btn>
+                <v-btn color="primary" @click="getDataFromApi">Refresh</v-btn>
             </template>
         </v-data-table>
     </v-card>
@@ -53,6 +53,7 @@
         data () {
             return {
                 options: {},
+                datacenterChanged: false,
                 totalItems: 0,
                 loading: true,
                 headers: [
@@ -79,13 +80,11 @@
             options: {
                 handler() {
                     this.getDataFromApi()
+
                         .then(data => {
                             this.racks = data.data;
                             this.totalItems = data.totalCount;
                             /* eslint-disable no-unused-vars, no-console */
-                console.log("this is the total count in watch")
-                            console.log(data.totalCount);
-                             console.log(this.racks);
                             this.loading = false;
                         })
                 },
@@ -105,10 +104,6 @@
                 .then(data => {
                     this.racks = data.data;
                     this.totalItems = data.totalCount;
-                    /* eslint-disable no-unused-vars, no-console */
-                console.log("this is the total count in mounted")
-                    console.log(data.totalCount);
-                    console.log(this.racks);
                     this.loading = false;
                 })
         },
@@ -128,19 +123,25 @@
             },
             async getDataFromApi() {
                 this.loading = true;
+                
                 const { sortBy, sortDesc, page, itemsPerPage } = this.options;
 
                 this.fillQuery(sortBy, sortDesc, page, itemsPerPage);
-                 /* eslint-disable no-unused-vars, no-console */
-                console.log("this is the search query")
-                console.log(this.searchQuery);
 
                 var info = await this.rackRepository.tablelist(this.searchQuery);
-                this.racks = info.data;
+                 this.racks = info.data
                 /* eslint-disable no-unused-vars, no-console */
                 console.log("this is the stuff in the returned info")
                  console.log(this.racks);
+
                 console.log(info);
+                console.log("this is the paging information");
+                 console.log(page);
+
+                console.log(itemsPerPage);
+               
+                this.loading = false;
+                this.change = this.change + 1;
                 return info;
             },
             async fillQuery(sortBy, sortDesc, page, itemsPerPage) {
@@ -167,7 +168,7 @@
             deleteItem(item) {
                 confirm('Are you sure you want to delete this item?') && this.rackRepository.deleteInRange(item.address, item.address, item.datacenterId)
                     .then(async () => {
-                        this.datacenterSearch();
+                        this.getDataFromApi();
                     })
             },
             async datacenterSearch() {
@@ -176,7 +177,7 @@
             },
             async updateRacks() { // This might slow things down if we have a lot of racks to get from the backend !!!
                 this.$emit('updated');
-                this.datacenterSearch(); // re-call with same datacenter name if racks were added or deleted
+                this.getDataFromApi(); // re-call with same datacenter name if racks were added or deleted
             }
         }
     }
