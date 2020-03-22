@@ -179,7 +179,7 @@
                     </template>
 
                     <template v-slot:item.power="{ item }">
-                        <v-row v-if="item.hasNetworkManagedPower">
+                        <v-row v-if="item.hasNetworkManagedPower && powerPermission">
                             <v-item-group dense
                                           light
                                           tile>
@@ -299,6 +299,9 @@
         computed: {
             permission() {
                 return this.$store.getters.hasAssetPermission || this.$store.getters.isAdmin
+            },
+            powerPermission() {
+                return this.$store.getters.hasPowerPermission || this.$store.getters.isAdmin
             },
             filteredHeaders() {
                 return (this.permission) ? this.headers : this.headers.filter(h => h.text !== "Actions" && h.text !== "Power")
