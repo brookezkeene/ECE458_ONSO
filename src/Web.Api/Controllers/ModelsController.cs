@@ -36,7 +36,7 @@ namespace Web.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<PagedList<GetModelsApiDto>>> Get([FromQuery] SearchModelQuery query)
         {
-            var models = await _modelService.GetModelsAsync(query, query.Page, query.PageSize);
+            var models = await _modelService.GetModelsAsync(query);
             var response = models.MapTo<PagedList<GetModelsApiDto>>();
             return Ok(response);
         }
