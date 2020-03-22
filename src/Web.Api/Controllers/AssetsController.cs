@@ -39,7 +39,7 @@ namespace Web.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<PagedList<GetAssetsApiDto>>> GetMany([FromQuery] SearchAssetQuery query)
         {
-            var assets = await _assetService.GetAssetsAsync(query, query.Page, query.PageSize);
+            var assets = await _assetService.GetAssetsAsync(query);
 
             var response = assets.MapTo<PagedList<GetAssetsApiDto>>();
             return Ok(response);

@@ -27,9 +27,9 @@ namespace Web.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedList<GetRacksApiDto>>> Get(Guid? datacenterId, int page = 1, int pageSize = 10)
+        public async Task<ActionResult<PagedList<GetRacksApiDto>>> Get([FromQuery] SearchRackQuery query)
         {
-            var racks = await _rackService.GetRacksAsync(datacenterId, page, pageSize);
+            var racks = await _rackService.GetRacksAsync(query);
             var response = racks.MapTo<PagedList<GetRacksApiDto>>();
             return Ok(response);
         }

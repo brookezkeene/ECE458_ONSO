@@ -24,11 +24,12 @@ namespace Web.Api.Core.Services
             _auditEventLogger = auditEventLogger;
         }
 
-        public async Task<PagedList<AssetDto>> GetAssetsAsync(SearchAssetQuery query, int page = 1, int pageSize = 10)
+        public async Task<PagedList<AssetDto>> GetAssetsAsync(SearchAssetQuery query)
         {
             query.ToUpper();
             var pagedList = await _repository.GetAssetsAsync(query.Datacenter, query.Vendor, query.ModelNumber, query.Hostname, 
-                    query.RackStart, query.RackEnd, query.SortBy, query.IsDesc, page, pageSize);
+                    query.RackStart, query.RackEnd, query.SortBy, query.IsDesc, query.Page, query.PageSize);
+            pagedList.CurrentPage = query.Page;
             return pagedList.ToDto();
         }
 
