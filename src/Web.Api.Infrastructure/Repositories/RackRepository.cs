@@ -27,7 +27,7 @@ namespace Web.Api.Infrastructure.Repositories
         {
             var pagedList = new PagedList<Rack>();
 
-            var query = _dbContext.Racks
+            var racks = await _dbContext.Racks
                 .PageBy(x => x.Id, page, pageSize)
                 .WhereIf(datacenterId != null, x => x.DatacenterId == datacenterId)
                 .Include(x => x.Datacenter)
@@ -35,11 +35,13 @@ namespace Web.Api.Infrastructure.Repositories
                     .ThenInclude(x => x.Model)
                 .Include(x => x.Assets)
                     .ThenInclude(x => x.Owner)
-                .AsNoTracking();
-            var racks = await query.ToListAsync();
+                .AsNoTracking()
+                .ToListAsync();
             racks = Sort(racks, sortBy, isDesc);
             pagedList.AddRange(racks);
-            pagedList.TotalCount = await query.CountAsync();
+            pagedList.TotalCount = await _dbContext.Racks
+                .WhereIf(datacenterId != null, x => x.Datacenter.Id == datacenterId)
+                .CountAsync();
             pagedList.PageSize = pageSize;
             pagedList.CurrentPage = page;
 
@@ -107,7 +109,7 @@ namespace Web.Api.Infrastructure.Repositories
                 var row = r.ToString().ToUpper();
                 for (var col = colStart; col <= colEnd; col++)
                 {
-                    if (!await _dbContext.Racks.AnyAsync(o => o.Row == row && o.Column == col))
+                    if (!await _dbContext.Racks.AnyAsync(o => o.Row == row && o.Column == col && o.Datacenter.Id == datacenterId))
                     {
                         await _dbContext.Racks.AddAsync(new Rack
                         {

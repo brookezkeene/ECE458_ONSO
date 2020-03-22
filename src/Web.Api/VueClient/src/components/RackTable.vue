@@ -20,7 +20,7 @@
                               label="Datacenter"
                               placeholder="Select a datacenter or all datacenters"
                               class="pt-8 pl-4"
-                              @change="datacenterSearch()">
+                              @change="getDataFromApi()">
                     </v-select>
                     <v-spacer></v-spacer>
                     <v-spacer></v-spacer>
@@ -36,7 +36,7 @@
             </template>
 
             <template v-slot:no-data>
-                <v-btn color="primary" @click="initialize">Refresh</v-btn>
+                <v-btn color="primary" @click="initializeDatacenters">Refresh</v-btn>
             </template>
         </v-data-table>
     </v-card>
@@ -82,6 +82,10 @@
                         .then(data => {
                             this.racks = data.data;
                             this.totalItems = data.totalCount;
+                            /* eslint-disable no-unused-vars, no-console */
+                console.log("this is the total count in watch")
+                            console.log(data.totalCount);
+                             console.log(this.racks);
                             this.loading = false;
                         })
                 },
@@ -101,6 +105,10 @@
                 .then(data => {
                     this.racks = data.data;
                     this.totalItems = data.totalCount;
+                    /* eslint-disable no-unused-vars, no-console */
+                console.log("this is the total count in mounted")
+                    console.log(data.totalCount);
+                    console.log(this.racks);
                     this.loading = false;
                 })
         },
@@ -123,12 +131,16 @@
                 const { sortBy, sortDesc, page, itemsPerPage } = this.options;
 
                 this.fillQuery(sortBy, sortDesc, page, itemsPerPage);
-                /* eslint-disable no-unused-vars, no-console */
-                console.log("this is the sorting stuff")
+                 /* eslint-disable no-unused-vars, no-console */
+                console.log("this is the search query")
                 console.log(this.searchQuery);
 
                 var info = await this.rackRepository.tablelist(this.searchQuery);
                 this.racks = info.data;
+                /* eslint-disable no-unused-vars, no-console */
+                console.log("this is the stuff in the returned info")
+                 console.log(this.racks);
+                console.log(info);
                 return info;
             },
             async fillQuery(sortBy, sortDesc, page, itemsPerPage) {

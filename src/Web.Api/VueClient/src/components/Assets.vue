@@ -30,7 +30,7 @@
                                                   label="Datacenter"
                                                   placeholder="Select a datacenter or all datacenters"
                                                   class="pt-8 pl-4"
-                                                  @change="datacenterSearch()">
+                                                  @change="getAssetsFromApi()">
                                         </v-select>
                                     </v-col>
                                 </v-row>

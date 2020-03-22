@@ -47,6 +47,10 @@ namespace Web.Api.Infrastructure.Repositories
             assets = Sort(assets, sortBy, isDesc);
             pagedList.AddRange(assets);
             pagedList.TotalCount = await _dbContext.Assets
+                .WhereIf(datacenterId != null, x => x.Rack.Datacenter.Id == datacenterId)
+                .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
+                .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
+                .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
                 .CountAsync();
             pagedList.PageSize = pageSize;
             pagedList.CurrentPage = page;
