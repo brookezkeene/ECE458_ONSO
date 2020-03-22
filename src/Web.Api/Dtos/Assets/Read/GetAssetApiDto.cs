@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Web.Api.Dtos.Models.Read;
 
 namespace Web.Api.Dtos.Assets.Read
 {
