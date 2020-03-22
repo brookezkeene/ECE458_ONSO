@@ -38,7 +38,7 @@
                 <v-row>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Asset Number</v-label>
-                        <v-card-text> {{asset.number}} </v-card-text>
+                        <v-card-text> {{asset.assetNumber}} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Owner Username</v-label>
