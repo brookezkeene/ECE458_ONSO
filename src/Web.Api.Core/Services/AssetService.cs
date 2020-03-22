@@ -70,7 +70,7 @@ namespace Web.Api.Core.Services
             var entity = asset.ToEntity();
             await _repository.DeleteAssetAsync(entity);
 
-            await _auditEventLogger.LogEventAsync(new AssetDeletedEvent(asset));
+            //await _auditEventLogger.LogEventAsync(new AssetDeletedEvent(asset));
         }
 
         public async Task<int> UpdateAssetAsync(AssetDto asset)
@@ -78,7 +78,7 @@ namespace Web.Api.Core.Services
             var entity = asset.ToEntity();
             var updated = await _repository.UpdateAssetAsync(entity);
 
-            await _auditEventLogger.LogEventAsync(new AssetUpdatedEvent(asset));
+            //await _auditEventLogger.LogEventAsync(new AssetUpdatedEvent(asset));
             return updated;
         }
         public async Task<AssetDto> GetAssetForDecommissioning(Guid assetId)
