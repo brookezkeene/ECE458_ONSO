@@ -11,6 +11,9 @@ namespace Web.Api.Core.Dtos
         public string ModelNumber { get; set; }
         public string RackStart { get; set; }
         public string RackEnd { get; set; }
+        public string DateStart { get; set; }
+        public string DateEnd { get; set; }
+        public string Decommissioner { get; set; }
         public string Hostname { get; set; }
         public int Page { get; set; } 
         public int PageSize { get; set; }

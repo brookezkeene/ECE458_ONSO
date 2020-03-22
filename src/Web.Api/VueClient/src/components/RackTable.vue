@@ -3,8 +3,9 @@
         <v-data-table
           :headers="filteredHeaders"
           :items="racks"
+          :options.sync="options"
+          :server-items-length="totalItems"
           class="pa-10"
-          multi-sort
           >
             <template v-slot:top>
 
@@ -51,6 +52,8 @@
         item: null,
         data () {
             return {
+                options: {},
+                totalItems: 0,
                 loading: true,
                 headers: [
                     { text: 'Address', value: 'address'},
@@ -59,12 +62,30 @@
                 ],
                 racks: [],
                 datacenters: [],
-                selectedDatacenter: 'All Datacenters'
+                selectedDatacenter: 'All Datacenters',
+                searchQuery: {
+                    datacenter: '',
+                    page: 0,
+                    pageSize: 0,
+                    isDesc: '',
+                    sortBy: '',
+                }
             };
         },
         watch: { // This might slow things down if we have a lot of racks to get from the backend !!!
             updateData(val) {
                 this.updateRacks() || val;
+            },
+            options: {
+                handler() {
+                    this.getDataFromApi()
+                        .then(data => {
+                            this.racks = data.data;
+                            this.totalItems = data.totalCount;
+                            this.loading = false;
+                        })
+                },
+                deep: true
             },
         },
         computed: {
@@ -75,12 +96,19 @@
                 return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
             },
         },
+        mounted() {
+            this.getDataFromApi()
+                .then(data => {
+                    this.racks = data.data;
+                    this.totalItems = data.totalCount;
+                    this.loading = false;
+                })
+        },
         async created () {
-            this.initialize()
+            this.initializeDatacenters()
         },
         methods: {
-            async initialize() {
-                this.racks = await this.rackRepository.list();
+            async initializeDatacenters() {
                 this.datacenters = await this.datacenterRepository.list();
                 var datacenter = {
                     description: "All Datacenters",
@@ -88,6 +116,41 @@
                 }
                 this.datacenters.push(datacenter);
                 this.loading = false;
+
+            },
+            async getDataFromApi() {
+                this.loading = true;
+                const { sortBy, sortDesc, page, itemsPerPage } = this.options;
+
+                this.fillQuery(sortBy, sortDesc, page, itemsPerPage);
+                /* eslint-disable no-unused-vars, no-console */
+                console.log("this is the sorting stuff")
+                console.log(this.searchQuery);
+
+                var info = await this.rackRepository.tablelist(this.searchQuery);
+                this.racks = info.data;
+                return info;
+            },
+            async fillQuery(sortBy, sortDesc, page, itemsPerPage) {
+                var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
+                if (typeof searchDatacenter === 'undefined') {
+                    this.searchQuery.datacenter = '';
+                } else {
+                    this.searchQuery.datacenter = searchDatacenter.id;
+                }
+                this.searchQuery.page = page;
+                this.searchQuery.pageSize = itemsPerPage;
+                this.searchQuery.sortBy = this.parseSort(sortBy);
+                this.searchQuery.isDesc = this.parseSort(sortDesc);
+            },
+            parseSort(value) {
+                if (typeof value === 'undefined') {
+                    return '';
+                }
+                else if (value.length !== 0) {
+                    return value[0];
+                }
+                return '';
             },
             deleteItem(item) {
                 confirm('Are you sure you want to delete this item?') && this.rackRepository.deleteInRange(item.address, item.address, item.datacenterId)

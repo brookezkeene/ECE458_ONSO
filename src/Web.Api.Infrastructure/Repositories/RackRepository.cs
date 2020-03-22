@@ -23,7 +23,7 @@ namespace Web.Api.Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<PagedList<Rack>> GetRacksAsync(Guid? datacenterId, int page = 1, int pageSize = 10)
+        public async Task<PagedList<Rack>> GetRacksAsync(Guid? datacenterId, string sortBy, string isDesc, int page = 1, int pageSize = 10)
         {
             var pagedList = new PagedList<Rack>();
 
@@ -37,7 +37,7 @@ namespace Web.Api.Infrastructure.Repositories
                     .ThenInclude(x => x.Owner)
                 .AsNoTracking();
             var racks = await query.ToListAsync();
-
+            racks = Sort(racks, sortBy, isDesc);
             pagedList.AddRange(racks);
             pagedList.TotalCount = await query.CountAsync();
             pagedList.PageSize = pageSize;
@@ -150,6 +150,36 @@ namespace Web.Api.Infrastructure.Repositories
         {
             return await _dbContext.Racks.Where(x => x.Row == rackRow && x.Column == rackColumn && x.Datacenter.Id == (datacenterId))
                 .AnyAsync();
+        }
+        private static List<Rack> Sort(List<Rack> racks, string sortBy, string isDesc)
+        {
+            if (string.IsNullOrEmpty(sortBy))
+            {
+                return racks;
+            }
+            if (sortBy.Equals("address"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return racks.OrderBy(c => c.Row).ThenBy(c => c.Column).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return racks.OrderByDescending(q => q.Row).ThenByDescending(c => c.Column).ToList();
+                }
+            }
+            else if (sortBy.Equals("datacenter.description"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return racks.OrderBy(c => c.Datacenter.Name).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return racks.OrderByDescending(q => q.Datacenter.Name).ToList();
+                }
+            }
+            return racks;
         }
     }
 }
