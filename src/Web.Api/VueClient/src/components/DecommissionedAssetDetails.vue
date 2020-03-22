@@ -98,7 +98,7 @@
                     </v-col>
                 </v-row>
                 <v-row v-if="showNeighborhood">
-                    <network-neighborhood v-bind:id=undefined v-bind:networkJson="asset.data.NetworkPortGraph" @click="nodeClicked"></network-neighborhood>
+                    <network-neighborhood v-bind:id=undefined v-bind:networkJson="asset.data.NetworkPortGraph"></network-neighborhood>
                 </v-row>
             </v-card-text>
 
@@ -221,11 +221,6 @@
             hideNames() {
                 this.viewPowerPorts = false;
             },
-            nodeClicked(e) {
-                /* eslint-disable no-unused-vars, no-console */
-                console.log('clicked');
-                this.$router.push({ name: 'asset-details', params: { id: e } });
-            }
 
         }
     }
