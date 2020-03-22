@@ -11,6 +11,7 @@ services:
       - 443:443
     environment:
       - "ConnectionStrings__ApplicationDbConnection=Server=db;Database=webapi;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true"
+      - "ASPNETCORE_ENVIRONMENT=Development"
     depends_on:
       - db
   db:
