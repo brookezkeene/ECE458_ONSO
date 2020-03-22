@@ -102,7 +102,7 @@
                                     <v-icon small v-on="on">mdi-post</v-icon>
                                 </template>
                                 <span>{{allRoles[3].label}}</span>
-                            </v-tooltip>edit
+                            </v-tooltip>
 
                             <v-tooltip right v-if="item.permissions.includes('admin')">
                                 <template v-slot:activator="{ on }">
@@ -229,7 +229,7 @@ import Auth from "../auth"
             this.loading = false;
         },
         showActionsForUser(item) {
-            return !['admin', Auth.username()].includes(item.username) && this.isAdmin;
+            return !['admin', Auth.username()].includes(item.username) && this.admin;
         },
         openCreateUser() {
             this.$router.push({ name: 'users-create' });
