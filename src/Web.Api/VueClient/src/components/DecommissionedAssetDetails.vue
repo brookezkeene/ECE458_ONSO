@@ -64,7 +64,7 @@
                         <v-card flat class="overflow-y-auto">
                             <v-card flat outlined class="overflow-y-auto" max-height="300px">
                                 <div v-for="(port,index) in asset.data.NetworkPorts" :key="index">
-                                    <v-card-text>{{port.Number}} : {{port.MacAddress}}</v-card-text>
+                                    <v-card-text>{{port.Name}} : {{port.MacAddress}}</v-card-text>
                                 </div>
                             </v-card>
                         </v-card>
