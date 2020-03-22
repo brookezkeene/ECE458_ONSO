@@ -43,9 +43,13 @@ export default {
             }).catch(error => error);
     },
     create(item) {
+        /*eslint-disable*/
+        console.log(item);
         return axios.post(`${resource}`, item).then(response => response.data).catch(error => error);
     },
     update(item) {
+        /*eslint-disable*/
+        console.log(item);
         return axios.put(`${resource}`, item).then(response => response.data).catch(error => error);
     },
     delete(item) {

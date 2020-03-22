@@ -7,6 +7,8 @@ namespace Web.Api.Dtos.Assets.Update
         public Guid Id { get; set; }
         public string MacAddress { get; set; }
         public Guid? ConnectedPortId { get; set; }
+        public string Name { get; set; }
+        public int Number { get; set; }
         public Guid ModelNetworkPortId { get; set; }
     }
 }

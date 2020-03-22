@@ -113,6 +113,8 @@ namespace Web.Api.Infrastructure.Repositories
                                 .ThenInclude(x => x.Datacenter)
                 .Include(x => x.NetworkPorts)
                     .ThenInclude(x => x.ConnectedPort)
+                 .Include(x => x.NetworkPorts)
+                    .ThenInclude(x => x.ModelNetworkPort)
                 .Where(x => x.Id == assetId)
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
