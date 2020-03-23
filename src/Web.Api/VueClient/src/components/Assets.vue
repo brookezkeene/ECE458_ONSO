@@ -10,7 +10,9 @@
                               class="elevation-1"
                               @click:row="showDetails"
                               :server-items-length="totalItems"
-                              :options.sync="options">
+                              :options.sync="options"
+                              :key="selectedDatacenter"
+                              >
 
                     <template v-slot:top v-slot:item.action="{ item }">
                         <v-toolbar flat>
@@ -29,8 +31,7 @@
                                                   :return-object="false"
                                                   label="Datacenter"
                                                   placeholder="Select a datacenter or all datacenters"
-                                                  class="pt-8 pl-4"
-                                                  @change="datacenterSearch()">
+                                                  class="pt-8 pl-4">
                                         </v-select>
                                     </v-col>
                                 </v-row>
@@ -340,13 +341,17 @@
             async getAssetsFromApi() {
                 this.loading = true;
                 const { sortBy, sortDesc, page, itemsPerPage } = this.options;
-
+                
                 this.fillQuery(sortBy, sortDesc, page, itemsPerPage);
                 /* eslint-disable no-unused-vars, no-console */
                 console.log("this is the sorting stuff")
                 console.log(this.assetSearchQuery);
 
                 var info = await this.assetRepository.tablelist(this.assetSearchQuery);
+                if ((page - 1) * itemsPerPage > info.totalCount) {
+                    this.fillQuery(sortBy, sortDesc, 1, itemsPerPage);
+                    info = await this.assetRepository.tablelist(this.assetSearchQuery);
+                }
                 this.assets = info.data;
                 return info;
             },
@@ -378,7 +383,7 @@
             },
             async initialize() {
 
-                this.assets = await this.assetRepository.list();
+                this.assets = await this.getAssetsFromApi();
                 this.loading = false;
 
             },
