@@ -129,6 +129,7 @@
                 this.fillQuery(sortBy, sortDesc, page, itemsPerPage);
 
                 var info = await this.rackRepository.tablelist(this.searchQuery);
+                
                  this.racks = info.data
                 /* eslint-disable no-unused-vars, no-console */
                 console.log("this is the stuff in the returned info")
@@ -141,7 +142,6 @@
                 console.log(itemsPerPage);
                
                 this.loading = false;
-                this.change = this.change + 1;
                 return info;
             },
             async fillQuery(sortBy, sortDesc, page, itemsPerPage) {
