@@ -9,13 +9,16 @@ namespace Web.Api.Core.Services.Interfaces
 {
     public interface IAssetService
     {
-        Task<PagedList<AssetDto>> GetAssetsAsync(Guid? datacenterId, int page = 1, int pageSize = 10);
+        Task<PagedList<AssetDto>> GetAssetsAsync(SearchAssetQuery query);
         Task<AssetDto> GetAssetAsync(Guid assetId);
         Task<List<AssetDto>> GetAssetExportAsync(AssetExportQuery query);
         Task<List<AssetNetworkPortDto>> GetNetworkPortExportAsync(NetworkPortExportQuery query);
         Task<Guid> CreateAssetAsync(AssetDto asset);
         Task DeleteAssetAsync(AssetDto asset);
         Task<int> UpdateAssetAsync(AssetDto asset);
-
+        Task<AssetDto> GetAssetForDecommissioning(Guid assetId);
+        Task<Guid> CreateDecommissionedAssetAsync(DecommissionedAssetDto asset);
+        Task<DecommissionedAssetDto> GetDecommissionedAssetAsync(Guid assetId);
+        Task<PagedList<DecommissionedAssetDto>> GetDecommissionedAssetsAsync( int page = 1, int pageSize = 10);
     }
 }

@@ -8,7 +8,8 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
 {
     public interface IAssetRepository
     {
-        Task<PagedList<Asset>> GetAssetsAsync(Guid? datacenterId, int page = 1, int pageSize = 10);
+        Task<PagedList<Asset>> GetAssetsAsync(Guid? datacenterId, string vendor, string number, string hostname, string rackStart, string rackEnd,
+                            string sortBy, string isDesc, int page, int pageSize);
         Task<Asset> GetAssetAsync(Guid assetId);
         Task<int> AddAssetAsync(Asset asset);
         Task<int> UpdateAssetAsync(Asset asset);
@@ -16,5 +17,9 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
         Task<List<Asset>> GetAssetExportAsync(string search, string hostname, string rowStart, int colStart, string rowEnd, int colEnd);
         Task<bool> AssetIsUniqueAsync(string hostname, Guid id = default);
         Task<List<AssetNetworkPort>> GetNetworkPortExportAsync(string search, string hostname, string rowStart, int colStart, string rowEnd, int colEnd);
+        Task<Asset> GetAssetForDecommissioning(Guid assetId);
+        Task<int> AddDecomissionedAssetAsync(DecommissionedAsset asset);
+        Task<DecommissionedAsset> GetDecommissionedAssetAsync(Guid assetId);
+        Task<PagedList<DecommissionedAsset>> GetDecommissionedAssetsAsync( int page = 1, int pageSize = 10);
     }
 }

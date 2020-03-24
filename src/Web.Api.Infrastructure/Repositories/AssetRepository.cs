@@ -19,11 +19,16 @@ namespace Web.Api.Infrastructure.Repositories
         public AssetRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
-        }
+        } 
 
-        public async Task<PagedList<Asset>> GetAssetsAsync(Guid? datacenterId, int page = 1, int pageSize = 10)
+        public async Task<PagedList<Asset>> GetAssetsAsync(Guid? datacenterId, string vendor, string number, string hostname, string rackStart, string rackEnd,
+                    string sortBy, string isDesc, int page, int pageSize)
         {
             var pagedList = new PagedList<Asset>();
+            Expression<Func<Asset, bool>> hostnameCondition = x => (x.Hostname.Contains(hostname));
+            Expression<Func<Asset, bool>> vendorCondition = x => (x.Model.Vendor.Contains(vendor));
+            Expression<Func<Asset, bool>> numberCondition = x => (x.Model.ModelNumber.Contains(number));
+
 
             var assets = await _dbContext.Assets
                 .Include(x => x.Model)
@@ -31,18 +36,28 @@ namespace Web.Api.Infrastructure.Repositories
                 .Include(x => x.Rack)
                 .ThenInclude(x => x.Datacenter)
                 .WhereIf(datacenterId != null, x => x.Rack.Datacenter.Id == datacenterId)
+                .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
+                .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
+                .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
                 .PageBy(x => x.Hostname, page, pageSize)
                 .AsNoTracking()
                 .ToListAsync();
-
+            assets = assets.Where(x => String.Compare($"{x.Rack.Row.ToUpper()}{x.Rack.Column}", rackStart) >= 0 &&
+                                  String.Compare($"{x.Rack.Row.ToUpper()}{x.Rack.Column}", rackEnd) <= 0).ToList();
+            assets = Sort(assets, sortBy, isDesc);
             pagedList.AddRange(assets);
             pagedList.TotalCount = await _dbContext.Assets
+                .WhereIf(datacenterId != null, x => x.Rack.Datacenter.Id == datacenterId)
+                .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
+                .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
+                .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
                 .CountAsync();
             pagedList.PageSize = pageSize;
             pagedList.CurrentPage = page;
 
             return pagedList;
         }
+
 
         public async Task<List<Asset>> GetAssetExportAsync(string search, string hostname, string rowStart, int colStart, string rowEnd, int colEnd)
         {
@@ -78,8 +93,6 @@ namespace Web.Api.Infrastructure.Repositories
                 .Include(x => x.Asset).ThenInclude(x => x.Rack).ThenInclude(x => x.Datacenter)
                 .Include(x => x.ConnectedPort).ThenInclude(x => x.ModelNetworkPort)
                 .Include(x => x.ConnectedPort).ThenInclude(x => x.Asset)
-                //.Where(x => x.Asset.Rack.Column >= colStart)
-                //.Where(x => x.Asset.Rack.Column <= colEnd)
                 .WhereIf(!string.IsNullOrEmpty(search), modelCondition)
                 .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
                 .AsNoTracking()
@@ -89,7 +102,8 @@ namespace Web.Api.Infrastructure.Repositories
             return ports;
         }
 
-        public async Task<Asset> GetAssetAsync(Guid assetId)
+
+            public async Task<Asset> GetAssetAsync(Guid assetId)
         {
             return await _dbContext.Assets
                 .Include(x => x.Model)
@@ -103,6 +117,8 @@ namespace Web.Api.Infrastructure.Repositories
                                 .ThenInclude(x => x.Datacenter)
                 .Include(x => x.NetworkPorts)
                     .ThenInclude(x => x.ConnectedPort)
+                 .Include(x => x.NetworkPorts)
+                    .ThenInclude(x => x.ModelNetworkPort)
                 .Where(x => x.Id == assetId)
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
@@ -134,6 +150,146 @@ namespace Web.Api.Infrastructure.Repositories
                 .Where(x => x.Hostname == hostname)
                 .WhereIf(id != default, x => x.Id != id)
                 .AnyAsync();
+        }
+
+        public async Task<Asset> GetAssetForDecommissioning(Guid assetId)
+        {
+            return await _dbContext.Assets
+                .Include(x => x.Model)
+                .Include(x => x.Owner)
+                .Include(x => x.Rack)
+                    .ThenInclude(x => x.Datacenter)
+                .Include(x => x.NetworkPorts)
+                    .ThenInclude(x => x.ModelNetworkPort)
+                .Include(x => x.NetworkPorts)
+                    .ThenInclude(x => x.ConnectedPort)
+                        .ThenInclude(x => x.Asset)
+                 .Include(x => x.NetworkPorts)
+                    .ThenInclude(x => x.ConnectedPort)
+                        .ThenInclude(x => x.ModelNetworkPort)
+                .Include(x => x.PowerPorts)
+                    .ThenInclude(x => x.PduPort)
+                        .ThenInclude(x => x.Pdu)
+                            .ThenInclude(x => x.Rack)
+                                .ThenInclude(x => x.Datacenter)
+                .Where(x => x.Id == assetId)
+                .AsNoTracking()
+                .SingleOrDefaultAsync();
+        }
+        public async Task<PagedList<DecommissionedAsset>> GetDecommissionedAssetsAsync( int page = 1, int pageSize = 10)
+        {
+            var pagedList = new PagedList<DecommissionedAsset>();
+
+            var assets = await _dbContext.DecommissionedAssets
+                .PageBy(x => x.Id, page, pageSize)
+                .AsNoTracking()
+                .ToListAsync();
+
+            pagedList.AddRange(assets);
+            pagedList.TotalCount = await _dbContext.Assets
+                .CountAsync();
+            pagedList.PageSize = pageSize;
+            pagedList.CurrentPage = page;
+
+            return pagedList;
+        }
+        public async Task<int> AddDecomissionedAssetAsync(DecommissionedAsset asset)
+        {
+            _dbContext.DecommissionedAssets.Add(asset);
+            return await _dbContext.SaveChangesAsync();
+        }
+        public async Task<DecommissionedAsset> GetDecommissionedAssetAsync(Guid assetId)
+        {
+            return await _dbContext.DecommissionedAssets
+                .Where(x => x.Id == assetId)
+                .AsNoTracking()
+                .SingleOrDefaultAsync();
+        }
+
+        private static List<Asset> Sort(List<Asset> assets, string sortBy, string isDesc)
+        {
+            if (string.IsNullOrEmpty(sortBy))
+            {
+                return assets;
+            }
+            else if (sortBy.Equals("vendor"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(q => q.Model.Vendor).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(q => q.Model.Vendor).ToList();
+                }
+            }
+            else if (sortBy.Equals("modelNumber"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(q => q.Model.ModelNumber).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(q => q.Model.ModelNumber).ToList();
+                }
+            }
+            else if (sortBy.Equals("hostname"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(q => q.Hostname).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(q => q.Hostname).ToList();
+                }
+            }
+            else if (sortBy.Equals("datacenter"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(q => q.Rack.Datacenter.Name).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(q => q.Rack.Datacenter.Name).ToList();
+                }
+            }
+            else if (sortBy.Equals("rack"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(c => c.Rack.Row).ThenBy(c => c.Rack.Column).ThenBy(c => c.RackPosition).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(c => c.Rack.Row).ThenByDescending(c => c.Rack.Column).ThenByDescending(c => c.RackPosition).ToList();
+                }
+            }
+            else if (sortBy.Equals("rackPosition"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(q => q.RackPosition).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(q => q.RackPosition).ToList();
+                }
+            }
+            else if (sortBy.Equals("owner"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(q => q.Owner.UserName).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(q => q.Owner.UserName).ToList();
+                }
+            }
+            return assets;
         }
     }
 }

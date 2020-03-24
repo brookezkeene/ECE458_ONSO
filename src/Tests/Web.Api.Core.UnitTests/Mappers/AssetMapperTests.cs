@@ -339,13 +339,13 @@ namespace Web.Api.Core.UnitTests.Mappers
                 {
                     Id = Guid.NewGuid(),
                     ConnectedPortId = Guid.NewGuid(),
-                    MacAddress = "00:11:22:33:44:55"
+                    MacAddress = "00:11:22:33:44:55",
                 },
                 new UpdateAssetNetworkPortApiDto()
                 {
                     Id = Guid.NewGuid(),
                     ConnectedPortId = Guid.NewGuid(),
-                    MacAddress = "aa:bb:cc:dd:ee:ff"
+                    MacAddress = "aa:bb:cc:dd:ee:ff",
                 }
             };
             var apiDto = new UpdateAssetApiDto()

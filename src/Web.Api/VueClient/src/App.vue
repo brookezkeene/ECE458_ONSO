@@ -1,9 +1,14 @@
 <template>
     <v-app>
+        <appbar></appbar>
+        <navigation></navigation>
         <v-content>
-            <router-view></router-view>
+            <v-container fluid>
+                <router-view></router-view>
+            </v-container>
         </v-content>
     </v-app>
+
 </template>
 
 <style>
@@ -15,7 +20,15 @@
 </style>
 
 <script>
+    import appbar from "@/components/AppBar"
+    import navigation from "@/components/Navigation"
+
     export default {
-        name: 'App'
+        name: 'App',
+
+        components: {
+            appbar,
+            navigation
+        }
     }
 </script>

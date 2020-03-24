@@ -30,10 +30,11 @@ namespace Web.Api.Core.Services
             return racks.ToDto();
         }
 
-        public async Task<PagedList<RackDto>> GetRacksAsync(Guid? datacenterId, int page = 1, int pageSize = 10)
+        public async Task<PagedList<RackDto>> GetRacksAsync(SearchRackQuery query)
         {
-            var racks = await _rackRepository.GetRacksAsync(datacenterId, page, pageSize);
-            return racks.ToDto();
+            var pagedList = await _rackRepository.GetRacksAsync(query.Datacenter, query.SortBy, query.IsDesc, query.Page, query.PageSize);
+            pagedList.CurrentPage = query.Page;
+            return pagedList.ToDto();
         }
 
         public async Task CreateRacksAsync(RackRangeQuery query)

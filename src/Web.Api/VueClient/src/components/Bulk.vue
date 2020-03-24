@@ -7,16 +7,16 @@
             <v-col>
                 <v-card>
                     <v-card-title class="justify-center">
-                        <v-icon v-if="admin" color="white">mdi-information</v-icon>
+                        <v-icon v-if="modelPermission" color="white">mdi-information</v-icon>
                         <v-spacer></v-spacer>
                         Models
                         <v-spacer></v-spacer>
-                        <v-icon v-if="admin" @click="showModelInfo">mdi-information</v-icon>
+                        <v-icon v-if="modelPermission" @click="showModelInfo">mdi-information</v-icon>
                     </v-card-title>
                     <v-card-actions class="justify-center">
                         <v-container>
                             <v-row align="center" justify="center">
-                                <v-btn v-if="admin" color="primary" class="mb-2" @click="openImportModels">Import</v-btn>
+                                <v-btn v-if="modelPermission" color="primary" class="mb-2" @click="openImportModels">Import</v-btn>
                             </v-row>
                             <v-row align="center" justify="center">
                                 <v-btn color="primary" class="mb-2" @click="startExportModels">Export</v-btn>
@@ -28,16 +28,16 @@
             <v-col>
                 <v-card>
                     <v-card-title class="justify-center">
-                        <v-icon v-if="admin" color="white">mdi-information</v-icon>
+                        <v-icon v-if="assetPermission" color="white">mdi-information</v-icon>
                         <v-spacer></v-spacer>
                         Assets
                         <v-spacer></v-spacer>
-                        <v-icon v-if="admin" @click="showAssetInfo">mdi-information</v-icon>
+                        <v-icon v-if="assetPermission" @click="showAssetInfo">mdi-information</v-icon>
                     </v-card-title>
                     <v-card-actions class="justify-center">
                         <v-container>
                             <v-row align="center" justify="center">
-                                <v-btn v-if="admin" color="primary" class="mb-2" @click="openImportAssets">Import</v-btn>
+                                <v-btn v-if="assetPermission" color="primary" class="mb-2" @click="openImportAssets">Import</v-btn>
                             </v-row>
                             <v-row align="center" justify="center">
                                 <v-btn color="primary" class="mb-2" @click="startExportAssets">Export</v-btn>
@@ -49,16 +49,16 @@
             <v-col>
                 <v-card>
                     <v-card-title class="justify-center">
-                        <v-icon v-if="admin" color="white">mdi-information</v-icon>
+                        <v-icon v-if="assetPermission" color="white">mdi-information</v-icon>
                         <v-spacer></v-spacer>
                         Networks
                         <v-spacer></v-spacer>
-                        <v-icon v-if="admin" @click="showNetworkInfo">mdi-information</v-icon>
+                        <v-icon v-if="assetPermission" @click="showNetworkInfo">mdi-information</v-icon>
                     </v-card-title>
                     <v-card-actions class="justify-center">
                         <v-container>
                             <v-row align="center" justify="center">
-                                <v-btn v-if="admin" color="primary" class="mb-2" @click="openImportNetworks">Import</v-btn>
+                                <v-btn v-if="assetPermission" color="primary" class="mb-2" @click="openImportNetworks">Import</v-btn>
                             </v-row>
                             <v-row align="center" justify="center">
                                 <v-btn color="primary" class="mb-2" @click="startExportNetworks">Export</v-btn>
@@ -142,7 +142,6 @@ import ImportWizard from "./ImportWizard"
 import ExportModelWizard from "./ExportModelWizard"
 import ExportAssetWizard from "./ExportAssetWizard"
 import ExportNetworkWizard from "./ExportNetworkWizard"
-import Auth from "../auth"
 
 export default {
     data () {
@@ -166,8 +165,11 @@ export default {
         };
     },
     computed: {
-        admin() {
-            return Auth.isAdmin()
+        modelPermission() {
+            return this.$store.getters.hasModelPermission || this.$store.getters.isAdmin
+        },
+        assetPermission() {
+            return this.$store.getters.hasAssetPermission || this.$store.getters.isAdmin
         },
     },
     watch: {

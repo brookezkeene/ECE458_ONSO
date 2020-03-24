@@ -24,9 +24,12 @@ namespace Web.Api.Core.Services
             _auditEventLogger = auditEventLogger;
         }
 
-        public async Task<PagedList<AssetDto>> GetAssetsAsync(Guid? datacenterId, int page = 1, int pageSize = 10)
+        public async Task<PagedList<AssetDto>> GetAssetsAsync(SearchAssetQuery query)
         {
-            var pagedList = await _repository.GetAssetsAsync(datacenterId, page, pageSize);
+            query.ToUpper();
+            var pagedList = await _repository.GetAssetsAsync(query.Datacenter, query.Vendor, query.ModelNumber, query.Hostname, 
+                    query.RackStart, query.RackEnd, query.SortBy, query.IsDesc, query.Page, query.PageSize);
+            pagedList.CurrentPage = query.Page;
             return pagedList.ToDto();
         }
 
@@ -67,7 +70,7 @@ namespace Web.Api.Core.Services
             var entity = asset.ToEntity();
             await _repository.DeleteAssetAsync(entity);
 
-            await _auditEventLogger.LogEventAsync(new AssetDeletedEvent(asset));
+            //await _auditEventLogger.LogEventAsync(new AssetDeletedEvent(asset));
         }
 
         public async Task<int> UpdateAssetAsync(AssetDto asset)
@@ -75,8 +78,34 @@ namespace Web.Api.Core.Services
             var entity = asset.ToEntity();
             var updated = await _repository.UpdateAssetAsync(entity);
 
-            await _auditEventLogger.LogEventAsync(new AssetUpdatedEvent(asset));
+            //await _auditEventLogger.LogEventAsync(new AssetUpdatedEvent(asset));
             return updated;
+        }
+        public async Task<AssetDto> GetAssetForDecommissioning(Guid assetId)
+        {
+            var decommissionedAsset = await _repository.GetAssetForDecommissioning(assetId);
+            return decommissionedAsset.ToDto();
+
+        }
+        public async Task<PagedList<DecommissionedAssetDto>> GetDecommissionedAssetsAsync( int page = 1, int pageSize = 10)
+        {
+            var pagedList = await _repository.GetDecommissionedAssetsAsync( page, pageSize);
+            return pagedList.ToDto();
+        }
+
+        public async Task<Guid> CreateDecommissionedAssetAsync(DecommissionedAssetDto asset)
+        {
+            var entity = asset.ToEntity();
+            await _repository.AddDecomissionedAssetAsync(entity);
+
+            //await _auditEventLogger.LogEventAsync(new AssetCreatedEvent(asset));
+
+            return entity.Id;
+        }
+        public async Task<DecommissionedAssetDto> GetDecommissionedAssetAsync(Guid assetId)
+        {
+            var asset = await _repository.GetDecommissionedAssetAsync(assetId);
+            return asset.ToDto();
         }
     }
 }

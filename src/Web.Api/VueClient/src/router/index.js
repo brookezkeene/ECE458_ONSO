@@ -13,10 +13,12 @@ import ImportExport from '@/components/Bulk'
 import Users from '@/components/Users'
 import assetEdit from '@/components/AssetEdit'
 import Reports from '@/components/Reports'
-import Dashboard from '@/components/Dashboard'
+import App from '@/App'
 import UsersCreate from '@/components/UserForm'
 import Log from '@/components/Log'
 import auth from '@/auth'
+import DecommissionedAssets from '@/components/DecommissionedAssets'
+import DecommissionedAssetDetails from '@/components/DecommissionedAssetDetails'
 
 Vue.use(Router)
 
@@ -28,7 +30,7 @@ const routes = [
     },
     {
         path: '/',
-        component: Dashboard,
+        component: App,
         meta: { requiresAuth: true },
         children: [
             {
@@ -65,6 +67,17 @@ const routes = [
                 path: '/assets',
                 name: 'assets',
                 component: assets,
+            },
+            {
+                path: '/decommissioned-assets',
+                name: 'decommissioned-assets',
+                component: DecommissionedAssets,
+            },
+            {
+                path: '/decommissioned-assets/:id',
+                name: 'decommissioned-asset-details',
+                component: DecommissionedAssetDetails,
+                props: true,
             },
             {
                 path: '/assets/:id',

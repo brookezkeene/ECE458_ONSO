@@ -13,6 +13,10 @@ namespace Web.Api.Core.Dtos
         public string EndRow { get; set; }
         public int StartCol { get; set; }
         public int EndCol { get; set; }
+        public string IsDesc { get; set; }
+        public string SortBy { get; set; }
+        public int Page { get; set; }
+        public int PageSize { get; set; }
         public Guid DatacenterId { get; set; }
     }
 
@@ -24,6 +28,7 @@ namespace Web.Api.Core.Dtos
             upperQuery.StartRow = query.StartRow.ToUpper();
             upperQuery.EndRow = query.EndRow.ToUpper();
             upperQuery.DatacenterId = query.DatacenterId;
+
             return upperQuery;
         }
     }

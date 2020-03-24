@@ -1,5 +1,5 @@
 ﻿<template>
-    <div>
+    <div v-if="permission">
         <v-card flat>
             <v-card-title>System Log</v-card-title>
             <v-container>
@@ -63,6 +63,11 @@
 
         </v-card>
     </div>
+    <div v-else class="pt-10">
+        <v-layout class="justify-center">
+            <h3 class="green--text">You do not have permission to view this page.</h3>
+        </v-layout>
+    </div>
 </template>
 
 
@@ -94,6 +99,11 @@
                 items: [],
                 expanded: []
             }
+        },
+        computed: {
+            permission() {
+                return this.$store.getters.hasAuditPermission || this.$store.getters.isAdmin
+            },
         },
         watch: {
             options: {

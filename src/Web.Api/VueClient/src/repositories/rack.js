@@ -17,13 +17,20 @@ const validAddress = (address) => {
 export default {
     list(datacenter) {
         const query = {
-            datacenterId: datacenter,
+            datacenter: datacenter,
             pageSize: 2000000000
         }
         return axios.get(`${resource}`, { params: query })
             .then(response => {
                 return response.data.data;
             });
+    },
+    tablelist(query) {
+        //query contains page and pagesize
+        return axios.get(`${resource}`, { params: query })
+            .then(response => {
+                return response.data;
+            }).catch(error => error);
     },
     findInRange(start, end, datacenter) {
         const { rowLetter: startRow, rackNumber: startCol } = splitAddress(start);

@@ -25,7 +25,8 @@ namespace Web.Api.Core.Services
             _regex = new Regex(Pattern, RegexOptions.Compiled | RegexOptions.Multiline);
             _assetService = assetService;
 
-            client.BaseAddress = new Uri("http://hyposoft-mgt.colab.duke.edu:8003");
+            // TODO: REMEMBER TO CHANGE THIS BACK TO OUR GROUP PORT 8003
+            client.BaseAddress = new Uri("http://hyposoft-mgt.colab.duke.edu:8000");
 
             Client = client;
 
@@ -84,13 +85,25 @@ namespace Web.Api.Core.Services
                 // v: on, off
                 foreach (var port in kvp.Value)
                 {
-
                     var requestData = new Dictionary<String, String>
                     {
                         { "pdu", kvp.Key },
                         { "port", port.ToString() },
                         { "v", state.ToString().ToLower() }
                     };
+
+                    if (state.ToString().ToLower().Equals("cycle"))
+                    {
+                        requestData.Remove("v");
+                        requestData.Add("v", "off");
+                        var d = new FormUrlEncodedContent(requestData);
+                        var r = await Client.PostAsync("/power.php", d);
+                        await Task.Delay(2000);
+
+                        // Two seconds after sending the power off signal, send power on
+                        requestData.Remove("v");
+                        requestData.Add("v", "on");
+                    } 
 
                     var data = new FormUrlEncodedContent(requestData);
                     var response = await Client.PostAsync("/power.php", data);
