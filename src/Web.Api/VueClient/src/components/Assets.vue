@@ -1,5 +1,7 @@
 <template>
     <v-card flat>
+        <v-btn color="primary" @click="createChangePlan"> Create a Change Plan</v-btn>
+        <changePlanBar></changePlanBar>
         <v-card-title>Assets</v-card-title>
         <v-container>
             <v-card>
@@ -11,8 +13,7 @@
                               @click:row="showDetails"
                               :server-items-length="totalItems"
                               :options.sync="options"
-                              :key="selectedDatacenter"
-                              >
+                              :key="selectedDatacenter">
 
                     <template v-slot:top v-slot:item.action="{ item }">
                         <v-toolbar flat>
@@ -224,14 +225,17 @@
 <script>
 
     import networkNeighborhood from '@/networkNeighborhood';
+    import changePlanBar from '@/components/ChangePlanStatusBar';
 
     export default {
 
         components: {
+            changePlanBar,
         },
         inject: ['assetRepository', 'datacenterRepository'],
         data() {
             return {
+                changePlanner: false,
                 selectedDatacenter: 'All Datacenters',
                 // Filter values.
                 hostnameSearch: '',
@@ -492,6 +496,11 @@
                 return value.toLowerCase() >= this.startRackValue.toLowerCase()
                     && value.toLowerCase() <= this.endRackValue.toLowerCase();
             },
+
+            createChangePlan() {
+                this.$store.dispatch('startChangePlan');
+                console.log(this.$store.getters.isChangePlan);
+            }
 
         },
     }

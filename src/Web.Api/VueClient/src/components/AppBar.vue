@@ -35,7 +35,9 @@
 
 <script>
 
+
     export default {
+
         name: 'app-bar',
         created() {
             this.$store.dispatch('loadUsername');

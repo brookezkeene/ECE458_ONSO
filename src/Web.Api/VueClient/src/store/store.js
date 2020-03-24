@@ -21,6 +21,7 @@ export default new Vuex.Store({
         updateData: false,      // for updating tables
         username: '',           // for showing who is signed in and saving who decommissioned
         myPermissions: [],      // for tracking user permissions
+        changePlan: false,
     },
 
     /*Defines Computed Properties for our Store
@@ -41,6 +42,9 @@ export default new Vuex.Store({
         },
         isAdmin: state => {
             return state.myPermissions.includes("admin")
+        },
+        isChangePlan: state => {
+            return state.changePlan
         }
     },
 
@@ -67,6 +71,12 @@ export default new Vuex.Store({
         },
         SAVE_ROLES(state, roles) {
             state.myPermissions = roles;
+        },
+        START_CHANGE_PLAN(state) {
+            state.changePlan = true;
+        },
+        END_CHANGE_PLAN(state) {
+            state.changePlan = false;
         }
     },
 
@@ -85,5 +95,11 @@ export default new Vuex.Store({
                 throw new Error(`API ${error}`);
             });
         },
+        startChangePlan({ commit }) {
+            commit('START_CHANGE_PLAN');
+        },
+        endChangePlan({ commit }) {
+            commit('END_CHANGE_PLAN');
+        }
     },
 })
