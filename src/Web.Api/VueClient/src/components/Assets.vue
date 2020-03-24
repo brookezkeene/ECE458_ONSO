@@ -7,7 +7,7 @@
                 <v-data-table :headers="filteredHeaders"
                               :items="assets"
                               :search="search"
-                              class="elevation-1"
+                              class="pa-5"
                               @click:row="showDetails"
                               :server-items-length="totalItems"
                               :options.sync="options"

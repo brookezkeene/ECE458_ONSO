@@ -8,7 +8,7 @@
                 <v-data-table :headers="filteredHeaders"
                               :items="assets"
                               :search="search"
-                              class="elevation-1"
+                              class="pa-5"
                               multi-sort
                               @click:row="showDetails">
 
@@ -21,7 +21,7 @@
                                     <v-col class="pt-6 mt-6" cols="2">
                                         <v-label>Filter by ... </v-label>
                                     </v-col>
-                                    <v-col cols="6">
+                                    <v-col cols="5">
                                         <v-select v-model="selectedDatacenter"
                                                   :items="datacenters"
                                                   item-text="description"
@@ -30,10 +30,44 @@
                                                   label="Datacenter"
                                                   placeholder="Select a datacenter or all datacenters"
                                                   class="pt-8 pl-4"
+                                                  range
                                                   @change="datacenterSearch()">
                                         </v-select>
                                     </v-col>
+                                    <v-col class="mt-6" cols="4">
+                                        <v-menu ref="menu"
+                                                v-model="menu"
+                                                :close-on-content-click="false"
+                                                :return-value.sync="dates"
+                                                transition="scale-transition"
+                                                offset-y
+                                                min-width="290px">
+                                            <template v-slot:activator="{ on }">
+                                                <v-row>
+                                                    <v-col>
+                                                        <v-text-field v-model="dates[0]"
+                                                                  label="Dates"
+                                                                  prepend-icon="mdi-calendar"
+                                                                  readonly
+                                                                  v-on="on"></v-text-field>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <v-text-field v-model="dates[1]"
+                                                                      readonly
+                                                                      v-on="on"></v-text-field>
+                                                    </v-col>
+                                                </v-row>
+
+                                            </template>
+                                            <v-date-picker v-model="dates" no-title range color="primary">
+                                                <v-spacer></v-spacer>
+                                                <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
+                                                <v-btn text color="primary" @click="$refs.menu.save(dates)">OK</v-btn>
+                                            </v-date-picker>
+                                        </v-menu>
+                                    </v-col>
                                 </v-row>
+
                             </v-container>
 
                             <v-spacer></v-spacer>
@@ -85,7 +119,7 @@
                             </v-col>
                             <v-spacer></v-spacer>
                         </v-row>
-                    </template>
+                        </template>
 
                     <template v-slot:no-data>
                         <v-btn color="primary" @click="initialize">Refresh</v-btn>
@@ -103,6 +137,8 @@
         inject: ['assetRepository', 'modelRepository', 'userRepository', 'datacenterRepository'],
         data() {
             return {
+                menu: false,
+                dates: ['2020-03-01', '2020-03-02'],
                 selectedDatacenter: 'All Datacenters',
                 // Filter values.
                 startRackValue: '',
