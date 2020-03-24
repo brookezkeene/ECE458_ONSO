@@ -138,7 +138,7 @@
         data() {
             return {
                 menu: false,
-                dates: ['2020-03-01', '2020-03-02'],
+                dates: ['', ''],
                 selectedDatacenter: 'All Datacenters',
                 // Filter values.
                 startRackValue: '',
