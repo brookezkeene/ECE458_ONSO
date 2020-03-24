@@ -151,18 +151,27 @@ namespace Web.Api.Core.Mappers
         {
             return changePlanDto == null ? null : Mapper.Map<ChangePlan>(changePlanDto);
         }
+        
         public static ChangePlanItem ToEntity(this ChangePlanItemDto changePlanItemDto)
         {
             return changePlanItemDto == null ? null : Mapper.Map<ChangePlanItem>(changePlanItemDto);
         }
-
+        
         public static ChangePlanDto ToDto(this ChangePlan changePlan)
         {
             return changePlan == null ? null : Mapper.Map<ChangePlanDto>(changePlan);
         }
+        public static List<ChangePlanDto> ToDto(this List<ChangePlan> changePlan)
+        {
+            return changePlan == null ? null : Mapper.Map<List<ChangePlanDto>>(changePlan);
+        }
         public static ChangePlanItemDto ToDto(this ChangePlanItem changePlanItem)
         {
             return changePlanItem == null ? null : Mapper.Map<ChangePlanItemDto>(changePlanItem);
+        }
+        public static List<ChangePlanItemDto> ToDto(this List<ChangePlanItem> changePlanItem)
+        {
+            return changePlanItem == null ? null : Mapper.Map<List<ChangePlanItemDto>>(changePlanItem);
         }
     }
 }

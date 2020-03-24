@@ -8,7 +8,14 @@ namespace Web.Api.Core.Services.Interfaces
 {
     public interface IChangePlanService
     {
+        Task<ChangePlanDto> GetChangePlanAsync(Guid changPlanId);
+        Task<ChangePlanItemDto> GetChangePlanItemAsync(Guid changePlanItemId);
+        Task<List<ChangePlanDto>> GetChangePlansAsync(Guid? createdById);
+        Task<List<ChangePlanItemDto>> GetChangePlanItemsAsync(Guid changePlanId);
         Task<Guid> CreateChangePlanAsync(ChangePlanDto changePlan);
         Task<Guid> CreateChangePlanItemAsync(ChangePlanItemDto changePlanItem);
+        Task<int> UpdateChangePlanItemAsync(ChangePlanItemDto changePlanItem);
+        Task DeleteChangePlanAsync(ChangePlanDto changePlan);
+        Task DeleteChangePlanItemAsync(ChangePlanItemDto changePlanItem);
     }
 }
