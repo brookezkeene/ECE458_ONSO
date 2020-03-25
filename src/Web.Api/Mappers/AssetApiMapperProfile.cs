@@ -86,7 +86,7 @@ namespace Web.Api.Mappers
                 .ForMember(o => o.Hostname, opts => opts.MapFrom(src => src.Hostname))
                 .ForMember(o => o.Decommissioner, opts => opts.Ignore())
                 .ForMember(o => o.Data, opts => opts.Ignore())
-                .ForMember(o => o.Date, opts => opts.Ignore())
+                .ForMember(o => o.DateDecommissioned, opts => opts.Ignore())
                 .ReverseMap();
         }
     }

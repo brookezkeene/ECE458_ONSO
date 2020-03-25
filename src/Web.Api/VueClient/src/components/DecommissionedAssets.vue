@@ -150,7 +150,7 @@
 
                 // Table data.
                 headers: [
-                    { text: 'Time Decommissioned', value: 'date' },
+                    { text: 'Time Decommissioned', value: 'dateDecommissioned' },
                     { text: 'Decomissioned By User', value: 'decommissioner' },
                     { text: 'Model Vendor', value: 'modelName' },
                     { text: 'Model Number', value: 'modelNumber', },

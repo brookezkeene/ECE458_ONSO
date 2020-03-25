@@ -8,7 +8,7 @@
                 <v-row>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Time Decommissioned</v-label>
-                        <v-card-text> {{asset.date}} </v-card-text>
+                        <v-card-text> {{asset.dateDecommissioned}} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Decommissioned By</v-label>

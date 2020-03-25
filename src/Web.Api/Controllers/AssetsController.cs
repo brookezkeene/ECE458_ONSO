@@ -117,7 +117,7 @@ namespace Web.Api.Controllers
             var decommisionedAsset = assetDto.MapTo<DecommissionedAssetDto>();
             decommisionedAsset.Data = jsonString;
             decommisionedAsset.Decommissioner = query.Decommissioner;
-            decommisionedAsset.Date = DateTime.Now.ToString("yyyy-MM-dd");
+            decommisionedAsset.DateDecommissioned = DateTime.Now;
 
             //deleting asset from active asset column
             var asset = await _assetService.GetAssetAsync(query.Id);
