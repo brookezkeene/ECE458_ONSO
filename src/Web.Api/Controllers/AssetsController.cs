@@ -58,6 +58,7 @@ namespace Web.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateAssetApiDto assetApiDto)
         {
+            assetApiDto.LastUpdatedDate = DateTime.Now;
             var assetDto = assetApiDto.MapTo<AssetDto>();
             await _assetService.CreateAssetAsync(assetDto);
 
@@ -73,6 +74,7 @@ namespace Web.Api.Controllers
         [HttpPut]
         public async Task<IActionResult> Put(UpdateAssetApiDto assetApiDto)
         {
+            assetApiDto.LastUpdatedDate = DateTime.Now; 
             var assetDto = assetApiDto.MapTo<AssetDto>();
             await _assetService.UpdateAssetAsync(assetDto);
             return NoContent();

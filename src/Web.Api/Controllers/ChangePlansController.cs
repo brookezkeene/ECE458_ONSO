@@ -11,11 +11,12 @@ namespace Web.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ChangePlanController : ControllerBase
+    [Produces("application/json")]
+    public class ChangePlansController : ControllerBase
     {
         private readonly IChangePlanService _changePlanService;
 
-        public ChangePlanController(IChangePlanService changePlanService)
+        public ChangePlansController(IChangePlanService changePlanService)
         {
             _changePlanService = changePlanService;
         }
@@ -43,20 +44,20 @@ namespace Web.Api.Controllers
             var response = await _changePlanService.GetChangePlanItemsAsync(id);
             return Ok(response);
         }
-        [HttpPost]
+        [HttpPost("changeplan")]
         public async Task<IActionResult> Post([FromBody] ChangePlanDto changePlanDto)
         {
             await _changePlanService.CreateChangePlanAsync(changePlanDto);
             return Ok();
         }
-        [HttpPost]
+        [HttpPost("changeplanitem")]
         public async Task<IActionResult> Post([FromBody] ChangePlanItemDto changePlanItemDto)
         {
             await _changePlanService.CreateChangePlanItemAsync(changePlanItemDto);
             return Ok();
         }
         //TODO: NEED TO SEE IF WE NEED ANOTHER FORMAT/DESERIALIZE DATA OR SOMETHING
-        [HttpPut]
+        [HttpPut("changeplanitem")]
         public async Task<IActionResult> Put(ChangePlanItemDto changePlanItem)
         {
             await _changePlanService.UpdateChangePlanItemAsync(changePlanItem);
