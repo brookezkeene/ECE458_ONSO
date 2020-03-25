@@ -10,8 +10,18 @@ using Web.Api.Infrastructure.DbContexts;
 namespace Web.Api.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
+<<<<<<< HEAD
     [Migration("20200325042156_AssetLastUpdatedDateAndDecommissionedAssetNewColumns")]
     partial class AssetLastUpdatedDateAndDecommissionedAssetNewColumns
+=======
+<<<<<<< HEAD:src/Web.Api.Infrastructure/Migrations/20200324003345_ChangePlanItems.Designer.cs
+    [Migration("20200324003345_ChangePlanItems")]
+    partial class ChangePlanItems
+=======
+    [Migration("20200325042156_AssetLastUpdatedDateAndDecommissionedAssetNewColumns")]
+    partial class AssetLastUpdatedDateAndDecommissionedAssetNewColumns
+>>>>>>> adding pagination to the backend:src/Web.Api.Infrastructure/Migrations/20200325042156_AssetLastUpdatedDateAndDecommissionedAssetNewColumns.Designer.cs
+>>>>>>> adding pagination to the backend
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -171,9 +181,12 @@ namespace Web.Api.Infrastructure.Migrations
                         .HasColumnType("nvarchar(63)")
                         .HasMaxLength(63);
 
+<<<<<<< HEAD
                     b.Property<DateTime>("LastUpdatedDate")
                         .HasColumnType("datetime2");
 
+=======
+>>>>>>> adding pagination to the backend
                     b.Property<Guid>("ModelId")
                         .HasColumnType("uniqueidentifier");
 
