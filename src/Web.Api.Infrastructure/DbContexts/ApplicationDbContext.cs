@@ -62,5 +62,7 @@ namespace Web.Api.Infrastructure.DbContexts
         public DbSet<AssetNetworkPort> AssetNetworkPort { get; set; }
         public DbSet<ImportFile> ImportFiles { get; set; }
         public DbSet<DecommissionedAsset> DecommissionedAssets { get; set; }
+        public DbSet<ChangePlan> ChangePlans { get; set; }
+        public DbSet<ChangePlanItem> ChangePlanItems { get; set; }
     }
 }

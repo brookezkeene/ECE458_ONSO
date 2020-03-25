@@ -27,6 +27,7 @@ namespace Web.Api.Infrastructure.Entities
         public virtual User Owner { get; set; }
 
         public string Comment { get; set; }
+        public DateTime LastUpdatedDate { get; set; }
 
         public int AssetNumber { get; set; }
 

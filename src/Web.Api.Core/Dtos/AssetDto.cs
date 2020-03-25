@@ -14,6 +14,7 @@ namespace Web.Api.Core.Dtos
         public RackDto Rack { get; set; }
         public Guid? OwnerId { get; set; }
         public UserDto Owner { get; set; }
+        public DateTime LastUpdatedDate { get; set; }
         public Guid Id { get; set; }
         public string Hostname { get; set; }
         public int RackPosition { get; set; }

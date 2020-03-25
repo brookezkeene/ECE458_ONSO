@@ -50,6 +50,11 @@ namespace Web.Api.Core.Mappers
                 .ForSourceMember(o => o.Password, opts => opts.DoNotValidate());
 
             CreateMap<PagedList<Asset>, PagedList<AssetDto>>();
+
+            CreateMap<ChangePlan, ChangePlanDto>()
+                .ReverseMap();
+            CreateMap<ChangePlanItem, ChangePlanItemDto>()
+                .ReverseMap();
         }
     }
 }
