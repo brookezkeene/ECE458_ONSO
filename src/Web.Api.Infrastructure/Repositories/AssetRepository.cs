@@ -177,21 +177,23 @@ namespace Web.Api.Infrastructure.Repositories
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
         }
-        public async Task<PagedList<DecommissionedAsset>> GetDecommissionedAssetsAsync(Guid? datacenter, string generalSearch, string decommissioner,
+        public async Task<PagedList<DecommissionedAsset>> GetDecommissionedAssetsAsync(string datacenterName, string generalSearch, string decommissioner,
                     string dateStart, string dateEnd, string rackStart, string rackEnd, string sortBy, string isDesc, int page, int pageSize)
         {
             var pagedList = new PagedList<DecommissionedAsset>();
             Expression<Func<DecommissionedAsset, bool>> hostnameCondition = x => (x.Hostname.Contains(generalSearch) || 
                                            x.ModelName.Contains(generalSearch) || x.ModelNumber.Contains(generalSearch));
-            Expression<Func<DecommissionedAsset, bool>> numberCondition = x => (x.Decommissioner.Contains(decommissioner));
+            Expression<Func<DecommissionedAsset, bool>> decommissionerCondition = x => (x.Decommissioner.Contains(decommissioner));
             Expression<Func<DecommissionedAsset, bool>> startDateCondition = x => (x.DateDecommissioned >= DateTime.Parse(dateStart));
             Expression<Func<DecommissionedAsset, bool>> endDateCondition = x => (x.DateDecommissioned <= DateTime.Parse(dateEnd));
-            
+            Expression<Func<DecommissionedAsset, bool>> datacenterCondition = x => (x.Datacenter.Contains(datacenterName));
+
             var assets = await _dbContext.DecommissionedAssets
                 .WhereIf(!string.IsNullOrEmpty(generalSearch), hostnameCondition)
-                .WhereIf(!string.IsNullOrEmpty(decommissioner), numberCondition)
+                .WhereIf(!string.IsNullOrEmpty(decommissioner), decommissionerCondition)
                 .WhereIf(!string.IsNullOrEmpty(dateStart), startDateCondition)
                 .WhereIf(!string.IsNullOrEmpty(dateEnd), endDateCondition)
+                .WhereIf(!string.IsNullOrEmpty(datacenterName), datacenterCondition)
                 .PageBy(x => x.Id, page, pageSize)
                 .AsNoTracking()
                 .ToListAsync();
@@ -201,9 +203,10 @@ namespace Web.Api.Infrastructure.Repositories
             pagedList.AddRange(assets);
             pagedList.TotalCount = await _dbContext.DecommissionedAssets
                 .WhereIf(!string.IsNullOrEmpty(generalSearch), hostnameCondition)
-                .WhereIf(!string.IsNullOrEmpty(decommissioner), numberCondition)
+                .WhereIf(!string.IsNullOrEmpty(decommissioner), decommissionerCondition)
                 .WhereIf(!string.IsNullOrEmpty(dateStart), startDateCondition)
                 .WhereIf(!string.IsNullOrEmpty(dateEnd), endDateCondition)
+                .WhereIf(!string.IsNullOrEmpty(datacenterName), datacenterCondition)
                 .Where(x => String.Compare(x.Rack, rackStart) >= 0 && String.Compare(x.Rack, rackEnd) <= 0)
                 .CountAsync();
             pagedList.PageSize = pageSize;

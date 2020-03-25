@@ -7,6 +7,7 @@ namespace Web.Api.Core.Dtos
     public class SearchAssetQuery
     {
         public Guid? Datacenter { get; set; }
+        public string DatacenterName { get; set; }
         public string GeneralSearch { get; set; }
         public string Vendor { get; set; }
         public string ModelNumber { get; set; }
@@ -33,6 +34,14 @@ namespace Web.Api.Core.Dtos
             else
             {
                 query.Vendor = "";
+            }
+            if (!string.IsNullOrEmpty(query.DatacenterName))
+            {
+                query.DatacenterName = query.DatacenterName.ToUpper();
+            }
+            else
+            {
+                query.DatacenterName = "";
             }
             if (!string.IsNullOrEmpty(query.Decommissioner))
             {

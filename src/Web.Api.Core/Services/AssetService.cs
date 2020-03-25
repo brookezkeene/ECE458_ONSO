@@ -90,7 +90,7 @@ namespace Web.Api.Core.Services
         public async Task<PagedList<DecommissionedAssetDto>> GetDecommissionedAssetsAsync(SearchAssetQuery query)
         {
             query.ToUpper();
-            var pagedList = await _repository.GetDecommissionedAssetsAsync(query.Datacenter, query.GeneralSearch, query.Decommissioner,
+            var pagedList = await _repository.GetDecommissionedAssetsAsync(query.DatacenterName, query.GeneralSearch, query.Decommissioner,
                     query.DateStart, query.DateEnd, query.RackStart, query.RackEnd, query.SortBy, query.IsDesc, query.Page, query.PageSize);
             pagedList.CurrentPage = query.Page;
             return pagedList.ToDto();
