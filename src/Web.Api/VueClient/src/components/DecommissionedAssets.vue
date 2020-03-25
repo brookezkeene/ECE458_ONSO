@@ -46,10 +46,10 @@
                                                 <v-row>
                                                     <v-col>
                                                         <v-text-field v-model="dates[0]"
-                                                                  label="Dates"
-                                                                  prepend-icon="mdi-calendar"
-                                                                  readonly
-                                                                  v-on="on"></v-text-field>
+                                                                      label="Dates"
+                                                                      prepend-icon="mdi-calendar"
+                                                                      readonly
+                                                                      v-on="on"></v-text-field>
                                                     </v-col>
                                                     <v-col>
                                                         <v-text-field v-model="dates[1]"
@@ -84,42 +84,58 @@
                         <v-row>
                             <v-col cols="6">
                                 <v-row class="pl-10 pt-1">
-                                    <v-autocomplete prepend-inner-icon="mdi-magnify"
-                                                    :items="assets"
-                                                    :search-input.sync="search"
-                                                    cache-items
-                                                    class="mt-3 pt-3"
-                                                    flat
-                                                    hide-no-data
-                                                    hide-details
-                                                    item-text="modelName"
-                                                    label="Search by keyword on model and hostname"
-                                                    single-line
-                                                    solo-inverted></v-autocomplete>
+                                    <v-text-field prepend-inner-icon="mdi-magnify"
+                                                  :search-input.sync="search"
+                                                  v-model="search"
+                                                  cache-items
+                                                  class="mt-3 pt-3"
+                                                  flat
+                                                  hide-no-data
+                                                  hide-details
+                                                  label="Search by keyword on model and hostname"
+                                                  single-line
+                                                  solo-inverted></v-text-field>
 
                                 </v-row>
                             </v-col>
-                            <v-spacer></v-spacer>
-                            <!-- Custom filters; sorts between rack ranges -->
-                            <v-col cols="4">
-                                <v-row class="mt-4 pt-2">
-                                    <v-text-field v-model="startRackValue"
-                                                  placeholder="Start"
-                                                  type="text"
-                                                  label="Rack Range"
-                                                  style="width:0">
-                                    </v-text-field>
+                            <v-col cols="6">
+                                <v-row class="pl-10 pt-1">
+                                    <v-text-field prepend-inner-icon="mdi-magnify"
+                                                  v-model="decommissioner"
+                                                  cache-items
+                                                  class="mt-3 pt-3"
+                                                  flat
+                                                  hide-no-data
+                                                  hide-details
+                                                  label="Search for decommissioner"
+                                                  single-line
+                                                  solo-inverted></v-text-field>
 
-                                    <v-text-field v-model="endRackValue"
-                                                  type="text"
-                                                  placeholder="End"
-                                                  style="width:0">
-                                    </v-text-field>
                                 </v-row>
                             </v-col>
-                            <v-spacer></v-spacer>
                         </v-row>
-                        </template>
+                        <v-row>
+                        <v-spacer></v-spacer>
+                        <!-- Custom filters; sorts between rack ranges -->
+                        <v-col cols="4">
+                            <v-row class="mt-4 pt-2">
+                                <v-text-field v-model="startRackValue"
+                                              placeholder="Start"
+                                              type="text"
+                                              label="Rack Range"
+                                              style="width:0">
+                                </v-text-field>
+
+                                <v-text-field v-model="endRackValue"
+                                              type="text"
+                                              placeholder="End"
+                                              style="width:0">
+                                </v-text-field>
+                            </v-row>
+                        </v-col>
+                        <v-spacer></v-spacer>
+                        </v-row>
+                    </template>
 
                     <template v-slot:no-data>
                         <v-btn color="primary" @click="initialize">Refresh</v-btn>
@@ -143,6 +159,7 @@
                 // Filter values.
                 startRackValue: '',
                 endRackValue: '',
+                decommissioner:'',
                 datacenters: [],
                 instructionsDialog: false,
                 loading: true,
@@ -183,6 +200,21 @@
                     ownerId: '',
                     comment: '',
                 },
+                assetSearchQuery: {
+                    datacenter: '',
+                    hostname: '',
+                    rackStart: '',
+                    rackEnd: '',
+                    decommissioner: '',
+                    dateStart: '',
+                    dateEnd: '',
+                    vendor: '',
+                    modelNumber: '',
+                    page: 0,
+                    pageSize: 0,
+                    isDesc: '',
+                    sortBy: '',
+                },
                 editing: false,
             }
         },
@@ -219,7 +251,6 @@
                 })
 
                 /*eslint-disable*/
-                console.log(this.assets);
 
                 var datacenter = {
                     description: "All Datacenters",
@@ -228,11 +259,33 @@
                 this.datacenters.push(datacenter);
 
                 this.loading = false;
+                
 
+            },
+            fillQuery() {//(sortBy, sortDesc, page, itemsPerPage) {
+                var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
+                if (typeof searchDatacenter === 'undefined') {
+                    this.assetSearchQuery.datacenter = '';
+                } else {
+                    this.assetSearchQuery.datacenter = searchDatacenter.id;
+                }
+                this.assetSearchQuery.vendor = this.search;
+                this.assetSearchQuery.decommissioner = this.decommissioner;
+                this.assetSearchQuery.dateStart = this.dates[0];
+                this.assetSearchQuery.dateEnd = this.dates[1];
+                this.assetSearchQuery.rackStart = this.startRackValue;
+                this.assetSearchQuery.rackEnd = this.endRackValue;
+                /*this.assetSearchQuery.page = page;
+                this.assetSearchQuery.pageSize = itemsPerPage;
+                this.assetSearchQuery.sortBy = this.parseSort(sortBy);
+                this.assetSearchQuery.isDesc = this.parseSort(sortDesc);*/
             },
             async datacenterSearch() {
                 var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
                 this.assets = await this.assetRepository.list(searchDatacenter.id);
+                this.fillQuery();
+                console.log(this.assetSearchQuery);
+                console.log("this is the search query");
             },
             showInstructions() {
                 this.instructionsDialog = true;

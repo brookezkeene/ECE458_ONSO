@@ -349,8 +349,14 @@ namespace Web.Api.Infrastructure.Migrations
                     b.Property<string>("ModelNumber")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OwnerName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Rack")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RackPosition")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

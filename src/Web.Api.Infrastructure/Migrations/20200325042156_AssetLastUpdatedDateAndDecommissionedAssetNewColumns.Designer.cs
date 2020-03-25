@@ -10,8 +10,8 @@ using Web.Api.Infrastructure.DbContexts;
 namespace Web.Api.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200325010804_DecommissionedAssetDateTime")]
-    partial class DecommissionedAssetDateTime
+    [Migration("20200325042156_AssetLastUpdatedDateAndDecommissionedAssetNewColumns")]
+    partial class AssetLastUpdatedDateAndDecommissionedAssetNewColumns
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -171,6 +171,9 @@ namespace Web.Api.Infrastructure.Migrations
                         .HasColumnType("nvarchar(63)")
                         .HasMaxLength(63);
 
+                    b.Property<DateTime>("LastUpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("ModelId")
                         .HasColumnType("uniqueidentifier");
 
@@ -249,6 +252,52 @@ namespace Web.Api.Infrastructure.Migrations
                     b.ToTable("AssetPowerPort");
                 });
 
+            modelBuilder.Entity("Web.Api.Infrastructure.Entities.ChangePlan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CreatedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ExecutedData")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ChangePlans");
+                });
+
+            modelBuilder.Entity("Web.Api.Infrastructure.Entities.ChangePlanItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AssetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ChangePlanId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NewData")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PreviousData")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ChangePlanItems");
+                });
+
             modelBuilder.Entity("Web.Api.Infrastructure.Entities.Datacenter", b =>
                 {
                     b.Property<Guid>("Id")
@@ -302,8 +351,14 @@ namespace Web.Api.Infrastructure.Migrations
                     b.Property<string>("ModelNumber")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OwnerName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Rack")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RackPosition")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

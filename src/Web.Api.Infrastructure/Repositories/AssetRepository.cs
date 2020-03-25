@@ -51,6 +51,7 @@ namespace Web.Api.Infrastructure.Repositories
                 .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
                 .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
                 .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
+                .Where(x => String.Compare(x.Rack, rackStart) >= 0 && String.Compare(x.Rack, rackEnd) <= 0)
                 .CountAsync();
             pagedList.PageSize = pageSize;
             pagedList.CurrentPage = page;
@@ -176,17 +177,34 @@ namespace Web.Api.Infrastructure.Repositories
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
         }
-        public async Task<PagedList<DecommissionedAsset>> GetDecommissionedAssetsAsync( int page = 1, int pageSize = 10)
+        public async Task<PagedList<DecommissionedAsset>> GetDecommissionedAssetsAsync(Guid? datacenter, string generalSearch, string decommissioner,
+                    string dateStart, string dateEnd, string rackStart, string rackEnd, string sortBy, string isDesc, int page, int pageSize)
         {
             var pagedList = new PagedList<DecommissionedAsset>();
-
+            Expression<Func<DecommissionedAsset, bool>> hostnameCondition = x => (x.Hostname.Contains(generalSearch) || 
+                                           x.ModelName.Contains(generalSearch) || x.ModelNumber.Contains(generalSearch));
+            Expression<Func<DecommissionedAsset, bool>> numberCondition = x => (x.Decommissioner.Contains(decommissioner));
+            Expression<Func<DecommissionedAsset, bool>> startDateCondition = x => (x.DateDecommissioned >= DateTime.Parse(dateStart));
+            Expression<Func<DecommissionedAsset, bool>> endDateCondition = x => (x.DateDecommissioned <= DateTime.Parse(dateEnd));
+            
             var assets = await _dbContext.DecommissionedAssets
+                .WhereIf(!string.IsNullOrEmpty(generalSearch), hostnameCondition)
+                .WhereIf(!string.IsNullOrEmpty(decommissioner), numberCondition)
+                .WhereIf(!string.IsNullOrEmpty(dateStart), startDateCondition)
+                .WhereIf(!string.IsNullOrEmpty(dateEnd), endDateCondition)
                 .PageBy(x => x.Id, page, pageSize)
                 .AsNoTracking()
                 .ToListAsync();
-
+            assets = assets.Where(x => String.Compare(x.Rack, rackStart) >= 0 && String.Compare(x.Rack, rackEnd) <= 0)
+                .ToList();
+            assets = SortDecommissionedAsset(assets, sortBy, isDesc);
             pagedList.AddRange(assets);
-            pagedList.TotalCount = await _dbContext.Assets
+            pagedList.TotalCount = await _dbContext.DecommissionedAssets
+                .WhereIf(!string.IsNullOrEmpty(generalSearch), hostnameCondition)
+                .WhereIf(!string.IsNullOrEmpty(decommissioner), numberCondition)
+                .WhereIf(!string.IsNullOrEmpty(dateStart), startDateCondition)
+                .WhereIf(!string.IsNullOrEmpty(dateEnd), endDateCondition)
+                .Where(x => String.Compare(x.Rack, rackStart) >= 0 && String.Compare(x.Rack, rackEnd) <= 0)
                 .CountAsync();
             pagedList.PageSize = pageSize;
             pagedList.CurrentPage = page;
@@ -287,6 +305,113 @@ namespace Web.Api.Infrastructure.Repositories
                 else if (isDesc.Equals("true"))
                 {
                     return assets.OrderByDescending(q => q.Owner.UserName).ToList();
+                }
+            }
+            return assets;
+        }
+        private static List<DecommissionedAsset> SortDecommissionedAsset(List<DecommissionedAsset> assets, string sortBy, string isDesc)
+        {
+            if (string.IsNullOrEmpty(sortBy))
+            {
+                return assets;
+            }
+            else if (sortBy.Equals("vendor"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(q => q.ModelName).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(q => q.ModelName).ToList();
+                }
+            }
+            else if (sortBy.Equals("modelNumber"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(q => q.ModelNumber).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(q => q.ModelNumber).ToList();
+                }
+            }
+            else if (sortBy.Equals("hostname"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(q => q.Hostname).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(q => q.Hostname).ToList();
+                }
+            }
+            else if (sortBy.Equals("datacenter"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(q => q.Datacenter).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(q => q.Datacenter).ToList();
+                }
+            }
+            else if (sortBy.Equals("rack"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(c => c.Rack[0]).ThenBy(c => int.Parse(c.Rack.Substring(1))).ThenBy(c => c.RackPosition).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(c => c.Rack[0]).ThenByDescending(c => int.Parse(c.Rack.Substring(1))).ThenByDescending(c => c.RackPosition).ToList();
+                }
+            }
+            else if (sortBy.Equals("rackPosition"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(q => q.RackPosition).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(q => q.RackPosition).ToList();
+                }
+            }
+            else if (sortBy.Equals("owner"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(q => q.OwnerName).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(q => q.OwnerName).ToList();
+                }
+            }
+            else if (sortBy.Equals("dateDecommissioned"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(q => q.DateDecommissioned).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(q => q.DateDecommissioned).ToList();
+                }
+            }
+            else if (sortBy.Equals("decommissioner"))
+            {
+                if (isDesc.Equals("false"))
+                {
+                    return assets.OrderBy(q => q.Decommissioner).ToList();
+                }
+                else if (isDesc.Equals("true"))
+                {
+                    return assets.OrderByDescending(q => q.Decommissioner).ToList();
                 }
             }
             return assets;

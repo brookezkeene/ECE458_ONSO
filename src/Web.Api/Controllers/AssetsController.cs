@@ -135,9 +135,9 @@ namespace Web.Api.Controllers
             return Ok(asset);
         }
         [HttpGet("decommission")]
-        public async Task<ActionResult<PagedList<DecommissionedAssetDto>>> GetManyDecommissioned(int page = 1, int pageSize = 10)
+        public async Task<ActionResult<PagedList<DecommissionedAssetDto>>> GetManyDecommissioned([FromQuery] SearchAssetQuery query)
         {
-            var assets = await _assetService.GetDecommissionedAssetsAsync( page, pageSize);
+            var assets = await _assetService.GetDecommissionedAssetsAsync(query);
 
             var response = assets.MapTo<PagedList<DecommissionedAssetDto>>();
             return Ok(response);
