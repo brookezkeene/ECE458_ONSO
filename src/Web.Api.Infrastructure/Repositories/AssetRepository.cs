@@ -51,7 +51,8 @@ namespace Web.Api.Infrastructure.Repositories
                 .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
                 .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
                 .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
-                .Where(x => String.Compare(x.Rack, rackStart) >= 0 && String.Compare(x.Rack, rackEnd) <= 0)
+                .Where(x => String.Compare($"{x.Rack.Row.ToUpper()}{x.Rack.Column}", rackStart) >= 0 &&
+                                  String.Compare($"{x.Rack.Row.ToUpper()}{x.Rack.Column}", rackEnd) <= 0)
                 .CountAsync();
             pagedList.PageSize = pageSize;
             pagedList.CurrentPage = page;
