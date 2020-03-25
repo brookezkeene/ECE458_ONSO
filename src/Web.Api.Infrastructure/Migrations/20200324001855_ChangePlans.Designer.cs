@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Web.Api.Infrastructure.DbContexts;
 
 namespace Web.Api.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200324001855_ChangePlans")]
+    partial class ChangePlans
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -169,9 +171,6 @@ namespace Web.Api.Infrastructure.Migrations
                         .HasColumnType("nvarchar(63)")
                         .HasMaxLength(63);
 
-                    b.Property<DateTime>("LastUpdatedDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("ModelId")
                         .HasColumnType("uniqueidentifier");
 
@@ -268,32 +267,6 @@ namespace Web.Api.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ChangePlans");
-                });
-
-            modelBuilder.Entity("Web.Api.Infrastructure.Entities.ChangePlanItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AssetId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ChangePlanId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("NewData")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PreviousData")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ChangePlanItems");
                 });
 
             modelBuilder.Entity("Web.Api.Infrastructure.Entities.Datacenter", b =>

@@ -103,7 +103,7 @@ namespace Web.Api.Infrastructure.Repositories
         }
 
 
-            public async Task<Asset> GetAssetAsync(Guid assetId)
+        public async Task<Asset> GetAssetAsync(Guid assetId)
         {
             return await _dbContext.Assets
                 .Include(x => x.Model)

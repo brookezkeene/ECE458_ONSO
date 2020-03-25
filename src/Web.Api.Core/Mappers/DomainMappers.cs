@@ -147,5 +147,31 @@ namespace Web.Api.Core.Mappers
         {
             return assets == null ? null : Mapper.Map<PagedList<DecommissionedAssetDto>>(assets);
         }
+        public static ChangePlan ToEntity(this ChangePlanDto changePlanDto)
+        {
+            return changePlanDto == null ? null : Mapper.Map<ChangePlan>(changePlanDto);
+        }
+        
+        public static ChangePlanItem ToEntity(this ChangePlanItemDto changePlanItemDto)
+        {
+            return changePlanItemDto == null ? null : Mapper.Map<ChangePlanItem>(changePlanItemDto);
+        }
+        
+        public static ChangePlanDto ToDto(this ChangePlan changePlan)
+        {
+            return changePlan == null ? null : Mapper.Map<ChangePlanDto>(changePlan);
+        }
+        public static PagedList<ChangePlanDto> ToDto(this PagedList<ChangePlan> changePlan)
+        {
+            return changePlan == null ? null : Mapper.Map<PagedList<ChangePlanDto>>(changePlan);
+        }
+        public static ChangePlanItemDto ToDto(this ChangePlanItem changePlanItem)
+        {
+            return changePlanItem == null ? null : Mapper.Map<ChangePlanItemDto>(changePlanItem);
+        }
+        public static List<ChangePlanItemDto> ToDto(this List<ChangePlanItem> changePlanItem)
+        {
+            return changePlanItem == null ? null : Mapper.Map<List<ChangePlanItemDto>>(changePlanItem);
+        }
     }
 }
