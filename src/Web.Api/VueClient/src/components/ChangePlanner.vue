@@ -101,7 +101,7 @@
 
 <script>
   export default {
-    inject: ['assetRepository',],
+    inject: ['assetRepository','changePlanRepository'],
     data() {
         return {
         loading: true,
@@ -137,8 +137,8 @@
         /*eslint-disable*/
         async initialize() {
             // TODO: replace with change plan data
-            this.assets = await this.assetRepository.list();
-
+            this.assets = await this.changePlanRepository.list();
+            console.log(this.assets);
             this.loading = false;
 
         },
@@ -161,10 +161,12 @@
         editItem(item) {
             this.editing = true;
             //TODO: edit change plan code, change this probably
-            this.$router.push({ name: 'change-plan-edit', params: { id: item.id } })
+            this.$store.dispatch('startChangePlan');
+            this.$router.push({ name: 'assets'})
         },
-        addItem() {
+        addItem(item) {
             //TODO: adde new change plan code, change this probably
+            this.changePlanRepository.create(item)
             this.$router.push({ name: 'change-plan-new' })
         },
         showDetails(item) {

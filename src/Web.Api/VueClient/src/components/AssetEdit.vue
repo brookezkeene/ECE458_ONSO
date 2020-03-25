@@ -1,6 +1,7 @@
 <template>
     <div v-if="!loading">
         <v-card flat>
+            <changePlanBar></changePlanBar>
             <v-card-title>
                 <span class="headline">{{formTitle}}</span>
             </v-card-title>
@@ -239,8 +240,14 @@
 </style>
 
 <script>
+
+    import changePlanBar from '@/components/ChangePlanStatusBar';
+
     export default {
         name: 'asset-edit',
+        components: {
+            changePlanBar,
+        },
         inject: ['assetRepository', 'modelRepository', 'userRepository', 'rackRepository', 'datacenterRepository'],
         props: {
             id: String,
