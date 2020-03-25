@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Web.Api.Common;
 using Web.Api.Core.Dtos;
 
 namespace Web.Api.Core.Services.Interfaces
@@ -10,7 +11,7 @@ namespace Web.Api.Core.Services.Interfaces
     {
         Task<ChangePlanDto> GetChangePlanAsync(Guid changPlanId);
         Task<ChangePlanItemDto> GetChangePlanItemAsync(Guid changePlanItemId);
-        Task<List<ChangePlanDto>> GetChangePlansAsync(Guid? createdById);
+        Task<PagedList<ChangePlanDto>> GetChangePlansAsync(Guid? createdById, int page = 1, int pageSize = 10);
         Task<List<ChangePlanItemDto>> GetChangePlanItemsAsync(Guid changePlanId);
         Task<Guid> CreateChangePlanAsync(ChangePlanDto changePlan);
         Task<Guid> CreateChangePlanItemAsync(ChangePlanItemDto changePlanItem);

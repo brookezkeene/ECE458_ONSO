@@ -161,9 +161,9 @@ namespace Web.Api.Core.Mappers
         {
             return changePlan == null ? null : Mapper.Map<ChangePlanDto>(changePlan);
         }
-        public static List<ChangePlanDto> ToDto(this List<ChangePlan> changePlan)
+        public static PagedList<ChangePlanDto> ToDto(this PagedList<ChangePlan> changePlan)
         {
-            return changePlan == null ? null : Mapper.Map<List<ChangePlanDto>>(changePlan);
+            return changePlan == null ? null : Mapper.Map<PagedList<ChangePlanDto>>(changePlan);
         }
         public static ChangePlanItemDto ToDto(this ChangePlanItem changePlanItem)
         {

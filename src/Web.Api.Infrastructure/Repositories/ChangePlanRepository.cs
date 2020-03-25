@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Web.Api.Common;
+using Web.Api.Common.Extensions;
 using Web.Api.Infrastructure.DbContexts;
 using Web.Api.Infrastructure.Entities;
 using Web.Api.Infrastructure.Repositories.Interfaces;
@@ -32,13 +34,23 @@ namespace Web.Api.Infrastructure.Repositories
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
         }
-        public async Task<List<ChangePlan>> GetChangePlansAsync(Guid? createdById)
+        public async Task<PagedList<ChangePlan>> GetChangePlansAsync(Guid? createdById, int page = 1, int pageSize = 10)
         {
+            var pagedList = new PagedList<ChangePlan>();
+
             var changePlans = await _dbContext.ChangePlans
                 .Where(x => x.Id == createdById)
+                .PageBy(x => x.Id, page, pageSize)
                 .AsNoTracking()
                 .ToListAsync();
-            return changePlans;
+            pagedList.AddRange(changePlans);
+            pagedList.TotalCount = await _dbContext.ChangePlans
+                .Where(x => x.Id == createdById)
+                .CountAsync();
+            pagedList.PageSize = pageSize;
+            pagedList.CurrentPage = page;
+
+            return pagedList;
         }
         public async Task<List<ChangePlanItem>> GetChangePlanItemsAsync(Guid changePlanId)
         {

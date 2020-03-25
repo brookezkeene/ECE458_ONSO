@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Web.Api.Common;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Mappers;
 using Web.Api.Core.Services.Interfaces;
@@ -27,9 +28,9 @@ namespace Web.Api.Core.Services
             var changePlanItem = await _repository.GetChangePlanItemAsync(changePlanItemId);
             return changePlanItem.ToDto();
         }
-        public async Task<List<ChangePlanDto>> GetChangePlansAsync(Guid? createdById)
+        public async Task<PagedList<ChangePlanDto>> GetChangePlansAsync(Guid? createdById, int page = 1, int pageSize = 10)
         {
-            var list = await _repository.GetChangePlansAsync(createdById);
+            var list = await _repository.GetChangePlansAsync(createdById, page, pageSize);
             return list.ToDto();
         }
         public async Task<List<ChangePlanItemDto>> GetChangePlanItemsAsync(Guid changePlanId)
