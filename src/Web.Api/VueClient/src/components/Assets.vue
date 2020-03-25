@@ -1,6 +1,5 @@
 <template>
     <v-card flat>
-        <v-btn color="primary" @click="createChangePlan"> Create a Change Plan</v-btn>
         <changePlanBar></changePlanBar>
         <v-card-title>Assets</v-card-title>
         <v-container>
@@ -496,12 +495,6 @@
                 return value.toLowerCase() >= this.startRackValue.toLowerCase()
                     && value.toLowerCase() <= this.endRackValue.toLowerCase();
             },
-
-            createChangePlan() {
-                this.$store.dispatch('startChangePlan');
-                console.log(this.$store.getters.isChangePlan);
-            }
-
         },
     }
 </script>

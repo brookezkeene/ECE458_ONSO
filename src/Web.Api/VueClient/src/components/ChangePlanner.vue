@@ -161,7 +161,8 @@
         editItem(item) {
             this.editing = true;
             //TODO: edit change plan code, change this probably
-            this.$router.push({ name: 'change-plan-edit', params: { id: item.id } })
+            this.$store.dispatch('startChangePlan');
+            this.$router.push({ name: 'assets'})
         },
         addItem() {
             //TODO: adde new change plan code, change this probably

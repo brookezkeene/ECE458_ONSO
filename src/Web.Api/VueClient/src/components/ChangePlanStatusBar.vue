@@ -26,6 +26,7 @@
             save() {
                 if (confirm('Are you sure you would like to save this change plan?')) {
                     this.$store.dispatch('endChangePlan');
+                    this.$router.push({ name:'change-planner' })
                     // Save the change plan via api call
                 }
             },
@@ -33,6 +34,7 @@
                 if (confirm('Are you sure you would like to abandon these changes to the change plan?')) {
                     /*eslint-disable*/
                     this.$store.dispatch('endChangePlan');
+                    this.$router.push({ name:'change-planner' })
                 }
             }
         }
