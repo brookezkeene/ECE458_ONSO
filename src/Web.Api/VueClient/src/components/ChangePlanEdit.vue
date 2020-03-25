@@ -48,7 +48,7 @@
 <script>
     export default {
         name: 'change-plan-edit',
-        inject: ['modelRepository','datacenterRepository'], // TODO: replace with change plan data
+        inject: ['modelRepository','datacenterRepository','changePlanRepository'], // TODO: replace with change plan data
         props: {
             id: String,
         },
@@ -89,6 +89,7 @@
                 var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
                 this.newItem.datacenter = searchDatacenter.id;
                 console.log(this.newItem)
+                this.changePlanRepository.create(this.newItem);
                 this.close()
             },
             close() {

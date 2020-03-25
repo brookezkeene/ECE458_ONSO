@@ -6,6 +6,7 @@ import rackRepository from "./repositories/rack";
 import reportRepository from "./repositories/report";
 import datacenterRepository from "./repositories/datacenter"
 import logRepository from "./repositories/log";
+import changePlanRepository from "./repositories/changePlan";
 import auth from './auth';
 
 export default {
@@ -17,5 +18,6 @@ export default {
 	exportRepository: exportRepository,
 	datacenterRepository: datacenterRepository,
 	logRepository: logRepository,
+	changePlanRepository: changePlanRepository,
 	auth: auth
 };
