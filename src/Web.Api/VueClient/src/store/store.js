@@ -22,6 +22,7 @@ export default new Vuex.Store({
         username: '',           // for showing who is signed in and saving who decommissioned
         myPermissions: [],      // for tracking user permissions
         changePlan: false,
+        userId: auth.id(),
     },
 
     /*Defines Computed Properties for our Store
@@ -45,6 +46,10 @@ export default new Vuex.Store({
         },
         isChangePlan: state => {
             return state.changePlan
+        },
+        userId: state => {
+            console.log(state.userId);
+            return state.userId
         }
     },
 
@@ -72,6 +77,9 @@ export default new Vuex.Store({
         SAVE_ROLES(state, roles) {
             state.myPermissions = roles;
         },
+        SAVE_USER_ID(state, id) {
+            state.userId = id;
+        },
         START_CHANGE_PLAN(state) {
             state.changePlan = true;
         },
@@ -94,6 +102,11 @@ export default new Vuex.Store({
             }).catch(error => {
                 throw new Error(`API ${error}`);
             });
+        },
+        // Provides the user id from the cookie to send for a changeplan
+        loadUserId({ commit }) {
+            commit('SAVE_USER_ID', auth.id());
+            console.log(auth.id());
         },
         startChangePlan({ commit }) {
             commit('START_CHANGE_PLAN');

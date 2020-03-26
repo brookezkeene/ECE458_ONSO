@@ -137,10 +137,9 @@
         /*eslint-disable*/
         async initialize() {
             // TODO: replace with change plan data
-            this.assets = await this.changePlanRepository.list();
+            this.assets = await this.changePlanRepository.list(this.$store.getters.userId); //only list change plans for a given user
             console.log(this.assets);
             this.loading = false;
-
         },
         deleteItem (item) {
             this.editing = true;
@@ -166,7 +165,7 @@
         },
         addItem(item) {
             //TODO: adde new change plan code, change this probably
-            this.changePlanRepository.create(item)
+            this.changePlanRepository.create(item);
             this.$router.push({ name: 'change-plan-new' })
         },
         showDetails(item) {
