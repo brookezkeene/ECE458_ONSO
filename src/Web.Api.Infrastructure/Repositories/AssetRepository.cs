@@ -42,8 +42,11 @@ namespace Web.Api.Infrastructure.Repositories
                 .PageBy(x => x.Hostname, page, pageSize)
                 .AsNoTracking()
                 .ToListAsync();
-            assets = assets.Where(x => String.Compare($"{x.Rack.Row.ToUpper()}{x.Rack.Column}", rackStart) >= 0 &&
-                                  String.Compare($"{x.Rack.Row.ToUpper()}{x.Rack.Column}", rackEnd) <= 0).ToList();
+            assets = assets.Where(x => String.Compare(x.Rack.Row.ToUpper(), rackStart[0].ToString()) >= 0 &&
+                            String.Compare(x.Rack.Row.ToUpper(), rackEnd[0].ToString()) <= 0 &&
+                            x.Rack.Column >= int.Parse(rackStart.Substring(1)) &&
+                            x.Rack.Column <= int.Parse(rackEnd.Substring(1)))
+                .ToList();
             assets = Sort(assets, sortBy, isDesc);
             pagedList.AddRange(assets);
             pagedList.TotalCount = assets.Count();
@@ -191,7 +194,10 @@ namespace Web.Api.Infrastructure.Repositories
                 .PageBy(x => x.Id, page, pageSize)
                 .AsNoTracking()
                 .ToListAsync();
-            assets = assets.Where(x => String.Compare(x.Rack, rackStart) >= 0 && String.Compare(x.Rack, rackEnd) <= 0)
+            assets = assets.Where(x => String.Compare(x.Rack[0].ToString().ToUpper(), rackStart[0].ToString()) >= 0 &&
+                            String.Compare(x.Rack[0].ToString().ToUpper(), rackEnd[0].ToString()) <= 0 &&
+                            int.Parse(x.Rack.Substring(1)) >= int.Parse(rackStart.Substring(1)) &&
+                            int.Parse(x.Rack.Substring(1)) <= int.Parse(rackEnd.Substring(1)))
                 .ToList();
             assets = SortDecommissionedAsset(assets, sortBy, isDesc);
             pagedList.AddRange(assets);
@@ -349,7 +355,7 @@ namespace Web.Api.Infrastructure.Repositories
                     return assets.OrderByDescending(q => q.Datacenter).ToList();
                 }
             }
-            else if (sortBy.Equals("rack"))
+            else if (sortBy.Equals("rackAddress"))
             {
                 if (isDesc.Equals("false"))
                 {

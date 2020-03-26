@@ -10,13 +10,8 @@ using Web.Api.Infrastructure.DbContexts;
 namespace Web.Api.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-<<<<<<< HEAD:src/Web.Api.Infrastructure/Migrations/20200324003345_ChangePlanItems.Designer.cs
     [Migration("20200324003345_ChangePlanItems")]
-    partial class ChangePlanItems
-=======
-    [Migration("20200325042156_AssetLastUpdatedDateAndDecommissionedAssetNewColumns")]
-    partial class AssetLastUpdatedDateAndDecommissionedAssetNewColumns
->>>>>>> adding pagination to the backend:src/Web.Api.Infrastructure/Migrations/20200325042156_AssetLastUpdatedDateAndDecommissionedAssetNewColumns.Designer.cs
+    partial class ChangePlanItems  
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

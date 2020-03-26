@@ -67,13 +67,17 @@ namespace Web.Api.Core.Dtos
             {
                 query.Hostname = "";
             }
-            if (!string.IsNullOrEmpty(query.RackStart))
+            if (string.IsNullOrEmpty(query.RackStart))
             {
-                query.RackStart = query.RackStart.ToUpper();
+                query.RackStart = "A" + 0.ToString();
+            }
+            else if (query.RackStart.Length == 1)
+            {
+                query.RackStart = query.RackStart.ToUpper() + 0.ToString();
             }
             else
             {
-                query.RackStart = "A" + 0.ToString();
+                query.RackStart = query.RackStart.ToUpper();
             }
             if (string.IsNullOrEmpty(query.RackEnd))
             {
