@@ -15,7 +15,9 @@ namespace Web.Api.Infrastructure.Entities
         public string ModelName { get; set; }
         public string ModelNumber { get; set; }
         public string Decommissioner { get; set; }
-        public string Date { get; set; }
+        public int RackPosition { get; set; }
+        public string OwnerName { get; set; }
+        public DateTime DateDecommissioned { get; set; }
         public string Rack { get; set; }
         public string Data { get; set; }
     }

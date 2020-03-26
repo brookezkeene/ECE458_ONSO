@@ -20,6 +20,7 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
         Task<Asset> GetAssetForDecommissioning(Guid assetId);
         Task<int> AddDecomissionedAssetAsync(DecommissionedAsset asset);
         Task<DecommissionedAsset> GetDecommissionedAssetAsync(Guid assetId);
-        Task<PagedList<DecommissionedAsset>> GetDecommissionedAssetsAsync( int page = 1, int pageSize = 10);
+        Task<PagedList<DecommissionedAsset>> GetDecommissionedAssetsAsync(string datacenterName, string generalSearch, string decommissioner,
+                    string dateStart, string dateEnd, string rackStart, string rackEnd, string sortBy, string isDesc, int page, int pageSize);
     }
 }

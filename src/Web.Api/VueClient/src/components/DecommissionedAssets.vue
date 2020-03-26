@@ -9,8 +9,9 @@
                               :items="assets"
                               :search="search"
                               class="pa-5"
-                              multi-sort
-                              @click:row="showDetails">
+                              @click:row="showDetails"
+                              :server-items-length="totalItems"
+                              :options.sync="options">
 
                     <template v-slot:top>
                         <v-toolbar flat>
@@ -22,17 +23,19 @@
                                         <v-label>Filter by ... </v-label>
                                     </v-col>
                                     <v-col cols="5">
-                                        <v-select v-model="selectedDatacenter"
-                                                  :items="datacenters"
-                                                  item-text="description"
-                                                  item-value=""
-                                                  :return-object="false"
-                                                  label="Datacenter"
-                                                  placeholder="Select a datacenter or all datacenters"
-                                                  class="pt-8 pl-4"
-                                                  range
-                                                  @change="datacenterSearch()">
-                                        </v-select>
+                                        
+                                        <v-text-field prepend-inner-icon="mdi-magnify"
+                                                      :search-input.sync="datacenterValue"
+                                                      v-model="datacenterValue"
+                                                      cache-items
+                                                      class="mt-3 pt-3"
+                                                      flat
+                                                      hide-no-data
+                                                      hide-details
+                                                      @input="getAssetsFromApi()"
+                                                      label="Search by Datacenter name"
+                                                      single-line
+                                                      solo-inverted></v-text-field>
                                     </v-col>
                                     <v-col class="mt-6" cols="4">
                                         <v-menu ref="menu"
@@ -41,21 +44,24 @@
                                                 :return-value.sync="dates"
                                                 transition="scale-transition"
                                                 offset-y
+                                                @input="getAssetsFromApi()"
+                                                @change="getAssetsFromApi()"
                                                 min-width="290px">
                                             <template v-slot:activator="{ on }">
                                                 <v-row>
                                                     <v-col>
                                                         <v-text-field v-model="dates[0]"
-                                                                  label="Dates"
-                                                                  prepend-icon="mdi-calendar"
-                                                                  readonly
-                                                                  v-on="on"></v-text-field>
+                                                                      label="Dates"
+                                                                      prepend-icon="mdi-calendar"
+                                                                      readonly
+                                                                      v-on="on"></v-text-field>
                                                     </v-col>
                                                     <v-col>
                                                         <v-text-field v-model="dates[1]"
                                                                       readonly
                                                                       v-on="on"></v-text-field>
                                                     </v-col>
+                                                    
                                                 </v-row>
 
                                             </template>
@@ -66,6 +72,7 @@
                                             </v-date-picker>
                                         </v-menu>
                                     </v-col>
+                                    
                                 </v-row>
 
                             </v-container>
@@ -84,42 +91,62 @@
                         <v-row>
                             <v-col cols="6">
                                 <v-row class="pl-10 pt-1">
-                                    <v-autocomplete prepend-inner-icon="mdi-magnify"
-                                                    :items="assets"
-                                                    :search-input.sync="search"
-                                                    cache-items
-                                                    class="mt-3 pt-3"
-                                                    flat
-                                                    hide-no-data
-                                                    hide-details
-                                                    item-text="modelName"
-                                                    label="Search by keyword on model and hostname"
-                                                    single-line
-                                                    solo-inverted></v-autocomplete>
+                                    <v-text-field prepend-inner-icon="mdi-magnify"
+                                                  :search-input.sync="search"
+                                                  v-model="search"
+                                                  cache-items
+                                                  class="mt-3 pt-3"
+                                                  flat
+                                                  hide-no-data
+                                                  hide-details
+                                                  @input="getAssetsFromApi()"
+                                                  label="Search by keyword on model and hostname"
+                                                  single-line
+                                                  solo-inverted></v-text-field>
 
                                 </v-row>
                             </v-col>
-                            <v-spacer></v-spacer>
-                            <!-- Custom filters; sorts between rack ranges -->
-                            <v-col cols="4">
-                                <v-row class="mt-4 pt-2">
-                                    <v-text-field v-model="startRackValue"
-                                                  placeholder="Start"
-                                                  type="text"
-                                                  label="Rack Range"
-                                                  style="width:0">
-                                    </v-text-field>
+                            <v-col cols="6">
+                                <v-row class="pl-10 pt-1">
+                                    <v-text-field prepend-inner-icon="mdi-magnify"
+                                                  v-model="decommissioner"
+                                                  cache-items
+                                                  class="mt-3 pt-3"
+                                                  flat
+                                                  hide-no-data
+                                                  hide-details
+                                                  label="Search for decommissioner"
+                                                  @input="getAssetsFromApi()"
+                                                  single-line
+                                                  solo-inverted></v-text-field>
 
-                                    <v-text-field v-model="endRackValue"
-                                                  type="text"
-                                                  placeholder="End"
-                                                  style="width:0">
-                                    </v-text-field>
                                 </v-row>
                             </v-col>
-                            <v-spacer></v-spacer>
                         </v-row>
-                        </template>
+                        <v-row>
+                        <v-spacer></v-spacer>
+                        <!-- Custom filters; sorts between rack ranges -->
+                        <v-col cols="4">
+                            <v-row class="mt-4 pt-2">
+                                <v-text-field v-model="startRackValue"
+                                              placeholder="Start"
+                                              type="text"
+                                              label="Rack Range"
+                                              @input="getAssetsFromApi()"
+                                              style="width:0">
+                                </v-text-field>
+
+                                <v-text-field v-model="endRackValue"
+                                              type="text"
+                                              placeholder="End"
+                                              @input="getAssetsFromApi()"
+                                              style="width:0">
+                                </v-text-field>
+                            </v-row>
+                        </v-col>
+                        <v-spacer></v-spacer>
+                        </v-row>
+                    </template>
 
                     <template v-slot:no-data>
                         <v-btn color="primary" @click="initialize">Refresh</v-btn>
@@ -140,26 +167,29 @@
                 menu: false,
                 dates: ['', ''],
                 selectedDatacenter: 'All Datacenters',
+                datacenterValue: '',
                 // Filter values.
                 startRackValue: '',
                 endRackValue: '',
+                decommissioner:'',
                 datacenters: [],
                 instructionsDialog: false,
                 loading: true,
                 search: '',
-
+                options: {},
                 // Table data.
                 headers: [
-                    { text: 'Time Decommissioned', value: 'date' },
+                    { text: 'Time Decommissioned', value: 'dateDecommissioned' },
                     { text: 'Decomissioned By User', value: 'decommissioner' },
                     { text: 'Model Vendor', value: 'modelName' },
                     { text: 'Model Number', value: 'modelNumber', },
                     { text: 'Hostname', value: 'hostname' },
                     { text: 'Datacenter', value: 'datacenter' },
                     { text: 'Rack', value: 'rackAddress', filter: this.rackFilter },
-                    { text: 'Rack U', value: 'data.RackPosition', },
-                    { text: 'Owner Username', value: 'data.OwnerName' },
+                    { text: 'Rack U', value: 'rackPosition', },
+                    { text: 'Owner Username', value: 'ownerName' },
                 ],
+                totalItems: 0,
                 assets: [],
                 models: [],
                 defaultItem: {
@@ -183,6 +213,20 @@
                     ownerId: '',
                     comment: '',
                 },
+                assetSearchQuery: {
+                    datacenterName: '',
+                    generalSearch: '',
+                    rackStart: '',
+                    rackEnd: '',
+                    decommissioner: '',
+                    dateStart: '',
+                    dateEnd: '',
+                    modelNumber: '',
+                    page: 0,
+                    pageSize: 0,
+                    isDesc: '',
+                    sortBy: '',
+                },
                 editing: false,
             }
         },
@@ -198,41 +242,90 @@
             instructionsDialog(val) {
                 val || this.closeDetail()
             },
+            options: {
+                handler() {
+                    this.getAssetsFromApi()
+                        .then(data => {
+                            this.assets = data.data;
+                            // Turn data blob into fields to be read in table
+                            this.assets.forEach(e => {
+                                var assetInfo = JSON.parse(e.data);
+                                e.data = assetInfo;
+                            })
+                            this.totalItems = data.totalCount;
+                            this.loading = false;
+                        })
+                },
+                deep: true
+            },
+        },
+        mounted() {
+            this.getAssetsFromApi()
+                .then(data => {
+                    this.assets = data.data;
+                    // Turn data blob into fields to be read in table
+                    this.assets.forEach(e => {
+                        var assetInfo = JSON.parse(e.data);
+                        e.data = assetInfo;
+                    })
+                    this.totalItems = data.totalCount;
+                    this.loading = false;
+                })
         },
 
+
         async created() {
-            this.initialize();
             this.$store.dispatch('loadUsername');
         },
 
         methods: {
-            async initialize() {
-                this.assets = await this.assetRepository.getDecommissionedAssets();
-                this.models = await this.modelRepository.list();
-                this.users = await this.userRepository.list();
-                this.datacenters = await this.datacenterRepository.list();
 
-                // Turn data blob into fields to be read in table
-                this.assets.forEach(e => {
-                    var assetInfo = JSON.parse(e.data);
-                    e.data = assetInfo;
-                })
+            async getAssetsFromApi() {
+                this.loading = true;
+                const { sortBy, sortDesc, page, itemsPerPage } = this.options;
+                
+                this.fillQuery(sortBy, sortDesc, page, itemsPerPage);
+                /* eslint-disable no-unused-vars, no-console */
+                console.log("this is the sorting stuff")
+                console.log(this.assetSearchQuery);
 
-                /*eslint-disable*/
-                console.log(this.assets);
-
-                var datacenter = {
-                    description: "All Datacenters",
-                    name: "All",
+                var info = await this.assetRepository.tablelistDecommissionedAssets(this.assetSearchQuery);
+                if ((page - 1) * itemsPerPage > info.totalCount) {
+                    this.fillQuery(sortBy, sortDesc, 1, itemsPerPage);
+                    info = await this.assetRepository.tablelistDecommissionedAssets(this.assetSearchQuery);
                 }
-                this.datacenters.push(datacenter);
+                this.assets = info.data;
+                return info;
+            },
+            fillQuery(sortBy, sortDesc, page, itemsPerPage) {
+               
+                this.assetSearchQuery.datacenterName = this.datacenterValue;
+                this.assetSearchQuery.generalSearch = this.search;
+                this.assetSearchQuery.decommissioner = this.decommissioner;
+                this.assetSearchQuery.dateStart = this.dates[0];
+                this.assetSearchQuery.dateEnd = this.dates[1];
+                this.assetSearchQuery.rackStart = this.startRackValue;
+                this.assetSearchQuery.rackEnd = this.endRackValue;
+                this.assetSearchQuery.page = page;
+                this.assetSearchQuery.pageSize = itemsPerPage;
+                this.assetSearchQuery.sortBy = this.parseSort(sortBy);
+                this.assetSearchQuery.isDesc = this.parseSort(sortDesc);
 
-                this.loading = false;
-
+            },
+             parseSort(value) {
+                if (typeof value === 'undefined') {
+                    return '';
+                }
+                else if (value.length !== 0) {
+                    return value[0];
+                }
+                return '';
             },
             async datacenterSearch() {
                 var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
-                this.assets = await this.assetRepository.list(searchDatacenter.id);
+                this.fillQuery();
+                console.log(this.assetSearchQuery);
+                console.log("this is the search query");
             },
             showInstructions() {
                 this.instructionsDialog = true;

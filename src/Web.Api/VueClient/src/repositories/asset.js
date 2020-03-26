@@ -70,6 +70,19 @@ export default {
             });
     },
     getDecommissionedAssets() {
-        return axios.get(`${resource}/decommission`).then(response => response.data.data).catch(error => error);
+        var query = {
+            pageSize: 2000000000,
+        };
+        return axios.get(`${resource}/decommission`, { params: query })
+            .then(response => {
+                return response.data.data;
+            }).catch(error => error);
+    },
+    tablelistDecommissionedAssets(query) {
+        //query contains page and pagesize
+        return axios.get(`${resource}/decommission`, { params: query })
+            .then(response => {
+                return response.data;
+            }).catch(error => error);
     },
 }

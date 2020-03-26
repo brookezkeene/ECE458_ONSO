@@ -11,7 +11,7 @@ namespace Web.Api.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20200324003345_ChangePlanItems")]
-    partial class ChangePlanItems
+    partial class ChangePlanItems  
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -333,8 +333,8 @@ namespace Web.Api.Infrastructure.Migrations
                     b.Property<string>("Datacenter")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Date")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("DateDecommissioned")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Decommissioner")
                         .HasColumnType("nvarchar(max)");
@@ -348,8 +348,14 @@ namespace Web.Api.Infrastructure.Migrations
                     b.Property<string>("ModelNumber")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OwnerName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Rack")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RackPosition")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

@@ -10,11 +10,12 @@ using Web.Api.Infrastructure.DbContexts;
 namespace Web.Api.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200324044703_AssetLastUpdatedDate")]
-    partial class AssetLastUpdatedDate
+    [Migration("20200325042156_AssetLastUpdatedDateAndDecommissionedAssetNewColumns")]
+    partial class AssetLastUpdatedDateAndDecommissionedAssetNewColumns
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
+
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.2")
@@ -336,8 +337,8 @@ namespace Web.Api.Infrastructure.Migrations
                     b.Property<string>("Datacenter")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Date")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("DateDecommissioned")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Decommissioner")
                         .HasColumnType("nvarchar(max)");
@@ -351,8 +352,14 @@ namespace Web.Api.Infrastructure.Migrations
                     b.Property<string>("ModelNumber")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OwnerName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Rack")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RackPosition")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
