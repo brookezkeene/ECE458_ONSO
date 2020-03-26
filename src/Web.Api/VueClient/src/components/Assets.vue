@@ -351,10 +351,6 @@
                 console.log(this.assetSearchQuery);
 
                 var info = await this.assetRepository.tablelist(this.assetSearchQuery);
-                if ((page - 1) * itemsPerPage > info.totalCount) {
-                    this.fillQuery(sortBy, sortDesc, 1, itemsPerPage);
-                    info = await this.assetRepository.tablelist(this.assetSearchQuery);
-                }
                 this.assets = info.data;
                 return info;
             },
