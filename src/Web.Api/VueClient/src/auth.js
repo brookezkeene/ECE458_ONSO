@@ -58,5 +58,13 @@ export default {
             const username = cookie.find(o => o.type === claimsType.Name) || {};
             return username.value;
         }
+    },
+    permissions() {
+        let cookie = Cookies.get(loginCookie);
+        if (typeof cookie !== 'undefined') {
+            cookie = JSON.parse(cookie);
+            const datacenters = cookie.find(o => o.type === "permission:datacenter");
+            return datacenters.value.split(',');
+        }
     }
 }

@@ -226,6 +226,11 @@ import Auth from "../auth"
                 this.users[i]["permissions"] = userRoles;
             }
             this.datacenters = await this.datacenterRepository.list();
+            var datacenter = {
+                    description: "All Datacenters",
+                    name: "All",
+                }
+            this.datacenters.push(datacenter);
             this.loading = false;
         },
         showActionsForUser(item) {
@@ -267,11 +272,14 @@ import Auth from "../auth"
             }
         },
         savePermissions() {
-            this.userRepository.updateUserRoles(this.editedItem.id, { roles: this.editedRoles } )
+            // add an array of roles and comma separated string of datacenters
+            this.userRepository.updateUserRoles(this.editedItem.id, { roles: this.editedRoles, datacenters: this.selectedDatacenters.join(",") })
                 .then(async () => {
                     this.closeDialog();
                     await this.initialize();
                 })
+            // reset selectedDatacents variable
+            this.selectedDatacenters = [];
             
             this.updateSnackbar.show = true;
             this.updateSnackbar.color = 'green lighten-4';
