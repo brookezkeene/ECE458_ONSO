@@ -78,7 +78,20 @@ namespace Web.Api.Controllers
             {
                 return NotFound("User not found.");
             }
-            return Ok(await _userManager.GetRolesAsync(user));
+            var roles = await _userManager.GetRolesAsync(user);
+            return Ok(roles);
+        }
+
+        [HttpGet("{id}/claims")]
+        public async Task<ActionResult<string>> GetUserClaims(Guid id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+            var claims = await _userManager.GetClaimsAsync(user);
+            return Ok(claims);
         }
 
         [HttpPut("{id}/roles")]

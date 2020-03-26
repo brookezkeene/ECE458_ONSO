@@ -230,7 +230,7 @@ import Auth from "../auth"
                     description: "All Datacenters",
                     name: "All",
                 }
-            this.datacenters.push(datacenter);
+            this.datacenters.unshift(datacenter);
             this.loading = false;
         },
         showActionsForUser(item) {
@@ -260,6 +260,7 @@ import Auth from "../auth"
                     this.editedRoles = roles;
                     this.permissionsDialog = true;
                 })
+            this.userRepository.findClaims(item.id)
         },
         checkAdmin() {
             /* eslint-disable no-unused-vars, no-console */

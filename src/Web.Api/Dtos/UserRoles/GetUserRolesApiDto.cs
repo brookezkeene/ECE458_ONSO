@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Web.Api.Dtos.Users
 {
     public class GetUserRolesApiDto
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
+        public List<string> Roles { get; set; }
+        public string Datacenters { get; set; }
     }
 }
