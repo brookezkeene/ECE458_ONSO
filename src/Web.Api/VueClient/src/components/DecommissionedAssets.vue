@@ -11,8 +11,7 @@
                               class="pa-5"
                               @click:row="showDetails"
                               :server-items-length="totalItems"
-                              :options.sync="options"
-                              :key="selectedDatacenter">
+                              :options.sync="options">
 
                     <template v-slot:top>
                         <v-toolbar flat>
@@ -24,17 +23,19 @@
                                         <v-label>Filter by ... </v-label>
                                     </v-col>
                                     <v-col cols="5">
-                                        <v-select v-model="selectedDatacenter"
-                                                  :items="datacenters"
-                                                  item-text="description"
-                                                  item-value=""
-                                                  :return-object="false"
-                                                  label="Datacenter"
-                                                  placeholder="Select a datacenter or all datacenters"
-                                                  class="pt-8 pl-4"
-                                                  range
-                                                  @change="datacenterSearch()">
-                                        </v-select>
+                                        
+                                        <v-text-field prepend-inner-icon="mdi-magnify"
+                                                      :search-input.sync="datacenterValue"
+                                                      v-model="datacenterValue"
+                                                      cache-items
+                                                      class="mt-3 pt-3"
+                                                      flat
+                                                      hide-no-data
+                                                      hide-details
+                                                      @input="getAssetsFromApi()"
+                                                      label="Search by Datacenter name"
+                                                      single-line
+                                                      solo-inverted></v-text-field>
                                     </v-col>
                                     <v-col class="mt-6" cols="4">
                                         <v-menu ref="menu"
@@ -43,6 +44,8 @@
                                                 :return-value.sync="dates"
                                                 transition="scale-transition"
                                                 offset-y
+                                                @input="getAssetsFromApi()"
+                                                @change="getAssetsFromApi()"
                                                 min-width="290px">
                                             <template v-slot:activator="{ on }">
                                                 <v-row>
@@ -58,6 +61,7 @@
                                                                       readonly
                                                                       v-on="on"></v-text-field>
                                                     </v-col>
+                                                    
                                                 </v-row>
 
                                             </template>
@@ -68,6 +72,7 @@
                                             </v-date-picker>
                                         </v-menu>
                                     </v-col>
+                                    
                                 </v-row>
 
                             </v-container>
@@ -94,6 +99,7 @@
                                                   flat
                                                   hide-no-data
                                                   hide-details
+                                                  @input="getAssetsFromApi()"
                                                   label="Search by keyword on model and hostname"
                                                   single-line
                                                   solo-inverted></v-text-field>
@@ -110,6 +116,7 @@
                                                   hide-no-data
                                                   hide-details
                                                   label="Search for decommissioner"
+                                                  @input="getAssetsFromApi()"
                                                   single-line
                                                   solo-inverted></v-text-field>
 
@@ -125,12 +132,14 @@
                                               placeholder="Start"
                                               type="text"
                                               label="Rack Range"
+                                              @input="getAssetsFromApi()"
                                               style="width:0">
                                 </v-text-field>
 
                                 <v-text-field v-model="endRackValue"
                                               type="text"
                                               placeholder="End"
+                                              @input="getAssetsFromApi()"
                                               style="width:0">
                                 </v-text-field>
                             </v-row>
@@ -158,6 +167,7 @@
                 menu: false,
                 dates: ['', ''],
                 selectedDatacenter: 'All Datacenters',
+                datacenterValue: '',
                 // Filter values.
                 startRackValue: '',
                 endRackValue: '',
@@ -166,7 +176,7 @@
                 instructionsDialog: false,
                 loading: true,
                 search: '',
-
+                options: {},
                 // Table data.
                 headers: [
                     { text: 'Time Decommissioned', value: 'dateDecommissioned' },
@@ -179,6 +189,7 @@
                     { text: 'Rack U', value: 'data.RackPosition', },
                     { text: 'Owner Username', value: 'data.OwnerName' },
                 ],
+                totalItems: 0,
                 assets: [],
                 models: [],
                 defaultItem: {
@@ -203,14 +214,13 @@
                     comment: '',
                 },
                 assetSearchQuery: {
-                    datacenter: '',
-                    hostname: '',
+                    datacenterName: '',
+                    generalSearch: '',
                     rackStart: '',
                     rackEnd: '',
                     decommissioner: '',
                     dateStart: '',
                     dateEnd: '',
-                    vendor: '',
                     modelNumber: '',
                     page: 0,
                     pageSize: 0,
@@ -232,11 +242,32 @@
             instructionsDialog(val) {
                 val || this.closeDetail()
             },
+            options: {
+                handler() {
+                    this.getAssetsFromApi()
+                        .then(data => {
+                            this.assets = data.data;
+                            // Turn data blob into fields to be read in table
+                            this.assets.forEach(e => {
+                                var assetInfo = JSON.parse(e.data);
+                                e.data = assetInfo;
+                            })
+                            this.totalItems = data.totalCount;
+                            this.loading = false;
+                        })
+                },
+                deep: true
+            },
         },
         mounted() {
             this.getAssetsFromApi()
                 .then(data => {
                     this.assets = data.data;
+                    // Turn data blob into fields to be read in table
+                    this.assets.forEach(e => {
+                        var assetInfo = JSON.parse(e.data);
+                        e.data = assetInfo;
+                    })
                     this.totalItems = data.totalCount;
                     this.loading = false;
                 })
@@ -244,35 +275,11 @@
 
 
         async created() {
-            this.initialize();
             this.$store.dispatch('loadUsername');
         },
 
         methods: {
-            async initialize() {
-                this.assets = await this.assetRepository.getDecommissionedAssets();
-                this.models = await this.modelRepository.list();
-                this.users = await this.userRepository.list();
-                this.datacenters = await this.datacenterRepository.list();
 
-                // Turn data blob into fields to be read in table
-                this.assets.forEach(e => {
-                    var assetInfo = JSON.parse(e.data);
-                    e.data = assetInfo;
-                })
-
-                /*eslint-disable*/
-
-                var datacenter = {
-                    description: "All Datacenters",
-                    name: "All",
-                }
-                this.datacenters.push(datacenter);
-
-                this.loading = false;
-                
-
-            },
             async getAssetsFromApi() {
                 this.loading = true;
                 const { sortBy, sortDesc, page, itemsPerPage } = this.options;
@@ -282,35 +289,40 @@
                 console.log("this is the sorting stuff")
                 console.log(this.assetSearchQuery);
 
-                var info = await this.assetRepository.tablelist(this.assetSearchQuery);
+                var info = await this.assetRepository.tablelistDecommissionedAssets(this.assetSearchQuery);
                 if ((page - 1) * itemsPerPage > info.totalCount) {
                     this.fillQuery(sortBy, sortDesc, 1, itemsPerPage);
-                    info = await this.assetRepository.tablelist(this.assetSearchQuery);
+                    info = await this.assetRepository.tablelistDecommissionedAssets(this.assetSearchQuery);
                 }
                 this.assets = info.data;
                 return info;
             },
-            fillQuery() {//(sortBy, sortDesc, page, itemsPerPage) {
-                var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
-                if (typeof searchDatacenter === 'undefined') {
-                    this.assetSearchQuery.datacenter = '';
-                } else {
-                    this.assetSearchQuery.datacenter = searchDatacenter.id;
-                }
-                this.assetSearchQuery.vendor = this.search;
+            fillQuery(sortBy, sortDesc, page, itemsPerPage) {
+               
+                this.assetSearchQuery.datacenterName = this.datacenterValue;
+                this.assetSearchQuery.generalSearch = this.search;
                 this.assetSearchQuery.decommissioner = this.decommissioner;
                 this.assetSearchQuery.dateStart = this.dates[0];
                 this.assetSearchQuery.dateEnd = this.dates[1];
                 this.assetSearchQuery.rackStart = this.startRackValue;
                 this.assetSearchQuery.rackEnd = this.endRackValue;
-                /*this.assetSearchQuery.page = page;
+                this.assetSearchQuery.page = page;
                 this.assetSearchQuery.pageSize = itemsPerPage;
                 this.assetSearchQuery.sortBy = this.parseSort(sortBy);
-                this.assetSearchQuery.isDesc = this.parseSort(sortDesc);*/
+                this.assetSearchQuery.isDesc = this.parseSort(sortDesc);
+
+            },
+             parseSort(value) {
+                if (typeof value === 'undefined') {
+                    return '';
+                }
+                else if (value.length !== 0) {
+                    return value[0];
+                }
+                return '';
             },
             async datacenterSearch() {
                 var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
-                this.assets = await this.assetRepository.list(searchDatacenter.id);
                 this.fillQuery();
                 console.log(this.assetSearchQuery);
                 console.log("this is the search query");
