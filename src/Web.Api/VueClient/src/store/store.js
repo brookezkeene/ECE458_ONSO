@@ -21,6 +21,7 @@ export default new Vuex.Store({
         updateData: false,      // for updating tables
         username: '',           // for showing who is signed in and saving who decommissioned
         myPermissions: [],      // for tracking user permissions
+        myDatacenters: [],      // for tracking datacenter permissions
     },
 
     /*Defines Computed Properties for our Store
@@ -41,6 +42,9 @@ export default new Vuex.Store({
         },
         isAdmin: state => {
             return state.myPermissions.includes("admin")
+        },
+        hasDatacenters: state => {
+            return state.myDatacenters
         }
     },
 
@@ -67,6 +71,9 @@ export default new Vuex.Store({
         },
         SAVE_ROLES(state, roles) {
             state.myPermissions = roles;
+        },
+        SAVE_PERMISSIONS(state, datacenters) {
+            state.myDatacenters = datacenters;
         }
     },
 
@@ -85,5 +92,8 @@ export default new Vuex.Store({
                 throw new Error(`API ${error}`);
             });
         },
+        loadPermissionDatacenters({ commit }) {
+            commit('SAVE_PERMISSIONS', auth.permissions());
+        }
     },
 })

@@ -6,5 +6,6 @@ namespace Web.Api.Dtos.Users
     public class UpdateUserRoleApiDto
     {
         public List<string> Roles { get; set; }
+        public string Datacenters { get; set; }
     }
 }
