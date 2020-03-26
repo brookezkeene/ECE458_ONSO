@@ -46,14 +46,7 @@ namespace Web.Api.Infrastructure.Repositories
                                   String.Compare($"{x.Rack.Row.ToUpper()}{x.Rack.Column}", rackEnd) <= 0).ToList();
             assets = Sort(assets, sortBy, isDesc);
             pagedList.AddRange(assets);
-            pagedList.TotalCount = await _dbContext.Assets
-                .WhereIf(datacenterId != null, x => x.Rack.Datacenter.Id == datacenterId)
-                .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
-                .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
-                .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
-                .Where(x => String.Compare($"{x.Rack.Row.ToUpper()}{x.Rack.Column}", rackStart) >= 0 &&
-                                  String.Compare($"{x.Rack.Row.ToUpper()}{x.Rack.Column}", rackEnd) <= 0)
-                .CountAsync();
+            pagedList.TotalCount = assets.Count();
             pagedList.PageSize = pageSize;
             pagedList.CurrentPage = page;
 
@@ -202,14 +195,7 @@ namespace Web.Api.Infrastructure.Repositories
                 .ToList();
             assets = SortDecommissionedAsset(assets, sortBy, isDesc);
             pagedList.AddRange(assets);
-            pagedList.TotalCount = await _dbContext.DecommissionedAssets
-                .WhereIf(!string.IsNullOrEmpty(generalSearch), hostnameCondition)
-                .WhereIf(!string.IsNullOrEmpty(decommissioner), decommissionerCondition)
-                .WhereIf(!string.IsNullOrEmpty(dateStart), startDateCondition)
-                .WhereIf(!string.IsNullOrEmpty(dateEnd), endDateCondition)
-                .WhereIf(!string.IsNullOrEmpty(datacenterName), datacenterCondition)
-                .Where(x => String.Compare(x.Rack, rackStart) >= 0 && String.Compare(x.Rack, rackEnd) <= 0)
-                .CountAsync();
+            pagedList.TotalCount = assets.Count();
             pagedList.PageSize = pageSize;
             pagedList.CurrentPage = page;
 
