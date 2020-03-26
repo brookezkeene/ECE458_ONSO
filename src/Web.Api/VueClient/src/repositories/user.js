@@ -16,6 +16,13 @@ export default {
                 return response.data;
             }).catch(error => error)
     },
+    findClaims(id) {
+        return axios.get(`${resource}/${id}/claims`)
+            .then(response => {
+                //console.log(response)
+                return response.data;
+            }).catch(error => error)
+    },
     list() {
         return axios.get(`${resource}`, { params: { pageSize: 2000000000 } })
             .then(response => {
