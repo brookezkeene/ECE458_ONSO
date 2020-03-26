@@ -9,8 +9,10 @@
                               :items="assets"
                               :search="search"
                               class="pa-5"
-                              multi-sort
-                              @click:row="showDetails">
+                              @click:row="showDetails"
+                              :server-items-length="totalItems"
+                              :options.sync="options"
+                              :key="selectedDatacenter">
 
                     <template v-slot:top>
                         <v-toolbar flat>
@@ -231,6 +233,15 @@
                 val || this.closeDetail()
             },
         },
+        mounted() {
+            this.getAssetsFromApi()
+                .then(data => {
+                    this.assets = data.data;
+                    this.totalItems = data.totalCount;
+                    this.loading = false;
+                })
+        },
+
 
         async created() {
             this.initialize();
@@ -261,6 +272,23 @@
                 this.loading = false;
                 
 
+            },
+            async getAssetsFromApi() {
+                this.loading = true;
+                const { sortBy, sortDesc, page, itemsPerPage } = this.options;
+                
+                this.fillQuery(sortBy, sortDesc, page, itemsPerPage);
+                /* eslint-disable no-unused-vars, no-console */
+                console.log("this is the sorting stuff")
+                console.log(this.assetSearchQuery);
+
+                var info = await this.assetRepository.tablelist(this.assetSearchQuery);
+                if ((page - 1) * itemsPerPage > info.totalCount) {
+                    this.fillQuery(sortBy, sortDesc, 1, itemsPerPage);
+                    info = await this.assetRepository.tablelist(this.assetSearchQuery);
+                }
+                this.assets = info.data;
+                return info;
             },
             fillQuery() {//(sortBy, sortDesc, page, itemsPerPage) {
                 var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
