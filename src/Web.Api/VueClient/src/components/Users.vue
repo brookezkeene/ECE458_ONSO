@@ -300,6 +300,8 @@ import Auth from "../auth"
                     this.closeDialog();
                     await this.initialize();
                 })
+            // reset selectedDatacents variable
+            this.selectedDatacenters = [];
             
             this.updateSnackbar.show = true;
             this.updateSnackbar.color = 'green lighten-4';

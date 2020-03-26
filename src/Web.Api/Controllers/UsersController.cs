@@ -131,11 +131,14 @@ namespace Web.Api.Controllers
             // add all datacenters to claims
             if (containsAsset)
             {
+<<<<<<< HEAD
                 var userClaims = await _userManager.GetClaimsAsync(user);
                 if (userClaims != null)
                 {
                     await _userManager.RemoveClaimsAsync(user, userClaims);
                 }
+=======
+>>>>>>> creating datacenter claims on backend and extracting them from cookie
                 await _userManager.AddClaimAsync(user, new Claim("permission:datacenter", roles.Datacenters));
             }
 
