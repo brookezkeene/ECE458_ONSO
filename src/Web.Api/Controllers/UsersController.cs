@@ -78,7 +78,20 @@ namespace Web.Api.Controllers
             {
                 return NotFound("User not found.");
             }
-            return Ok(await _userManager.GetRolesAsync(user));
+            var roles = await _userManager.GetRolesAsync(user);
+            return Ok(roles);
+        }
+
+        [HttpGet("{id}/claims")]
+        public async Task<ActionResult<string>> GetUserClaims(Guid id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+            var claims = await _userManager.GetClaimsAsync(user);
+            return Ok(claims);
         }
 
         [HttpPut("{id}/roles")]
@@ -96,9 +109,15 @@ namespace Web.Api.Controllers
             }
 
             var requestedRolesExist = true;
+            var containsAsset = false;
             foreach (var role in roles.Roles)
             {
                 requestedRolesExist &= await _roleManager.RoleExistsAsync(role);
+                // check if user's new permissions include assets
+                if (role == "asset")
+                {
+                    containsAsset = true;
+                }
             }
             if (!requestedRolesExist)
             {
@@ -109,6 +128,17 @@ namespace Web.Api.Controllers
             await _userManager.RemoveFromRolesAsync(user, allRoles);
 
             var add = await _userManager.AddToRolesAsync(user, roles.Roles);
+            // add all datacenters to claims
+            if (containsAsset)
+            {
+                var userClaims = await _userManager.GetClaimsAsync(user);
+                if (userClaims != null)
+                {
+                    await _userManager.RemoveClaimsAsync(user, userClaims);
+                }
+                await _userManager.AddClaimAsync(user, new Claim("permission:datacenter", roles.Datacenters));
+            }
+
             return Ok(add);
         }
 

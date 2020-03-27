@@ -42,6 +42,7 @@
         created() {
             this.$store.dispatch('loadUsername');
             this.$store.dispatch('loadPermissions');
+            this.$store.dispatch('loadPermissionDatacenters');
         },
         computed: {
             username() {

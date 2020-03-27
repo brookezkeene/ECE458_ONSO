@@ -21,6 +21,7 @@ export default new Vuex.Store({
         updateData: false,      // for updating tables
         username: '',           // for showing who is signed in and saving who decommissioned
         myPermissions: [],      // for tracking user permissions
+        myDatacenters: [],      // for tracking datacenter permissions
         changePlan: false,      // for showing changeplan snackbar
         changePlanName: '',     // for showing name of changeplan being edited in snackbar
         userId: auth.id(),      // for querying the backend for the changeplans belonging to a particular user
@@ -45,6 +46,9 @@ export default new Vuex.Store({
         isAdmin: state => {
             return state.myPermissions.includes("admin")
         },
+        hasDatacenters: state => {
+            return state.myDatacenters
+        },
         isChangePlan: state => {
             return state.changePlan
         },
@@ -54,7 +58,7 @@ export default new Vuex.Store({
         userId: state => {
             console.log(state.userId);
             return state.userId
-        }
+        },
     },
 
     /*Defines functions that Change the App State
@@ -81,6 +85,9 @@ export default new Vuex.Store({
         SAVE_ROLES(state, roles) {
             state.myPermissions = roles;
         },
+        SAVE_PERMISSIONS(state, datacenters) {
+            state.myDatacenters = datacenters;
+        },
         SAVE_USER_ID(state, id) {
             state.userId = id;
         },
@@ -90,7 +97,7 @@ export default new Vuex.Store({
         },
         END_CHANGE_PLAN(state) {
             state.changePlan = false;
-        }
+        },
     },
 
     /*Used to Commit Mutations
@@ -108,6 +115,9 @@ export default new Vuex.Store({
                 throw new Error(`API ${error}`);
             });
         },
+        loadPermissionDatacenters({ commit }) {
+            commit('SAVE_PERMISSIONS', auth.permissions());
+        },
         // Provides the user id from the cookie to send for a changeplan
         loadUserId({ commit }) {
             commit('SAVE_USER_ID', auth.id());
@@ -118,6 +128,6 @@ export default new Vuex.Store({
         },
         endChangePlan({ commit }) {
             commit('END_CHANGE_PLAN');
-        }
+        },
     },
 })

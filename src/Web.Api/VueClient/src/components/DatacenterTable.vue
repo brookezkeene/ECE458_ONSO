@@ -12,7 +12,7 @@
 
                     <v-spacer></v-spacer>
 
-                    <v-btn v-if="admin" color="primary" dark class="mb-2" @click="openCreate">Add Datacenter</v-btn>
+                    <v-btn v-if="permission" color="primary" dark class="mb-2" @click="openCreate">Add Datacenter</v-btn>
                 </v-toolbar>
 
                 <v-toolbar flat>
@@ -64,8 +64,6 @@
 </template>
 
 <script>
-    import Auth from "../auth"
-
     export default {
         name: 'datacenter-table',
         inject: ['datacenterRepository', 'rackRepository'],
@@ -92,11 +90,11 @@
             };
         },
         computed: {
-            admin() {
-                return Auth.isAdmin()
+            permission() {
+                return this.$store.getters.isAdmin || this.$store.getters.hasDatacenters.includes("All Datacenters")
             },
             filteredHeaders() {
-                return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
+                return (this.permission) ? this.headers : this.headers.filter(h => h.text !== "Actions")
             },
         },
         async created () {
