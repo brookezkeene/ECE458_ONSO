@@ -48,7 +48,7 @@ export default new Vuex.Store({
         },
         hasDatacenters: state => {
             return state.myDatacenters
-        }
+        },
         isChangePlan: state => {
             return state.changePlan
         },
