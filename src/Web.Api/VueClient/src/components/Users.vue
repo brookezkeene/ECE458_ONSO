@@ -258,9 +258,12 @@ import Auth from "../auth"
             this.userRepository.findRole(item.id)
                 .then((roles) => {
                     this.editedRoles = roles;
-                    this.permissionsDialog = true;
                 })
             this.userRepository.findClaims(item.id)
+                .then((claims) => {
+                    this.selectedDatacenters = claims[0].value.split(",");
+                })
+            this.permissionsDialog = true;
         },
         checkAdmin() {
             /* eslint-disable no-unused-vars, no-console */
