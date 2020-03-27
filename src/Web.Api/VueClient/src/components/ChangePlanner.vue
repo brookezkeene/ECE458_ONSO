@@ -17,7 +17,7 @@
                             {{ props.item.name }}
                             <template v-if="!props.item.executedDate"  v-slot:input>
                                 <v-text-field v-model="props.item.name"
-                                              :rules="[max25chars]"
+                                              :rules="[rules.nameRules]"
                                               label="Edit"
                                               single-line
                                               counter></v-text-field>
@@ -175,7 +175,11 @@
             comment: '',
             poweredOn: false,
         },
-        editing: false,
+            editing: false,
+        rules: {
+            nameRules: v => /^(?=\s*\S).*$/.test(v) || 'Name is required',
+            // TODO: add rule for datacenter
+        },
         }
     },
     async created() {
