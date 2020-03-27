@@ -15,9 +15,11 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
         Task<List<ChangePlanItem>> GetChangePlanItemsAsync(Guid changePlanId);
         Task<int> AddChangePlanAsync(ChangePlan changePlan);
         Task<int> AddChangePlanItemAsync(ChangePlanItem changePlanItem);
+        Task<int> UpdateChangePlanAsync(ChangePlan changePlan);
         Task<int> UpdateChangePlanItemAsync(ChangePlanItem changePlanItem);
         Task<int> DeleteChangePlanAsync(ChangePlan changePlan);
         Task<int> DeleteChangePlanItemAsync(ChangePlanItem changePlanItem);
+        Task<int> ExecuteChangePlan(List<ChangePlanItem> changePlanItems);
 
     }
 }

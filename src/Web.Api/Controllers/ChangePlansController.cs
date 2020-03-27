@@ -4,8 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
+using Web.Api.Dtos.Assets.Create;
+using Web.Api.Dtos.Assets.Update;
 using Web.Api.Dtos.ChangePlans;
 using Web.Api.Mappers;
 
@@ -17,10 +20,13 @@ namespace Web.Api.Controllers
     public class ChangePlansController : ControllerBase
     {
         private readonly IChangePlanService _changePlanService;
+        private readonly IAssetService _assetService;
 
-        public ChangePlansController(IChangePlanService changePlanService)
+
+        public ChangePlansController(IChangePlanService changePlanService, IAssetService assetService)
         {
             _changePlanService = changePlanService;
+            _assetService = assetService;
         }
         [HttpGet("{id}/changeplan")]
         public async Task<ActionResult<ChangePlanDto>> GetChangePlan(Guid id)
@@ -82,6 +88,51 @@ namespace Web.Api.Controllers
         {
             var changePlanItem = await _changePlanService.GetChangePlanItemAsync(id);
             await _changePlanService.DeleteChangePlanItemAsync(changePlanItem);
+            return Ok();
+        }
+        [HttpPut("{id}/execute")]
+        public async Task<IActionResult> ExecuteChangePlan(Guid id)
+        {
+            var changePlanItems = await _changePlanService.GetChangePlanItemsAsync(id);
+            for (int i = 0; i < changePlanItems.Count(); i ++)
+            {
+                var changePlanItem = changePlanItems[i];
+                //NOTE: THE NEWDATA HERE IS A CreateAssetApiDto
+                if (changePlanItem.ExecutionType.Equals("create"))
+                {
+                    var assetApiDto = JsonConvert.DeserializeObject<CreateAssetApiDto>(changePlanItem.NewData);
+                    assetApiDto.LastUpdatedDate = DateTime.Now;
+                    var assetDto = assetApiDto.MapTo<AssetDto>();
+                    changePlanItem.NewData = JsonConvert.SerializeObject(assetDto);
+                }
+                //NOTE: THE NEWDATA HERE IS A UpdateAssetApiDto
+                else if (changePlanItem.ExecutionType.Equals("update"))
+                {
+                    var assetApiDto = JsonConvert.DeserializeObject<UpdateAssetApiDto>(changePlanItem.NewData);
+                    assetApiDto.LastUpdatedDate = DateTime.Now;
+                    var assetDto = assetApiDto.MapTo<AssetDto>();
+                    changePlanItem.NewData = JsonConvert.SerializeObject(assetDto);
+                }
+                //NOTE: THE NEWDATA HERE IS A DecommissionedAssetQuery
+                else if (changePlanItem.ExecutionType.Equals("decommission"))
+                {
+                    var query = JsonConvert.DeserializeObject<DecommissionedAssetQuery>(changePlanItem.NewData);
+                    var assetDto = await _assetService.GetAssetForDecommissioning(changePlanItem.AssetId);
+                    var createDecommissionedAsset = assetDto.MapTo<CreateDecommissionedAsset>();
+
+                    //adding network graph to the asset
+                    createDecommissionedAsset.NetworkPortGraph = query.NetworkPortGraph;
+
+                    //creating a new decommissionedAssetDto from assetDto, filling in the data, decommissioner, and date
+                    var jsonString = JsonConvert.SerializeObject(createDecommissionedAsset);
+                    var decommisionedAsset = assetDto.MapTo<DecommissionedAssetDto>();
+                    decommisionedAsset.Data = jsonString;
+                    decommisionedAsset.Decommissioner = query.Decommissioner;
+                    decommisionedAsset.DateDecommissioned = DateTime.Now;
+
+                }
+            }
+            await _changePlanService.ExecuteChangePlan(changePlanItems);
             return Ok();
         }
 

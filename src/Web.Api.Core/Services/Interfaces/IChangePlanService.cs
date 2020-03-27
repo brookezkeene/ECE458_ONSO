@@ -18,5 +18,6 @@ namespace Web.Api.Core.Services.Interfaces
         Task<int> UpdateChangePlanItemAsync(ChangePlanItemDto changePlanItem);
         Task DeleteChangePlanAsync(ChangePlanDto changePlan);
         Task DeleteChangePlanItemAsync(ChangePlanItemDto changePlanItem);
+        Task ExecuteChangePlan(List<ChangePlanItemDto> changePlanItems);
     }
 }
