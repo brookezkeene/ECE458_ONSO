@@ -36,34 +36,29 @@
                     <template v-slot:expanded-item="{ headers, item }">
                         <td :colspan="headers.length">
                             <v-container>
-                                <v-row>
-                                    <v-col v-for="(table, title, index) in item.data" :key="index">
-                                        <v-subheader>{{ title }}</v-subheader>
-                                        <v-simple-table dense fixed-header>
-                                            <template v-slot:default>
-                                                <thead>
-                                                    <tr>
-                                                        <th>Asset</th>
-                                                        <th>Value</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr v-for="(value, name) in table" :key="name" class="text-left">
-                                                        <td class="font-weight-medium">{{ name }}</td>
-                                                        <td v-if="isIdProperty(name, item)"><router-link :to="constructLink(value, name, item)">{{ value }}</router-link></td>
-                                                        <td v-else>{{ value }}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </template>
-                                        </v-simple-table>
-                                    </v-col>
-                                </v-row>
+                                <v-simple-table dense fixed-header>
+                                    <template v-slot:default>
+                                        <thead>
+                                            <tr>
+                                                <th>Asset</th>
+                                                <th>Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(value, name) in getChangePlanItems(item.id)" :key="name" class="text-left">
+                                                <td class="font-weight-medium">{{ name }}</td>
+                                                <td v-if="isIdProperty(name, item)"><router-link :to="constructLink(value, name, item)">{{ value }}</router-link></td>
+                                                <td v-else>{{ value }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </template>
+                                </v-simple-table>
                             </v-container>
                         </td>
                     </template>
 
                     <template v-slot:item.executed="{ item }">
-                        <div v-if="executedDate">
+                        <div v-if="item.executedDate">
                             <v-icon color="primary">
                                 mdi-check-circle-outline
                             </v-icon>
@@ -170,7 +165,6 @@
         editing: false,
         }
     },
-
     async created() {
       this.initialize()
     },
@@ -216,7 +210,12 @@
                 this.$router.push({ name: 'change-plan-details', params: {id: item.id } })
             }
             this.editing = false;
-      },
+        },
+        async getChangePlanItems(changeplanId) {
+            var items = await this.changePlanRepository.listItems(changeplanId);
+            console.log(items);
+            return items;
+        }
     },
   }
 </script>
