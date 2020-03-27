@@ -62,6 +62,7 @@ export default new Vuex.Store({
                 id: state.changePlanId,
                 datacenterName: state.changePlanDatacenterName,
                 datacenterDescription: state.changePlanDatacenterDescription,
+                datacenterId: state.changePlanDatacenterId,
             };
             console.log(ret);
             return ret;
