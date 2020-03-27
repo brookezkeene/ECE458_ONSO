@@ -73,7 +73,7 @@
                     <template v-slot:item.action="{ item }">
                         <v-row>
                             <v-tooltip top>
-                                <template v-slot:activator="{ on }">
+                                <template v-if="!item.executedDate" v-slot:activator="{ on }">
                                     <v-btn icon v-on="on"
                                            @click="editItem(item)">
                                         <v-icon medium
@@ -101,7 +101,7 @@
                             </v-tooltip>
 
                             <v-tooltip top>
-                                <template v-slot:activator="{ on }">
+                                <template v-if="!item.executedDate" v-slot:activator="{ on }">
                                     <v-btn icon v-on="on"
                                            color="primary"
                                            @click="executeItem(item)">
@@ -116,7 +116,7 @@
                             </v-tooltip>
 
                             <v-tooltip top>
-                                <template v-slot:activator="{ on }">
+                                <template v-if="!item.executedDate" v-slot:activator="{ on }">
                                     <v-btn icon v-on="on"
                                            @click="deleteItem(item)">
                                         <v-icon medium
