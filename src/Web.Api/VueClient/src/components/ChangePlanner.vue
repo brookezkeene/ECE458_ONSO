@@ -213,6 +213,7 @@
         },
         async getChangePlanItems(changeplanId) {
             var items = await this.changePlanRepository.listItems(changeplanId);
+            /*eslint-disable*/
             console.log(items);
             return items;
         }

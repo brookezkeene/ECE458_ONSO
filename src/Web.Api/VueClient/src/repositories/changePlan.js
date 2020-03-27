@@ -12,8 +12,8 @@ export default {
             });
     },
     // Get all the items for a change plan
-    listItems(changePlanId) {
-        return axios.get(`${resource}/${user_id}/changeplanitems`, { params: { pageSize: 2000000000 } })
+    listItems(changeplan_id) {
+        return axios.get(`${resource}/${changeplan_id}/changeplanitems`, { params: { pageSize: 2000000000 } })
             .then(response => {
                 return response.data.data;
             });
