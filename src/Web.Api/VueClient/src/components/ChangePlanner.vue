@@ -10,6 +10,7 @@
                               :search="search"
                               class="elevation-1 pa-10"
                               multi-sort
+                              show-expand
                               @click:row="showDetails">
 
                     <template v-slot:top>
@@ -30,8 +31,35 @@
                             <v-spacer></v-spacer>
                             <v-btn color="primary" dark class="mb-2" @click="addItem">Add Change Plan</v-btn>
                         </v-toolbar>
+                    </template>
 
-
+                    <template v-slot:expanded-item="{ headers, item }">
+                        <td :colspan="headers.length">
+                            <v-container>
+                                <v-row>
+                                    <v-col v-for="(table, title, index) in item.data" :key="index">
+                                        <v-subheader>{{ title }}</v-subheader>
+                                        <v-simple-table dense fixed-header>
+                                            <template v-slot:default>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Asset</th>
+                                                        <th>Value</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr v-for="(value, name) in table" :key="name" class="text-left">
+                                                        <td class="font-weight-medium">{{ name }}</td>
+                                                        <td v-if="isIdProperty(name, item)"><router-link :to="constructLink(value, name, item)">{{ value }}</router-link></td>
+                                                        <td v-else>{{ value }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </template>
+                                        </v-simple-table>
+                                    </v-col>
+                                </v-row>
+                            </v-container>
+                        </td>
                     </template>
 
                     <template v-slot:item.executed="{ item }">
@@ -45,7 +73,7 @@
                                 mdi-close-circle-outline
                             </v-icon>
                         </div>
-                        </template>
+                    </template>
 
                     <template v-slot:item.action="{ item }">
                         <v-row>
@@ -173,7 +201,7 @@
         editItem(item) {
             this.editing = true;
             //TODO: edit change plan code, change this probably
-            this.$store.dispatch('startChangePlan');
+            this.$store.dispatch('startChangePlan', item.name);
             this.$router.push({ name: 'assets'})
         },
         addItem(item) {
