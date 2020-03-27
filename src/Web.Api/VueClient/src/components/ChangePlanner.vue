@@ -144,6 +144,7 @@
         search: '',
         // TODO: replace with change plan data
         headers: [
+            { text: 'Datacenter', value: 'datacenter' },
             { text: 'Change Plan Name', value: 'name' },
             { text: 'Executed', value: 'executed', },
             { text: 'Date & Time', value: 'createdDate' },
@@ -195,7 +196,8 @@
         editItem(item) {
             this.editing = true;
             //TODO: edit change plan code, change this probably
-            this.$store.dispatch('startChangePlan', item.name);
+            var changePlan = { name: item.name, datacenter: item.id };
+            this.$store.dispatch('startChangePlan', changePlan);
             this.$router.push({ name: 'assets'})
         },
         addItem(item) {

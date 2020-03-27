@@ -13,18 +13,19 @@ export default new Vuex.Store({
      Props --> State
      */
     state: {
-        clicked: false,         // for clicking network neighborhood
-        itemId: '',             // for detail and edit views
-        page: '',               // to keep track of current page
-        dialogVisible: false,   // to show or hide a dialog
-        dialogType: null,       // specify dialog type
-        updateData: false,      // for updating tables
-        username: '',           // for showing who is signed in and saving who decommissioned
-        myPermissions: [],      // for tracking user permissions
-        myDatacenters: [],      // for tracking datacenter permissions
-        changePlan: false,      // for showing changeplan snackbar
-        changePlanName: '',     // for showing name of changeplan being edited in snackbar
-        userId: auth.id(),      // for querying the backend for the changeplans belonging to a particular user
+        clicked: false,             // for clicking network neighborhood
+        itemId: '',                 // for detail and edit views
+        page: '',                   // to keep track of current page
+        dialogVisible: false,       // to show or hide a dialog
+        dialogType: null,           // specify dialog type
+        updateData: false,          // for updating tables
+        username: '',               // for showing who is signed in and saving who decommissioned
+        myPermissions: [],          // for tracking user permissions
+        myDatacenters: [],          // for tracking datacenter permissions
+        changePlan: false,          // for showing changeplan snackbar
+        changePlanName: '',         // for showing name of changeplan being edited in snackbar
+        changePlanDatacenter: '',   // for limiting the change plan assets to a datacenter
+        userId: auth.id(),          // for querying the backend for the changeplans belonging to a particular user
     },
 
     /*Defines Computed Properties for our Store
@@ -54,6 +55,9 @@ export default new Vuex.Store({
         },
         changePlanName: state => {
             return state.changePlanName
+        },
+        changePlanDatacenter: state => {
+            return state.changePlanDatacenter
         },
         userId: state => {
             console.log(state.userId);
@@ -91,9 +95,10 @@ export default new Vuex.Store({
         SAVE_USER_ID(state, id) {
             state.userId = id;
         },
-        START_CHANGE_PLAN(state, name) {
-            state.changePlanName = name;
+        START_CHANGE_PLAN(state, changePlan) {
+            state.changePlanName = changePlan.name;
             state.changePlan = true;
+            state.changePlanDatacenter = changePlan.datacenter;
         },
         END_CHANGE_PLAN(state) {
             state.changePlan = false;
@@ -123,8 +128,9 @@ export default new Vuex.Store({
             commit('SAVE_USER_ID', auth.id());
             console.log(auth.id());
         },
-        startChangePlan({ commit }, name) {
-            commit('START_CHANGE_PLAN', name);
+        startChangePlan({ commit }, changePlan) {
+            console.log(changePlan);
+            commit('START_CHANGE_PLAN', changePlan);
         },
         endChangePlan({ commit }) {
             commit('END_CHANGE_PLAN');
