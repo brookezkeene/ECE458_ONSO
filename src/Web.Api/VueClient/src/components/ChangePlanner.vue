@@ -166,7 +166,7 @@
         },
         addItem(item) {
             //TODO: adde new change plan code, change this probably
-            this.changePlanRepository.create(item);
+            
             this.$router.push({ name: 'change-plan-new' })
         },
         showDetails(item) {
