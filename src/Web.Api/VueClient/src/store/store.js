@@ -24,6 +24,7 @@ export default new Vuex.Store({
         myDatacenters: [],          // for tracking datacenter permissions
         changePlan: false,          // for showing changeplan snackbar
         changePlanName: '',         // for showing name of changeplan being edited in snackbar
+        changePlanId: '',
         changePlanDatacenter: '',   // for limiting the change plan assets to a datacenter
         userId: auth.id(),          // for querying the backend for the changeplans belonging to a particular user
     },
@@ -53,11 +54,10 @@ export default new Vuex.Store({
         isChangePlan: state => {
             return state.changePlan
         },
-        changePlanName: state => {
-            return state.changePlanName
-        },
-        changePlanDatacenter: state => {
-            return state.changePlanDatacenter
+        changePlan: state => {
+            var ret = { name: state.changePlanName, id: state.changePlanId, datacenter: state.changePlanDatacenter };
+            console.log(ret);
+            return ret;
         },
         userId: state => {
             console.log(state.userId);
@@ -99,6 +99,7 @@ export default new Vuex.Store({
             state.changePlanName = changePlan.name;
             state.changePlan = true;
             state.changePlanDatacenter = changePlan.datacenter;
+            state.changePlanId = changePlan.id;
         },
         END_CHANGE_PLAN(state) {
             state.changePlan = false;

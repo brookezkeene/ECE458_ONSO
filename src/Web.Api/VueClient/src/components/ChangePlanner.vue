@@ -196,7 +196,7 @@
         editItem(item) {
             this.editing = true;
             //TODO: edit change plan code, change this probably
-            var changePlan = { name: item.name, datacenter: item.id };
+            var changePlan = { name: item.name, datacenter: item.datacenterId, changePlanId: item.id };
             this.$store.dispatch('startChangePlan', changePlan);
             this.$router.push({ name: 'assets'})
         },

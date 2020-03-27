@@ -409,8 +409,8 @@
                     this.datacenters = [];
                     datacenter = {
                         description: this.selectedDatacenter,
-                        name: this.$store.getters.changePlanDatacenter,
-                        id: this.$store.getters.changePlanDatacenter,
+                        name: this.$store.getters.changePlan.name,
+                        id: this.$store.getters.changePlan.id,
                     }
                 } else {
                     this.datacenters = await this.datacenterRepository.list();
