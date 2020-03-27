@@ -189,6 +189,7 @@
         },
         executeItem(item) {
             //TODO: execute change plan code
+            confirm('Are you sure you want to execute this change plan?')
             console.log("execute" + item);
         },
         editItem(item) {
