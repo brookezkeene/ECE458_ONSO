@@ -291,7 +291,6 @@ import Auth from "../auth"
                     this.selectedDatacenters.push(this.datacenters[i].description);
                 }
             }
-            console.log(this.selectedDatacenters);
         },
         savePermissions() {
             // add an array of roles and comma separated string of datacenters
@@ -300,8 +299,6 @@ import Auth from "../auth"
                     this.closeDialog();
                     await this.initialize();
                 })
-            // reset selectedDatacents variable
-            this.selectedDatacenters = [];
             
             this.updateSnackbar.show = true;
             this.updateSnackbar.color = 'green lighten-4';
