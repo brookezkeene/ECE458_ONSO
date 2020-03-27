@@ -36,7 +36,7 @@
                                     </v-card-title>
                                     <v-card-text>
                                         <v-container fluid>
-                                            <v-form v-model="valid">
+                                            <v-form>
                                                 <div v-for="(role, index) in allRoles" :key="index">
                                                     <v-row>
                                                         <v-checkbox :label="role.label"
@@ -286,8 +286,12 @@ import Auth from "../auth"
         },
         checkAll() {
             if (this.selectedDatacenters.includes('All Datacenters')) {
-                this.selectedDatacenters = this.datacenters;
+                this.selectedDatacenters = [];
+                for (var i = 0; i < this.datacenters.length; i++) {
+                    this.selectedDatacenters.push(this.datacenters[i].description);
+                }
             }
+            console.log(this.selectedDatacenters);
         },
         savePermissions() {
             // add an array of roles and comma separated string of datacenters
