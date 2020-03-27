@@ -59,7 +59,8 @@
                 selectedDatacenter: '',
                 newItem: {
                     name: '',
-                    datacenter: '',
+                    datacenterId: '',
+                    createdById: '',
                 },
                 editedIndex: -1,
                 rules: {
@@ -87,7 +88,8 @@
                 // TODO: save change plan
                 /*eslint-disable*/
                 var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
-                this.newItem.datacenter = searchDatacenter.id;
+                this.newItem.datacenterId = searchDatacenter.id;
+                this.newItem.createdById = this.$store.getters.userId;
                 console.log(this.newItem)
                 this.changePlanRepository.create(this.newItem);
                 this.close()

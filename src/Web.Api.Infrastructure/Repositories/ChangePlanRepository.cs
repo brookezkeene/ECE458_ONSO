@@ -39,7 +39,7 @@ namespace Web.Api.Infrastructure.Repositories
             var pagedList = new PagedList<ChangePlan>();
 
             var changePlans = await _dbContext.ChangePlans
-                .Where(x => x.Id == createdById)
+                .Where(x => x.CreatedById == createdById)
                 .PageBy(x => x.Id, page, pageSize)
                 .AsNoTracking()
                 .ToListAsync();
@@ -67,8 +67,19 @@ namespace Web.Api.Infrastructure.Repositories
         }
         public async Task<int> AddChangePlanItemAsync(ChangePlanItem changePlanItem)
         {
-            _dbContext.ChangePlanItems.Add(changePlanItem);
-            return await _dbContext.SaveChangesAsync();
+            if(!await _dbContext.ChangePlanItems.AnyAsync(o => o.AssetId == changePlanItem.AssetId && o.ChangePlanId == changePlanItem.ChangePlanId))
+            {
+                _dbContext.ChangePlanItems.Add(changePlanItem);
+                return await _dbContext.SaveChangesAsync();
+            }
+            var updatedChangePlan = await _dbContext.ChangePlanItems
+                .Where(x => x.AssetId == changePlanItem.AssetId && x.ChangePlanId == changePlanItem.ChangePlanId)
+                .AsNoTracking()
+                .SingleOrDefaultAsync();
+            updatedChangePlan.NewData = changePlanItem.NewData;
+            updatedChangePlan.CreatedDate = changePlanItem.CreatedDate;
+
+            return await UpdateChangePlanItemAsync(updatedChangePlan);
         }
         //TODO: can you update a changePlan?
         public async Task<int> UpdateChangePlanItemAsync(ChangePlanItem changePlanItem)

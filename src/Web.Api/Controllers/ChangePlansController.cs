@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
+using Web.Api.Dtos.ChangePlans;
+using Web.Api.Mappers;
 
 namespace Web.Api.Controllers
 {
@@ -45,22 +47,27 @@ namespace Web.Api.Controllers
             return Ok(response);
         }
         [HttpPost("changeplan")]
-        public async Task<IActionResult> Post([FromBody] ChangePlanDto changePlanDto)
+        public async Task<IActionResult> Post([FromBody] CreateChangePlanApiDto changePlan)
         {
+            var changePlanDto = changePlan.MapTo<ChangePlanDto>();
+            changePlanDto.CreatedDate = DateTime.Now;
             await _changePlanService.CreateChangePlanAsync(changePlanDto);
             return Ok();
         }
         [HttpPost("changeplanitem")]
-        public async Task<IActionResult> Post([FromBody] ChangePlanItemDto changePlanItemDto)
+        public async Task<IActionResult> Post([FromBody] CreateChangePlanItemApiDto changePlanItem)
         {
+            var changePlanItemDto = changePlanItem.MapTo<ChangePlanItemDto>();
+            changePlanItemDto.CreatedDate = DateTime.Now;
             await _changePlanService.CreateChangePlanItemAsync(changePlanItemDto);
             return Ok();
         }
         //TODO: NEED TO SEE IF WE NEED ANOTHER FORMAT/DESERIALIZE DATA OR SOMETHING
         [HttpPut("changeplanitem")]
-        public async Task<IActionResult> Put(ChangePlanItemDto changePlanItem)
+        public async Task<IActionResult> Put(UpdateChangePlanItemApiDto changePlanItem)
         {
-            await _changePlanService.UpdateChangePlanItemAsync(changePlanItem);
+            var changePlanItemDto = changePlanItem.MapTo<ChangePlanItemDto>();
+            await _changePlanService.UpdateChangePlanItemAsync(changePlanItemDto);
             return NoContent();
         }
         [HttpDelete("{id}/changeplan")]
