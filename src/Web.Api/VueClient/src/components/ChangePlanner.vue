@@ -10,7 +10,7 @@
                               :search="search"
                               class="elevation-1 pa-10"
                               multi-sort
-                              @click:row="showDetails">
+                              show-expand>
 
                     <template v-slot:top>
                         <v-toolbar flat class="mb-6">
@@ -30,12 +30,34 @@
                             <v-spacer></v-spacer>
                             <v-btn color="primary" dark class="mb-2" @click="addItem">Add Change Plan</v-btn>
                         </v-toolbar>
+                    </template>
 
-
+                    <template v-slot:expanded-item="{ headers, item }">
+                        <td :colspan="headers.length">
+                            <v-container>
+                                <v-simple-table dense fixed-header>
+                                    <template v-slot:default>
+                                        <thead>
+                                            <tr>
+                                                <th>Asset</th>
+                                                <th>Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(value, name) in getChangePlanItems(item.id)" :key="name" class="text-left">
+                                                <td class="font-weight-medium">{{ name }}</td>
+                                                <td v-if="isIdProperty(name, item)"><router-link :to="constructLink(value, name, item)">{{ value }}</router-link></td>
+                                                <td v-else>{{ value }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </template>
+                                </v-simple-table>
+                            </v-container>
+                        </td>
                     </template>
 
                     <template v-slot:item.executed="{ item }">
-                        <div v-if="executedData">
+                        <div v-if="item.executedDate">
                             <v-icon color="primary">
                                 mdi-check-circle-outline
                             </v-icon>
@@ -45,12 +67,12 @@
                                 mdi-close-circle-outline
                             </v-icon>
                         </div>
-                        </template>
+                    </template>
 
                     <template v-slot:item.action="{ item }">
                         <v-row>
                             <v-tooltip top>
-                                <template v-slot:activator="{ on }">
+                                <template v-if="!item.executedDate" v-slot:activator="{ on }">
                                     <v-btn icon v-on="on"
                                            @click="editItem(item)">
                                         <v-icon medium
@@ -78,7 +100,7 @@
                             </v-tooltip>
 
                             <v-tooltip top>
-                                <template v-slot:activator="{ on }">
+                                <template v-if="!item.executedDate" v-slot:activator="{ on }">
                                     <v-btn icon v-on="on"
                                            color="primary"
                                            @click="executeItem(item)">
@@ -93,7 +115,7 @@
                             </v-tooltip>
 
                             <v-tooltip top>
-                                <template v-slot:activator="{ on }">
+                                <template v-if="!item.executedDate" v-slot:activator="{ on }">
                                     <v-btn icon v-on="on"
                                            @click="deleteItem(item)">
                                         <v-icon medium
@@ -142,7 +164,6 @@
         editing: false,
         }
     },
-
     async created() {
       this.initialize()
     },
@@ -157,7 +178,7 @@
         deleteItem (item) {
             this.editing = true;
             console.log("delete" + item);
-            confirm('Are you sure you want to delete this asset?') //&& this.assetRepository.delete(item)
+            confirm('Are you sure you want to delete this asset?') && this.changePlanRepository.delete(item)
                     .then(async () => {
                         await this.initialize();
                     })
@@ -168,12 +189,13 @@
         },
         executeItem(item) {
             //TODO: execute change plan code
+            confirm('Are you sure you want to execute this change plan?')
             console.log("execute" + item);
         },
         editItem(item) {
             this.editing = true;
             //TODO: edit change plan code, change this probably
-            this.$store.dispatch('startChangePlan');
+            this.$store.dispatch('startChangePlan', item.name);
             this.$router.push({ name: 'assets'})
         },
         addItem(item) {
@@ -181,6 +203,7 @@
             
             this.$router.push({ name: 'change-plan-new' })
         },
+        // Don't think we will need clickable rows here since we have the drop down
         showDetails(item) {
             //TODO: show change plan summary code
             if (!this.editing) {
@@ -188,7 +211,13 @@
                 this.$router.push({ name: 'change-plan-details', params: {id: item.id } })
             }
             this.editing = false;
-      },
+        },
+        async getChangePlanItems(changeplanId) {
+            var items = await this.changePlanRepository.listItems(changeplanId);
+            /*eslint-disable*/
+            console.log(items);
+            return items;
+        }
     },
   }
 </script>

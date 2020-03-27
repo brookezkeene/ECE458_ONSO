@@ -1,13 +1,15 @@
 ﻿
 <template>
     <v-snackbar class="green--text text--darken-4" v-model="changePlan" top color="#8eff47" :timeout=0>
+        <span>
+            Editing Change Plan: &nbsp; 
+        </span>
         <strong>
-            Editing Change Planner (Insert Vuex Call to say which)
+            {{changePlanName}}
         </strong>
         <v-icon @click="save">mdi-content-save-outline</v-icon>
         <v-icon @click="cancel">mdi-close</v-icon>
     </v-snackbar>
-
 </template>
 
 <script>
@@ -16,6 +18,9 @@
         computed: {
             changePlan() {
                 return this.$store.getters.isChangePlan;
+            },
+            changePlanName() {
+                return this.$store.getters.changePlanName;
             }
         },
         data() {

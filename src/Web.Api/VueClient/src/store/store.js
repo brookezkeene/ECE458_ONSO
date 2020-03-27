@@ -21,8 +21,9 @@ export default new Vuex.Store({
         updateData: false,      // for updating tables
         username: '',           // for showing who is signed in and saving who decommissioned
         myPermissions: [],      // for tracking user permissions
-        changePlan: false,
-        userId: auth.id(),
+        changePlan: false,      // for showing changeplan snackbar
+        changePlanName: '',     // for showing name of changeplan being edited in snackbar
+        userId: auth.id(),      // for querying the backend for the changeplans belonging to a particular user
     },
 
     /*Defines Computed Properties for our Store
@@ -46,6 +47,9 @@ export default new Vuex.Store({
         },
         isChangePlan: state => {
             return state.changePlan
+        },
+        changePlanName: state => {
+            return state.changePlanName
         },
         userId: state => {
             console.log(state.userId);
@@ -80,7 +84,8 @@ export default new Vuex.Store({
         SAVE_USER_ID(state, id) {
             state.userId = id;
         },
-        START_CHANGE_PLAN(state) {
+        START_CHANGE_PLAN(state, name) {
+            state.changePlanName = name;
             state.changePlan = true;
         },
         END_CHANGE_PLAN(state) {
@@ -108,8 +113,8 @@ export default new Vuex.Store({
             commit('SAVE_USER_ID', auth.id());
             console.log(auth.id());
         },
-        startChangePlan({ commit }) {
-            commit('START_CHANGE_PLAN');
+        startChangePlan({ commit }, name) {
+            commit('START_CHANGE_PLAN', name);
         },
         endChangePlan({ commit }) {
             commit('END_CHANGE_PLAN');
