@@ -9,7 +9,7 @@ namespace Web.Api.Dtos.ChangePlans
     {
         public Guid Id { get; set; }
         public DateTime CreatedDate { get; set; }
-        public DateTime? ExecutedData { get; set; }
+        public DateTime? ExecutedDate { get; set; }
         public Guid CreatedById { get; set; }
         public string Name { get; set; }
         public Guid DatacenterId { get; set; }

@@ -79,7 +79,7 @@
                                                   flat
                                                   hide-no-data
                                                   hide-details
-                                                  label="Search Number"
+                                                  label="Search Model Number"
                                                   single-line
                                                   solo-inverted>
 

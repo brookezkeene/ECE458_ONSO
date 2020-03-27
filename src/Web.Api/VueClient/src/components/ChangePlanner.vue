@@ -34,6 +34,19 @@
 
                     </template>
 
+                    <template v-slot:item.executed="{ item }">
+                        <div v-if="executedData">
+                            <v-icon color="primary">
+                                mdi-check-circle-outline
+                            </v-icon>
+                        </div>
+                        <div v-else>
+                            <v-icon color="red">
+                                mdi-close-circle-outline
+                            </v-icon>
+                        </div>
+                        </template>
+
                     <template v-slot:item.action="{ item }">
                         <v-row>
                             <v-tooltip top>
@@ -67,6 +80,7 @@
                             <v-tooltip top>
                                 <template v-slot:activator="{ on }">
                                     <v-btn icon v-on="on"
+                                           color="primary"
                                            @click="executeItem(item)">
                                         <v-icon medium
                                                 class="mr-2">
@@ -108,9 +122,9 @@
         search: '',
         // TODO: replace with change plan data
         headers: [
-            { text: 'Change Plan Name', value: 'vendor' },
-            { text: 'Executed', value: 'modelNumber', },
-            { text: 'Date & Time', value: 'hostname' },
+            { text: 'Change Plan Name', value: 'name' },
+            { text: 'Executed', value: 'executed', },
+            { text: 'Date & Time', value: 'createdDate' },
             { text: 'Actions', value: 'action', sortable: false },
         ],
         assets: [],
@@ -136,9 +150,7 @@
     methods: {
         /*eslint-disable*/
         async initialize() {
-            // TODO: replace with change plan data
-            this.assets = await this.assetRepository.list();
-            //this.assets = await this.changePlanRepository.list(this.$store.getters.userId); //only list change plans for a given user
+            this.assets = await this.changePlanRepository.list(this.$store.getters.userId); //only list change plans for a given user
             console.log(this.assets);
             this.loading = false;
         },

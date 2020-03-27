@@ -11,10 +11,17 @@ export default {
                 return response.data.data;
             });
     },
+    // How to get change plan item (what id do i pass in?)
+    getChangePlanItem(changePlan) {
+
+    },
+    // Creating a change plan
     create(item) {
         return axios.post(`${resource}/changeplan`, item).then(response => response.data).catch(error => error);
     },
+    // Creating a change plan item
     createItem(item) {
         return axios.post(`${resource}/changeplanitem`, item).then(response => response.data).catch(error => error);
-    }
+    },
+
 }
