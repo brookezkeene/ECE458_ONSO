@@ -63,7 +63,7 @@
                     </template>
 
                     <template v-slot:item.executed="{ item }">
-                        <div v-if="executedData">
+                        <div v-if="executedDate">
                             <v-icon color="primary">
                                 mdi-check-circle-outline
                             </v-icon>
@@ -185,7 +185,7 @@
         deleteItem (item) {
             this.editing = true;
             console.log("delete" + item);
-            confirm('Are you sure you want to delete this asset?') //&& this.assetRepository.delete(item)
+            confirm('Are you sure you want to delete this asset?') && this.changePlanRepository.delete(item)
                     .then(async () => {
                         await this.initialize();
                     })

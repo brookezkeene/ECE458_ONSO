@@ -19,6 +19,10 @@ export default {
     create(item) {
         return axios.post(`${resource}/changeplan`, item).then(response => response.data).catch(error => error);
     },
+    // Deleting a change plan
+    delete(item) {
+        return axios.delete(`${resource}/${item.id}/changeplan`).then(response => { return response.data; }).catch(error => error);
+    },
     // Creating a change plan item
     createItem(item) {
         return axios.post(`${resource}/changeplanitem`, item).then(response => response.data).catch(error => error);
