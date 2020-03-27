@@ -36,39 +36,44 @@
                                     </v-card-title>
                                     <v-card-text>
                                         <v-container fluid>
-                                            <div v-for="(role, index) in allRoles" :key="index">
-                                                <v-row>
-                                                    <v-checkbox :label="role.label"
-                                                                :value="role.name"
-                                                                v-model="editedRoles"
-                                                                @change="checkAdmin"></v-checkbox>
-                                                    <v-tooltip right>
-                                                        <template v-slot:activator="{ on }">
-                                                            <v-icon class="pl-2" color="primary" v-on="on">mdi-information-outline</v-icon>
-                                                        </template>
-                                                        <span>{{role.description}}</span>
-                                                    </v-tooltip>
-                                                </v-row>
-                                                <v-row v-if="role.name === 'asset' && editedRoles.includes('asset')">
-                                                    <v-select v-model="selectedDatacenters"
-                                                              :items="datacenters"
-                                                              item-text="description"
-                                                              item-value=""
-                                                              :return-object="false"
-                                                              multiple
-                                                              label="Please select which datacenter(s) this extends to"
-                                                              placeholder="Select a datacenter or all datacenters"
-                                                              class="pt-8 pl-4">
-                                                    </v-select>
-                                                </v-row>
-                                            </div>
+                                            <v-form v-model="valid">
+                                                <div v-for="(role, index) in allRoles" :key="index">
+                                                    <v-row>
+                                                        <v-checkbox :label="role.label"
+                                                                    :value="role.name"
+                                                                    v-model="editedRoles"
+                                                                    :disabled="editedRoles.includes('admin') && role.name!='admin'"
+                                                                    @change="checkAdmin"></v-checkbox>
+                                                        <v-tooltip right>
+                                                            <template v-slot:activator="{ on }">
+                                                                <v-icon class="pl-2" color="primary" v-on="on">mdi-information-outline</v-icon>
+                                                            </template>
+                                                            <span>{{role.description}}</span>
+                                                        </v-tooltip>
+                                                    </v-row>
+                                                    <v-row v-if="role.name === 'asset' && editedRoles.includes('asset')">
+                                                        <v-select v-model="selectedDatacenters"
+                                                                  :items="datacenters"
+                                                                  item-text="description"
+                                                                  item-value=""
+                                                                  :return-object="false"
+                                                                  multiple
+                                                                  label="Please select which datacenter(s) this extends to"
+                                                                  placeholder="Select a datacenter or all datacenters"
+                                                                  class="pt-8 pl-4 pr-4"
+                                                                  @change="checkAll">
+                                                        </v-select>
+                                                    </v-row>
+                                                </div>
+                                                <v-card-actions>
+                                                    <v-spacer></v-spacer>
+                                                    <v-btn color="primary" text @click="closeDialog">Close</v-btn>
+                                                    <v-btn color="primary" text @click="savePermissions">Save</v-btn>
+                                                </v-card-actions>
+                                            </v-form>
                                         </v-container>
                                     </v-card-text>
-                                    <v-card-actions>
-                                        <v-spacer></v-spacer>
-                                        <v-btn color="primary" text @click="closeDialog">Close</v-btn>
-                                        <v-btn color="primary" text @click="savePermissions">Save</v-btn>
-                                    </v-card-actions>
+                                    
                                 </v-card>
                             </v-dialog>
                         </div>
@@ -201,6 +206,10 @@ import Auth from "../auth"
         permissionsDialog: false,
         datacenters: [],
         selectedDatacenters: [],
+        //valid: false,
+        //rules: {
+        //    datacenterRequired: () => (this.selectedDatacenters.length > 0 || !this.editedRoles.includes("asset")) || 'Please select at least one datacenter.',
+        //}
       }
     },
     computed: {
@@ -275,6 +284,11 @@ import Auth from "../auth"
                 }
             }
         },
+        checkAll() {
+            if (this.selectedDatacenters.includes('All Datacenters')) {
+                this.selectedDatacenters = this.datacenters;
+            }
+        },
         savePermissions() {
             // add an array of roles and comma separated string of datacenters
             this.userRepository.updateUserRoles(this.editedItem.id, { roles: this.editedRoles, datacenters: this.selectedDatacenters.join(",") })
@@ -282,14 +296,14 @@ import Auth from "../auth"
                     this.closeDialog();
                     await this.initialize();
                 })
-            // reset selectedDatacents variable
-            this.selectedDatacenters = [];
             
             this.updateSnackbar.show = true;
             this.updateSnackbar.color = 'green lighten-4';
-            this.updateSnackbar.message = 'Successfully updated user\'s permissions.';
+            this.updateSnackbar.message = 'Successfully updated user\'s permissions.';            
         },
         closeDialog() {
+            // reset selectedDatacents variable
+            this.selectedDatacenters = [];
             this.permissionsDialog = false;
         }
     },
