@@ -405,12 +405,12 @@
             async initializeDatacenters() {
                 var datacenter;
                 if (this.$store.getters.isChangePlan) {
-                    this.selectedDatacenter = 'Research Triangle Park 1'//this.$store.getters.changePlanDatacenter; //Limiting change plans to a datacenter
+                    this.selectedDatacenter = 'Research Triangle Park 2'//this.$store.getters.changePlanDatacenter; //Limiting change plans to a datacenter
                     this.datacenters = [];
                     datacenter = {
                         description: this.selectedDatacenter,
                         name: this.$store.getters.changePlan.name,
-                        id: this.$store.getters.changePlan.id,
+                        id: this.$store.getters.changePlan.datacenter,
                     }
                 } else {
                     this.datacenters = await this.datacenterRepository.list();
