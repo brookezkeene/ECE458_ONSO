@@ -23,8 +23,8 @@
                     <v-row>
                         <v-btn class="mr-4 ml-4" color="primary" :disabled="startFilled" @click="viewDiagram">View Diagrams</v-btn>
                         <v-spacer></v-spacer>
-                        <v-btn v-if="admin" class="mr-4" color="primary" @click="createInRange">Add Racks</v-btn>
-                        <v-btn v-if="admin" class="mr-4" color="primary" @click="deleteInRange">Delete Racks</v-btn>
+                        <v-btn v-if="permission" class="mr-4" color="primary" @click="createInRange">Add Racks</v-btn>
+                        <v-btn v-if="permission" class="mr-4" color="primary" @click="deleteInRange">Delete Racks</v-btn>
                     </v-row>
 
                 </form>
@@ -47,8 +47,6 @@
 </template>
 
 <script>
-import Auth from "../auth"
-
 export default {
     name: 'rack-form',
     inject: ['rackRepository', 'datacenterRepository'],
@@ -70,12 +68,15 @@ export default {
         },
     }),
     computed: {
-        admin() {
-            return Auth.isAdmin()
+        permission() {
+            return this.$store.getters.isAdmin || this.$store.getters.hasAssetPermission
+        },
+        datacenterPermissions() {
+            return this.$store.getters.hasDatacenters
         },
         startFilled() {
             return this.range.start === '';
-        }
+        },
     },
     async created () {
             this.initialize()
@@ -95,39 +96,51 @@ export default {
             if (this.validation() != 0) {
                 return;
             }
-            var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
+            // check if user has permission for given datacenter
+            if (this.datacenterPermissions.includes(this.selectedDatacenter)) {
+                var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
 
-            await this.rackRepository.createInRange(this.range.start, this.range.end, searchDatacenter.id)
-                .then(() => {
-                    // indicate success
-                    this.$emit('update-create'); // trigger event to update rack-table
-                })
-                .catch(() => {
-                    // indicate failure
-                    this.$emit('error-create');
-                });
+                await this.rackRepository.createInRange(this.range.start, this.range.end, searchDatacenter.id)
+                    .then(() => {
+                        // indicate success
+                        this.$emit('update-create'); // trigger event to update rack-table
+                    })
+                    .catch(() => {
+                        // indicate failure
+                        this.$emit('error-create');
+                    });
 
-            // This might slow things down if we have a lot of racks to get from the backend !!!
-            //this.$emit('update-create'); // trigger event to update rack-table
+                // This might slow things down if we have a lot of racks to get from the backend !!!
+                //this.$emit('update-create'); // trigger event to update rack-table
+            }
+            else {
+                this.$emit('error-datacenter');
+            }
         },
         async deleteInRange() {
             if (this.validation() != 0) {
                 return;
             }
-            var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
+            // check if user has permission for given datacenter
+            if (this.datacenterPermissions.includes(this.selectedDatacenter)) {
+                var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
 
-            await this.rackRepository.deleteInRange(this.range.start, this.range.end, searchDatacenter.id)
-                .then(() => {
-                    // indicate success
-                    this.$emit('update-delete'); // trigger event to update rack-table
-                })
-                .catch(() => {
-                    // indicate failure
-                    this.$emit('error-delete');
-                });
+                await this.rackRepository.deleteInRange(this.range.start, this.range.end, searchDatacenter.id)
+                    .then(() => {
+                        // indicate success
+                        this.$emit('update-delete'); // trigger event to update rack-table
+                    })
+                    .catch(() => {
+                        // indicate failure
+                        this.$emit('error-delete');
+                    });
 
-            // This might slow things down if we have a lot of racks to get from the backend !!!
-            //this.$emit('update-delete'); // trigger event to update rack-table
+                // This might slow things down if we have a lot of racks to get from the backend !!!
+                //this.$emit('update-delete'); // trigger event to update rack-table
+            }
+            else {
+                this.$emit('error-datacenter');
+            }
         },
         validation() {
             var count = 0;
