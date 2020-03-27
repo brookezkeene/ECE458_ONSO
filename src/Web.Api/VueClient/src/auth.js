@@ -64,7 +64,7 @@ export default {
         if (typeof cookie !== 'undefined') {
             cookie = JSON.parse(cookie);
             const datacenters = cookie.find(o => o.type === "permission:datacenter");
-            console.log(datacenters.value.split(','));
+            console.log(cookie);
             return datacenters.value.split(',');
         }
     }
