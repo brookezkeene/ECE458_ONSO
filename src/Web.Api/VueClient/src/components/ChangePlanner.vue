@@ -157,7 +157,7 @@
         search: '',
         // TODO: replace with change plan data
         headers: [
-            { text: 'Datacenter', value: 'datacenter' },
+            { text: 'Datacenter', value: 'datacenterName' },
             { text: 'Change Plan Name', value: 'name' },
             { text: 'Executed', value: 'executed', },
             { text: 'Date & Time', value: 'createdDate' },
@@ -213,7 +213,14 @@
         editItem(item) {
             this.editing = true;
             //TODO: edit change plan code, change this probably
-            var changePlan = { name: item.name, datacenter: item.datacenterId, changePlanId: item.id };
+            console.log(item);
+            var changePlan = {
+                name: item.name,
+                datacenterName: item.datacenterName,
+                datacenterDescription: item.datacenterDescription,
+                datacenterId: item.datacenterId,
+                changePlanId: item.id
+            };
             this.$store.dispatch('startChangePlan', changePlan);
             this.$router.push({ name: 'assets'})
         },
