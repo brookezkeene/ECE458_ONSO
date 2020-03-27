@@ -12,6 +12,19 @@
                               multi-sort
                               show-expand>
 
+                    <template v-slot:item.name="props">
+                        <v-edit-dialog :return-value.sync="props.item.name">
+                            {{ props.item.name }}
+                            <template v-slot:input>
+                                <v-text-field v-model="props.item.name"
+                                              :rules="[max25chars]"
+                                              label="Edit"
+                                              single-line
+                                              counter></v-text-field>
+                            </template>
+                        </v-edit-dialog>
+                    </template>
+
                     <template v-slot:top>
                         <v-toolbar flat class="mb-6">
                             <v-label>Filter by ... </v-label>
