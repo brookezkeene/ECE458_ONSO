@@ -15,7 +15,7 @@
                     <template v-slot:item.name="props">
                         <v-edit-dialog :return-value.sync="props.item.name">
                             {{ props.item.name }}
-                            <template v-slot:input>
+                            <template v-if="!props.item.executedDate"  v-slot:input>
                                 <v-text-field v-model="props.item.name"
                                               :rules="[max25chars]"
                                               label="Edit"
