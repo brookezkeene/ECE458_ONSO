@@ -12,6 +12,19 @@
                               multi-sort
                               show-expand>
 
+                    <template v-slot:item.name="props">
+                        <v-edit-dialog :return-value.sync="props.item.name">
+                            {{ props.item.name }}
+                            <template v-if="!props.item.executedDate"  v-slot:input>
+                                <v-text-field v-model="props.item.name"
+                                              :rules="[rules.nameRules]"
+                                              label="Edit"
+                                              single-line
+                                              counter></v-text-field>
+                            </template>
+                        </v-edit-dialog>
+                    </template>
+
                     <template v-slot:top>
                         <v-toolbar flat class="mb-6">
                             <v-label>Filter by ... </v-label>
@@ -144,6 +157,7 @@
         search: '',
         // TODO: replace with change plan data
         headers: [
+            { text: 'Datacenter', value: 'datacenterName' },
             { text: 'Change Plan Name', value: 'name' },
             { text: 'Executed', value: 'executed', },
             { text: 'Date & Time', value: 'createdDate' },
@@ -161,7 +175,11 @@
             comment: '',
             poweredOn: false,
         },
-        editing: false,
+            editing: false,
+        rules: {
+            nameRules: v => /^(?=\s*\S).*$/.test(v) || 'Name is required',
+            // TODO: add rule for datacenter
+        },
         }
     },
     async created() {
@@ -195,7 +213,15 @@
         editItem(item) {
             this.editing = true;
             //TODO: edit change plan code, change this probably
-            this.$store.dispatch('startChangePlan', item.name);
+            console.log(item);
+            var changePlan = {
+                name: item.name,
+                datacenterName: item.datacenterName,
+                datacenterDescription: item.datacenterDescription,
+                datacenterId: item.datacenterId,
+                changePlanId: item.id
+            };
+            this.$store.dispatch('startChangePlan', changePlan);
             this.$router.push({ name: 'assets'})
         },
         addItem(item) {

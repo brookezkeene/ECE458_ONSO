@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Web.Api.Common;
 using Web.Api.Common.Extensions;
 using Web.Api.Infrastructure.DbContexts;
@@ -58,7 +59,8 @@ namespace Web.Api.Infrastructure.Repositories
                 .Where(x => x.Id == changePlanId)
                 .AsNoTracking()
                 .ToListAsync();
-            return changePlans;
+            var list = changePlans.OrderBy(q => q.CreatedDate).ToList();
+            return list;
         }
         public async Task<int> AddChangePlanAsync(ChangePlan changePlan)
         {
@@ -67,7 +69,9 @@ namespace Web.Api.Infrastructure.Repositories
         }
         public async Task<int> AddChangePlanItemAsync(ChangePlanItem changePlanItem)
         {
-            if(!await _dbContext.ChangePlanItems.AnyAsync(o => o.AssetId == changePlanItem.AssetId && o.ChangePlanId == changePlanItem.ChangePlanId))
+            
+            if (!await _dbContext.ChangePlanItems.AnyAsync(o => o.AssetId == changePlanItem.AssetId && 
+                    o.ChangePlanId == changePlanItem.ChangePlanId && changePlanItem.ExecutionType.Equals("update")))
             {
                 _dbContext.ChangePlanItems.Add(changePlanItem);
                 return await _dbContext.SaveChangesAsync();
@@ -77,11 +81,14 @@ namespace Web.Api.Infrastructure.Repositories
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
             updatedChangePlan.NewData = changePlanItem.NewData;
-            updatedChangePlan.CreatedDate = changePlanItem.CreatedDate;
 
             return await UpdateChangePlanItemAsync(updatedChangePlan);
         }
-        //TODO: can you update a changePlan?
+        public async Task<int> UpdateChangePlanAsync(ChangePlan changePlan)
+        {
+            _dbContext.ChangePlans.Update(changePlan);
+            return await _dbContext.SaveChangesAsync();
+        }
         public async Task<int> UpdateChangePlanItemAsync(ChangePlanItem changePlanItem)
         {
             _dbContext.ChangePlanItems.Update(changePlanItem);
@@ -106,11 +113,42 @@ namespace Web.Api.Infrastructure.Repositories
                .Where(x => x.Id == changePlanId)
                .AsNoTracking()
                .ToListAsync();
-            foreach(ChangePlanItem changePlanItem in changePlanItems)
+            foreach (ChangePlanItem changePlanItem in changePlanItems)
             {
                 _dbContext.ChangePlanItems.Remove(changePlanItem);
             }
             return await _dbContext.SaveChangesAsync();
         }
+        public async Task<int> ExecuteChangePlan(List<ChangePlanItem> changePlanItems)
+        {
+
+            for (int i = 0; i < changePlanItems.Count(); i ++ ) 
+            {   
+                var changePlanItem = changePlanItems[i];
+                if (changePlanItem.ExecutionType.Equals("create"))
+                {
+                    var asset = JsonConvert.DeserializeObject<Asset>(changePlanItem.NewData);
+                    _dbContext.Assets.Add(asset);
+                }
+                else if (changePlanItem.ExecutionType.Equals("update"))
+                {
+                    var asset = JsonConvert.DeserializeObject<Asset>(changePlanItem.NewData);
+                    _dbContext.Assets.Update(asset);
+                }
+                else if (changePlanItem.ExecutionType.Equals("decommission"))
+                {
+                    var decommissionedAsset = JsonConvert.DeserializeObject<DecommissionedAsset>(changePlanItem.NewData);
+                    var asset = await _dbContext.Assets
+                                .Where(x => x.Id == decommissionedAsset.Id)
+                                .AsNoTracking()
+                                .SingleOrDefaultAsync();
+                    _dbContext.DecommissionedAssets.Add(decommissionedAsset);
+                    _dbContext.Assets.Remove(asset);
+
+                }
+            }
+            return await _dbContext.SaveChangesAsync();
+        }
+
     }
 }

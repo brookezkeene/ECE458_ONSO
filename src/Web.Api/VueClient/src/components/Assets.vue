@@ -345,16 +345,19 @@
                 })
         },
 
-        async created() {
-            this.initializeDatacenters();
-            this.initialize();
-            if (this.$store.getters.isChangePlan) {
-                this.modifyAssetsForChangePlan();
-            }
-
+        async created() { 
+            this.createPage();
         },
 
         methods: {
+            createPage() {
+                this.initializeDatacenters();
+                this.initialize();
+                this.getAssetsFromApi();
+                if (this.$store.getters.isChangePlan) {
+                    this.modifyAssetsForChangePlan();
+                }
+            },
             async getAssetsFromApi() {
                 this.loading = true;
                 const { sortBy, sortDesc, page, itemsPerPage } = this.options;
@@ -370,6 +373,7 @@
             },
             async fillQuery(sortBy, sortDesc, page, itemsPerPage) {
                 var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
+                console.log(searchDatacenter);
                 if (typeof searchDatacenter === 'undefined') {
                     this.assetSearchQuery.datacenter = '';
                 } else {
@@ -399,10 +403,21 @@
                 this.loading = false;
             },
             async initializeDatacenters() {
-                this.datacenters = await this.datacenterRepository.list();
-                var datacenter = {
-                    description: "All Datacenters",
-                    name: "All",
+                var datacenter;
+                if (this.$store.getters.isChangePlan) {
+                    this.selectedDatacenter = this.$store.getters.changePlan.datacenterDescription; //Limiting change plans to a datacenter
+                    this.datacenters = [];
+                    datacenter = {
+                        description: this.selectedDatacenter,
+                        name: this.$store.getters.changePlan.datacenterName,
+                        id: this.$store.getters.changePlan.datacenterId,
+                    }
+                } else {
+                    this.datacenters = await this.datacenterRepository.list();
+                    datacenter = {
+                        description: "All Datacenters",
+                        name: "All",
+                    }
                 }
                 this.datacenters.push(datacenter);
                 this.loading = false;
@@ -425,6 +440,7 @@
                         await this.initialize();
                     })
             },
+            // Is this unnecessary?
             async datacenterSearch() {
                 var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
                 this.assets = await this.assetRepository.list(searchDatacenter.id);
@@ -503,6 +519,7 @@
                     && value.toLowerCase() <= this.endRackValue.toLowerCase();
             },
             async modifyAssetsForChangePlan() {
+                console.log(this.selectedDatacenter);
                 console.log("In a change plan!");
             },
         },

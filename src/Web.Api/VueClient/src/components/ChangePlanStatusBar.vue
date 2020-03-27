@@ -2,7 +2,7 @@
 <template>
     <v-snackbar class="green--text text--darken-4" v-model="changePlan" top color="#8eff47" :timeout=0>
         <span>
-            Editing Change Plan: &nbsp; 
+            Editing Change Plan:&nbsp; 
         </span>
         <strong>
             {{changePlanName}}
@@ -20,7 +20,7 @@
                 return this.$store.getters.isChangePlan;
             },
             changePlanName() {
-                return this.$store.getters.changePlanName;
+                return this.$store.getters.changePlan.name;
             }
         },
         data() {
