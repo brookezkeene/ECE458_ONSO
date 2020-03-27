@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using Web.Api.Common;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Mappers;
 using Web.Api.Core.Services.Interfaces;
+using Web.Api.Infrastructure.Entities;
 using Web.Api.Infrastructure.Repositories.Interfaces;
 
 namespace Web.Api.Core.Services
@@ -56,6 +58,12 @@ namespace Web.Api.Core.Services
             var updated = await _repository.UpdateChangePlanItemAsync(entity);
             return updated;
         }
+        public async Task<int> UpdateChangePlanAsync(ChangePlanDto changePlan)
+        {
+            var entity = changePlan.ToEntity();
+            var updated = await _repository.UpdateChangePlanAsync(entity);
+            return updated;
+        }
         public async Task DeleteChangePlanAsync(ChangePlanDto changePlan)
         {
             var entity = changePlan.ToEntity();
@@ -65,6 +73,33 @@ namespace Web.Api.Core.Services
         {
             var entity = changePlanItem.ToEntity();
             await _repository.DeleteChangePlanItemAsync(entity);
+        }
+        public async Task ExecuteChangePlan(List<ChangePlanItemDto> changePlanItems)
+        {
+            List<ChangePlanItem> changePlanItemsEntities = new List<ChangePlanItem>();
+            for (int i = 0; i < changePlanItems.Count; i++)
+            {
+                var changePlanItem = changePlanItems[i];
+                //NOTE: THE NEWDATA HERE IS A CreateAssetApiDto
+                if (changePlanItem.ExecutionType.Equals("create") || changePlanItem.ExecutionType.Equals("update"))
+                {
+                    var assetDto = JsonConvert.DeserializeObject<AssetDto>(changePlanItem.NewData);
+                    var asset = assetDto.ToEntity();
+                    changePlanItem.NewData = JsonConvert.SerializeObject(asset);
+                    var changePlanItemEntity = changePlanItem.ToEntity();
+                    changePlanItemsEntities.Add(changePlanItemEntity);
+                }
+                //NOTE: THE NEWDATA HERE IS A DecommissionedAssetQuery
+                else if (changePlanItem.ExecutionType.Equals("decommission"))
+                {
+                    var decommissionedAssetDto = JsonConvert.DeserializeObject<DecommissionedAssetDto>(changePlanItem.NewData);
+                    var decommissionedAsset = decommissionedAssetDto.ToEntity();
+                    changePlanItem.NewData = JsonConvert.SerializeObject(decommissionedAsset);
+                    var changePlanItemEntity = changePlanItem.ToEntity();
+                    changePlanItemsEntities.Add(changePlanItemEntity);
+                }
+            }
+            await _repository.ExecuteChangePlan(changePlanItemsEntities);
         }
     }
 }

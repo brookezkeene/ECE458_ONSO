@@ -13,5 +13,9 @@ namespace Web.Api.Dtos.ChangePlans
         public Guid CreatedById { get; set; }
         public string Name { get; set; }
         public Guid DatacenterId { get; set; }
+        public string DatacenterName { get; set; }
+        public string DatacenterDescription { get; set; }
+
+
     }
 }
