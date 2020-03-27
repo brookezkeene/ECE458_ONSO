@@ -137,7 +137,8 @@
         /*eslint-disable*/
         async initialize() {
             // TODO: replace with change plan data
-            this.assets = await this.changePlanRepository.list(this.$store.getters.userId); //only list change plans for a given user
+            this.assets = await this.assetRepository.list();
+            //this.assets = await this.changePlanRepository.list(this.$store.getters.userId); //only list change plans for a given user
             console.log(this.assets);
             this.loading = false;
         },
