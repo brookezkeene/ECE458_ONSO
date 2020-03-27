@@ -82,17 +82,17 @@ namespace Web.Api.Controllers
             return Ok(roles);
         }
 
-        [HttpGet("{id}/claims")]
-        public async Task<ActionResult<string>> GetUserClaims(Guid id)
-        {
-            var user = await _userManager.FindByIdAsync(id.ToString());
-            if (user == null)
-            {
-                return NotFound("User not found.");
-            }
-            var claims = await _userManager.GetClaimsAsync(user);
-            return Ok(claims);
-        }
+        //[HttpGet("{id}/claims")]
+        //public async Task<ActionResult<string>> GetUserClaims(Guid id)
+        //{
+        //    var user = await _userManager.FindByIdAsync(id.ToString());
+        //    if (user == null)
+        //    {
+        //        return NotFound("User not found.");
+        //    }
+        //    var claims = await _userManager.GetClaimsAsync(user);
+        //    return Ok(claims);
+        //}
 
         [HttpPut("{id}/roles")]
         public async Task<IActionResult> PostUserRoles(Guid id, [FromBody] UpdateUserRoleApiDto roles)
