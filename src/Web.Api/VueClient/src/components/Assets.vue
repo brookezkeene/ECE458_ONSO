@@ -308,7 +308,16 @@
                 return this.$store.getters.hasPowerPermission || this.$store.getters.isAdmin
             },
             filteredHeaders() {
-                return (this.permission) ? this.headers : this.headers.filter(h => h.text !== "Actions" && h.text !== "Power")
+                var newHeaders = this.headers;
+
+                if (!this.powerPermission) {
+                    newHeaders = newHeaders.filter(h => h.text !== "Power")
+                }
+                if (!this.permission) {
+                    newHeaders = newHeaders.filter(h => h.text !== "Actions")
+                }
+
+                return newHeaders;
             },
         },
         watch: {
