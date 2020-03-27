@@ -29,8 +29,10 @@
             </template>
 
             <template v-slot:item.action="{ item }">
-                <v-row class="pl-5">
-                    <v-icon medium
+                <v-row 
+                       class="pl-5">
+                    <v-icon v-if="itemPermission(item)"
+                            medium
                             @click="deleteItem(item)">mdi-delete</v-icon>
                 </v-row>
             </template>
@@ -43,8 +45,6 @@
 </template>
 
 <script>
-    import Auth from "../auth"
-
     export default {
         name: 'rack-table',
         inject: ['rackRepository', 'datacenterRepository'],
@@ -92,11 +92,14 @@
             },
         },
         computed: {
-            admin() {
-                return Auth.isAdmin()
+            permission() {
+                return this.$store.getters.isAdmin || this.$store.getters.hasAssetPermission
+            },
+            datacenterPermissions() {
+                return this.$store.getters.hasDatacenters
             },
             filteredHeaders() {
-                return (this.admin) ? this.headers : this.headers.filter(h => h.text !== "Actions")
+                return (this.permission) ? this.headers : this.headers.filter(h => h.text !== "Actions")
             },
         },
         mounted() {
@@ -178,6 +181,14 @@
             async updateRacks() { // This might slow things down if we have a lot of racks to get from the backend !!!
                 this.$emit('updated');
                 this.getDataFromApi(); // re-call with same datacenter name if racks were added or deleted
+            },
+            itemPermission(item) {
+                if (this.admin || this.datacenterPermissions.includes(item.datacenter.description)) {
+                    return true
+                }
+                else {
+                    return false
+                }
             }
         }
     }
