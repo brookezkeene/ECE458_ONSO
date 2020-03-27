@@ -10,8 +10,7 @@
                               :search="search"
                               class="elevation-1 pa-10"
                               multi-sort
-                              show-expand
-                              @click:row="showDetails">
+                              show-expand>
 
                     <template v-slot:top>
                         <v-toolbar flat class="mb-6">
@@ -203,6 +202,7 @@
             
             this.$router.push({ name: 'change-plan-new' })
         },
+        // Don't think we will need clickable rows here since we have the drop down
         showDetails(item) {
             //TODO: show change plan summary code
             if (!this.editing) {
