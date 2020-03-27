@@ -99,7 +99,7 @@
             },
             filteredMenuItems() {
                 var newMenu = this.menuItems;
-                if (!this.$store.getters.hasAuditPermission) {
+                if (!this.$store.getters.hasAuditPermission && !this.$store.getters.isAdmin) {
                     newMenu = newMenu.filter(h => h.title !== "System Log");
                 }
                 return newMenu
