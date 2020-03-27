@@ -338,6 +338,11 @@
 
         async created() {
             this.initializeDatacenters();
+            this.initialize();
+            if (this.$store.getters.isChangePlan) {
+                this.modifyAssetsForChangePlan();
+            }
+
         },
 
         methods: {
@@ -381,10 +386,8 @@
                 return '';
             },
             async initialize() {
-
-                this.assets = await this.getAssetsFromApi();
+                await this.getAssetsFromApi();
                 this.loading = false;
-
             },
             async initializeDatacenters() {
                 this.datacenters = await this.datacenterRepository.list();
@@ -394,7 +397,6 @@
                 }
                 this.datacenters.push(datacenter);
                 this.loading = false;
-
             },
             deleteItem(item) {
                 this.editing = true;
@@ -490,6 +492,9 @@
                 // is between the rack values inputted
                 return value.toLowerCase() >= this.startRackValue.toLowerCase()
                     && value.toLowerCase() <= this.endRackValue.toLowerCase();
+            },
+            async modifyAssetsForChangePlan() {
+                console.log("In a change plan!");
             },
         },
     }

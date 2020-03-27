@@ -278,7 +278,7 @@
                     datacenterId: '',
                     hostname: '',
                     comment: '',
-                    rackPosition: 0,
+                    rackPosition: 1,
                     ownerId: '',
                     modelId: '',
                     assetNumber: ''
@@ -301,7 +301,7 @@
                     assetRules: v => /^[1-9]\d{5}$/.test(v) || 'Valid asset number is required',
                     datacenterRules: v => /^(?!\s*$).+/.test(v) || 'Datacenter is required',
                     rackRules: v => /^(?!\s*$).+/.test(v) || 'Rack is required',
-                    rackuRules: v => /^(?!\s*$).+/.test(v) || 'Rack U is required',
+                    rackuRules: v => (/^(?!\s*$).+/.test(v) &&  v>0) || 'Valid rack U is required',
                     macAddressRules: v => (/^([0-9A-Fa-f]{2}[\W_]*){5}([0-9A-Fa-f]{2})$/.test(v) || /^$/.test(v)) || 'Invalid MAC Address.'
                 },
                 valid: true

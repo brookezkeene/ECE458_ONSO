@@ -3,8 +3,10 @@ import axios from 'axios';
 const resource = '/changePlans';
 
 export default {
-    list() {
-        return axios.get(`${resource}`, { params: { pageSize: 2000000000 } })
+    list(user_id) {
+        /*eslint-disable*/
+        console.log(user_id);
+        return axios.get(`${resource}/${user_id}/changeplans`, { params: { pageSize: 2000000000 } })
             .then(response => {
                 return response.data.data;
             });
