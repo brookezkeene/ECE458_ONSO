@@ -17,6 +17,7 @@ namespace Web.Api.Infrastructure.Entities
         public Guid CreatedById {get; set; }
         public Guid DatacenterId { get; set; }
         public string DatacenterName { get; set; }
+        public string DatacenterDescription { get; set; }
         public string Name { get; set; }
 
     }
