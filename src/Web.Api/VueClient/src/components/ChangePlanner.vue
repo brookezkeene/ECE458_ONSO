@@ -1,5 +1,6 @@
 ﻿<template>
     <v-card flat>
+        <changePlanBar></changePlanBar>
         <v-card-title>Change Planner</v-card-title>
         <v-container>
             <v-card>
@@ -92,7 +93,13 @@
 </template>
 
 <script>
+
+    import changePlanBar from '@/components/ChangePlanStatusBar';
+
     export default {
+        components: {
+            changePlanBar
+        },
         inject: ['assetRepository','changePlanRepository'],
         data() {
             return {
