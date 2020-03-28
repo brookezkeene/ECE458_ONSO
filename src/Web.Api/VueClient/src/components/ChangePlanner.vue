@@ -38,11 +38,6 @@
                                 mdi-check-circle-outline
                             </v-icon>
                         </div>
-                        <div v-else>
-                            <v-icon color="red">
-                                mdi-close-circle-outline
-                            </v-icon>
-                        </div>
                     </template>
 
                     <template v-slot:item.action="{ item }">
@@ -78,21 +73,6 @@
                             <v-tooltip top>
                                 <template v-if="!item.executedDate" v-slot:activator="{ on }">
                                     <v-btn icon v-on="on"
-                                           color="primary"
-                                           @click="executeItem(item)">
-                                        <v-icon medium
-                                                class="mr-2">
-                                            mdi-play-circle
-                                        </v-icon>
-                                    </v-btn>
-                                </template>
-
-                                <span>Execute</span>
-                            </v-tooltip>
-
-                            <v-tooltip top>
-                                <template v-if="!item.executedDate" v-slot:activator="{ on }">
-                                    <v-btn icon v-on="on"
                                            @click="deleteItem(item)">
                                         <v-icon medium
                                                 class="mr-2">
@@ -112,41 +92,41 @@
 </template>
 
 <script>
-  export default {
-    inject: ['assetRepository','changePlanRepository'],
-    data() {
-        return {
-        loading: true,
-        search: '',
-        // TODO: replace with change plan data
-        headers: [
-            { text: 'Datacenter', value: 'datacenterName' },
-            { text: 'Change Plan Name', value: 'name' },
-            { text: 'Executed', value: 'executed', },
-            { text: 'Date & Time', value: 'createdDate' },
-            { text: 'Actions', value: 'action', sortable: false },
-        ],
-        assets: [],
-        defaultItem: {
-            id: '',
-            datacenter: '',
-            modelId: '',
-            hostname: '',
-            rackId: '',
-            rackPosition: '',
-            ownerId: '',
-            comment: '',
-            poweredOn: false,
-        },
-            editing: false,
-        rules: {
-            nameRules: v => /^(?=\s*\S).*$/.test(v) || 'Name is required',
-            // TODO: add rule for datacenter
-        },
+    export default {
+        inject: ['assetRepository','changePlanRepository'],
+        data() {
+            return {
+            loading: true,
+            search: '',
+            // TODO: replace with change plan data
+            headers: [
+                { text: 'Datacenter', value: 'datacenterName' },
+                { text: 'Change Plan Name', value: 'name' },
+                { text: 'Executed', value: 'executed', },
+                { text: 'Date & Time', value: 'createdDate' },
+                { text: 'Actions', value: 'action', sortable: false },
+            ],
+            assets: [],
+            defaultItem: {
+                id: '',
+                datacenter: '',
+                modelId: '',
+                hostname: '',
+                rackId: '',
+                rackPosition: '',
+                ownerId: '',
+                comment: '',
+                poweredOn: false,
+            },
+                editing: false,
+            rules: {
+                nameRules: v => /^(?=\s*\S).*$/.test(v) || 'Name is required',
+                // TODO: add rule for datacenter
+            },
         }
     },
     async created() {
-      this.initialize()
+        this.initialize()
     },
 
     methods: {
@@ -167,12 +147,6 @@
         printItem (item) {
             //TODO: print work order code
             console.log("print" + item);
-        },
-        executeItem(item) {
-            //TODO: execute change plan code
-            this.changePlanRepository.execute(item);
-            confirm('Are you sure you want to execute this change plan?')
-            console.log("execute" + item.name);
         },
         editItem(item) {
             this.editing = true;

@@ -181,7 +181,7 @@
                 headers: [
                     { text: 'Time Decommissioned', value: 'dateDecommissioned' },
                     { text: 'Decomissioned By User', value: 'decommissioner' },
-                    //{ text: 'Asset Number', value: 'assetNo'},
+                    { text: 'Asset Number', value: 'data.AssetNumber'},
                     { text: 'Model Vendor', value: 'modelName' },
                     { text: 'Model Number', value: 'modelNumber', },
                     { text: 'Hostname', value: 'hostname' },
@@ -269,6 +269,8 @@
                         var assetInfo = JSON.parse(e.data);
                         e.data = assetInfo;
                     })
+                    /*eslint-disable*/
+                    console.log(this.assets);
                     this.totalItems = data.totalCount;
                     this.loading = false;
                 })
