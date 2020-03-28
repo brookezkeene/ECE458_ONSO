@@ -207,8 +207,9 @@
         },
         executeItem(item) {
             //TODO: execute change plan code
+            this.changePlanRepository.execute(item);
             confirm('Are you sure you want to execute this change plan?')
-            console.log("execute" + item);
+            console.log("execute" + item.name);
         },
         editItem(item) {
             this.editing = true;

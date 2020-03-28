@@ -28,7 +28,7 @@ export default {
     },
     // Executing a change plan
     execute(item) {
-
+        return axios.put(`${resource}/${item.id}/execute`, item).then(response => response.data).catch(error => error);
     },
     // Creating a change plan item
     createItem(item) {
