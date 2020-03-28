@@ -24,6 +24,7 @@
             <v-card>
                 <v-spacer></v-spacer>
                 <v-data-table v-model="selectedAssets"
+                              calculate-widths
                               :headers="filteredHeaders"
                               :items="assets"
                               :search="search"
@@ -306,13 +307,13 @@
                 // Table data.
                 headers: [
                     { text: 'Model Vendor', value: 'vendor' },
-                    { text: 'Model Number', value: 'modelNumber', },
-                    { text: 'Asset Number', value: 'assetNumber'},
+                    { text: 'Model No.', value: 'modelNumber', },
+                    { text: 'Asset No.', value: 'assetNumber'},
                     { text: 'Hostname', value: 'hostname' },
                     { text: 'Datacenter', value: 'datacenter' },
                     { text: 'Rack', value: 'rack' },
                     { text: 'Rack U', value: 'rackPosition', },
-                    { text: 'Owner Username', value: 'owner' },
+                    { text: 'Owner', value: 'owner' },
                     { text: 'Power', value: 'power', sortable: false },
                     { text: 'Actions', value: 'action', sortable: false },
                 ],
