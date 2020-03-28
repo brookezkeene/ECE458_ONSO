@@ -181,6 +181,7 @@
                 headers: [
                     { text: 'Time Decommissioned', value: 'dateDecommissioned' },
                     { text: 'Decomissioned By User', value: 'decommissioner' },
+                    //{ text: 'Asset Number', value: 'assetNo'},
                     { text: 'Model Vendor', value: 'modelName' },
                     { text: 'Model Number', value: 'modelNumber', },
                     { text: 'Hostname', value: 'hostname' },

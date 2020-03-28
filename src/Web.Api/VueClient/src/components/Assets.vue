@@ -307,6 +307,7 @@
                 headers: [
                     { text: 'Model Vendor', value: 'vendor' },
                     { text: 'Model Number', value: 'modelNumber', },
+                    { text: 'Asset Number', value: 'assetNumber'},
                     { text: 'Hostname', value: 'hostname' },
                     { text: 'Datacenter', value: 'datacenter' },
                     { text: 'Rack', value: 'rack' },
