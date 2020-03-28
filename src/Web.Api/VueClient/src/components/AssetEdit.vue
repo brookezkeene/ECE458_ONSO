@@ -350,17 +350,29 @@
             save() {
                 console.log(this.editedItem);
                 console.log(this.selectedModel);
+
+                // Check if in a changeplan
+                if (this.$store.getters.isChangePlan) {
+                    this.editedItem.changePlanId = this.$store.getters.changePlan.id;
+                }
+
                 if (this.editedItem.id.length != 0) {
 
                     for (var j = 0; j < this.editedItem.networkPorts.length; j++) {
                         this.editedItem.networkPorts[j].modelNetworkPortId = this.selectedModel.networkPorts[j].id;
                     }
+
                     console.log(this.editedItem);
+
                     this.assetRepository.update(this.editedItem).then(this.close());
                 } else {
+
                     for (var i = 0; i < this.editedItem.networkPorts.length; i++) {
                         this.editedItem.networkPorts[i].modelNetworkPortId = this.selectedModel.networkPorts[i].id;
                     }
+
+                    console.log(this.editedItem);
+
                     this.assetRepository.create(this.editedItem).then(this.close());
                 }
                 console.log(this.editedItem);

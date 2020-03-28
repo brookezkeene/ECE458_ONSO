@@ -117,8 +117,7 @@
         },
         methods: {
             async initialize() {
-                //this.changePlanItems = await this.changePlanRepository.listItems(this.id);
-                this.changePlanItems = await this.assetRepository.list();
+                this.changePlanItems = await this.changePlanRepository.listItems(this.id);
             },
             execute(item) {
                 (confirm('Are you sure you want to execute this change plan?') && this.changePlanRepository.execute(item))
