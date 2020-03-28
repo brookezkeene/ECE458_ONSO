@@ -6,12 +6,14 @@
         <v-container>
             <v-card>
                 <v-spacer></v-spacer>
-                <v-data-table :headers="filteredHeaders"
+                <v-data-table v-model="selectedAssets"
+                              :headers="filteredHeaders"
                               :items="assets"
                               :search="search"
                               class="pa-5"
                               @click:row="showDetails"
                               :server-items-length="totalItems"
+                              show-select
                               :options.sync="options"
                               :key="selectedDatacenter">
 
@@ -37,9 +39,8 @@
                                     </v-col>
                                 </v-row>
                             </v-container>
-
                             <v-spacer></v-spacer>
-
+                            <v-spacer></v-spacer>
                             <v-btn v-if="permission" color="primary" dark class="mb-2" @click="addItem">Add asset</v-btn>
 
                             <v-dialog v-model="instructionsDialog" max-width="550px">
@@ -132,6 +133,37 @@
                         </v-row>
 
 
+                    </template>
+
+                    <!--Customize Select All/None Option-->
+                    <template v-slot:header.data-table-select="{ on, props }">
+                        <v-row>
+                            <span style="white-space:nowrap">Select All</span>
+                        </v-row>
+                        <v-simple-checkbox color="primary"
+                                           class="pb-4"
+                                           v-bind="props"
+                                           v-on="on"></v-simple-checkbox>
+                    </template>
+
+                    <!--Add Button to Data Table Footer-->
+                    <template v-slot:footer>
+                        <v-row class="pa-10">
+                            <v-spacer></v-spacer>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn dark
+                                           color="primary"
+                                           v-on="on"
+                                           @click="addLabels">
+                                        Generate Labels
+                                    </v-btn>
+                                </template>
+
+                                <span>Generate Asset Labels for the current selection of Assets</span>
+                            </v-tooltip>
+                            <v-spacer></v-spacer>
+                        </v-row>
                     </template>
 
                     <template v-if="permission" v-slot:item.action="{ item }">
@@ -236,6 +268,7 @@
         data() {
             return {
                 changePlanner: false,
+                selectedAssets: [],
                 selectedDatacenter: 'All Datacenters',
                 // Filter values.
                 hostnameSearch: '',
@@ -243,7 +276,6 @@
                 numberSearch: '',
                 startRackValue: '',
                 endRackValue: '',
-
                 datacenters: [],
                 instructionsDialog: false,
                 loading: true,
@@ -429,6 +461,10 @@
             },
             addItem() {
                 this.$router.push({ name: 'asset-new' })
+            },
+            addLabels() {
+                /*eslint-disable*/
+                console.log(this.selectedAssets);
             },
             turnOn(item) {
                 this.editing = true;
