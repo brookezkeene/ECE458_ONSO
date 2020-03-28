@@ -22,18 +22,21 @@ namespace Web.Api.Mappers
         {
             // Core
             CreateMap<AssetDto, AssetApiDto>()
+                .ForMember(x => x.ChangePlanId, opt => opt.Ignore())
                 .IncludeAllDerived()
                 .ReverseMap();
 
             // Create
             CreateMap<CreateAssetPowerPortApiDto, AssetPowerPortDto>(MemberList.Source);
             CreateMap<CreateAssetNetworkPortApiDto, AssetNetworkPortDto>(MemberList.Source);
-            CreateMap<CreateAssetApiDto, AssetDto>(MemberList.Source);
+            CreateMap<CreateAssetApiDto, AssetDto>(MemberList.Source)
+                .ForSourceMember(x => x.ChangePlanId, opt => opt.DoNotValidate());
 
             // Update
             CreateMap<UpdateAssetPowerPortApiDto, AssetPowerPortDto>(MemberList.Source);
             CreateMap<UpdateAssetNetworkPortApiDto, AssetNetworkPortDto>(MemberList.Source);
-            CreateMap<UpdateAssetApiDto, AssetDto>(MemberList.Source);
+            CreateMap<UpdateAssetApiDto, AssetDto>(MemberList.Source)
+                .ForSourceMember(x => x.ChangePlanId, opt => opt.DoNotValidate());;
 
             // Read
             CreateMap<AssetDto, GetAssetsApiDto>()

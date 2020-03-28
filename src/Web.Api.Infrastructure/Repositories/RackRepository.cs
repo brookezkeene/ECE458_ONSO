@@ -82,7 +82,6 @@ namespace Web.Api.Infrastructure.Repositories
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
         }
-
         public async Task<int> AddRackAsync(Rack rack)
         {
             _dbContext.Racks.Add(rack);

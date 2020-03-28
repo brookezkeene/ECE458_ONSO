@@ -68,14 +68,19 @@ namespace Web.Api.Controllers
             await _changePlanService.CreateChangePlanItemAsync(changePlanItemDto);
             return Ok();
         }
-        //TODO: NEED TO SEE IF WE NEED ANOTHER FORMAT/DESERIALIZE DATA OR SOMETHING
-        [HttpPut("changeplanitem")]
-        public async Task<IActionResult> Put(UpdateChangePlanItemApiDto changePlanItem)
+        [HttpPut("changeplan")]
+        public async Task<IActionResult> Put(ChangePlanDto changePlan)
         {
-            var changePlanItemDto = changePlanItem.MapTo<ChangePlanItemDto>();
-            await _changePlanService.UpdateChangePlanItemAsync(changePlanItemDto);
+            await _changePlanService.UpdateChangePlanAsync(changePlan);
             return NoContent();
         }
+        [HttpPut("changeplanitem")]
+        public async Task<IActionResult> Put(ChangePlanItemDto changePlanItem)
+        {
+            await _changePlanService.UpdateChangePlanItemAsync(changePlanItem);
+            return NoContent();
+        }
+        
         [HttpDelete("{id}/changeplan")]
         public async Task<IActionResult> DeleteChangePlan(Guid id)
         {
@@ -90,49 +95,22 @@ namespace Web.Api.Controllers
             await _changePlanService.DeleteChangePlanItemAsync(changePlanItem);
             return Ok();
         }
+        /**
+         * The data inside of the change plan items are entities! 
+         * (asset and decommissionedasset entities)
+         */
         [HttpPut("{id}/execute")]
         public async Task<IActionResult> ExecuteChangePlan(Guid id)
         {
             var changePlanItems = await _changePlanService.GetChangePlanItemsAsync(id);
-            for (int i = 0; i < changePlanItems.Count(); i ++)
-            {
-                var changePlanItem = changePlanItems[i];
-                //NOTE: THE NEWDATA HERE IS A CreateAssetApiDto
-                if (changePlanItem.ExecutionType.Equals("create"))
-                {
-                    var assetApiDto = JsonConvert.DeserializeObject<CreateAssetApiDto>(changePlanItem.NewData);
-                    assetApiDto.LastUpdatedDate = DateTime.Now;
-                    var assetDto = assetApiDto.MapTo<AssetDto>();
-                    changePlanItem.NewData = JsonConvert.SerializeObject(assetDto);
-                }
-                //NOTE: THE NEWDATA HERE IS A UpdateAssetApiDto
-                else if (changePlanItem.ExecutionType.Equals("update"))
-                {
-                    var assetApiDto = JsonConvert.DeserializeObject<UpdateAssetApiDto>(changePlanItem.NewData);
-                    assetApiDto.LastUpdatedDate = DateTime.Now;
-                    var assetDto = assetApiDto.MapTo<AssetDto>();
-                    changePlanItem.NewData = JsonConvert.SerializeObject(assetDto);
-                }
-                //NOTE: THE NEWDATA HERE IS A DecommissionedAssetQuery
-                else if (changePlanItem.ExecutionType.Equals("decommission"))
-                {
-                    var query = JsonConvert.DeserializeObject<DecommissionedAssetQuery>(changePlanItem.NewData);
-                    var assetDto = await _assetService.GetAssetForDecommissioning(changePlanItem.AssetId);
-                    var createDecommissionedAsset = assetDto.MapTo<CreateDecommissionedAsset>();
-
-                    //adding network graph to the asset
-                    createDecommissionedAsset.NetworkPortGraph = query.NetworkPortGraph;
-
-                    //creating a new decommissionedAssetDto from assetDto, filling in the data, decommissioner, and date
-                    var jsonString = JsonConvert.SerializeObject(createDecommissionedAsset);
-                    var decommisionedAsset = assetDto.MapTo<DecommissionedAssetDto>();
-                    decommisionedAsset.Data = jsonString;
-                    decommisionedAsset.Decommissioner = query.Decommissioner;
-                    decommisionedAsset.DateDecommissioned = DateTime.Now;
-
-                }
-            }
+            //waiting to see if the change plan successfully finished
             await _changePlanService.ExecuteChangePlan(changePlanItems);
+            
+            //setting a new execute date for the change plan
+            var changePlan = await _changePlanService.GetChangePlanAsync(id);
+            changePlan.ExecutedDate = DateTime.Now;
+            await _changePlanService.UpdateChangePlanAsync(changePlan);
+            
             return Ok();
         }
 

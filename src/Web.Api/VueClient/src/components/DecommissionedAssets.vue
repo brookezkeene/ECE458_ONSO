@@ -1,6 +1,7 @@
 ﻿﻿
 <template>
     <v-card flat>
+        <changePlanBar></changePlanBar>
         <v-card-title>Decommissioned Assets</v-card-title>
         <v-container>
             <v-card>
@@ -23,7 +24,7 @@
                                         <v-label>Filter by ... </v-label>
                                     </v-col>
                                     <v-col cols="5">
-                                        
+
                                         <v-text-field prepend-inner-icon="mdi-magnify"
                                                       :search-input.sync="datacenterValue"
                                                       v-model="datacenterValue"
@@ -61,7 +62,7 @@
                                                                       readonly
                                                                       v-on="on"></v-text-field>
                                                     </v-col>
-                                                    
+
                                                 </v-row>
 
                                             </template>
@@ -72,7 +73,7 @@
                                             </v-date-picker>
                                         </v-menu>
                                     </v-col>
-                                    
+
                                 </v-row>
 
                             </v-container>
@@ -124,27 +125,27 @@
                             </v-col>
                         </v-row>
                         <v-row>
-                        <v-spacer></v-spacer>
-                        <!-- Custom filters; sorts between rack ranges -->
-                        <v-col cols="4">
-                            <v-row class="mt-4 pt-2">
-                                <v-text-field v-model="startRackValue"
-                                              placeholder="Start"
-                                              type="text"
-                                              label="Rack Range"
-                                              @input="getAssetsFromApi()"
-                                              style="width:0">
-                                </v-text-field>
+                            <v-spacer></v-spacer>
+                            <!-- Custom filters; sorts between rack ranges -->
+                            <v-col cols="4">
+                                <v-row class="mt-4 pt-2">
+                                    <v-text-field v-model="startRackValue"
+                                                  placeholder="Start"
+                                                  type="text"
+                                                  label="Rack Range"
+                                                  @input="getAssetsFromApi()"
+                                                  style="width:0">
+                                    </v-text-field>
 
-                                <v-text-field v-model="endRackValue"
-                                              type="text"
-                                              placeholder="End"
-                                              @input="getAssetsFromApi()"
-                                              style="width:0">
-                                </v-text-field>
-                            </v-row>
-                        </v-col>
-                        <v-spacer></v-spacer>
+                                    <v-text-field v-model="endRackValue"
+                                                  type="text"
+                                                  placeholder="End"
+                                                  @input="getAssetsFromApi()"
+                                                  style="width:0">
+                                    </v-text-field>
+                                </v-row>
+                            </v-col>
+                            <v-spacer></v-spacer>
                         </v-row>
                     </template>
 
@@ -158,8 +159,12 @@
 </template>
 
 <script>
+
+    import changePlanBar from '@/components/ChangePlanStatusBar';
+
     export default {
         components: {
+            changePlanBar
         },
         inject: ['assetRepository', 'modelRepository', 'userRepository', 'datacenterRepository'],
         data() {
@@ -181,6 +186,7 @@
                 headers: [
                     { text: 'Time Decommissioned', value: 'dateDecommissioned' },
                     { text: 'Decomissioned By User', value: 'decommissioner' },
+                    { text: 'Asset Number', value: 'data.AssetNumber'},
                     { text: 'Model Vendor', value: 'modelName' },
                     { text: 'Model Number', value: 'modelNumber', },
                     { text: 'Hostname', value: 'hostname' },
@@ -268,6 +274,8 @@
                         var assetInfo = JSON.parse(e.data);
                         e.data = assetInfo;
                     })
+                    /*eslint-disable*/
+                    console.log(this.assets);
                     this.totalItems = data.totalCount;
                     this.loading = false;
                 })
@@ -279,6 +287,9 @@
         },
 
         methods: {
+            initialize() {
+                 this.$store.dispatch('loadUsername');
+            },
 
             async getAssetsFromApi() {
                 this.loading = true;
@@ -298,7 +309,12 @@
                 return info;
             },
             fillQuery(sortBy, sortDesc, page, itemsPerPage) {
-               
+                console.log(this.datacenterValue);
+                if (this.$store.getters.isChangePlan) {
+                    this.datacenterValue = this.$store.getters.changePlan.datacenterName;
+                }
+                console.log(this.datacenterValue);
+                this.assetSearchQuery.datacenterName = this.datacenterValue;
                 this.assetSearchQuery.datacenterName = this.datacenterValue;
                 this.assetSearchQuery.generalSearch = this.search;
                 this.assetSearchQuery.decommissioner = this.decommissioner;

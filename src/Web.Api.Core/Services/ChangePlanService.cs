@@ -16,9 +16,19 @@ namespace Web.Api.Core.Services
     public class ChangePlanService : IChangePlanService
     {
         private readonly IChangePlanRepository _repository;
-        public ChangePlanService(IChangePlanRepository repository)
+        private readonly IAssetRepository _assetRepository;
+        private readonly IModelRepository _modelRepository;
+        private readonly IRackRepository _rackRepository;
+        private readonly IIdentityRepository _ownerRepository;
+
+        public ChangePlanService(IChangePlanRepository repository, IAssetRepository assetRepository, 
+            IModelRepository modelRepository, IRackRepository rackRepository, IIdentityRepository ownerRepository)
         {
             _repository = repository;
+            _assetRepository = assetRepository;
+            _modelRepository = modelRepository;
+            _rackRepository = rackRepository;
+            _ownerRepository = ownerRepository;
         }
         public async Task<ChangePlanDto> GetChangePlanAsync(Guid changPlanId)
         {
@@ -52,6 +62,59 @@ namespace Web.Api.Core.Services
             await _repository.AddChangePlanItemAsync(entity);
             return entity.Id;
         }
+        public async Task<Guid> CreateChangePlanItemAsync(AssetDto assetDto, Guid changePlanId)
+        {
+            var asset = assetDto.ToEntity();
+            asset.Model = await _modelRepository.GetModelAsync(assetDto.ModelId);
+            asset.Rack = await _rackRepository.GetRackAsync(assetDto.RackId);
+            var changePlanItemDto = new ChangePlanItemDto
+            {
+                ChangePlanId = changePlanId,
+                ExecutionType = "create",
+                NewData = JsonConvert.SerializeObject(asset),
+                CreatedDate = DateTime.Now
+            };
+            var entity = changePlanItemDto.ToEntity();
+            await _repository.AddChangePlanItemAsync(entity);
+            
+            return entity.Id;
+        }
+        public async Task<Guid> UpdateChangePlanItemAsync(AssetDto assetDto, Guid changePlanId)
+        {
+            var asset = assetDto.ToEntity();
+            var originalAsset = _assetRepository.GetAssetAsync(assetDto.Id);
+
+            var changePlanItemDto = new ChangePlanItemDto
+            {
+                ChangePlanId = changePlanId,
+                AssetId = asset.Id,
+                NewData = JsonConvert.SerializeObject(asset),
+                PreviousData = JsonConvert.SerializeObject(originalAsset),
+                ExecutionType = "update",
+                CreatedDate = DateTime.Now
+            };
+            var entity = changePlanItemDto.ToEntity();
+            await _repository.AddChangePlanItemAsync(entity);
+            return entity.Id;
+        }
+        public async Task<Guid> DecommisionChangePlanItemAsync(DecommissionedAssetDto assetDto, Guid changePlanId)
+        {
+            var asset = assetDto.ToEntity();
+            var originalAsset = _assetRepository.GetAssetAsync(assetDto.Id);
+
+            var changePlanItemDto = new ChangePlanItemDto
+            {
+                ChangePlanId = changePlanId,
+                AssetId = asset.Id,
+                NewData = JsonConvert.SerializeObject(asset),
+                PreviousData = JsonConvert.SerializeObject(originalAsset),
+                ExecutionType = "decommission",
+                CreatedDate = DateTime.Now
+            };
+            var entity = changePlanItemDto.ToEntity();
+            await _repository.AddChangePlanItemAsync(entity);
+            return entity.Id;
+        }
         public async Task<int> UpdateChangePlanItemAsync(ChangePlanItemDto changePlanItem)
         {
             var entity = changePlanItem.ToEntity();
@@ -74,32 +137,15 @@ namespace Web.Api.Core.Services
             var entity = changePlanItem.ToEntity();
             await _repository.DeleteChangePlanItemAsync(entity);
         }
-        public async Task ExecuteChangePlan(List<ChangePlanItemDto> changePlanItems)
+        public async Task<int> ExecuteChangePlan(List<ChangePlanItemDto> changePlanItems)
         {
             List<ChangePlanItem> changePlanItemsEntities = new List<ChangePlanItem>();
             for (int i = 0; i < changePlanItems.Count; i++)
             {
-                var changePlanItem = changePlanItems[i];
-                //NOTE: THE NEWDATA HERE IS A CreateAssetApiDto
-                if (changePlanItem.ExecutionType.Equals("create") || changePlanItem.ExecutionType.Equals("update"))
-                {
-                    var assetDto = JsonConvert.DeserializeObject<AssetDto>(changePlanItem.NewData);
-                    var asset = assetDto.ToEntity();
-                    changePlanItem.NewData = JsonConvert.SerializeObject(asset);
-                    var changePlanItemEntity = changePlanItem.ToEntity();
-                    changePlanItemsEntities.Add(changePlanItemEntity);
-                }
-                //NOTE: THE NEWDATA HERE IS A DecommissionedAssetQuery
-                else if (changePlanItem.ExecutionType.Equals("decommission"))
-                {
-                    var decommissionedAssetDto = JsonConvert.DeserializeObject<DecommissionedAssetDto>(changePlanItem.NewData);
-                    var decommissionedAsset = decommissionedAssetDto.ToEntity();
-                    changePlanItem.NewData = JsonConvert.SerializeObject(decommissionedAsset);
-                    var changePlanItemEntity = changePlanItem.ToEntity();
-                    changePlanItemsEntities.Add(changePlanItemEntity);
-                }
+                var changePlanItemEntity = changePlanItems[i].ToEntity();
+                changePlanItemsEntities.Add(changePlanItemEntity);
             }
-            await _repository.ExecuteChangePlan(changePlanItemsEntities);
+            return await _repository.ExecuteChangePlan(changePlanItemsEntities);
         }
     }
 }

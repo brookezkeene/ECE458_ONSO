@@ -1,5 +1,6 @@
 ﻿<template>
     <v-card flat>
+        <changePlanBar></changePlanBar>
         <v-card-title>Change Planner</v-card-title>
         <v-container>
             <v-card>
@@ -10,21 +11,7 @@
                               :search="search"
                               class="elevation-1 pa-10"
                               multi-sort
-                              @click:row="showDetails"
-                              show-expand>
-
-                    <template v-slot:item.name="props">
-                        <v-edit-dialog :return-value.sync="props.item.name">
-                            {{ props.item.name }}
-                            <template v-if="!props.item.executedDate"  v-slot:input>
-                                <v-text-field v-model="props.item.name"
-                                              :rules="[rules.nameRules]"
-                                              label="Edit"
-                                              single-line
-                                              counter></v-text-field>
-                            </template>
-                        </v-edit-dialog>
-                    </template>
+                              @click:row="showDetails">
 
                     <template v-slot:top>
                         <v-toolbar flat class="mb-6">
@@ -50,11 +37,6 @@
                         <div v-if="item.executedDate">
                             <v-icon color="primary">
                                 mdi-check-circle-outline
-                            </v-icon>
-                        </div>
-                        <div v-else>
-                            <v-icon color="red">
-                                mdi-close-circle-outline
                             </v-icon>
                         </div>
                     </template>
@@ -92,21 +74,6 @@
                             <v-tooltip top>
                                 <template v-if="!item.executedDate" v-slot:activator="{ on }">
                                     <v-btn icon v-on="on"
-                                           color="primary"
-                                           @click="executeItem(item)">
-                                        <v-icon medium
-                                                class="mr-2">
-                                            mdi-play-circle
-                                        </v-icon>
-                                    </v-btn>
-                                </template>
-
-                                <span>Execute</span>
-                            </v-tooltip>
-
-                            <v-tooltip top>
-                                <template v-if="!item.executedDate" v-slot:activator="{ on }">
-                                    <v-btn icon v-on="on"
                                            @click="deleteItem(item)">
                                         <v-icon medium
                                                 class="mr-2">
@@ -126,41 +93,47 @@
 </template>
 
 <script>
-  export default {
-    inject: ['assetRepository','changePlanRepository'],
-    data() {
-        return {
-        loading: true,
-        search: '',
-        // TODO: replace with change plan data
-        headers: [
-            { text: 'Datacenter', value: 'datacenterName' },
-            { text: 'Change Plan Name', value: 'name' },
-            { text: 'Executed', value: 'executed', },
-            { text: 'Date & Time', value: 'createdDate' },
-            { text: 'Actions', value: 'action', sortable: false },
-        ],
-        assets: [],
-        defaultItem: {
-            id: '',
-            datacenter: '',
-            modelId: '',
-            hostname: '',
-            rackId: '',
-            rackPosition: '',
-            ownerId: '',
-            comment: '',
-            poweredOn: false,
+
+    import changePlanBar from '@/components/ChangePlanStatusBar';
+
+    export default {
+        components: {
+            changePlanBar
         },
-            editing: false,
-        rules: {
-            nameRules: v => /^(?=\s*\S).*$/.test(v) || 'Name is required',
-            // TODO: add rule for datacenter
-        },
+        inject: ['assetRepository','changePlanRepository'],
+        data() {
+            return {
+            loading: true,
+            search: '',
+            // TODO: replace with change plan data
+            headers: [
+                { text: 'Datacenter', value: 'datacenterName' },
+                { text: 'Change Plan Name', value: 'name' },
+                { text: 'Executed', value: 'executed', },
+                { text: 'Date & Time', value: 'createdDate' },
+                { text: 'Actions', value: 'action', sortable: false },
+            ],
+            assets: [],
+            defaultItem: {
+                id: '',
+                datacenter: '',
+                modelId: '',
+                hostname: '',
+                rackId: '',
+                rackPosition: '',
+                ownerId: '',
+                comment: '',
+                poweredOn: false,
+            },
+                editing: false,
+            rules: {
+                nameRules: v => /^(?=\s*\S).*$/.test(v) || 'Name is required',
+                // TODO: add rule for datacenter
+            },
         }
     },
     async created() {
-      this.initialize()
+        this.initialize()
     },
 
     methods: {
@@ -181,12 +154,6 @@
         printItem (item) {
             //TODO: print work order code
             console.log("print" + item);
-        },
-        executeItem(item) {
-            //TODO: execute change plan code
-            this.changePlanRepository.execute(item);
-            confirm('Are you sure you want to execute this change plan?')
-            console.log("execute" + item.name);
         },
         editItem(item) {
             this.editing = true;
