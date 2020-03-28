@@ -287,9 +287,8 @@
         },
 
         methods: {
-            async initialize() {
-                await this.getAssetsFromApi();
-                this.loading = false;
+            initialize() {
+                 this.$store.dispatch('loadUsername');
             },
 
             async getAssetsFromApi() {
@@ -310,7 +309,12 @@
                 return info;
             },
             fillQuery(sortBy, sortDesc, page, itemsPerPage) {
-               
+                console.log(this.datacenterValue);
+                if (this.$store.getters.isChangePlan) {
+                    this.datacenterValue = this.$store.getters.changePlan.datacenterName;
+                }
+                console.log(this.datacenterValue);
+                this.assetSearchQuery.datacenterName = this.datacenterValue;
                 this.assetSearchQuery.datacenterName = this.datacenterValue;
                 this.assetSearchQuery.generalSearch = this.search;
                 this.assetSearchQuery.decommissioner = this.decommissioner;
