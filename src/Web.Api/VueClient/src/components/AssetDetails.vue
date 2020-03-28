@@ -185,6 +185,7 @@
             async initialize() {
                 /*eslint-disable*/
                 if (!this.loading) this.loading = true;
+                console.log(this.id);
                 this.asset = await this.assetRepository.find(this.id);
                 console.log(this.asset);
                 this.loading = false;

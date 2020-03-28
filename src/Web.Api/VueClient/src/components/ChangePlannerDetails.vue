@@ -1,49 +1,60 @@
-﻿<template>
+﻿
+<template>
     <v-card flat>
-        <v-card-title>Change Planner</v-card-title>
+        <v-card-title>Change Plan Details</v-card-title>
         <v-container>
             <v-card>
                 <v-spacer></v-spacer>
-                <!--TODO: change for change plans -->
                 <v-data-table :headers="headers"
-                              :items="assets"
+                              :items="changePlanItems"
                               :search="search"
                               class="elevation-1 pa-10"
                               multi-sort
                               @click:row="showDetails"
                               show-expand>
 
-                    <template v-slot:item.name="props">
-                        <v-edit-dialog :return-value.sync="props.item.name">
-                            {{ props.item.name }}
-                            <template v-if="!props.item.executedDate"  v-slot:input>
-                                <v-text-field v-model="props.item.name"
-                                              :rules="[rules.nameRules]"
-                                              label="Edit"
-                                              single-line
-                                              counter></v-text-field>
-                            </template>
-                        </v-edit-dialog>
-                    </template>
-
                     <template v-slot:top>
                         <v-toolbar flat class="mb-6">
                             <v-label>Filter by ... </v-label>
                             <v-spacer></v-spacer>
                             <v-autocomplete prepend-inner-icon="mdi-magnify"
-                                            :items="assets"
+                                            :items="changePlanItems"
                                             :search-input.sync="search"
                                             cache-items
                                             flat
                                             hide-no-data
                                             hide-details
-                                            item-text="vendor"
+                                            item-text="asset" 
                                             label="Search"
                                             single-line
                                             solo-inverted></v-autocomplete>
                             <v-spacer></v-spacer>
                             <v-btn color="primary" dark class="mb-2" @click="addItem">Add Change Plan</v-btn>
                         </v-toolbar>
+                    </template>
+
+                    <template v-slot:expanded-item="{ headers, item }">
+                        <td :colspan="headers.length">
+                            <v-container>
+                                <v-simple-table dense fixed-header>
+                                    <template v-slot:default>
+                                        <thead>
+                                            <tr>
+                                                <th>Asset</th>
+                                                <th>Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(value, name) in getChangePlanItems(item.id)" :key="name" class="text-left">
+                                                <td class="font-weight-medium">{{ name }}</td>
+                                                <td v-if="isIdProperty(name, item)"><router-link :to="constructLink(value, name, item)">{{ value }}</router-link></td>
+                                                <td v-else>{{ value }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </template>
+                                </v-simple-table>
+                            </v-container>
+                        </td>
                     </template>
 
                     <template v-slot:item.executed="{ item }">
@@ -125,103 +136,36 @@
     </v-card>
 </template>
 
-<script>
-  export default {
-    inject: ['assetRepository','changePlanRepository'],
-    data() {
-        return {
-        loading: true,
-        search: '',
-        // TODO: replace with change plan data
-        headers: [
-            { text: 'Datacenter', value: 'datacenterName' },
-            { text: 'Change Plan Name', value: 'name' },
-            { text: 'Executed', value: 'executed', },
-            { text: 'Date & Time', value: 'createdDate' },
-            { text: 'Actions', value: 'action', sortable: false },
-        ],
-        assets: [],
-        defaultItem: {
-            id: '',
-            datacenter: '',
-            modelId: '',
-            hostname: '',
-            rackId: '',
-            rackPosition: '',
-            ownerId: '',
-            comment: '',
-            poweredOn: false,
-        },
-            editing: false,
-        rules: {
-            nameRules: v => /^(?=\s*\S).*$/.test(v) || 'Name is required',
-            // TODO: add rule for datacenter
-        },
-        }
-    },
-    async created() {
-      this.initialize()
-    },
 
-    methods: {
-        /*eslint-disable*/
-        async initialize() {
-            this.assets = await this.changePlanRepository.list(this.$store.getters.userId); //only list change plans for a given user
-            console.log(this.assets);
-            this.loading = false;
-        },
-        deleteItem (item) {
-            this.editing = true;
-            console.log("delete" + item);
-            confirm('Are you sure you want to delete this asset?') && this.changePlanRepository.delete(item)
-                    .then(async () => {
-                        await this.initialize();
-                    })
-        },
-        printItem (item) {
-            //TODO: print work order code
-            console.log("print" + item);
-        },
-        executeItem(item) {
-            //TODO: execute change plan code
-            this.changePlanRepository.execute(item);
-            confirm('Are you sure you want to execute this change plan?')
-            console.log("execute" + item.name);
-        },
-        editItem(item) {
-            this.editing = true;
-            //TODO: edit change plan code, change this probably
-            console.log(item);
-            var changePlan = {
-                name: item.name,
-                datacenterName: item.datacenterName,
-                datacenterDescription: item.datacenterDescription,
-                datacenterId: item.datacenterId,
-                changePlanId: item.id
-            };
-            this.$store.dispatch('startChangePlan', changePlan);
-            this.$router.push({ name: 'assets'})
-        },
-        addItem(item) {
-            //TODO: adde new change plan code, change this probably
-            
-            this.$router.push({ name: 'change-plan-new' })
-        },
-        // Don't think we will need clickable rows here since we have the drop down
-        showDetails(item) {
-            //TODO: show change plan summary code
-            if (!this.editing) {
-                console.log(item);
-                this.$router.push({ name: 'change-plan-details', params: {id: item.id } })
+<script>
+
+    export default {
+        name: 'changePlan-details',
+        inject: ['changePlanRepository'],
+        props: ['id'],
+        data() {
+            return {
+                loading: false,
+                headers: [
+                    { text: 'Model Vendor', value: 'vendor' },
+                    { text: 'Model Number', value: 'modelNumber', },
+                    { text: 'Hostname', value: 'hostname' },
+                    { text: 'Datacenter', value: 'datacenter' },
+                    { text: 'Rack', value: 'rack' },
+                    { text: 'Rack U', value: 'rackPosition', },
+                    { text: 'Owner Username', value: 'owner' },
+                    { text: 'Power', value: 'power', sortable: false },
+                    { text: 'Actions', value: 'action', sortable: false },
+                ],
             }
-            this.editing = false;
         },
-        async getChangePlanItems(changeplanId) {
-            var items = await this.changePlanRepository.listItems(changeplanId);
-            /*eslint-disable*/
-            console.log(items);
-            return items;
+        async created() {
+            this.initialize();
+        },
+        methods: {
+            async initialize() {
+                this.changePlanItems = await this.changePlanRepository.listItems(this.id);
+            }
         }
-    },
-  }
+    }
 </script>

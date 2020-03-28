@@ -20,6 +20,7 @@ import auth from '@/auth'
 import DecommissionedAssets from '@/components/DecommissionedAssets'
 import DecommissionedAssetDetails from '@/components/DecommissionedAssetDetails'
 import ChangePlanner from '@/components/ChangePlanner'
+import ChangePlannerDetails from '@/components/ChangePlannerDetails'
 import ChangePlanEdit from '@/components/ChangePlanEdit'
 
 
@@ -83,7 +84,7 @@ const routes = [
                 props: true,
             },
             {
-                path: '/change-planner',
+                path: '/change-plan',
                 name: 'change-planner',
                 component: ChangePlanner,
             },
@@ -96,6 +97,12 @@ const routes = [
                 path: '/change-plan/edit/:id',
                 name: 'change-plan-edit',
                 component: ChangePlanEdit,
+            },
+            {
+                path: '/change-plan/details/:id',
+                name: 'change-plan-details',
+                component: ChangePlannerDetails,
+                props: true,
             },
             {
                 path: '/assets/:id',

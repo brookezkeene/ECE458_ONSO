@@ -13,6 +13,7 @@ export default {
     },
     // Get all the items for a change plan
     listItems(changeplan_id) {
+        console.log(changeplan_id);
         return axios.get(`${resource}/${changeplan_id}/changeplanitems`, { params: { pageSize: 2000000000 } })
             .then(response => {
                 return response.data.data;
