@@ -3,6 +3,24 @@
         <changePlanBar></changePlanBar>
         <v-card-title>Assets</v-card-title>
         <v-container>
+            <v-card flat>
+                <v-layout>
+                    <v-spacer></v-spacer>
+                    <v-tooltip top>
+                        <template v-slot:activator="{ on }">
+                            <v-switch v-model="labelGen" 
+                                      label="Asset Label Mode"
+                                      v-on="on"
+                                      class="pa-3"></v-switch>
+                        </template>
+
+                        <span>Switch on to begin selecting labels for asset label generation</span>
+                    </v-tooltip>
+                </v-layout>
+            </v-card>
+        </v-container>
+        
+        <v-container>
             <v-card>
                 <v-spacer></v-spacer>
                 <v-data-table v-model="selectedAssets"
@@ -12,7 +30,7 @@
                               class="pa-5"
                               @click:row="showDetails"
                               :server-items-length="totalItems"
-                              show-select
+                              :show-select="labelGen"
                               :options.sync="options"
                               :key="selectedDatacenter">
 
@@ -139,6 +157,7 @@
                         <v-row>
                             <span style="white-space:nowrap">Select All</span>
                         </v-row>
+                        
                         <v-simple-checkbox color="primary"
                                            class="pb-4"
                                            v-bind="props"
@@ -146,7 +165,7 @@
                     </template>
 
                     <!--Add Button to Data Table Footer-->
-                    <template v-slot:footer>
+                    <template v-if="labelGen" v-slot:footer>
                         <v-row class="pa-10">
                             <v-spacer></v-spacer>
                             <v-tooltip bottom>
@@ -159,7 +178,7 @@
                                     </v-btn>
                                 </template>
 
-                                <span>Generate Asset Labels for the current selection of Assets</span>
+                                <span>Generate barcode labels for the current selection of assets</span>
                             </v-tooltip>
                             <v-spacer></v-spacer>
                         </v-row>
@@ -267,6 +286,7 @@
         data() {
             return {
                 changePlanner: false,
+                labelGen: false,
                 selectedAssets: [],
                 selectedDatacenter: 'All Datacenters',
                 // Filter values.
