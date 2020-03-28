@@ -5,9 +5,11 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Web.Api.Common;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Dtos.Power;
+using Web.Api.Core.Mappers;
 using Web.Api.Core.Services;
 using Web.Api.Core.Services.Interfaces;
 using Web.Api.Dtos;
@@ -15,6 +17,7 @@ using Web.Api.Dtos.Assets;
 using Web.Api.Dtos.Assets.Create;
 using Web.Api.Dtos.Assets.Read;
 using Web.Api.Dtos.Assets.Update;
+using Web.Api.Dtos.ChangePlans;
 using Web.Api.Mappers;
 using Web.Api.Resources;
 
@@ -26,14 +29,17 @@ namespace Web.Api.Controllers
     public class AssetsController : ControllerBase
     {
         private readonly IAssetService _assetService;
+        private readonly IChangePlanService _changePlanService;
+
         private readonly IApiErrorResources _errorResources;
         private readonly PowerService _powerService;
 
-        public AssetsController(IAssetService assetService, IApiErrorResources errorResources, PowerService powerService)
+        public AssetsController(IAssetService assetService, IApiErrorResources errorResources, PowerService powerService, IChangePlanService changePlanService)
         {
             _assetService = assetService;
             _errorResources = errorResources;
             _powerService = powerService;
+            _changePlanService = changePlanService;
         }
 
         [HttpGet]
@@ -54,13 +60,23 @@ namespace Web.Api.Controllers
             return Ok(response);
         }
 
-
+        /*
+         * WHAT'S STORED IN THE CHANGEPLANITEM DATA: it's either an Asset entity
+         * or a DecommissionedAsset entity
+         */
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateAssetApiDto assetApiDto)
         {
             assetApiDto.LastUpdatedDate = DateTime.Now;
             var assetDto = assetApiDto.MapTo<AssetDto>();
-            await _assetService.CreateAssetAsync(assetDto);
+            if (assetApiDto.ChangePlanId != null && assetApiDto.ChangePlanId != Guid.Empty)
+            {
+                await _changePlanService.CreateChangePlanItemAsync(assetDto, assetApiDto.ChangePlanId);
+            }
+            else
+            {
+                await _assetService.CreateAssetAsync(assetDto);
+            }
 
             return Ok();
         }
@@ -76,6 +92,10 @@ namespace Web.Api.Controllers
         {
             assetApiDto.LastUpdatedDate = DateTime.Now; 
             var assetDto = assetApiDto.MapTo<AssetDto>();
+            if (assetApiDto.ChangePlanId != null && assetApiDto.ChangePlanId != Guid.Empty)
+            {
+                await _changePlanService.UpdateChangePlanItemAsync(assetDto, assetApiDto.ChangePlanId);
+            }
             await _assetService.UpdateAssetAsync(assetDto);
             return NoContent();
         }
@@ -119,12 +139,17 @@ namespace Web.Api.Controllers
             decommisionedAsset.Decommissioner = query.Decommissioner;
             decommisionedAsset.DateDecommissioned = DateTime.Now;
 
-            //deleting asset from active asset column
-            var asset = await _assetService.GetAssetAsync(query.Id);
-
-            await _assetService.CreateDecommissionedAssetAsync(decommisionedAsset);
-
-            await _assetService.DeleteAssetAsync(asset);
+            if (query.ChangePlanId != null && query.ChangePlanId != Guid.Empty)
+            {
+                await _changePlanService.DecommisionChangePlanItemAsync(decommisionedAsset, query.ChangePlanId);
+            }
+            else
+            {
+                var asset = await _assetService.GetAssetAsync(query.Id);
+                await _assetService.CreateDecommissionedAssetAsync(decommisionedAsset);
+                //deleting asset from active asset column
+                await _assetService.DeleteAssetAsync(asset);
+            }
 
             return Ok();
         }

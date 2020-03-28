@@ -128,6 +128,12 @@ namespace Web.Api.Infrastructure.Repositories
                 if (changePlanItem.ExecutionType.Equals("create"))
                 {
                     var asset = JsonConvert.DeserializeObject<Asset>(changePlanItem.NewData);
+                    //need to set these equal to null otherwise error occurs in database 
+                    //these values weren't null previously so that feilds which use them could appear on the 
+                    //data table for the change plan
+                    asset.Model = null;
+                    asset.Rack = null;
+                    asset.Owner = null;
                     _dbContext.Assets.Add(asset);
                 }
                 else if (changePlanItem.ExecutionType.Equals("update"))
