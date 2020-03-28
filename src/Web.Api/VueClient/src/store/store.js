@@ -109,7 +109,7 @@ export default new Vuex.Store({
             state.changePlanDatacenterName = changePlan.datacenterName;
             state.changePlanDatacenterDescription = changePlan.datacenterDescription;
             state.changePlanDatacenterId = changePlan.datacenterId;
-            state.changePlanId = changePlan.id;
+            state.changePlanId = changePlan.changePlanId;
         },
         END_CHANGE_PLAN(state) {
             state.changePlan = false;

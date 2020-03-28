@@ -350,6 +350,7 @@
                     pageSize: 0,
                     isDesc: '',
                     sortBy: '',
+                    changePlanId: ''
                 },
                 editing: false,
             }
@@ -421,6 +422,10 @@
                 console.log("this is the sorting stuff")
                 console.log(this.assetSearchQuery);
 
+                if (this.$store.getters.isChangePlan) {
+                    this.assetSearchQuery.changePlanId = this.$store.getters.changePlan.id;
+                    console.log(this.assetSearchQuery);
+                }
                 var info = await this.assetRepository.tablelist(this.assetSearchQuery);
                 this.assets = info.data;
                 return info;
@@ -501,7 +506,8 @@
             },
             editItem(item) {
                 this.editing = true;
-                this.$router.push({ name: 'asset-edit', params: { id: item.id } })
+                console.log(item);
+                this.$router.push({ name: 'asset-edit', params: { id: item.id} })
             },
             addItem() {
                 this.$router.push({ name: 'asset-new' })
