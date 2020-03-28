@@ -51,7 +51,7 @@
                     <template v-slot:item.action="{ item }">
                         <v-row>
                             <v-tooltip top>
-                                <template v-if="!item.executedDate" v-slot:activator="{ on }">
+                                <template v-slot:activator="{ on }">
                                     <v-btn icon v-on="on">
                                         <v-icon medium
                                                 class="mr-2">
@@ -62,50 +62,27 @@
 
                                 <span>Edit</span>
                             </v-tooltip>
-
                             <v-tooltip top>
                                 <template v-slot:activator="{ on }">
                                     <v-btn icon v-on="on">
                                         <v-icon medium
                                                 class="mr-2">
-                                            mdi-printer
+                                            mdi-plus
                                         </v-icon>
                                     </v-btn>
                                 </template>
 
-                                <span>Print Work Order</span>
+                                <span>Edit</span>
                             </v-tooltip>
 
-                            <v-tooltip top>
-                                <template v-if="!item.executedDate" v-slot:activator="{ on }">
-                                    <v-btn icon v-on="on"
-                                           color="primary">
-                                        <v-icon medium
-                                                class="mr-2">
-                                            mdi-play-circle
-                                        </v-icon>
-                                    </v-btn>
-                                </template>
-
-                                <span>Execute</span>
-                            </v-tooltip>
-
-                            <v-tooltip top>
-                                <template v-if="!item.executedDate" v-slot:activator="{ on }">
-                                    <v-btn icon v-on="on">
-                                        <v-icon medium
-                                                class="mr-2">
-                                            mdi-delete
-                                        </v-icon>
-                                    </v-btn>
-                                </template>
-
-                                <span>Delete</span>
-                            </v-tooltip>
                         </v-row>
+
                     </template>
                 </v-data-table>
-                <v-btn color="primary" dark class="mb-2" @click="execute">Execute Change Plan</v-btn>
+
+                <div class="text-center">
+                    <v-btn color="primary" dark class="mb-2" @click="execute">Execute Change Plan</v-btn>
+                </div>
             </v-card>
         </v-container>
     </v-card>
@@ -124,6 +101,7 @@
                 headers: [
                     { text: 'Model Vendor', value: 'vendor' },
                     { text: 'Model Number', value: 'modelNumber', },
+                    { text: 'Asset Number', value: 'assetNumber', },
                     { text: 'Hostname', value: 'hostname' },
                     { text: 'Datacenter', value: 'datacenter' },
                     { text: 'Rack', value: 'rack' },
@@ -143,8 +121,10 @@
                 this.changePlanItems = await this.assetRepository.list();
             },
             execute(item) {
-                this.changePlanRepository.execute(item);
-                confirm('Are you sure you want to execute this change plan?')
+                (confirm('Are you sure you want to execute this change plan?') && this.changePlanRepository.execute(item))
+                    .then( () => {
+                        this.$router.push({ name: 'change-plan' })
+                    });
             },
         }
     }
