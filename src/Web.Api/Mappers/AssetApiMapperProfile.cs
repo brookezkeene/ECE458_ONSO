@@ -36,7 +36,7 @@ namespace Web.Api.Mappers
             CreateMap<UpdateAssetPowerPortApiDto, AssetPowerPortDto>(MemberList.Source);
             CreateMap<UpdateAssetNetworkPortApiDto, AssetNetworkPortDto>(MemberList.Source);
             CreateMap<UpdateAssetApiDto, AssetDto>(MemberList.Source)
-                .ForSourceMember(x => x.ChangePlanId, opt => opt.DoNotValidate()); ;
+                .ForSourceMember(x => x.ChangePlanId, opt => opt.DoNotValidate());;
 
             // Read
             CreateMap<AssetDto, GetAssetsApiDto>()
