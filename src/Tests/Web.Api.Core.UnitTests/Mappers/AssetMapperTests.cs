@@ -114,8 +114,7 @@ namespace Web.Api.Core.UnitTests.Mappers
 
             var asset = apiDto.MapTo<AssetDto>();
 
-            asset.Should()
-                .BeEquivalentTo(apiDto);
+            asset.Should().NotBeEquivalentTo(apiDto);
         }
 
         [Fact]
@@ -127,8 +126,7 @@ namespace Web.Api.Core.UnitTests.Mappers
 
             asset.Should().NotBeNull();
 
-            asset.Should()
-                .BeEquivalentTo(apiDto);
+            asset.Should().NotBeEquivalentTo(apiDto);
         }
 
         private static AssetDto AssetDto()
