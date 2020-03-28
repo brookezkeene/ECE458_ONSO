@@ -7,31 +7,9 @@
                 <v-spacer></v-spacer>
                 <v-data-table :headers="headers"
                               :items="changePlanItems"
-                              :search="search"
-                              class="elevation-1 pa-10"
+                              class="pa-10"
                               multi-sort
-                              @click:row="showDetails"
                               show-expand>
-
-                    <template v-slot:top>
-                        <v-toolbar flat class="mb-6">
-                            <v-label>Filter by ... </v-label>
-                            <v-spacer></v-spacer>
-                            <v-autocomplete prepend-inner-icon="mdi-magnify"
-                                            :items="changePlanItems"
-                                            :search-input.sync="search"
-                                            cache-items
-                                            flat
-                                            hide-no-data
-                                            hide-details
-                                            item-text="asset" 
-                                            label="Search"
-                                            single-line
-                                            solo-inverted></v-autocomplete>
-                            <v-spacer></v-spacer>
-                            <v-btn color="primary" dark class="mb-2" @click="addItem">Add Change Plan</v-btn>
-                        </v-toolbar>
-                    </template>
 
                     <template v-slot:expanded-item="{ headers, item }">
                         <td :colspan="headers.length">
@@ -74,8 +52,7 @@
                         <v-row>
                             <v-tooltip top>
                                 <template v-if="!item.executedDate" v-slot:activator="{ on }">
-                                    <v-btn icon v-on="on"
-                                           @click="editItem(item)">
+                                    <v-btn icon v-on="on">
                                         <v-icon medium
                                                 class="mr-2">
                                             mdi-pencil
@@ -88,8 +65,7 @@
 
                             <v-tooltip top>
                                 <template v-slot:activator="{ on }">
-                                    <v-btn icon v-on="on"
-                                           @click="printItem(item)">
+                                    <v-btn icon v-on="on">
                                         <v-icon medium
                                                 class="mr-2">
                                             mdi-printer
@@ -103,8 +79,7 @@
                             <v-tooltip top>
                                 <template v-if="!item.executedDate" v-slot:activator="{ on }">
                                     <v-btn icon v-on="on"
-                                           color="primary"
-                                           @click="executeItem(item)">
+                                           color="primary">
                                         <v-icon medium
                                                 class="mr-2">
                                             mdi-play-circle
@@ -117,8 +92,7 @@
 
                             <v-tooltip top>
                                 <template v-if="!item.executedDate" v-slot:activator="{ on }">
-                                    <v-btn icon v-on="on"
-                                           @click="deleteItem(item)">
+                                    <v-btn icon v-on="on">
                                         <v-icon medium
                                                 class="mr-2">
                                             mdi-delete
@@ -131,6 +105,7 @@
                         </v-row>
                     </template>
                 </v-data-table>
+                <v-btn color="primary" dark class="mb-2" @click="execute">Execute Change Plan</v-btn>
             </v-card>
         </v-container>
     </v-card>
@@ -141,7 +116,7 @@
 
     export default {
         name: 'changePlan-details',
-        inject: ['changePlanRepository'],
+        inject: ['changePlanRepository','assetRepository'],
         props: ['id'],
         data() {
             return {
@@ -154,9 +129,9 @@
                     { text: 'Rack', value: 'rack' },
                     { text: 'Rack U', value: 'rackPosition', },
                     { text: 'Owner Username', value: 'owner' },
-                    { text: 'Power', value: 'power', sortable: false },
                     { text: 'Actions', value: 'action', sortable: false },
                 ],
+                changePlanItems: [],
             }
         },
         async created() {
@@ -164,8 +139,13 @@
         },
         methods: {
             async initialize() {
-                this.changePlanItems = await this.changePlanRepository.listItems(this.id);
-            }
+                //this.changePlanItems = await this.changePlanRepository.listItems(this.id);
+                this.changePlanItems = await this.assetRepository.list();
+            },
+            execute(item) {
+                this.changePlanRepository.execute(item);
+                confirm('Are you sure you want to execute this change plan?')
+            },
         }
     }
 </script>
