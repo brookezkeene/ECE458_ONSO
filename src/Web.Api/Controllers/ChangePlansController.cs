@@ -68,14 +68,19 @@ namespace Web.Api.Controllers
             await _changePlanService.CreateChangePlanItemAsync(changePlanItemDto);
             return Ok();
         }
-        //TODO: NEED TO SEE IF WE NEED ANOTHER FORMAT/DESERIALIZE DATA OR SOMETHING
-        [HttpPut("changeplanitem")]
-        public async Task<IActionResult> Put(UpdateChangePlanItemApiDto changePlanItem)
+        [HttpPut("changeplan")]
+        public async Task<IActionResult> Put(ChangePlanDto changePlan)
         {
-            var changePlanItemDto = changePlanItem.MapTo<ChangePlanItemDto>();
-            await _changePlanService.UpdateChangePlanItemAsync(changePlanItemDto);
+            await _changePlanService.UpdateChangePlanAsync(changePlan);
             return NoContent();
         }
+        [HttpPut("changeplanitem")]
+        public async Task<IActionResult> Put(ChangePlanItemDto changePlanItem)
+        {
+            await _changePlanService.UpdateChangePlanItemAsync(changePlanItem);
+            return NoContent();
+        }
+        
         [HttpDelete("{id}/changeplan")]
         public async Task<IActionResult> DeleteChangePlan(Guid id)
         {
@@ -132,7 +137,12 @@ namespace Web.Api.Controllers
 
                 }
             }
+            //waiting to see if the change plan successfully finished
             await _changePlanService.ExecuteChangePlan(changePlanItems);
+            //setting a new execute date for the change plan
+            var changePlan = await _changePlanService.GetChangePlanAsync(id);
+            changePlan.ExecutedDate = DateTime.Now;
+            await _changePlanService.UpdateChangePlanAsync(changePlan);
             return Ok();
         }
 

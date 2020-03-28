@@ -15,6 +15,7 @@ namespace Web.Api.Core.Services.Interfaces
         Task<List<ChangePlanItemDto>> GetChangePlanItemsAsync(Guid changePlanId);
         Task<Guid> CreateChangePlanAsync(ChangePlanDto changePlan);
         Task<Guid> CreateChangePlanItemAsync(ChangePlanItemDto changePlanItem);
+        Task<int> UpdateChangePlanAsync(ChangePlanDto changePlan);
         Task<int> UpdateChangePlanItemAsync(ChangePlanItemDto changePlanItem);
         Task DeleteChangePlanAsync(ChangePlanDto changePlan);
         Task DeleteChangePlanItemAsync(ChangePlanItemDto changePlanItem);
