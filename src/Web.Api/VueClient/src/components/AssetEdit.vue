@@ -198,6 +198,7 @@
                                                                     item-value="id"
                                                                     :return-object="false"
                                                                     typeof="number"
+                                                                    clearable
                                                                     placeholder="PDU Number">
                                                     </v-autocomplete>
                                                     <v-autocomplete v-if="!port.pduLocation"
@@ -207,6 +208,7 @@
                                                                     item-value="id"
                                                                     :return-object="false"
                                                                     typeof="number"
+                                                                    clearable
                                                                     placeholder="PDU Number">
                                                     </v-autocomplete>
                                                     <v-spacer></v-spacer>
