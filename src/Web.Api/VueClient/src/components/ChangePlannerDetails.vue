@@ -17,15 +17,17 @@
                     </template>
 
                     <template v-slot:expanded-item="{ headers, item }">
-                            <td v-if="item.executionType=='update'"></td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.Vendor}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.ModelNumber}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.AssetNumber}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.Hostname}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.Datacenter}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.Rack}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.RackPosition}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.Owner}}</td>
+                        <td v-if="item.executionType=='update'"></td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.Vendor}}</td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.ModelNumber}}</td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.AssetNumber}}</td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.Hostname}}</td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.Datacenter}}</td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.Rack}}</td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.RackPosition}}</td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.Owner}}</td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.powerPorts}}</td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.networkPorts}}</td>
 
                     </template>
 
@@ -103,7 +105,7 @@
 
     export default {
         name: 'changePlan-details',
-        inject: ['changePlanRepository'],
+        inject: ['changePlanRepository', 'assetRepository'],
         props: ['id'],
         data() {
             return {
@@ -117,6 +119,8 @@
                     { text: 'Rack', value: 'newData.Rack' },
                     { text: 'Rack U', value: 'newData.RackPosition', },
                     { text: 'Owner Username', value: 'newData.Owner' },
+                    { text: 'Power Ports', value: 'newData.powerPorts' },
+                    { text: 'Network Ports', value: 'newData.networkPorts' },
                     { text: 'Change', value: 'action', sortable: false },
                 ],
                 changePlanItems: [],
@@ -128,27 +132,33 @@
         methods: {
             async initialize() {
                 this.changePlanItems = await this.changePlanRepository.listItems(this.id);
-                this.deserializeData();
+                this.deserializeData(this.changePlanItems);
                 /*eslint-disable*/
                 console.log(this.changePlanItems);
             },
-            deserializeData() {
-                this.changePlanItems.forEach(item => {
+            deserializeData(changePlanItems) {
+                console.log(changePlanItems);
+                changePlanItems.forEach(item => {
                     item.previousData = JSON.parse(item.previousData);
                     item.newData = JSON.parse(item.newData);
                     if (item.executionType === 'decommission') {
                         item.newData.Vendor = item.previousData.Model.Vendor;
                         item.newData.ModelNumber = item.previousData.Model.Number;
-                        item.newData.Rack = item.previousData.Rack.RackLetter + item.previousData.Rack.RackNumber; 
+                        item.newData.Rack = item.previousData.Rack.RackLetter + item.previousData.Rack.RackNumber;
                         item.newData.Owner = item.previousData.OwnerName;
                         item.newData.AssetNumber = item.previousData.AssetNumber;
+                    } else if (item.executionType === 'update') {
+                        item.newData.powerPorts = JSON.stringify(item.newData.PowerPorts);
+                        item.newData.networkPorts = JSON.stringify(item.newData.NetworkPorts);
+                        item.previousData.powerPorts = JSON.stringify(item.previousData.PowerPorts);
+                        item.previousData.networkPorts = JSON.stringify(item.previousData.NetworkPorts);
                     }
                 });
                 console.log(this.changePlanItems);
             },
             execute(item) {
                 (confirm('Are you sure you want to execute this change plan?') && this.changePlanRepository.execute(item))
-                    .then( () => {
+                    .then(() => {
                         this.$router.push({ name: 'change-plan' })
                     });
             },
