@@ -216,7 +216,7 @@
                             </v-tooltip>
 
                             <v-tooltip top>
-                                <template v-slot:activator="{ on }">
+                                <template v-if="!$store.getters.isChangePlan" v-slot:activator="{ on }">
                                     <v-btn icon v-on="on"
                                            @click="deleteItem(item)">
                                         <v-icon medium
