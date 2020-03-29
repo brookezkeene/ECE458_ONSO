@@ -108,6 +108,8 @@ export default {
     methods: {
         async save() {
             var result = await this.userRepository.create(this.editedItem)
+            /*eslint-disable*/
+            console.log(result);
             if (result != null &&  result.id.length == 0) {
                 this.updateSnackbar.show = true;
                 this.updateSnackbar.color = 'red lighten-4';
@@ -120,6 +122,7 @@ export default {
             this.$router.push({name: 'users'})
         },
         validationAfterReturning(result) {
+            console.log(result);
             if (result != null && (result.id == null || result.id.length == 0)) {
                 this.updateSnackbar.show = true;
                 this.updateSnackbar.color = 'red lighten-4';

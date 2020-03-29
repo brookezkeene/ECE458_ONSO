@@ -6,144 +6,55 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using AutoMapper;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Dtos.Power;
 using Newtonsoft.Json;
+using Web.Api.Infrastructure.Entities;
+using Web.Api.Infrastructure.Repositories.Interfaces;
 
 namespace Web.Api.Core.Services
 {
     public class PowerService : IPowerService
-{
-        private static Regex _regex;
-        private const string Pattern = @"^.*>(\d+)<.*>(ON|OFF)<";
-        public IAssetService _assetService;
+    {
+        private readonly IMapper _mapper;
+        private readonly IPowerRepository _repository;
 
-        public HttpClient Client { get; }
 
-        public PowerService(HttpClient client, IAssetService assetService)
+        public PowerService(IMapper mapper, IPowerRepository repository)
         {
-            _regex = new Regex(Pattern, RegexOptions.Compiled | RegexOptions.Multiline);
-            _assetService = assetService;
-
-            // TODO: REMEMBER TO CHANGE THIS BACK TO OUR GROUP PORT 8003
-            client.BaseAddress = new Uri("http://hyposoft-mgt.colab.duke.edu:8000");
-
-            Client = client;
-
+            _mapper = mapper;
+            _repository = repository;
         }
 
-        public async Task<AssetPowerStateDto> getStates(Guid assetId)
+        public async Task<Guid> CreateConnectionAsync(PowerConnectionDto connectionDto)
         {
-            var asset = await _assetService.GetAssetAsync(assetId);
-            var pduPorts = asset.PowerPorts
-                .Where(o => o.PduPort != null)
-                .GroupBy(o => o.PduPort.Pdu.ToString())
-                .ToDictionary(d => d.Key,
-                    d => d.Select(o => o.PduPort.Number)
-                          .ToList());
-
-            var powerStates = new List<AssetPowerPortStateDto>();
-
-            foreach (var kvp in pduPorts)
-            {
-                var response = await Client.GetAsync(
-                $"/pdu.php?pdu={kvp.Key}");
-                response.EnsureSuccessStatusCode();
-                var parsedResponse = ParseResponse(await response.Content.ReadAsStringAsync());
-                var states = kvp.Value.Select(n => new AssetPowerPortStateDto()
-                {
-                    Port = kvp.Key + n,
-                    Status = (PowerState)Enum.Parse(typeof(PowerState), parsedResponse[n], true)
-                });
-                powerStates.AddRange(states);
-            }
-            var ret = new AssetPowerStateDto()
-            {
-                Id = assetId,
-                PowerPorts = powerStates
-            };
-
-            return ret;
+            var connection = _mapper.Map<PowerConnection>(connectionDto);
+            return await _repository.CreateConnectionAsync(connection);
         }
 
-        public async Task<AssetPowerStateDto> setStates(Guid assetId, PowerAction state)
+        public async Task<List<Guid>> CreateConnectionsAsync(List<PowerConnectionDto> connectionDtos)
         {
-
-            var pduPorts = (await _assetService.GetAssetAsync(assetId))
-                .PowerPorts
-                .Where(o => o.PduPort != null)
-                .GroupBy(o => o.PduPort.Pdu.ToString())
-                .ToDictionary(d => d.Key,
-                    d => d.Select(o => o.PduPort.Number)
-                          .ToList());
-            var powerStates = new List<AssetPowerPortStateDto>();
-
-            foreach (var kvp in pduPorts)
-            {
-                // data is pdu: (hpdu-rtp1-A01L) (rack address + pdunumber + (LorR)
-                // port: number
-                // v: on, off
-                foreach (var port in kvp.Value)
-                {
-                    var requestData = new Dictionary<String, String>
-                    {
-                        { "pdu", kvp.Key },
-                        { "port", port.ToString() },
-                        { "v", state.ToString().ToLower() }
-                    };
-
-                    if (state.ToString().ToLower().Equals("cycle"))
-                    {
-                        requestData.Remove("v");
-                        requestData.Add("v", "off");
-                        var d = new FormUrlEncodedContent(requestData);
-                        var r = await Client.PostAsync("/power.php", d);
-                        await Task.Delay(2000);
-
-                        // Two seconds after sending the power off signal, send power on
-                        requestData.Remove("v");
-                        requestData.Add("v", "on");
-                    } 
-
-                    var data = new FormUrlEncodedContent(requestData);
-                    var response = await Client.PostAsync("/power.php", data);
-                    Console.WriteLine(response);
-
-                    // Translate the action that was taken on the asset into a current power state
-                    var powerState = PowerState.Off;
-                    if (state == PowerAction.On || state == PowerAction.Cycle) {
-                        powerState = PowerState.On;
-                    }
-
-                    var powerPortState = new AssetPowerPortStateDto()
-                    {
-                        Port = kvp.Key.ToString(),
-                        Status = powerState
-                    };
-
-                    powerStates.Add(powerPortState);
-                }
-            }
-            var ret = new AssetPowerStateDto()
-            {
-                Id = assetId,
-                PowerPorts = powerStates
-            };
-            return ret;
+            var connections = _mapper.Map<List<PowerConnection>>(connectionDtos);
+            return await _repository.CreateConnectionsAsync(connections);
         }
 
-        private static IDictionary<int, string> ParseResponse(string response)
+        public async Task<PowerConnectionDto> GetConnectionAsync(Guid connectionId)
         {
-            var matches = _regex.Matches(response);
-            return matches.ToDictionary(match => int.Parse(match.Groups[1]
-                .Value), match => match.Groups[2]
-                .Value);
+            var connection = await _repository.GetConnectionAsync(connectionId);
+            return _mapper.Map<PowerConnectionDto>(connection);
+        }
+
+        public List<AssetPowerPortDto> GetAssetPowerPorts(Guid assetId)
+        {
+            var ports = _repository.GetAssetPowerPorts(assetId);
+            return _mapper.Map<List<AssetPowerPortDto>>(ports);
+        }
+
+        public PduPortDto GetPduPort(Guid rackId, PduLocation pduLocation, int portNumber)
+        {
+            var port = _repository.GetPduPort(rackId, pduLocation, portNumber);
+            return _mapper.Map<PduPortDto>(port);
         }
     }
 }
-
-public class Data {
-    public string pdu { get; set; }
-    public string port { get; set; }
-    public string v { get; set; }
-    }

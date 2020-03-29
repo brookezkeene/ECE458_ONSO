@@ -14,6 +14,7 @@ namespace Web.Api.Core.Dtos
         public RackDto Rack { get; set; }
         public Guid? OwnerId { get; set; }
         public UserDto Owner { get; set; }
+        public DateTime LastUpdatedDate { get; set; }
         public Guid Id { get; set; }
         public string Hostname { get; set; }
         public int RackPosition { get; set; }
@@ -36,20 +37,33 @@ namespace Web.Api.Core.Dtos
         public AssetNetworkPortDto ConnectedPort { get; set; }
     }
 
-    public class AssetPowerPortDto
+    public class AssetPowerPortDto : PowerPortDto
     {
-        public Guid Id { get; set; }
-        public int Number { get; set; }
+        public AssetPowerPortDto(Guid id) : base(id) { }
+        public AssetPowerPortDto() { }
         public Guid AssetId { get; set; }
         public AssetDto Asset { get; set; }
         public Guid? PduPortId { get; set; }
         public PduPortDto PduPort { get; set; }
     }
 
-    public class PduPortDto
+    public abstract class PowerPortDto
     {
+        protected PowerPortDto(Guid id)
+        {
+            Id = id;
+        }
+
+        protected PowerPortDto() { }
+
         public Guid Id { get; set; }
         public int Number { get; set; }
+    }
+
+    public class PduPortDto : PowerPortDto
+    {
+        public PduPortDto(Guid id) : base(id) { }
+        public PduPortDto() { }
         public Guid PduId { get; set; }
         public PduDto Pdu { get; set; }
         public Guid? AssetPowerPortId { get; set; }
@@ -73,7 +87,7 @@ namespace Web.Api.Core.Dtos
         public override string ToString()
         {
             var datacenter = Rack.Datacenter.Name.ToLower();
-            var rack = Rack.Address.ToUpper();
+            var rack = Rack.RackAddress.ToUpper();
 
             return $"hpdu-{datacenter}-{rack}{Location}";
         }
@@ -81,7 +95,7 @@ namespace Web.Api.Core.Dtos
         public string ToPdu()
         {
             var datacenter = Rack.Datacenter.Name.ToLower();
-            var rack = Rack.Address.ToUpper();
+            var rack = Rack.RackAddress.ToUpper();
 
             return $"{datacenter}-{rack}{Location}";
         }

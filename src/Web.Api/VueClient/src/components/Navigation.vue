@@ -82,7 +82,8 @@
                     { title: 'Models', path: '/models', icon: 'mdi-table-large' },
                     { title: 'Assets', path: '/assets', icon: 'mdi-server', sublinks: [
                         { title: 'Active Assets', path: '/assets'},
-                        { title: 'Decommissioned Assets', path: '/decommissioned-assets'},
+                        { title: 'Decommissioned Assets', path: '/decommissioned-assets' },
+                        { title: 'Change Planner', path: '/change-plan'},
                     ]},
                     { title: 'Datacenters & Racks', path: '/racks', icon: 'mdi-view-day' },
                     { title: 'Users', path: '/users', icon: 'mdi-account' },
@@ -98,7 +99,7 @@
             },
             filteredMenuItems() {
                 var newMenu = this.menuItems;
-                if (!this.$store.getters.hasAuditPermission) {
+                if (!this.$store.getters.hasAuditPermission && !this.$store.getters.isAdmin) {
                     newMenu = newMenu.filter(h => h.title !== "System Log");
                 }
                 return newMenu

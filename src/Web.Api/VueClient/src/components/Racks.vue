@@ -16,7 +16,8 @@
             <rack-form v-on:update-create="allowUpdate('create')"
                        v-on:update-delete="allowUpdate('delete')"
                        v-on:error-create="showError('create')"
-                       v-on:error-delete="showError('delete')"></rack-form>
+                       v-on:error-delete="showError('delete')"
+                       v-on:error-datacenter="showError('datacenter')"></rack-form>
         </v-container>
 
         <v-container align="center" justify="center">
@@ -85,6 +86,9 @@ import RackTable from "./RackTable"
                 }
                 if (action === 'delete') {
                     this.updateSnackbar.message = 'Could not delete racks';
+                }
+                if (action === 'datacenter') {
+                    this.updateSnackbar.message = 'You do not have permission to modify the selected datacenter';
                 }
             },
             blockUpdate() {

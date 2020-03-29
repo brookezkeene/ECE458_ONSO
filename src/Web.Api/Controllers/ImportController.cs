@@ -16,10 +16,12 @@ namespace Web.Api.Controllers
     public class ImportController : ControllerBase
     {
         private readonly IModelImportService _modelImportService;
+        private readonly IAssetImportService _assetImportService;
 
-        public ImportController(IModelImportService modelImportService)
+        public ImportController(IModelImportService modelImportService, IAssetImportService assetImportService)
         {
             _modelImportService = modelImportService;
+            _assetImportService = assetImportService;
         }
 
         [HttpPost("models")]
@@ -36,9 +38,29 @@ namespace Web.Api.Controllers
         }
 
         [HttpGet("models/{id}")]
-        public async Task<ActionResult<BulkImportResultDto>> FinalizeImport(Guid id)
+        public async Task<ActionResult<BulkImportResultDto>> FinalizeModelImport(Guid id)
         {
             var result = await _modelImportService.FinalizeImport(id);
+            return Ok(result);
+        }
+
+        [HttpPost("assets")]
+        [DisableRequestSizeLimit]
+        public async Task<ActionResult<ImportValidationDto>> UploadAssets()
+        {
+            var file = Request.Form.Files.FirstOrDefault();
+            if (file == null || file.Length <= 0) return BadRequest();
+
+            await using var stream = file.OpenReadStream();
+            var result = await _assetImportService.HandleImport(stream);
+
+            return Ok(result);
+        }
+
+        [HttpGet("assets/{id}")]
+        public async Task<ActionResult<BulkImportResultDto>> FinalizeAssetImport(Guid id)
+        {
+            var result = await _assetImportService.FinalizeImport(id);
             return Ok(result);
         }
     }

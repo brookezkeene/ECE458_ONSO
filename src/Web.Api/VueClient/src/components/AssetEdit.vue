@@ -1,6 +1,7 @@
 <template>
     <div v-if="!loading">
         <v-card flat>
+            <changePlanBar></changePlanBar>
             <v-card-title>
                 <span class="headline">{{formTitle}}</span>
             </v-card-title>
@@ -38,6 +39,7 @@
                                                     <v-col cols="12" sm="6" md="4">
                                                         <v-text-field v-model="editedItem.assetNumber"
                                                                       label="Asset Number"
+                                                                      clearable
                                                                       placeholder="Please enter a 6 digit serial number"
                                                                       :rules="[rules.assetRules]"
                                                                       counter="6">
@@ -88,6 +90,7 @@
                                                     <v-col cols="12" sm="6" md="4">
                                                         <v-autocomplete v-model=editedItem.ownerId
                                                                         :items="users"
+                                                                        clearable
                                                                         item-text="username"
                                                                         item-value="id"
                                                                         label="Owner User Name"
@@ -170,7 +173,7 @@
 
                                             <v-container fluid
                                                          fill
-                                                         v-for="(port, index) in powerPorts" :key="index">
+                                                         v-for="(port, index) in editedItem.powerPorts" :key="index">
                                                 <v-layout align-center
                                                           justify-bottom>
                                                     <v-spacer></v-spacer>
@@ -180,30 +183,20 @@
                                                     <v-spacer></v-spacer>
                                                     <v-btn-toggle v-model="port.pduLocation"
                                                                   mandatory>
-                                                        <v-btn @click="setLocation('left')" value="true">
+                                                        <v-btn @click="setLocation(port)" value="left">
                                                             Left
                                                         </v-btn>
-                                                        <v-btn @click="setLocation('right')" value="false">
+                                                        <v-btn @click="setLocation(port)" value="right">
                                                             Right
                                                         </v-btn>
                                                     </v-btn-toggle>
                                                     <v-spacer></v-spacer>
-                                                    <v-autocomplete v-if="port.pduLocation"
-                                                                    v-model="editedItem.powerPorts[index].pduPortId"
-                                                                    :items="availablePortsInRack.right"
+                                                    <v-autocomplete v-model="port.pduPortId"
+                                                                    :items="availablePortsInRack[port.pduLocation]"
                                                                     item-text="number"
                                                                     item-value="id"
-                                                                    :return-object="false"
                                                                     typeof="number"
-                                                                    placeholder="PDU Number">
-                                                    </v-autocomplete>
-                                                    <v-autocomplete v-if="!port.pduLocation"
-                                                                    v-model="editedItem.powerPorts[index].pduPortId"
-                                                                    :items="availablePortsInRack.left"
-                                                                    item-text="number"
-                                                                    item-value="id"
-                                                                    :return-object="false"
-                                                                    typeof="number"
+                                                                    clearable
                                                                     placeholder="PDU Number">
                                                     </v-autocomplete>
                                                     <v-spacer></v-spacer>
@@ -239,9 +232,15 @@
 </style>
 
 <script>
+
+    import changePlanBar from '@/components/ChangePlanStatusBar';
+
     export default {
         name: 'asset-edit',
-        inject: ['assetRepository', 'modelRepository', 'userRepository', 'rackRepository', 'datacenterRepository'],
+        components: {
+            changePlanBar,
+        },
+        inject: ['assetRepository', 'modelRepository', 'userRepository', 'rackRepository', 'datacenterRepository', 'networkRepository', 'powerRepository'],
         props: {
             id: String,
         },
@@ -271,7 +270,7 @@
                     datacenterId: '',
                     hostname: '',
                     comment: '',
-                    rackPosition: 0,
+                    rackPosition: 1,
                     ownerId: '',
                     modelId: '',
                     assetNumber: ''
@@ -291,10 +290,10 @@
                 rules: {
                     modelRules: v => /^(?!\s*$).+/.test(v) || 'Model is required',
                     hostnameRules: v => /^(?![0-9]+$)(?!.*-$)(?!-)[a-zA-Z0-9-]{1,63}$/.test(v) || 'Valid hostname is required',
-                    assetRules: v => /^[1-9]\d{5}$/.test(v) || 'Valid asset number is required',
+                    assetRules: v => (/^[1-9]\d{5}$/.test(v) || (v || '').length==0) || 'Invalid Asset Number',
                     datacenterRules: v => /^(?!\s*$).+/.test(v) || 'Datacenter is required',
                     rackRules: v => /^(?!\s*$).+/.test(v) || 'Rack is required',
-                    rackuRules: v => /^(?!\s*$).+/.test(v) || 'Rack U is required',
+                    rackuRules: v => (/^(?!\s*$).+/.test(v) &&  v>0) || 'Valid rack U is required',
                     macAddressRules: v => (/^([0-9A-Fa-f]{2}[\W_]*){5}([0-9A-Fa-f]{2})$/.test(v) || /^$/.test(v)) || 'Invalid MAC Address.'
                 },
                 valid: true
@@ -325,7 +324,6 @@
             }
 
         },
-
         computed: {
             formTitle() {
                 return typeof this.id === 'undefined' ? 'New Item' : 'Edit Item'
@@ -341,24 +339,15 @@
         },
         methods: {
             save() {
-                console.log(this.editedItem);
-                console.log(this.selectedModel);
-                if (this.editedItem.id.length != 0) {
-
-                    for (var j = 0; j < this.editedItem.networkPorts.length; j++) {
-                        this.editedItem.networkPorts[j].modelNetworkPortId = this.selectedModel.networkPorts[j].id;
-                    }
-                    console.log(this.editedItem);
-                    this.assetRepository.update(this.editedItem).then(this.close());
-                } else {
-                    for (var i = 0; i < this.editedItem.networkPorts.length; i++) {
-                        this.editedItem.networkPorts[i].modelNetworkPortId = this.selectedModel.networkPorts[i].id;
-                    }
-                    this.assetRepository.create(this.editedItem).then(this.close());
+                // Check if in a change plan context
+                if (this.$store.getters.isChangePlan) {
+                    this.editedItem.changePlanId = this.$store.getters.changePlan.id;
                 }
-                console.log(this.editedItem);
-                this.selectedRack = false;
-                this.selectedModelBool = false;
+
+                var promise = typeof this.id !== 'undefined'
+                    ? this.assetRepository.update(this.editedItem)
+                    : this.assetRepository.create(this.editedItem);
+                promise.then(this.close);
             },
             close() {
                 this.$router.push({ name: 'assets' })
@@ -366,7 +355,7 @@
                 this.selectedModelBool = false;
             },
             async sendNetworkPortRequest() {
-                this.networks = await this.datacenterRepository.networkPorts(this.datacenterID);
+                this.networks = await this.datacenterRepository.openNetworkPorts(this.datacenterID);
                 for (const network of this.networks) {
                     network.nameRackAssetNum = "Port name: " + network.name +
                         ",  " + "Hostname: " + network.assetHostname;
@@ -419,6 +408,7 @@
                             id: '',
                             macAddress: '',
                             connectedPortId: null,
+                            modelNetworkPortId: model.networkPorts[j].id
                         }
                         networkPortsArray.push(Object.assign({}, newPortInfo));
                     }
@@ -454,8 +444,8 @@
                     this.editedItem.powerPorts = powerPortsArray;
                 }
             },
-            setLocation(side) {
-                this.sidePortIsOn = side;
+            setLocation(port) {
+                port.pduPortId = null;
             }
         },
 

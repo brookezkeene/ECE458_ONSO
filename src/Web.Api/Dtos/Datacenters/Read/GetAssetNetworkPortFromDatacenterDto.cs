@@ -12,5 +12,7 @@ namespace Web.Api.Dtos.Datacenters.Read
         public int RackNumber { get; set; }
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public string MacAddress { get; set; }
+        public Guid ModelNetworkPortId { get; set; }
     }
 }

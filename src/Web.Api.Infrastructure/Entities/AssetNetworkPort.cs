@@ -18,7 +18,7 @@ namespace Web.Api.Infrastructure.Entities
         public Guid ModelNetworkPortId { get; set; }
         public virtual ModelNetworkPort ModelNetworkPort { get; set; }
 
-        public Guid? ConnectedPortId { get; set; }
-        public virtual AssetNetworkPort ConnectedPort { get; set; }
+        public Guid? NetworkConnectionId { get; set; }
+        public virtual NetworkConnection NetworkConnection { get; set; }
     }
 }

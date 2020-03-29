@@ -1,12 +1,10 @@
 ﻿using System;
+using Web.Api.Dtos.Assets.Create;
 
 namespace Web.Api.Dtos.Assets.Update
 {
-    public class UpdateAssetNetworkPortApiDto
+    public class UpdateAssetNetworkPortApiDto : AssetNetworkPortApiDto
     {
         public Guid Id { get; set; }
-        public string MacAddress { get; set; }
-        public Guid? ConnectedPortId { get; set; }
-        public Guid ModelNetworkPortId { get; set; }
     }
 }

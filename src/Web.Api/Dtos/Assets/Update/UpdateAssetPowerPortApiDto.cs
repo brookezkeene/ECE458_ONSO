@@ -1,10 +1,10 @@
 ﻿using System;
+using Web.Api.Dtos.Assets.Create;
 
 namespace Web.Api.Dtos.Assets.Update
 {
-    public class UpdateAssetPowerPortApiDto
+    public class UpdateAssetPowerPortApiDto : AssetPowerPortApiDto
     {
         public Guid Id { get; set; }
-        public Guid? PduPortId { get; set; }
     }
 }

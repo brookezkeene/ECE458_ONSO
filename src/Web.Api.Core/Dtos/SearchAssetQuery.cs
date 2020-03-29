@@ -7,6 +7,9 @@ namespace Web.Api.Core.Dtos
     public class SearchAssetQuery
     {
         public Guid? Datacenter { get; set; }
+        public Guid? ChangePlanId { get; set; }
+        public string DatacenterName { get; set; }
+        public string GeneralSearch { get; set; }
         public string Vendor { get; set; }
         public string ModelNumber { get; set; }
         public string RackStart { get; set; }
@@ -24,7 +27,7 @@ namespace Web.Api.Core.Dtos
     {
         public static void ToUpper(this SearchAssetQuery query)
         {
-            //setting defaults for model vendor and number search
+            //setting defaults for model vendor and number search`
             if (!string.IsNullOrEmpty(query.Vendor))
             {
                 query.Vendor = query.Vendor.ToUpper();
@@ -32,6 +35,22 @@ namespace Web.Api.Core.Dtos
             else
             {
                 query.Vendor = "";
+            }
+            if (!string.IsNullOrEmpty(query.DatacenterName))
+            {
+                query.DatacenterName = query.DatacenterName.ToUpper();
+            }
+            else
+            {
+                query.DatacenterName = "";
+            }
+            if (!string.IsNullOrEmpty(query.Decommissioner))
+            {
+                query.Decommissioner = query.Decommissioner.ToUpper();
+            }
+            else
+            {
+                query.Decommissioner = "";
             }
             if (!string.IsNullOrEmpty(query.ModelNumber))
             {
@@ -49,13 +68,17 @@ namespace Web.Api.Core.Dtos
             {
                 query.Hostname = "";
             }
-            if (!string.IsNullOrEmpty(query.RackStart))
+            if (string.IsNullOrEmpty(query.RackStart))
             {
-                query.RackStart = query.RackStart.ToUpper();
+                query.RackStart = "A" + 0.ToString();
+            }
+            else if (query.RackStart.Length == 1)
+            {
+                query.RackStart = query.RackStart.ToUpper() + 0.ToString();
             }
             else
             {
-                query.RackStart = "A" + 0.ToString();
+                query.RackStart = query.RackStart.ToUpper();
             }
             if (string.IsNullOrEmpty(query.RackEnd))
             {
@@ -70,7 +93,14 @@ namespace Web.Api.Core.Dtos
             {
                 query.RackEnd = query.RackEnd.ToUpper();
             }
-
+            if (string.IsNullOrEmpty(query.DateStart))
+            {
+                query.DateStart = "";
+            }
+            if (string.IsNullOrEmpty(query.DateEnd))
+            {
+                query.DateEnd = "";
+            }
             if (query.Page == 0)
             {  
                 query.Page = 1;

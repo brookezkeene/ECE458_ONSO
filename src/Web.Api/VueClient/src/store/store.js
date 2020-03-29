@@ -13,14 +13,22 @@ export default new Vuex.Store({
      Props --> State
      */
     state: {
-        clicked: false,         // for clicking network neighborhood
-        itemId: '',             // for detail and edit views
-        page: '',               // to keep track of current page
-        dialogVisible: false,   // to show or hide a dialog
-        dialogType: null,       // specify dialog type
-        updateData: false,      // for updating tables
-        username: '',           // for showing who is signed in and saving who decommissioned
-        myPermissions: [],      // for tracking user permissions
+        clicked: false,             // for clicking network neighborhood
+        itemId: '',                 // for detail and edit views
+        page: '',                   // to keep track of current page
+        dialogVisible: false,       // to show or hide a dialog
+        dialogType: null,           // specify dialog type
+        updateData: false,          // for updating tables
+        username: '',               // for showing who is signed in and saving who decommissioned
+        myPermissions: [],          // for tracking user permissions
+        myDatacenters: [],          // for tracking datacenter permissions
+        changePlan: false,          // for showing changeplan snackbar
+        changePlanName: '',         // for showing name of changeplan being edited in snackbar
+        changePlanId: '',
+        changePlanDatacenterName: '',   // for limiting the change plan assets to a datacenter
+        changePlanDatacenterDescription: '',
+        changePlanDatacenterId: '',
+        userId: auth.id(),          // for querying the backend for the changeplans belonging to a particular user
     },
 
     /*Defines Computed Properties for our Store
@@ -41,7 +49,28 @@ export default new Vuex.Store({
         },
         isAdmin: state => {
             return state.myPermissions.includes("admin")
-        }
+        },
+        hasDatacenters: state => {
+            return state.myDatacenters
+        },
+        isChangePlan: state => {
+            return state.changePlan
+        },
+        changePlan: state => {
+            var ret = {
+                name: state.changePlanName,
+                id: state.changePlanId,
+                datacenterName: state.changePlanDatacenterName,
+                datacenterDescription: state.changePlanDatacenterDescription,
+                datacenterId: state.changePlanDatacenterId,
+            };
+            console.log(ret);
+            return ret;
+        },
+        userId: state => {
+            console.log(state.userId);
+            return state.userId
+        },
     },
 
     /*Defines functions that Change the App State
@@ -67,7 +96,24 @@ export default new Vuex.Store({
         },
         SAVE_ROLES(state, roles) {
             state.myPermissions = roles;
-        }
+        },
+        SAVE_PERMISSIONS(state, datacenters) {
+            state.myDatacenters = datacenters;
+        },
+        SAVE_USER_ID(state, id) {
+            state.userId = id;
+        },
+        START_CHANGE_PLAN(state, changePlan) {
+            state.changePlanName = changePlan.name;
+            state.changePlan = true;
+            state.changePlanDatacenterName = changePlan.datacenterName;
+            state.changePlanDatacenterDescription = changePlan.datacenterDescription;
+            state.changePlanDatacenterId = changePlan.datacenterId;
+            state.changePlanId = changePlan.changePlanId;
+        },
+        END_CHANGE_PLAN(state) {
+            state.changePlan = false;
+        },
     },
 
     /*Used to Commit Mutations
@@ -84,6 +130,21 @@ export default new Vuex.Store({
             }).catch(error => {
                 throw new Error(`API ${error}`);
             });
+        },
+        loadPermissionDatacenters({ commit }) {
+            commit('SAVE_PERMISSIONS', auth.permissions());
+        },
+        // Provides the user id from the cookie to send for a changeplan
+        loadUserId({ commit }) {
+            commit('SAVE_USER_ID', auth.id());
+            console.log(auth.id());
+        },
+        startChangePlan({ commit }, changePlan) {
+            console.log(changePlan);
+            commit('START_CHANGE_PLAN', changePlan);
+        },
+        endChangePlan({ commit }) {
+            commit('END_CHANGE_PLAN');
         },
     },
 })

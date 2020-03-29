@@ -95,7 +95,7 @@
 
         <v-dialog v-model="importAssetWizard" max-width="500px">
             <v-card>
-                <import-wizard v-on:close-file-chooser="closeImport"></import-wizard>
+                <import-wizard type="assets" v-on:close-file-chooser="closeImport" @import-error="throwError(e)"></import-wizard>
             </v-card>
         </v-dialog>
 

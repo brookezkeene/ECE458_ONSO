@@ -1,18 +1,39 @@
 <template>
     <v-card flat>
+        <changePlanBar></changePlanBar>
         <v-card-title>Assets</v-card-title>
+        <v-container>
+            <v-card flat>
+                <v-layout>
+                    <v-spacer></v-spacer>
+                    <v-tooltip top>
+                        <template v-slot:activator="{ on }">
+                            <v-switch v-model="labelGen" 
+                                      label="Asset Label Mode"
+                                      v-on="on"
+                                      class="pa-3"></v-switch>
+                        </template>
+
+                        <span>Switch on to begin selecting labels for asset label generation</span>
+                    </v-tooltip>
+                </v-layout>
+            </v-card>
+        </v-container>
+        
         <v-container>
             <v-card>
                 <v-spacer></v-spacer>
-                <v-data-table :headers="filteredHeaders"
+                <v-data-table v-model="selectedAssets"
+                              calculate-widths
+                              :headers="filteredHeaders"
                               :items="assets"
                               :search="search"
-                              class="elevation-1"
+                              class="pa-5"
                               @click:row="showDetails"
                               :server-items-length="totalItems"
+                              :show-select="labelGen"
                               :options.sync="options"
-                              :key="selectedDatacenter"
-                              >
+                              :key="selectedDatacenter">
 
                     <template v-slot:top v-slot:item.action="{ item }">
                         <v-toolbar flat>
@@ -36,9 +57,8 @@
                                     </v-col>
                                 </v-row>
                             </v-container>
-
                             <v-spacer></v-spacer>
-
+                            <v-spacer></v-spacer>
                             <v-btn v-if="permission" color="primary" dark class="mb-2" @click="addItem">Add asset</v-btn>
 
                             <v-dialog v-model="instructionsDialog" max-width="550px">
@@ -79,7 +99,7 @@
                                                   flat
                                                   hide-no-data
                                                   hide-details
-                                                  label="Search Number"
+                                                  label="Search Model Number"
                                                   single-line
                                                   solo-inverted>
 
@@ -133,6 +153,38 @@
 
                     </template>
 
+                    <!--Customize Select All/None Option-->
+                    <template v-slot:header.data-table-select="{ on, props }">
+                        <v-row>
+                            <span style="white-space:nowrap">Select All</span>
+                        </v-row>
+                        
+                        <v-simple-checkbox color="primary"
+                                           class="pb-4"
+                                           v-bind="props"
+                                           v-on="on"></v-simple-checkbox>
+                    </template>
+
+                    <!--Add Button to Data Table Footer-->
+                    <template v-if="labelGen" v-slot:footer>
+                        <v-row class="pa-10">
+                            <v-spacer></v-spacer>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn dark
+                                           color="primary"
+                                           v-on="on"
+                                           @click="addLabels">
+                                        Generate Labels
+                                    </v-btn>
+                                </template>
+
+                                <span>Generate barcode labels for the current selection of assets</span>
+                            </v-tooltip>
+                            <v-spacer></v-spacer>
+                        </v-row>
+                    </template>
+
                     <template v-if="permission" v-slot:item.action="{ item }">
                         <v-row>
                             <v-tooltip top>
@@ -164,7 +216,7 @@
                             </v-tooltip>
 
                             <v-tooltip top>
-                                <template v-slot:activator="{ on }">
+                                <template v-if="!$store.getters.isChangePlan" v-slot:activator="{ on }">
                                     <v-btn icon v-on="on"
                                            @click="deleteItem(item)">
                                         <v-icon medium
@@ -224,14 +276,19 @@
 <script>
 
     import networkNeighborhood from '@/networkNeighborhood';
+    import changePlanBar from '@/components/ChangePlanStatusBar';
 
     export default {
 
         components: {
+            changePlanBar,
         },
         inject: ['assetRepository', 'datacenterRepository'],
         data() {
             return {
+                changePlanner: false,
+                labelGen: false,
+                selectedAssets: [],
                 selectedDatacenter: 'All Datacenters',
                 // Filter values.
                 hostnameSearch: '',
@@ -239,7 +296,6 @@
                 numberSearch: '',
                 startRackValue: '',
                 endRackValue: '',
-
                 datacenters: [],
                 instructionsDialog: false,
                 loading: true,
@@ -251,12 +307,13 @@
                 // Table data.
                 headers: [
                     { text: 'Model Vendor', value: 'vendor' },
-                    { text: 'Model Number', value: 'modelNumber', },
+                    { text: 'Model No.', value: 'modelNumber', },
+                    { text: 'Asset No.', value: 'assetNumber'},
                     { text: 'Hostname', value: 'hostname' },
                     { text: 'Datacenter', value: 'datacenter' },
                     { text: 'Rack', value: 'rack' },
                     { text: 'Rack U', value: 'rackPosition', },
-                    { text: 'Owner Username', value: 'owner' },
+                    { text: 'Owner', value: 'owner' },
                     { text: 'Power', value: 'power', sortable: false },
                     { text: 'Actions', value: 'action', sortable: false },
                 ],
@@ -293,6 +350,7 @@
                     pageSize: 0,
                     isDesc: '',
                     sortBy: '',
+                    changePlanId: ''
                 },
                 editing: false,
             }
@@ -305,7 +363,16 @@
                 return this.$store.getters.hasPowerPermission || this.$store.getters.isAdmin
             },
             filteredHeaders() {
-                return (this.permission) ? this.headers : this.headers.filter(h => h.text !== "Actions" && h.text !== "Power")
+                var newHeaders = this.headers;
+
+                if (!this.powerPermission) {
+                    newHeaders = newHeaders.filter(h => h.text !== "Power")
+                }
+                if (!this.permission) {
+                    newHeaders = newHeaders.filter(h => h.text !== "Actions")
+                }
+
+                return newHeaders;
             },
         },
         watch: {
@@ -333,11 +400,19 @@
                 })
         },
 
-        async created() {
-            this.initializeDatacenters();
+        async created() { 
+            this.createPage();
         },
 
         methods: {
+            createPage() {
+                this.initializeDatacenters();
+                this.initialize();
+                this.getAssetsFromApi();
+                if (this.$store.getters.isChangePlan) {
+                    this.modifyAssetsForChangePlan();
+                }
+            },
             async getAssetsFromApi() {
                 this.loading = true;
                 const { sortBy, sortDesc, page, itemsPerPage } = this.options;
@@ -347,16 +422,17 @@
                 console.log("this is the sorting stuff")
                 console.log(this.assetSearchQuery);
 
-                var info = await this.assetRepository.tablelist(this.assetSearchQuery);
-                if ((page - 1) * itemsPerPage > info.totalCount) {
-                    this.fillQuery(sortBy, sortDesc, 1, itemsPerPage);
-                    info = await this.assetRepository.tablelist(this.assetSearchQuery);
+                if (this.$store.getters.isChangePlan) {
+                    this.assetSearchQuery.changePlanId = this.$store.getters.changePlan.id;
+                    console.log(this.assetSearchQuery);
                 }
+                var info = await this.assetRepository.tablelist(this.assetSearchQuery);
                 this.assets = info.data;
                 return info;
             },
             async fillQuery(sortBy, sortDesc, page, itemsPerPage) {
                 var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
+                console.log(searchDatacenter);
                 if (typeof searchDatacenter === 'undefined') {
                     this.assetSearchQuery.datacenter = '';
                 } else {
@@ -382,20 +458,28 @@
                 return '';
             },
             async initialize() {
-
-                this.assets = await this.getAssetsFromApi();
+                await this.getAssetsFromApi();
                 this.loading = false;
-
             },
             async initializeDatacenters() {
-                this.datacenters = await this.datacenterRepository.list();
-                var datacenter = {
-                    description: "All Datacenters",
-                    name: "All",
+                var datacenter;
+                if (this.$store.getters.isChangePlan) {
+                    this.selectedDatacenter = this.$store.getters.changePlan.datacenterDescription; //Limiting change plans to a datacenter
+                    this.datacenters = [];
+                    datacenter = {
+                        description: this.selectedDatacenter,
+                        name: this.$store.getters.changePlan.datacenterName,
+                        id: this.$store.getters.changePlan.datacenterId,
+                    }
+                } else {
+                    this.datacenters = await this.datacenterRepository.list();
+                    datacenter = {
+                        description: "All Datacenters",
+                        name: "All",
+                    }
                 }
                 this.datacenters.push(datacenter);
                 this.loading = false;
-
             },
             deleteItem(item) {
                 this.editing = true;
@@ -408,6 +492,9 @@
                 this.editing = true;
                 var graph = await networkNeighborhood.createGraph(item.id);
                 var query = { Id: item.id, NetworkPortGraph: JSON.stringify(graph), Decommissioner: this.$store.state.username }
+                if (this.$store.getters.isChangePlan) {
+                    query.changePlanId = this.$store.getters.changePlan.id;
+                }
                 /*eslint-disable*/
                 console.log(query);
                 confirm('Are you sure you want to decommission this asset? \nThis will remove the asset from the assets table, and instead add it to the decommissioned assets table.') && this.assetRepository.decommission(query)
@@ -415,16 +502,22 @@
                         await this.initialize();
                     })
             },
+            // Is this unnecessary?
             async datacenterSearch() {
                 var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
                 this.assets = await this.assetRepository.list(searchDatacenter.id);
             },
             editItem(item) {
                 this.editing = true;
-                this.$router.push({ name: 'asset-edit', params: { id: item.id } })
+                console.log(item);
+                this.$router.push({ name: 'asset-edit', params: { id: item.id} })
             },
             addItem() {
                 this.$router.push({ name: 'asset-new' })
+            },
+            addLabels() {
+                /*eslint-disable*/
+                console.log(this.selectedAssets);
             },
             turnOn(item) {
                 this.editing = true;
@@ -492,7 +585,10 @@
                 return value.toLowerCase() >= this.startRackValue.toLowerCase()
                     && value.toLowerCase() <= this.endRackValue.toLowerCase();
             },
-
+            async modifyAssetsForChangePlan() {
+                console.log(this.selectedDatacenter);
+                console.log("In a change plan!");
+            },
         },
     }
 </script>

@@ -8,15 +8,17 @@ using Web.Api.Common;
 using Web.Api.Common.Extensions;
 using Web.Api.Infrastructure.DbContexts;
 using Web.Api.Infrastructure.Entities;
+using Web.Api.Infrastructure.Interfaces;
 using Web.Api.Infrastructure.Repositories.Interfaces;
 
 namespace Web.Api.Infrastructure.Repositories
 {
-    public class DatacenterRepository : IDatacenterRepository
+    public class DatacenterRepository<TDbContext> : IDatacenterRepository
+        where TDbContext : DbContext, IApplicationDbContext
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly TDbContext _dbContext;
 
-        public DatacenterRepository(ApplicationDbContext dbContext)
+        public DatacenterRepository(TDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -43,6 +45,20 @@ namespace Web.Api.Infrastructure.Repositories
                             .AnyAsync();
         }
 
+        public Datacenter GetDatacenter(string name)
+        {
+            return _dbContext.Datacenters
+                .SingleOrDefault(dc => dc.Name == name);
+        }
+
+        public async Task<List<AssetNetworkPort>> GetOpenNetworkPortsFromDatacenterAsync(Guid datacenterId)
+        {
+            return await _dbContext.AssetNetworkPort
+                .Where(port => port.NetworkConnectionId == null)
+                .Where(port => port.Asset.Rack.DatacenterId == datacenterId)
+                .ToListAsync();
+        }
+
         public async Task<bool> DatacenterIsUniqueAsync(string name, string description, Guid id = default)
         {
             return !await _dbContext.Datacenters
@@ -54,12 +70,12 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<List<AssetNetworkPort>> GetNetworkPortFromDatacenterAsync(Guid datacenterID)
         {
             var ports = await _dbContext.AssetNetworkPort
-                .Include(x => x.ModelNetworkPort)
-                .Include(x => x.Asset).ThenInclude(x => x.Rack)
-                .Include(x => x.ConnectedPort).ThenInclude(x => x.ModelNetworkPort)
-                .Include(x => x.ConnectedPort).ThenInclude(x => x.Asset)
+                //.Include(x => x.ModelNetworkPort)
+                //.Include(x => x.Asset).ThenInclude(x => x.Rack)
+                //.Include(x => x.ConnectedPort).ThenInclude(x => x.ModelNetworkPort)
+                //.Include(x => x.ConnectedPort).ThenInclude(x => x.Asset)
                 .Where(x => x.Asset.Rack.Datacenter.Id == datacenterID)
-                .AsNoTracking()
+                //.AsNoTracking()
                 .ToListAsync();
             return ports;
         }
@@ -74,7 +90,7 @@ namespace Web.Api.Infrastructure.Repositories
         {
             return await _dbContext.Datacenters
                 .Where(x => x.Id == datacenterId)
-                .AsNoTracking()
+                //.AsNoTracking()
                 .SingleAsync();
         }
 
@@ -87,7 +103,7 @@ namespace Web.Api.Infrastructure.Repositories
             var datacenters = await _dbContext.Datacenters
                 .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
                 .PageBy(x => x.Name, page, pageSize)
-                .AsNoTracking()
+                //.AsNoTracking()
                 .ToListAsync();
 
             pagedList.AddRange(datacenters);

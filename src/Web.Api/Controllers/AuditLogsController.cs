@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Web.Api.Common;
@@ -16,10 +17,12 @@ namespace Web.Api.Controllers
     public class AuditLogsController : ControllerBase
     {
         private readonly IAuditLogService _auditLogService;
+        private readonly IMapper _mapper;
 
-        public AuditLogsController(IAuditLogService auditLogService)
+        public AuditLogsController(IAuditLogService auditLogService, IMapper mapper)
         {
             _auditLogService = auditLogService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -27,7 +30,7 @@ namespace Web.Api.Controllers
             int pageSize = 10)
         {
             var events = await _auditLogService.GetAsync(searchText, page, pageSize);
-            var response = events.MapTo<PagedList<GetAuditLogApiDto>>();
+            var response = _mapper.Map<PagedList<GetAuditLogApiDto>>(events);
             return Ok(response);
         }
     }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Web.Api.Common;
+using Web.Api.Infrastructure.Entities;
 
 namespace Web.Api.Controllers
 {

@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AutoMapper;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Web.Api.Core.Dtos;
+using Web.Api.Core.UnitTests.Common;
 using Web.Api.Dtos;
 using Web.Api.Dtos.Assets;
 using Web.Api.Dtos.Assets.Create;
@@ -17,19 +20,13 @@ using Xunit.Abstractions;
 
 namespace Web.Api.Core.UnitTests.Mappers
 {
-    public class AssetMapperTests
+    public class AssetMapperTests : IClassFixture<BaseMapperFixture>
     {
-        private readonly ITestOutputHelper _testOutput;
+        private readonly IMapper _mapper;
 
-        public AssetMapperTests(ITestOutputHelper testOutput)
+        public AssetMapperTests(BaseMapperFixture fixture)
         {
-            _testOutput = testOutput;
-        }
-
-        [Fact]
-        public void AssetMapperConfigIsValid()
-        {
-            ApiMappers.AssertConfigurationIsValid<AssetApiMapperProfile>();
+            _mapper = fixture.GetMapper();
         }
 
         [Fact]
@@ -37,7 +34,7 @@ namespace Web.Api.Core.UnitTests.Mappers
         {
             var asset = AssetDto();
 
-            var apiDto = asset.MapTo<GetAssetApiDto>();
+            var apiDto = _mapper.Map<GetAssetApiDto>(asset);
 
             // map didn't outright fail
             apiDto.Should()
@@ -80,7 +77,7 @@ namespace Web.Api.Core.UnitTests.Mappers
 
 
             // flattened data from complex types
-            apiDto.Rack.Should().Be(asset.Rack.Address);
+            apiDto.Rack.Should().Be(asset.Rack.RackAddress);
             apiDto.Owner.Should().Be(asset.Owner.Username);
             apiDto.Datacenter.Should().Be(asset.Rack.Datacenter.Name);
             apiDto.HasNetworkManagedPower.Should().Be(asset.Rack.Datacenter.HasNetworkManagedPower);
@@ -112,10 +109,9 @@ namespace Web.Api.Core.UnitTests.Mappers
         {
             var apiDto = CreateAssetApiDto();
 
-            var asset = apiDto.MapTo<AssetDto>();
+            var asset = _mapper.Map<AssetDto>(apiDto);
 
-            asset.Should()
-                .BeEquivalentTo(apiDto);
+            asset.Should().NotBeEquivalentTo(apiDto);
         }
 
         [Fact]
@@ -123,12 +119,11 @@ namespace Web.Api.Core.UnitTests.Mappers
         {
             var apiDto = UpdateAssetApiDto();
 
-            var asset = apiDto.MapTo<AssetDto>();
+            var asset = _mapper.Map<AssetDto>(apiDto);
 
             asset.Should().NotBeNull();
 
-            asset.Should()
-                .BeEquivalentTo(apiDto);
+            asset.Should().NotBeEquivalentTo(apiDto);
         }
 
         private static AssetDto AssetDto()
@@ -278,32 +273,24 @@ namespace Web.Api.Core.UnitTests.Mappers
         }
         private static CreateAssetApiDto CreateAssetApiDto()
         {
-            var powerPorts = new List<CreateAssetPowerPortApiDto>
-            {
-                new CreateAssetPowerPortApiDto()
-                {
-                    Number = 1,
-                    PduPortId = Guid.NewGuid()
-                },
-                new CreateAssetPowerPortApiDto()
-                {
-                    Number = 2,
-                    PduPortId = Guid.NewGuid()
-                }
-            };
-
             var networkPorts = new List<CreateAssetNetworkPortApiDto>
             {
                 new CreateAssetNetworkPortApiDto()
                 {
-                    MacAddress = "aa:bb:cc:dd:ee:ff",
-                    ConnectedPortId = Guid.NewGuid()
+                    MacAddress = "aa:bb:cc:dd:ee:ff"
                 },
                 new CreateAssetNetworkPortApiDto
                 {
                     MacAddress = "00:11:22:33:44:55"
                 }
             };
+
+            var powerPorts = new List<CreateAssetPowerPortApiDto>
+            {
+                new CreateAssetPowerPortApiDto(),
+                new CreateAssetPowerPortApiDto()
+            };
+
             var apiDto = new CreateAssetApiDto()
             {
                 ModelId = Guid.NewGuid(),
@@ -312,10 +299,11 @@ namespace Web.Api.Core.UnitTests.Mappers
                 Hostname = "foo-hostname",
                 RackPosition = 20,
                 Comment = "this is a comment",
-                PowerPorts = powerPorts,
                 NetworkPorts = networkPorts,
+                PowerPorts = powerPorts,
                 AssetNumber = 100000
             };
+
             return apiDto;
         }
         private static UpdateAssetApiDto UpdateAssetApiDto()

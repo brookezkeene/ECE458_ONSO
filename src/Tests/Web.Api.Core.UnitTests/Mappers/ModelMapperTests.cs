@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using AutoMapper;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Web.Api.Core.Dtos;
+using Web.Api.Core.UnitTests.Common;
 using Web.Api.Dtos;
 using Web.Api.Dtos.Models.Create;
 using Web.Api.Dtos.Models.Read;
@@ -14,24 +17,24 @@ using Xunit.Abstractions;
 
 namespace Web.Api.Core.UnitTests.Mappers
 {
-    public class ModelMapperTests
+    public class ModelMapperTests : IClassFixture<BaseMapperFixture>
     {
-        Guid modelId = Guid.NewGuid();
-        Guid networkId1 = Guid.NewGuid();
-        Guid networkId2 = Guid.NewGuid();
+        private readonly Guid _modelId = Guid.NewGuid();
+        private readonly Guid _networkId1 = Guid.NewGuid();
+        private readonly Guid _networkId2 = Guid.NewGuid();
+        private readonly IMapper _mapper;
 
-        [Fact]
-        public void ModelMapperConfigIsValid()
+        public ModelMapperTests(BaseMapperFixture fixture)
         {
-            ApiMappers.AssertConfigurationIsValid<ModelApiMapperProfile>();
+            _mapper = fixture.GetMapper();
         }
 
         [Fact]
         public void CanMapModelDto_ToGetModelApiDto()
         {
-            var model = BuildModel(modelId, networkId1, networkId2);
+            var model = BuildModel(_modelId, _networkId1, _networkId2);
 
-            var apiDto = model.MapTo<GetModelApiDto>();
+            var apiDto = _mapper.Map<GetModelApiDto>(model);
             model.Should().BeEquivalentTo(apiDto);
         }
 
@@ -40,7 +43,7 @@ namespace Web.Api.Core.UnitTests.Mappers
         {
             var apiDto = BuildCreateModelApiDto();
 
-            var model = apiDto.MapTo<ModelDto>();
+            var model = _mapper.Map<ModelDto>(apiDto);
 
             model.Should()
                 .BeEquivalentTo(apiDto);
@@ -48,9 +51,9 @@ namespace Web.Api.Core.UnitTests.Mappers
         [Fact]
         public void CanMapUpdateModelApiDto_ToModelDto()
         {
-            var apiDto = BuildUpdateModelApiDto(modelId, networkId1, networkId2);
+            var apiDto = BuildUpdateModelApiDto(_modelId, _networkId1, _networkId2);
 
-            var model = apiDto.MapTo<ModelDto>();
+            var model = _mapper.Map<ModelDto>(apiDto);
 
             model.Should()
                 .BeEquivalentTo(apiDto);
@@ -91,7 +94,7 @@ namespace Web.Api.Core.UnitTests.Mappers
             return model;
         }
 
-        private static CreateModelApiDto BuildCreateModelApiDto ()
+        private static CreateModelApiDto BuildCreateModelApiDto()
         {
             var networkports = new List<CreateModelNetworkPortDto>
             {

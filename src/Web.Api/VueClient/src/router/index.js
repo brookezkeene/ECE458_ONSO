@@ -19,6 +19,10 @@ import Log from '@/components/Log'
 import auth from '@/auth'
 import DecommissionedAssets from '@/components/DecommissionedAssets'
 import DecommissionedAssetDetails from '@/components/DecommissionedAssetDetails'
+import ChangePlanner from '@/components/ChangePlanner'
+import ChangePlannerDetails from '@/components/ChangePlannerDetails'
+import ChangePlanEdit from '@/components/ChangePlanEdit'
+
 
 Vue.use(Router)
 
@@ -77,6 +81,27 @@ const routes = [
                 path: '/decommissioned-assets/:id',
                 name: 'decommissioned-asset-details',
                 component: DecommissionedAssetDetails,
+                props: true,
+            },
+            {
+                path: '/change-plan',
+                name: 'change-planner',
+                component: ChangePlanner,
+            },
+            {
+                path: '/change-plan/new',
+                name: 'change-plan-new',
+                component: ChangePlanEdit,
+            },
+            {
+                path: '/change-plan/edit/:id',
+                name: 'change-plan-edit',
+                component: ChangePlanEdit,
+            },
+            {
+                path: '/change-plan/details/:id',
+                name: 'change-plan-details',
+                component: ChangePlannerDetails,
                 props: true,
             },
             {
