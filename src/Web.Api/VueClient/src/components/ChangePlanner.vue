@@ -38,7 +38,7 @@
                                             flat
                                             hide-no-data
                                             hide-details
-                                            item-text="vendor"
+                                            item-text="name"
                                             label="Search"
                                             single-line
                                             solo-inverted></v-autocomplete>
