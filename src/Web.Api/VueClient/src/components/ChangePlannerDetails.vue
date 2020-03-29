@@ -7,20 +7,28 @@
                 <v-spacer></v-spacer>
                 <v-data-table :headers="headers"
                               :items="changePlanItems"
-                              class="pa-10"
+                              class="pa-5"
                               multi-sort
                               show-expand>
 
+                    <template v-slot:item.data-table-expand="{ item, isExpanded, expand }">
+                        <v-btn icon @click="expand(true)" v-if="item.previousData!=null && !isExpanded"><v-icon>mdi-chevron-down</v-icon></v-btn>
+                        <v-btn icon @click="expand(false)" v-if="item.previousData==null && isExpanded"><v-icon>mdi-chevron-up</v-icon></v-btn>
+                    </template>
+
                     <template v-slot:expanded-item="{ headers, item }">
-                        <td></td>
-                        <td>{{item.previousData.Vendor}}</td>
-                        <td>{{item.previousData.ModelNumber}}</td>
-                        <td>{{item.previousData.AssetNumber}}</td>
-                        <td>{{item.previousData.Hostname}}</td>
-                        <td>{{item.previousData.Datacenter}}</td>
-                        <td>{{item.previousData.Rack}}</td>
-                        <td>{{item.previousData.RackPosition}}</td>
-                        <td>{{item.previousData.Owner}}</td>
+                        <div v-if="item.previousData!=null">
+                            <td></td>
+                            <td>{{item.previousData.Vendor}}</td>
+                            <td>{{item.previousData.ModelNumber}}</td>
+                            <td>{{item.previousData.AssetNumber}}</td>
+                            <td>{{item.previousData.Hostname}}</td>
+                            <td>{{item.previousData.Datacenter}}</td>
+                            <td>{{item.previousData.Rack}}</td>
+                            <td>{{item.previousData.RackPosition}}</td>
+                            <td>{{item.previousData.Owner}}</td>
+                        </div>
+
                     </template>
 
                     <template v-slot:item.executed="{ item }">
@@ -39,7 +47,7 @@
                     <template v-slot:item.action="{ item }">
                         <v-row>
                             <v-tooltip top>
-                                <template v-slot:activator="{ on }">
+                                <template v-if="item.executionType==='update'" v-slot:activator="{ on }">
                                     <v-btn icon v-on="on">
                                         <v-icon medium
                                                 class="mr-2">
@@ -47,11 +55,11 @@
                                         </v-icon>
                                     </v-btn>
                                 </template>
-
-                                <span>Edit</span>
+                                <span>Asset Edited</span>
                             </v-tooltip>
+
                             <v-tooltip top>
-                                <template v-slot:activator="{ on }">
+                                <template v-if="item.executionType==='create'" v-slot:activator="{ on }">
                                     <v-btn icon v-on="on">
                                         <v-icon medium
                                                 class="mr-2">
@@ -59,8 +67,7 @@
                                         </v-icon>
                                     </v-btn>
                                 </template>
-
-                                <span>Edit</span>
+                                <span>Asset Created</span>
                             </v-tooltip>
 
                         </v-row>
@@ -97,7 +104,7 @@
                     { text: 'Rack', value: 'newData.Rack' },
                     { text: 'Rack U', value: 'newData.RackPosition', },
                     { text: 'Owner Username', value: 'newData.Owner' },
-                    { text: 'Actions', value: 'action', sortable: false },
+                    { text: 'Change', value: 'action', sortable: false },
                 ],
                 changePlanItems: [],
             }
