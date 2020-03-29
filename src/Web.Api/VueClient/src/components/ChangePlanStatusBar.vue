@@ -2,13 +2,13 @@
 <template>
     <v-snackbar class="green--text text--darken-4" v-model="changePlan" top color="#8eff47" :timeout=0>
         <span>
-            Editing Change Plan:&nbsp; 
+            Editing Change Plan:
+            <strong>
+                {{changePlanName}}
+            </strong>
         </span>
-        <strong>
-            {{changePlanName}}
-        </strong>
+
         <v-icon @click="save">mdi-content-save-outline</v-icon>
-        <v-icon @click="cancel">mdi-close</v-icon>
     </v-snackbar>
 </template>
 
