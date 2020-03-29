@@ -12,27 +12,15 @@
                               show-expand>
 
                     <template v-slot:expanded-item="{ headers, item }">
-                        <td :colspan="headers.length">
-                            <v-container>
-                                <v-simple-table dense fixed-header>
-                                    <template v-slot:default>
-                                        <thead>
-                                            <tr>
-                                                <th>Asset</th>
-                                                <th>Value</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for="(value, name) in getChangePlanItems(item.id)" :key="name" class="text-left">
-                                                <td class="font-weight-medium">{{ name }}</td>
-                                                <td v-if="isIdProperty(name, item)"><router-link :to="constructLink(value, name, item)">{{ value }}</router-link></td>
-                                                <td v-else>{{ value }}</td>
-                                            </tr>
-                                        </tbody>
-                                    </template>
-                                </v-simple-table>
-                            </v-container>
-                        </td>
+                        <td></td>
+                        <td>{{item.previousData.Vendor}}</td>
+                        <td>{{item.previousData.ModelNumber}}</td>
+                        <td>{{item.previousData.AssetNumber}}</td>
+                        <td>{{item.previousData.Hostname}}</td>
+                        <td>{{item.previousData.Datacenter}}</td>
+                        <td>{{item.previousData.Rack}}</td>
+                        <td>{{item.previousData.RackPosition}}</td>
+                        <td>{{item.previousData.Owner}}</td>
                     </template>
 
                     <template v-slot:item.executed="{ item }">
@@ -101,14 +89,14 @@
             return {
                 loading: false,
                 headers: [
-                    { text: 'Model Vendor', value: 'vendor' },
-                    { text: 'Model Number', value: 'modelNumber', },
-                    { text: 'Asset Number', value: 'assetNumber', },
-                    { text: 'Hostname', value: 'hostname' },
-                    { text: 'Datacenter', value: 'datacenter' },
-                    { text: 'Rack', value: 'rack' },
-                    { text: 'Rack U', value: 'rackPosition', },
-                    { text: 'Owner Username', value: 'owner' },
+                    { text: 'Model Vendor', value: 'newData.Vendor' },
+                    { text: 'Model Number', value: 'newData.ModelNumber', },
+                    { text: 'Asset Number', value: 'newData.AssetNumber', },
+                    { text: 'Hostname', value: 'newData.Hostname' },
+                    { text: 'Datacenter', value: 'newData.Datacenter' },
+                    { text: 'Rack', value: 'newData.Rack' },
+                    { text: 'Rack U', value: 'newData.RackPosition', },
+                    { text: 'Owner Username', value: 'newData.Owner' },
                     { text: 'Actions', value: 'action', sortable: false },
                 ],
                 changePlanItems: [],
@@ -120,6 +108,16 @@
         methods: {
             async initialize() {
                 this.changePlanItems = await this.changePlanRepository.listItems(this.id);
+                this.deserializeData();
+                /*eslint-disable*/
+                console.log(this.changePlanItems);
+            },
+            deserializeData() {
+                this.changePlanItems.forEach(item => {
+                    item.previousData = JSON.parse(item.previousData);
+                    item.newData = JSON.parse(item.newData);
+                });
+                console.log(this.changePlanItems);
             },
             execute(item) {
                 (confirm('Are you sure you want to execute this change plan?') && this.changePlanRepository.execute(item))
