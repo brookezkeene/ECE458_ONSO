@@ -74,8 +74,9 @@
                     { title: 'Models', path: '/models', icon: 'mdi-table-large' },
                     { title: 'Assets', path: '/assets', icon: 'mdi-server', sublinks: [
                         { title: 'Active Assets', path: '/assets'},
-                        { title: 'Decommissioned Assets', path: '/decommissioned-assets' },
-                    ]},
+                        { title: 'Decommissioned', path: '/decommissioned-assets' }
+                    ]
+                    },
                     { title: 'Change Planner', path: '/change-planner', icon: 'mdi-clipboard-list-outline'},
                     { title: 'Datacenters', path: '/datacenters', icon: 'mdi-factory' },
                     { title: 'Racks', path: '/racks', icon: 'mdi-view-day' },
