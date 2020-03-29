@@ -13,6 +13,19 @@
                               multi-sort
                               @click:row="showDetails">
 
+                    <template v-slot:item.name="props">
+                        <v-edit-dialog :return-value.sync="props.item.name">
+                            {{ props.item.name }}
+                            <template v-if="!props.item.executedDate" v-slot:input>
+                                <v-text-field v-model="props.item.name"
+                                                :rules="[rules.nameRules]"
+                                                label="Edit"
+                                                single-line
+                                                counter></v-text-field>
+                                </template>
+                        </v-edit-dialog>
+                    </template>
+
                     <template v-slot:top>
                         <v-toolbar flat class="mb-6">
                             <v-label>Filter by ... </v-label>
@@ -39,6 +52,14 @@
                                 mdi-check-circle-outline
                             </v-icon>
                         </div>
+<<<<<<< HEAD
+=======
+                        <div v-else>
+                            <v-icon>
+                                mdi-minus
+                            </v-icon>
+                        </div>
+>>>>>>> 2799e4060daf8e863200b74096e924ee6e216e20
                     </template>
 
                     <template v-slot:item.action="{ item }">

@@ -39,6 +39,7 @@
                                                     <v-col cols="12" sm="6" md="4">
                                                         <v-text-field v-model="editedItem.assetNumber"
                                                                       label="Asset Number"
+                                                                      clearable
                                                                       placeholder="Please enter a 6 digit serial number"
                                                                       :rules="[rules.assetRules]"
                                                                       counter="6">
@@ -89,6 +90,7 @@
                                                     <v-col cols="12" sm="6" md="4">
                                                         <v-autocomplete v-model=editedItem.ownerId
                                                                         :items="users"
+                                                                        clearable
                                                                         item-text="username"
                                                                         item-value="id"
                                                                         label="Owner User Name"
@@ -196,6 +198,7 @@
                                                                     item-value="id"
                                                                     :return-object="false"
                                                                     typeof="number"
+                                                                    clearable
                                                                     placeholder="PDU Number">
                                                     </v-autocomplete>
                                                     <v-autocomplete v-if="!port.pduLocation"
@@ -205,6 +208,7 @@
                                                                     item-value="id"
                                                                     :return-object="false"
                                                                     typeof="number"
+                                                                    clearable
                                                                     placeholder="PDU Number">
                                                     </v-autocomplete>
                                                     <v-spacer></v-spacer>
@@ -298,7 +302,7 @@
                 rules: {
                     modelRules: v => /^(?!\s*$).+/.test(v) || 'Model is required',
                     hostnameRules: v => /^(?![0-9]+$)(?!.*-$)(?!-)[a-zA-Z0-9-]{1,63}$/.test(v) || 'Valid hostname is required',
-                    assetRules: v => /^[1-9]\d{5}$/.test(v) || 'Valid asset number is required',
+                    assetRules: v => (/^[1-9]\d{5}$/.test(v) || (v || '').length==0) || 'Invalid Asset Number',
                     datacenterRules: v => /^(?!\s*$).+/.test(v) || 'Datacenter is required',
                     rackRules: v => /^(?!\s*$).+/.test(v) || 'Rack is required',
                     rackuRules: v => (/^(?!\s*$).+/.test(v) &&  v>0) || 'Valid rack U is required',
