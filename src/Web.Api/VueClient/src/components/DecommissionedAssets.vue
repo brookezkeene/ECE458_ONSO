@@ -232,6 +232,7 @@
                     pageSize: 0,
                     isDesc: '',
                     sortBy: '',
+                    changePlanId: '',
                 },
                 editing: false,
             }
@@ -300,6 +301,10 @@
                 console.log("this is the sorting stuff")
                 console.log(this.assetSearchQuery);
 
+                if (this.$store.getters.isChangePlan) {
+                    this.assetSearchQuery.changePlanId = this.$store.getters.changePlan.id;
+                    console.log(this.assetSearchQuery);
+                }
                 var info = await this.assetRepository.tablelistDecommissionedAssets(this.assetSearchQuery);
                 if ((page - 1) * itemsPerPage > info.totalCount) {
                     this.fillQuery(sortBy, sortDesc, 1, itemsPerPage);

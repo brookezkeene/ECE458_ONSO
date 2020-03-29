@@ -59,18 +59,26 @@ namespace Web.Api.Controllers
             if (query.ChangePlanId != null && query.ChangePlanId != Guid.Empty)
             {
                 var changePlanId = query.ChangePlanId ?? Guid.Empty;
-                var changePlanItems = await _changePlanService.GetAsssetChangePlanItemsAsync(changePlanId);
+                var changePlanItems = await _changePlanService.GetChangePlanItemsAsync(changePlanId);
                 List<GetAssetApiDto> changePlanAssetList = new List<GetAssetApiDto>();
                 foreach (ChangePlanItemDto changePlanItem in changePlanItems)
                 {
                     var changePlanAssetDto = new AssetDto();
-                    if (changePlanItem.ExecutionType.Equals("create"))
+                    if(changePlanItem.ExecutionType.Equals("decommission"))
+                    {
+                        var decommissionedAsset = response.Find(x => x.Id == changePlanItem.AssetId);
+                        response.Remove(decommissionedAsset);
+                        continue;
+                    }
+                    else if (changePlanItem.ExecutionType.Equals("create"))
                     {
                          changePlanAssetDto = _mapper.Map<AssetDto>((JsonConvert.DeserializeObject<CreateAssetApiDto>(changePlanItem.NewData)));
                     }
                     else if (changePlanItem.ExecutionType.Equals("update"))
                     {
                         changePlanAssetDto = _mapper.Map<AssetDto>((JsonConvert.DeserializeObject<UpdateAssetApiDto>(changePlanItem.NewData)));
+                        var updatedAsset = response.Find(x => x.Id == changePlanItem.AssetId);
+                        response.Remove(updatedAsset);
                     }
                     changePlanAssetDto.Model = await _modelSerivce.GetModelAsync(changePlanAssetDto.ModelId);
                     changePlanAssetDto.Rack = await _rackService.GetRackDtoAsync(changePlanAssetDto.RackId);
@@ -206,7 +214,7 @@ namespace Web.Api.Controllers
                 var changePlanItemApiDto = new UpdateChangePlanItemApiDto
                 {
                     ChangePlanId = changePlanId,
-                    ExecutionType = "update",
+                    ExecutionType = "decommission",
                     AssetId = query.Id,
                     NewData = JsonConvert.SerializeObject(decommissionedAsset),
                     PreviousData = JsonConvert.SerializeObject(createDecommissionedAsset),
