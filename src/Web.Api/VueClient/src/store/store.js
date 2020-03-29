@@ -35,6 +35,9 @@ export default new Vuex.Store({
      Documentation: https://vuex.vuejs.org/guide/getters.html
      */
     getters: {
+        getPermissions: state => {
+            return state.myPermissions
+        },
         hasModelPermission: state => {
             return state.myPermissions.includes("model")
         },
