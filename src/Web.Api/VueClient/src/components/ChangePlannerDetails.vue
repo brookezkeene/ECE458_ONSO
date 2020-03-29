@@ -70,6 +70,19 @@
                                 <span>Asset Created</span>
                             </v-tooltip>
 
+                            <v-tooltip top>
+                                <template v-if="item.executionType==='decommission'" v-slot:activator="{ on }">
+                                    <v-btn icon v-on="on">
+                                        <v-icon medium
+                                                class="mr-2"
+                                                color="primary">
+                                            mdi-archive
+                                        </v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Asset Decommissioned</span>
+                            </v-tooltip>
+
                         </v-row>
 
                     </template>
