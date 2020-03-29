@@ -48,7 +48,16 @@ namespace Web.Api.Core.Services
             var list = await _repository.GetChangePlanItemsAsync(changePlanId);
             return _mapper.Map<List<ChangePlanItemDto>>(list);
         }
-
+        public async Task<List<ChangePlanItemDto>> GetDecommissionedChangePlanItemsAsync(Guid changePlanId)
+        {
+            var list = await _repository.GetDecommissionedChangePlanItemsAsync(changePlanId);
+            return _mapper.Map<List<ChangePlanItemDto>>(list);
+        }
+        public async Task<List<ChangePlanItemDto>> GetAsssetChangePlanItemsAsync(Guid changePlanId)
+        {
+            var list = await _repository.GetAssetChangePlanItemsAsync(changePlanId);
+            return _mapper.Map<List<ChangePlanItemDto>>(list);
+        }
         public async Task<Guid> CreateChangePlanAsync(ChangePlanDto changePlan)
         {
             var entity = _mapper.Map<ChangePlan>(changePlan);
@@ -94,5 +103,6 @@ namespace Web.Api.Core.Services
             var changePlanItemsEntities = _mapper.Map<List<ChangePlanItem>>(changePlanItems);
             return await _repository.ExecuteChangePlan(changePlanItemsEntities);
         }
+       
     }
 }

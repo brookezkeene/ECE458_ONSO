@@ -41,7 +41,6 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<PagedList<ChangePlan>> GetChangePlansAsync(Guid? createdById, int page = 1, int pageSize = 10)
         {
             var pagedList = new PagedList<ChangePlan>();
-
             var changePlans = await _dbContext.ChangePlans
                 .Where(x => x.CreatedById == createdById)
                 .PageBy(x => x.Id, page, pageSize)
@@ -68,6 +67,26 @@ namespace Web.Api.Infrastructure.Repositories
             return list;
         }
 
+        public async Task<List<ChangePlanItem>> GetDecommissionedChangePlanItemsAsync(Guid changePlanId)
+        {
+            var changePlans = await _dbContext.ChangePlanItems
+                .Where(x => x.ChangePlanId == changePlanId)
+                .Where(x => x.ExecutionType.Equals("decommission"))
+                .AsNoTracking()
+                .ToListAsync();
+            var list = changePlans.OrderBy(q => q.CreatedDate).ToList();
+            return list;
+        }
+        public async Task<List<ChangePlanItem>> GetAssetChangePlanItemsAsync(Guid changePlanId)
+        {
+            var changePlans = await _dbContext.ChangePlanItems
+                .Where(x => x.ChangePlanId == changePlanId)
+                .Where(x => x.ExecutionType.Equals("update") || x.ExecutionType.Equals("create"))
+                .AsNoTracking()
+                .ToListAsync();
+            var list = changePlans.OrderBy(q => q.CreatedDate).ToList();
+            return list;
+        }
         public async Task<int> AddChangePlanAsync(ChangePlan changePlan)
         {
             _dbContext.ChangePlans.Add(changePlan);

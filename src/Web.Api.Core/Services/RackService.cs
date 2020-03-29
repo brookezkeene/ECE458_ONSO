@@ -66,5 +66,10 @@ namespace Web.Api.Core.Services
 
             return _mapper.Map<RackDto>(rack);
         }
+        public async Task<RackDto> GetRackDtoAsync(Guid id)
+        {
+            var rack = await _rackRepository.GetRackAsync(id);
+            return _mapper.Map<RackDto>(rack);
+        }
     }
 }
