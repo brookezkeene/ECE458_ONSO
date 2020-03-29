@@ -1,18 +1,6 @@
 ﻿<template>
     <div class="avery">
-        <div id="controls">
-            <h1>Label Generator</h1>
-            <hr>
-            <h2>Labels</h2>
-            <section>
-                <p>
-                    Place each label on a separate line. It should be fine to copy-paste from Excel...
-                </p>
-                <p>
-                    <textarea v-model="barcodeInput" cols="30" rows="25"></textarea>
-                </p>
-            </section>
-            <hr>
+ <!--       <div id="controls">
             <h2>Press Ctrl+P when you're ready to print these labels!</h2>
             <section>
                 <p>This app was mainly tested in <strong>Chrome</strong>! It'll probably work in Firefox too...</p>
@@ -24,12 +12,11 @@
                     <li><strong>Left:</strong> 0.39"</li>
                 </ul>
             </section>
-            
         </div>
-        <Label v-for="(code, index) in barcodes"
+-->
+        <Label v-for="(asset, index) in assets"
                :key="index"
-               :value="code"
-               :text="code"/>
+               :asset="asset"/>
     </div>
 </template>
 
@@ -37,70 +24,34 @@
     import Label from './Label';
 
     export default {
-        name: 'Avery',
+        name: 'asset-labels',
+        props: ['assets'],
         components: {
             Label,
         },
         data() {
             return {
-                barcodeInput: '',
-                barcodes: [],
-                settings: {
-                    height: 48,
-                    width: 166,
-                    padding: 2,
-                    rightMargin: 20,
-                    barcodeHeightMM: 5,
-                    cornerRadius: 5,
-                },
             };
         },
         watch: {
-            barcodeInput: function (newVal) {
-                if (newVal) {
-                    this.barcodes = newVal.split('\n');
-                } else {
-                    this.barcodes = [];
-                }
-            },
         },
     }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-    #controls {
-        padding: 1em;
-    }
-
-    p, hr {
-        margin: 1em 0;
-    }
-
-    ul {
-        margin: 1em;
-    }
-
     label {
         font-weight: bold;
         margin-right: 0.5em;
     }
 
-    input {
-        display: block;
-        font-size: 1em;
-    }
-
     @media print {
         @page {
             size: A4 portrait;
-            margin: 0mm 0mm 0mm 0mm;
+            margin: 12.7mm 7.874mm 10.668mm 9.906mm;
         }
         body {
-            margin: 0px
-        }
-        #controls {
-            display: none;
+            margin: 12.7mm 7.874mm 10.668mm 9.906mm;
         }
     }
 </style>
