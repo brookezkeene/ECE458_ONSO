@@ -56,7 +56,7 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<List<ChangePlanItem>> GetChangePlanItemsAsync(Guid changePlanId)
         {
             var changePlans = await _dbContext.ChangePlanItems
-                .Where(x => x.Id == changePlanId)
+                .Where(x => x.ChangePlanId == changePlanId)
                 .AsNoTracking()
                 .ToListAsync();
             var list = changePlans.OrderBy(q => q.CreatedDate).ToList();

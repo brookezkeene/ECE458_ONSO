@@ -7,6 +7,7 @@ namespace Web.Api.Core.Dtos
     public class SearchAssetQuery
     {
         public Guid? Datacenter { get; set; }
+        public Guid? ChangePlanId { get; set; }
         public string DatacenterName { get; set; }
         public string GeneralSearch { get; set; }
         public string Vendor { get; set; }

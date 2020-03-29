@@ -65,13 +65,13 @@ namespace Web.Api.Core.Services
         public async Task<Guid> CreateChangePlanItemAsync(AssetDto assetDto, Guid changePlanId)
         {
             var asset = assetDto.ToEntity();
-            asset.Model = await _modelRepository.GetModelAsync(assetDto.ModelId);
-            asset.Rack = await _rackRepository.GetRackAsync(assetDto.RackId);
+            assetDto.Model = (await _modelRepository.GetModelAsync(assetDto.ModelId)).ToDto();
+            assetDto.Rack = (await _rackRepository.GetRackAsync(assetDto.RackId)).ToDto();
             var changePlanItemDto = new ChangePlanItemDto
             {
                 ChangePlanId = changePlanId,
                 ExecutionType = "create",
-                NewData = JsonConvert.SerializeObject(asset),
+                NewData = JsonConvert.SerializeObject(assetDto),
                 CreatedDate = DateTime.Now
             };
             var entity = changePlanItemDto.ToEntity();

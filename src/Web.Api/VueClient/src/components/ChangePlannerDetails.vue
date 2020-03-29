@@ -7,32 +7,26 @@
                 <v-spacer></v-spacer>
                 <v-data-table :headers="headers"
                               :items="changePlanItems"
-                              class="pa-10"
+                              class="pa-5"
                               multi-sort
                               show-expand>
 
+                    <template v-slot:item.data-table-expand="{ item, isExpanded, expand }">
+                        <v-btn icon @click="expand(true)" v-if="item.previousData!=null && !isExpanded"><v-icon>mdi-chevron-down</v-icon></v-btn>
+                        <v-btn icon @click="expand(false)" v-if="isExpanded"><v-icon>mdi-chevron-up</v-icon></v-btn>
+                    </template>
+
                     <template v-slot:expanded-item="{ headers, item }">
-                        <td :colspan="headers.length">
-                            <v-container>
-                                <v-simple-table dense fixed-header>
-                                    <template v-slot:default>
-                                        <thead>
-                                            <tr>
-                                                <th>Asset</th>
-                                                <th>Value</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for="(value, name) in getChangePlanItems(item.id)" :key="name" class="text-left">
-                                                <td class="font-weight-medium">{{ name }}</td>
-                                                <td v-if="isIdProperty(name, item)"><router-link :to="constructLink(value, name, item)">{{ value }}</router-link></td>
-                                                <td v-else>{{ value }}</td>
-                                            </tr>
-                                        </tbody>
-                                    </template>
-                                </v-simple-table>
-                            </v-container>
-                        </td>
+                            <td v-if="item.previousData!=null"></td>
+                            <td v-if="item.previousData!=null">{{item.previousData.Vendor}}</td>
+                            <td v-if="item.previousData!=null">{{item.previousData.ModelNumber}}</td>
+                            <td v-if="item.previousData!=null">{{item.previousData.AssetNumber}}</td>
+                            <td v-if="item.previousData!=null">{{item.previousData.Hostname}}</td>
+                            <td v-if="item.previousData!=null">{{item.previousData.Datacenter}}</td>
+                            <td v-if="item.previousData!=null">{{item.previousData.Rack}}</td>
+                            <td v-if="item.previousData!=null">{{item.previousData.RackPosition}}</td>
+                            <td v-if="item.previousData!=null">{{item.previousData.Owner}}</td>
+
                     </template>
 
                     <template v-slot:item.executed="{ item }">
@@ -51,28 +45,29 @@
                     <template v-slot:item.action="{ item }">
                         <v-row>
                             <v-tooltip top>
-                                <template v-slot:activator="{ on }">
+                                <template v-if="item.executionType==='update'" v-slot:activator="{ on }">
                                     <v-btn icon v-on="on">
                                         <v-icon medium
-                                                class="mr-2">
+                                                class="mr-2"
+                                                color="primary">
                                             mdi-pencil
                                         </v-icon>
                                     </v-btn>
                                 </template>
-
-                                <span>Edit</span>
+                                <span>Asset Edited</span>
                             </v-tooltip>
+
                             <v-tooltip top>
-                                <template v-slot:activator="{ on }">
+                                <template v-if="item.executionType==='create'" v-slot:activator="{ on }">
                                     <v-btn icon v-on="on">
                                         <v-icon medium
-                                                class="mr-2">
+                                                class="mr-2"
+                                                color="primary">
                                             mdi-plus
                                         </v-icon>
                                     </v-btn>
                                 </template>
-
-                                <span>Edit</span>
+                                <span>Asset Created</span>
                             </v-tooltip>
 
                         </v-row>
@@ -101,15 +96,15 @@
             return {
                 loading: false,
                 headers: [
-                    { text: 'Model Vendor', value: 'vendor' },
-                    { text: 'Model Number', value: 'modelNumber', },
-                    { text: 'Asset Number', value: 'assetNumber', },
-                    { text: 'Hostname', value: 'hostname' },
-                    { text: 'Datacenter', value: 'datacenter' },
-                    { text: 'Rack', value: 'rack' },
-                    { text: 'Rack U', value: 'rackPosition', },
-                    { text: 'Owner Username', value: 'owner' },
-                    { text: 'Actions', value: 'action', sortable: false },
+                    { text: 'Model Vendor', value: 'newData.Vendor' },
+                    { text: 'Model Number', value: 'newData.ModelNumber', },
+                    { text: 'Asset Number', value: 'newData.AssetNumber', },
+                    { text: 'Hostname', value: 'newData.Hostname' },
+                    { text: 'Datacenter', value: 'newData.Datacenter' },
+                    { text: 'Rack', value: 'newData.Rack' },
+                    { text: 'Rack U', value: 'newData.RackPosition', },
+                    { text: 'Owner Username', value: 'newData.Owner' },
+                    { text: 'Change', value: 'action', sortable: false },
                 ],
                 changePlanItems: [],
             }
@@ -120,6 +115,16 @@
         methods: {
             async initialize() {
                 this.changePlanItems = await this.changePlanRepository.listItems(this.id);
+                this.deserializeData();
+                /*eslint-disable*/
+                console.log(this.changePlanItems);
+            },
+            deserializeData() {
+                this.changePlanItems.forEach(item => {
+                    item.previousData = JSON.parse(item.previousData);
+                    item.newData = JSON.parse(item.newData);
+                });
+                console.log(this.changePlanItems);
             },
             execute(item) {
                 (confirm('Are you sure you want to execute this change plan?') && this.changePlanRepository.execute(item))
