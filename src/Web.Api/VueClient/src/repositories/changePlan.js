@@ -38,8 +38,8 @@ export default {
         return axios.delete(`${resource}/${item.id}/changeplan`).then(response => { return response.data; }).catch(error => error);
     },
     // Executing a change plan
-    execute(item) {
-        return axios.put(`${resource}/${item.id}/execute`, item).then(response => response.data).catch(error => error);
+    execute(id) {
+        return axios.put(`${resource}/${id}/execute`).then(response => response.data).catch(error => error);
     },
     // Creating a change plan item
     createItem(item) {

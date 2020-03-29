@@ -225,10 +225,12 @@ namespace Web.Api.Controllers
             }
             else
             {
-                var asset = await _assetService.GetAssetAsync(query.Id);
-                await _assetService.CreateDecommissionedAssetAsync(decommissionedAsset);
+
+                var getAssetApiDto = _mapper.Map<GetAssetApiDto>(await _assetService.GetAssetAsync(query.Id));
+
                 //deleting asset from active asset column
-                await _assetService.DeleteAssetAsync(asset);
+                await _assetService.DeleteAssetAsync(_mapper.Map<AssetDto>(getAssetApiDto));
+                await _assetService.CreateDecommissionedAssetAsync(decommissionedAsset);
             }
 
             return Ok();

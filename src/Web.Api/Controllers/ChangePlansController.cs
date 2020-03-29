@@ -124,11 +124,12 @@ namespace Web.Api.Controllers
                     var decommisionedAsset = JsonConvert.DeserializeObject<DecommissionedAssetDto>(changePlanItem.NewData);
                     decommisionedAsset.DateDecommissioned = DateTime.Now;
                     var asset = await _assetService.GetAssetAsync(decommisionedAsset.Id);
+
                     await _assetService.DeleteAssetAsync(asset);
                     await _assetService.CreateDecommissionedAssetAsync(decommisionedAsset);
                 }
             }
-
+                    
             return Ok();
         }
 
