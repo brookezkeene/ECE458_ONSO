@@ -87,7 +87,7 @@
                                     </v-btn>
                                 </template>
 
-                                <span>Print Work Order</span>
+                                <span>Work Order</span>
                             </v-tooltip>
 
                             <v-tooltip top>
@@ -119,7 +119,7 @@
         components: {
             changePlanBar
         },
-        inject: ['assetRepository','changePlanRepository'],
+        inject: ['changePlanRepository'],
         data() {
             return {
             loading: true,
@@ -165,18 +165,27 @@
         deleteItem (item) {
             this.editing = true;
             console.log("delete" + item);
-            confirm('Are you sure you want to delete this asset?') && this.changePlanRepository.delete(item)
+            confirm('Are you sure you want to delete this change plan?') && this.changePlanRepository.delete(item)
                     .then(async () => {
                         await this.initialize();
                     })
         },
         printItem (item) {
             //TODO: print work order code
+            this.editing = true;
+            var changePlan = {
+                name: item.name,
+                datacenterName: item.datacenterName,
+                datacenterDescription: item.datacenterDescription,
+                datacenterId: item.datacenterId,
+                changePlanId: item.id
+            };
+            this.$store.dispatch('saveChangePlan', changePlan);
             console.log("print" + item);
+            this.$router.push({ name: 'work-order', params: {id: item.id } })
         },
         editItem(item) {
             this.editing = true;
-            //TODO: edit change plan code, change this probably
             console.log(item);
             var changePlan = {
                 name: item.name,
@@ -188,14 +197,10 @@
             this.$store.dispatch('startChangePlan', changePlan);
             this.$router.push({ name: 'assets'})
         },
-        addItem(item) {
-            //TODO: adde new change plan code, change this probably
-            
+        addItem(item) {            
             this.$router.push({ name: 'change-plan-new' })
         },
-        // Don't think we will need clickable rows here since we have the drop down
         showDetails(item) {
-            //TODO: show change plan summary code
             if (!this.editing) {
                 console.log(item);
                 this.$router.push({ name: 'change-plan-details', params: {id: item.id } })
@@ -211,7 +216,7 @@
         saveName(item) {
             console.log(item);
             this.changePlanRepository.update(item)
-        }
+        },
     },
   }
 </script>

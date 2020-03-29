@@ -23,6 +23,7 @@ import ChangePlanner from '@/components/ChangePlanner'
 import ChangePlannerDetails from '@/components/ChangePlannerDetails'
 import ChangePlanEdit from '@/components/ChangePlanEdit'
 import AssetLabels from '@/components/AssetLabels'
+import WorkOrder from '@/components/PrintableChangePlan'
 
 
 Vue.use(Router)
@@ -103,6 +104,12 @@ const routes = [
                 path: '/change-plan/details/:id',
                 name: 'change-plan-details',
                 component: ChangePlannerDetails,
+                props: true,
+            },
+            {
+                path: '/change-plan/work-order/:id',
+                name: 'work-order',
+                component: WorkOrder,
                 props: true,
             },
             {

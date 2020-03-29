@@ -103,7 +103,7 @@
 
     export default {
         name: 'changePlan-details',
-        inject: ['changePlanRepository','assetRepository'],
+        inject: ['changePlanRepository'],
         props: ['id'],
         data() {
             return {
