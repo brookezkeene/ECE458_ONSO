@@ -14,5 +14,6 @@ namespace Web.Api.Dtos.Assets.Read
         public string Datacenter { get; set; }
         public bool HasNetworkManagedPower { get; set; }
         public Guid Id { get; set; }
+        public DateTime LastUpdatedDate { get; set; }
     }
 }

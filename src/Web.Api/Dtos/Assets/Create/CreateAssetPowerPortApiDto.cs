@@ -1,10 +1,6 @@
-﻿using System;
-
-namespace Web.Api.Dtos.Assets.Create
+﻿namespace Web.Api.Dtos.Assets.Create
 {
-    public class CreateAssetPowerPortApiDto
+    public class CreateAssetPowerPortApiDto : AssetPowerPortApiDto
     {
-        public int Number { get; set; }
-        public Guid? PduPortId { get; set; }
     }
 }

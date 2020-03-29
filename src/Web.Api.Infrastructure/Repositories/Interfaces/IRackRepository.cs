@@ -10,7 +10,8 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
     {
         Task<PagedList<Rack>> GetRacksAsync(Guid? datacenterId, string sortBy, string isDesc, int page = 1, int pageSize = 10);
         Task<List<Rack>> GetRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd, Guid? datacenterId);
-        Task<Rack> GetRackAsync(string row, int col);
+        Task<Rack> GetRackAsync(string row, int column, Guid datacenterId);
+        Rack GetRack(string row, int column, Guid datacenterId);
         Task<Rack> GetRackAsync(Guid rackId);
         Task<int> AddRackAsync(Rack rack);
         Task<int> UpdateRackAsync(Rack rack);

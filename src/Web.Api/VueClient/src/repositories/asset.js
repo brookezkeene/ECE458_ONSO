@@ -6,9 +6,7 @@ const resource = '/assets';
 export default {
     find(id) {
         return axios.get(`${resource}/${id}`)
-            .then(response => {
-                return response.data;
-            });
+            .then(response => response.data);
     },
     getPowerPortState(powerportid) {
         return axios.get(`${resource}/${powerportid}/power`)

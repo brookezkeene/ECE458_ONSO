@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -27,18 +28,20 @@ namespace Web.Api.Controllers
     {
         private readonly IDatacenterService _datacenterService;
         private readonly IApiErrorResources _errorResources;
+        private readonly IMapper _mapper;
 
-        public DatacentersController(IDatacenterService datacenterService, IApiErrorResources errorResources)
+        public DatacentersController(IDatacenterService datacenterService, IApiErrorResources errorResources, IMapper mapper)
         {
             _datacenterService = datacenterService;
             _errorResources = errorResources;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<ActionResult<PagedList<GetDatacenterApiDto>>> GetMany(string searchText, int page = 1, int pageSize = 10)
         {
             var datacenters = await _datacenterService.GetDatacentersAsync(searchText, page, pageSize);
-            var response = datacenters.MapTo<PagedList<GetDatacenterApiDto>>();
+            var response = _mapper.Map<PagedList<GetDatacenterApiDto>>(datacenters);
             return Ok(response);
         }
 
@@ -47,26 +50,32 @@ namespace Web.Api.Controllers
         public async Task<ActionResult<List<GetAssetNetworkPortFromDatacenterDto>>> GetNetworks(Guid id)
         {
             var ports = await _datacenterService.GetNetworkPortsOfDataCenterAsync(id);
-            var response = new List<GetAssetNetworkPortFromDatacenterDto>();
-            for(int i = 0; i<ports.Count(); i++)
-            {
-                response.Add(ports[i].MapTo<GetAssetNetworkPortFromDatacenterDto>());
-            }
-            return response;
+            var response = _mapper.Map<List<GetAssetNetworkPortFromDatacenterDto>>(ports);
+
+            return Ok(response);
+        }
+
+        [HttpGet("{id}/networkports/open")]
+        public async Task<ActionResult<List<GetAssetNetworkPortFromDatacenterDto>>> GetOpenNetworkPorts(Guid id)
+        {
+            var ports = await _datacenterService.GetOpenNetworkPortsOfDatacenterAsync(id);
+            var response = _mapper.Map<List<GetAssetNetworkPortFromDatacenterDto>>(ports);
+
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<GetDatacenterApiDto>> Get(Guid id)
         {
             var datacenter = await _datacenterService.GetDatacenterAsync(id);
-            var response = datacenter.MapTo<GetDatacenterApiDto>();
+            var response = _mapper.Map<GetDatacenterApiDto>(datacenter);
             return Ok(response);
         }
 
         [HttpPut]
         public async Task<IActionResult> Put(UpdateDatacenterApiDto datacenterApiDto)
         {
-            var datacenterDto = datacenterApiDto.MapTo<DatacenterDto>();
+            var datacenterDto = _mapper.Map<DatacenterDto>(datacenterApiDto);
             await _datacenterService.UpdateDatacenterAsync(datacenterDto);
             return NoContent();
         }
@@ -74,7 +83,7 @@ namespace Web.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(CreateDatacenterApiDto datacenterApiDto)
         {
-            var datacenterDto = datacenterApiDto.MapTo<DatacenterDto>();
+            var datacenterDto = _mapper.Map<DatacenterDto>(datacenterApiDto);
             await _datacenterService.CreateDatacenterAsync(datacenterDto);
             return Ok();
         }

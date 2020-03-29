@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Web.Api.Configuration;
 using Web.Api.Infrastructure.DbContexts;
 using Web.Api.Infrastructure.Entities;
+using Web.Api.Infrastructure.Interfaces;
 using Web.Api.Infrastructure.Repositories.Interfaces;
 
 namespace Web.Api.Helpers
@@ -34,7 +35,7 @@ namespace Web.Api.Helpers
             await EnsureSeedData(context, identityRepository, roleManager, userManager);
         }
 
-        public static async Task EnsureSeedData(ApplicationDbContext context, IIdentityRepository identityRepository, RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
+        public static async Task EnsureSeedData(IApplicationDbContext context, IIdentityRepository identityRepository, RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
         {
             var allRoles = new[] { "model", "asset", "power", "audit", "admin" };
             for (var i = 0; i < 5; i++)

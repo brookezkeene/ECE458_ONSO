@@ -1,12 +1,12 @@
 ﻿using System;
+using Web.Api.Dtos.Assets.Create;
 
 namespace Web.Api.Dtos.Assets.Read
 {
-    public class GetAssetPowerPortApiDto
+    public class GetAssetPowerPortApiDto : AssetPowerPortApiDto
     {
         public Guid Id { get; set; }
         public int Number { get; set; }
-        public Guid? PduPortId { get; set; }
         public string PduPort { get; set; }
     }
 }

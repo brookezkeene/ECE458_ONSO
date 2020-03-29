@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Web.Api.Common;
@@ -20,17 +21,19 @@ namespace Web.Api.Controllers
     public class RacksController : ControllerBase
     {
         private readonly IRackService _rackService;
+        private readonly IMapper _mapper;
 
-        public RacksController(IRackService rackService)
+        public RacksController(IRackService rackService, IMapper mapper)
         {
             _rackService = rackService;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<ActionResult<PagedList<GetRacksApiDto>>> Get([FromQuery] SearchRackQuery query)
         {
             var racks = await _rackService.GetRacksAsync(query);
-            var response = racks.MapTo<PagedList<GetRacksApiDto>>();
+            var response = _mapper.Map<PagedList<GetRacksApiDto>>(racks);
             return Ok(response);
         }
 
@@ -38,7 +41,7 @@ namespace Web.Api.Controllers
         public async Task<ActionResult<List<GetRacksApiDto>>> Get([FromQuery] RackRangeQuery query)
         {
             var racks = await _rackService.GetRacksAsync(query);
-            var response = racks.MapTo<List<GetRacksApiDto>>();
+            var response = _mapper.Map<List<GetRacksApiDto>>(racks);
             return Ok(response);
         }
 
@@ -61,7 +64,7 @@ namespace Web.Api.Controllers
         {
             var availablePorts = await _rackService.GetAvailablePowerPorts(id);
 
-            return Ok(availablePorts.MapTo<GetRackPdusApiDto>());
+            return Ok(_mapper.Map<GetRackPdusApiDto>(availablePorts));
         }
     }
 }

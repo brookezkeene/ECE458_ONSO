@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Web.Api.Core.Dtos;
@@ -19,11 +20,13 @@ namespace Web.Api.Controllers
     {
         private readonly IModelService _modelService;
         private readonly IAssetService _assetService;
+        private readonly IMapper _mapper;
 
-        public ExportController(IModelService modelService, IAssetService assetService)
+        public ExportController(IModelService modelService, IAssetService assetService, IMapper mapper)
         {
             _modelService = modelService;
             _assetService = assetService;
+            _mapper = mapper;
         }
 
         [HttpGet("models")]
@@ -35,7 +38,7 @@ namespace Web.Api.Controllers
             {
                 foreach (ModelDto model in models)
                 {
-                    response.Add(model.MapTo<ExportModelDto>());
+                    response.Add(_mapper.Map<ExportModelDto>(model));
                 }
             }
             return Ok(response);
@@ -50,7 +53,7 @@ namespace Web.Api.Controllers
             {
                 foreach (AssetDto asset in assets)
                 {
-                    response.Add(asset.MapTo<ExportAssetDto>());
+                    response.Add(_mapper.Map<ExportAssetDto>(asset));
                 }
             }
             return Ok(response);
@@ -65,7 +68,7 @@ namespace Web.Api.Controllers
 
             foreach (AssetNetworkPortDto port in ports)
             {
-                var export = port.MapTo<ExportNetworkPortDto>();
+                var export = _mapper.Map<ExportNetworkPortDto>(port);
                 response.Add(export);
             }
             

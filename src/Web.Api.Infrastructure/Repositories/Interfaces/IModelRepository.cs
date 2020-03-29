@@ -22,5 +22,6 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
         Task<bool> MeetsHeightChangeCriteriaAsync(Model model);
         Task<bool> ModelExistsAsync(string vendor, string modelNumber, Guid id);
         Model GetModel(string vendor, string modelNumber);
+        Model GetModel(Guid modelId);
     }
 }

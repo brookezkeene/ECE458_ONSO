@@ -25,12 +25,15 @@ using Skoruba.AuditLogging.EntityFramework.Extensions;
 using VueCliMiddleware;
 using Web.Api.Configuration;
 using Web.Api.Configuration.Constants;
-using Web.Api.Extensions;
 using Web.Api.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Skoruba.AuditLogging.EntityFramework.DbContexts;
+using Skoruba.AuditLogging.EntityFramework.Entities;
 using Web.Api.Core.Mappers;
 using Web.Api.Core.Mappers.Import;
+using Web.Api.Extensions;
+using Web.Api.Infrastructure.DbContexts;
 using Web.Api.Mappers;
 
 namespace Web.Api
@@ -47,12 +50,11 @@ namespace Web.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.ConfigureCoreServices()
-                .ConfigureSqlDbContext(Configuration);
+            RegisterDbContexts(services);
 
-            services.AddAutoMapper(typeof(ApiMappers).Assembly, typeof(ImportMapper).Assembly);
+            services.AddMappingConfigurations();
 
-            services.AddApiAuthentication(Configuration);
+            services.AddApiAuthentication();
 
             services.AddSpaStaticFiles(options => options.RootPath = "VueClient/dist");
 
@@ -77,23 +79,9 @@ namespace Web.Api
             services.AddSwaggerGenNewtonsoftSupport();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddAuditLogging(options =>
-            {
-                options.UseDefaultAction = true;
-                options.UseDefaultSubject = true;
-                options.Source = "Web";
-            })
-                .AddDefaultHttpEventData(subjectOptions =>
-                {
-                    subjectOptions.SubjectIdentifierClaim = ClaimTypes.NameIdentifier;
-                    subjectOptions.SubjectNameClaim = ClaimTypes.Name;
-                })
-                .AddDefaultStore(options => options.UseSqlServer(
-                    Configuration.GetConnectionString(ConfigurationConsts.ApplicationDbConnectionStringKey), sql =>
-                        sql.MigrationsAssembly(typeof(DatabaseExtensions).GetTypeInfo()
-                            .Assembly.GetName()
-                            .Name)))
-                .AddDefaultAuditSink();
+            services.AddAuditEventLogging<AuditLogDbContext, AuditLog>();
+
+            services.AddCoreServices<ApplicationDbContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -140,5 +128,9 @@ namespace Web.Api
             });
         }
 
+        public virtual void RegisterDbContexts(IServiceCollection services)
+        {
+            services.AddDbContexts<ApplicationDbContext, AuditLogDbContext>(Configuration);
+        }
     }
 }

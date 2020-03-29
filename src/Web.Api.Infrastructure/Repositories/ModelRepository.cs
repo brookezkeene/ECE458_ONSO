@@ -8,15 +8,17 @@ using Web.Api.Common;
 using Web.Api.Common.Extensions;
 using Web.Api.Infrastructure.DbContexts;
 using Web.Api.Infrastructure.Entities;
+using Web.Api.Infrastructure.Interfaces;
 using Web.Api.Infrastructure.Repositories.Interfaces;
 
 namespace Web.Api.Infrastructure.Repositories
 {
-    public class ModelRepository : IModelRepository
+    public class ModelRepository<TDbContext> : IModelRepository
+        where TDbContext : DbContext, IApplicationDbContext
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly TDbContext _dbContext;
 
-        public ModelRepository(ApplicationDbContext dbContext)
+        public ModelRepository(TDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -34,9 +36,9 @@ namespace Web.Api.Infrastructure.Repositories
             var models = await _dbContext.Models
                 .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
                 .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
-                .Include(x => x.NetworkPorts)
+                //.Include(x => x.NetworkPorts)
                 .PageBy(x => x.ModelNumber, page, pageSize)
-                .AsNoTracking()
+                //.AsNoTracking()
                 .ToListAsync();
             models = models.Where(x => x.Height >= heightStart && x.Height <= heightEnd && 
                 x.EthernetPorts >= networkRangeStart && x.EthernetPorts <= networkRangeEnd &&
@@ -58,8 +60,8 @@ namespace Web.Api.Infrastructure.Repositories
 
             var models = await _dbContext.Models
                 .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
-                .Include(x => x.NetworkPorts)
-                .AsNoTracking()
+                //.Include(x => x.NetworkPorts)
+                //.AsNoTracking()
                 .ToListAsync();
             //models = models.Where(x => x.ModelNumber.Contains(search) || x.Vendor.Contains(search)).ToList();
             return models;
@@ -68,10 +70,10 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<Model> GetModelAsync(Guid modelId)
         {
             return await _dbContext.Models
-                .Include(x => x.Assets)
-                .Include(x => x.NetworkPorts)
+                //.Include(x => x.Assets)
+                //.Include(x => x.NetworkPorts)
                 .Where(x => x.Id == modelId)
-                .AsNoTracking()
+                //.AsNoTracking()
                 .SingleAsync();
         }
 
@@ -79,7 +81,7 @@ namespace Web.Api.Infrastructure.Repositories
         {
             return await _dbContext.Models
                 .Where(expr)
-                .AsNoTracking()
+                //.AsNoTracking()
                 .SingleOrDefaultAsync();
         }
 
@@ -162,9 +164,16 @@ namespace Web.Api.Infrastructure.Repositories
         public Model GetModel(string vendor, string modelNumber)
         {
             return _dbContext.Models
-                .Include(model => model.NetworkPorts)
-                .AsNoTracking()
+                //.Include(model => model.NetworkPorts)
+                //.AsNoTracking()
                 .SingleOrDefault(model => model.Vendor == vendor && model.ModelNumber == modelNumber);
+        }
+
+        public Model GetModel(Guid modelId)
+        {
+            return _dbContext.Models
+                //.AsNoTracking()
+                .SingleOrDefault(model => model.Id == modelId);
         }
 
         private static void NetworkPortsSameNumberAsEthernetPorts(Model model)
