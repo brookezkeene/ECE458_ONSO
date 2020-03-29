@@ -21,7 +21,8 @@
                                                 :rules="[rules.nameRules]"
                                                 label="Edit"
                                                 single-line
-                                                counter></v-text-field>
+                                                counter
+                                                @input="saveName(props.item)"></v-text-field>
                                 </template>
                         </v-edit-dialog>
                     </template>
@@ -37,7 +38,7 @@
                                             flat
                                             hide-no-data
                                             hide-details
-                                            item-text="vendor"
+                                            item-text="name"
                                             label="Search"
                                             single-line
                                             solo-inverted></v-autocomplete>
@@ -206,6 +207,10 @@
             /*eslint-disable*/
             console.log(items);
             return items;
+        },
+        saveName(item) {
+            console.log(item);
+            this.changePlanRepository.update(item)
         }
     },
   }
