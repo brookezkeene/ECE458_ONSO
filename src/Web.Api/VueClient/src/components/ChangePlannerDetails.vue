@@ -85,6 +85,8 @@
                 </div>
             </v-card>
         </v-container>
+        <v-spacer></v-spacer>
+        <a href="javascript:history.go(-1)"> Go Back</a>
     </v-card>
 </template>
 
