@@ -19,5 +19,8 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
 
         Task<bool> DatacenterIsUniqueAsync(string vendor, string modelNumber, Guid id = default);
         Task<bool> DatacenterExistsAsync(string vendor, string modelNumber, Guid id);
+
+        Datacenter GetDatacenter(string name);
+        Task<List<AssetNetworkPort>> GetOpenNetworkPortsFromDatacenterAsync(Guid datacenterId);
     }
 }

@@ -116,9 +116,6 @@ namespace Web.Api.Controllers
                     // add generic claims
                     await _userManager.AddClaimsAsync(user, claims);
 
-                    // grant basic user access
-                    await _userManager.AddToRoleAsync(user, "basic");
-
                     // Include the access token in the properties
                     var props = new AuthenticationProperties();
                     props.StoreTokens(info.AuthenticationTokens);

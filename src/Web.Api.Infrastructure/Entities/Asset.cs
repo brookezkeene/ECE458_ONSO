@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Web.Api.Infrastructure.Entities
 {
-    [Table("Assets")]
     public class Asset
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

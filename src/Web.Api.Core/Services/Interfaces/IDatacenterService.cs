@@ -16,5 +16,6 @@ namespace Web.Api.Core.Services.Interfaces
         Task<int> UpdateDatacenterAsync(DatacenterDto datacenterDto);
         Task<Guid> CreateDatacenterAsync(DatacenterDto datacenterDto);
         Task DeleteDatacenterAsync(DatacenterDto datacenterDto);
+        Task<List<AssetNetworkPortDto>> GetOpenNetworkPortsOfDatacenterAsync(Guid datacenterId);
     }
 }

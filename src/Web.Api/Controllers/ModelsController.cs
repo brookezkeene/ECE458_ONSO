@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -26,18 +27,20 @@ namespace Web.Api.Controllers
     {
         private readonly IModelService _modelService;
         private readonly IApiErrorResources _errorResources;
+        private readonly IMapper _mapper;
 
-        public ModelsController(IModelService modelService, IApiErrorResources errorResources)
+        public ModelsController(IModelService modelService, IApiErrorResources errorResources, IMapper mapper)
         {
             _modelService = modelService;
             _errorResources = errorResources;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<ActionResult<PagedList<GetModelsApiDto>>> Get([FromQuery] SearchModelQuery query)
         {
             var models = await _modelService.GetModelsAsync(query);
-            var response = models.MapTo<PagedList<GetModelsApiDto>>();
+            var response = _mapper.Map<PagedList<GetModelsApiDto>>(models);
             return Ok(response);
         }
 
@@ -45,14 +48,14 @@ namespace Web.Api.Controllers
         public async Task<ActionResult<GetModelApiDto>> Get(Guid id)
         {
             var model = await _modelService.GetModelAsync(id);
-            var response = model.MapTo<GetModelApiDto>();
+            var response = _mapper.Map<GetModelApiDto>(model);
             return Ok(response);
         }
 
         [HttpPut]
         public async Task<IActionResult> Put(UpdateModelApiDto modelApiDto)
         {
-            var modelDto = modelApiDto.MapTo<ModelDto>();
+            var modelDto = _mapper.Map<ModelDto>(modelApiDto);
             await _modelService.UpdateModelAsync(modelDto);
             return NoContent();
         }
@@ -60,7 +63,7 @@ namespace Web.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateModelApiDto modelApiDto)
         {
-            var modelDto = modelApiDto.MapTo<ModelDto>();
+            var modelDto = _mapper.Map<ModelDto>(modelApiDto);
             await _modelService.CreateModelAsync(modelDto);
             return Ok();
         }

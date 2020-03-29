@@ -7,7 +7,6 @@ using System.Text;
 
 namespace Web.Api.Infrastructure.Entities
 {
-    [Table("ChangePlans")]
     public class ChangePlan
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

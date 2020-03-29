@@ -12,6 +12,5 @@ namespace Web.Api.Core.Services.Interfaces
         Task<UserDto> GetUserAsync(Guid userId);
         Task<(IdentityResult identityResult, Guid userId)> CreateUserAsync(RegisterUserDto user);
         Task<IdentityResult> DeleteUserAsync(Guid userId);
-        Task<Token> LoginAsync(LoginDto login);
     }
 }

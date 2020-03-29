@@ -5,7 +5,6 @@ using System.Text;
 
 namespace Web.Api.Infrastructure.Entities
 {
-    [Table("DecommissionedAssets")]
     public class DecommissionedAsset
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

@@ -3,20 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Web.Api.Common;
 using Web.Api.Common.Extensions;
 using Web.Api.Infrastructure.DbContexts;
 using Web.Api.Infrastructure.Entities;
+using Web.Api.Infrastructure.Interfaces;
 using Web.Api.Infrastructure.Repositories.Interfaces;
 
 namespace Web.Api.Infrastructure.Repositories
 {
-    public class AssetRepository : IAssetRepository
+    public class AssetRepository<TDbContext> : IAssetRepository
+        where TDbContext : DbContext, IApplicationDbContext
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly TDbContext _dbContext;
 
-        public AssetRepository(ApplicationDbContext dbContext)
+        public AssetRepository(TDbContext dbContext)
         {
             _dbContext = dbContext;
         } 
@@ -31,16 +34,11 @@ namespace Web.Api.Infrastructure.Repositories
 
 
             var assets = await _dbContext.Assets
-                .Include(x => x.Model)
-                .Include(x => x.Owner)
-                .Include(x => x.Rack)
-                .ThenInclude(x => x.Datacenter)
                 .WhereIf(datacenterId != null, x => x.Rack.Datacenter.Id == datacenterId)
                 .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
                 .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
                 .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
                 .PageBy(x => x.Hostname, page, pageSize)
-                .AsNoTracking()
                 .ToListAsync();
             assets = assets.Where(x => String.Compare(x.Rack.Row.ToUpper(), rackStart[0].ToString()) >= 0 &&
                             String.Compare(x.Rack.Row.ToUpper(), rackEnd[0].ToString()) <= 0 &&
@@ -65,14 +63,10 @@ namespace Web.Api.Infrastructure.Repositories
             
 
             var assets = await _dbContext.Assets
-                .Include(x => x.Model)
-                .Include(x => x.Owner)
-                .Include(x => x.Rack)
                 .Where(x => x.Rack.Column >= colStart)
                 .Where(x => x.Rack.Column <= colEnd)
                 .WhereIf(!string.IsNullOrEmpty(search), modelCondition)
                 .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
-                .AsNoTracking()
                 .ToListAsync();
                 assets = assets.Where(x => x.Rack.Row[0] >= rowStart[0] && x.Rack.Row[0] <= rowEnd[0]).ToList();
     
@@ -87,13 +81,8 @@ namespace Web.Api.Infrastructure.Repositories
             Expression<Func<AssetNetworkPort, bool>> hostnameCondition = x => x.Asset.Hostname.ToUpper().Contains(hostname);
 
             var ports = await _dbContext.AssetNetworkPort
-                .Include(x => x.ModelNetworkPort)
-                .Include(x => x.Asset).ThenInclude(x => x.Rack).ThenInclude(x => x.Datacenter)
-                .Include(x => x.ConnectedPort).ThenInclude(x => x.ModelNetworkPort)
-                .Include(x => x.ConnectedPort).ThenInclude(x => x.Asset)
                 .WhereIf(!string.IsNullOrEmpty(search), modelCondition)
                 .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
-                .AsNoTracking()
                 .ToListAsync();
             ports = ports.Where(x => x.Asset.Rack.Row[0] >= rowStart[0] && x.Asset.Rack.Row[0] <= rowEnd[0] && x.Asset.Rack.Column >= colStart && x.Asset.Rack.Column <= colEnd).ToList();
 
@@ -103,23 +92,7 @@ namespace Web.Api.Infrastructure.Repositories
 
         public async Task<Asset> GetAssetAsync(Guid assetId)
         {
-            return await _dbContext.Assets
-                .Include(x => x.Model)
-                .Include(x => x.Owner)
-                .Include(x => x.Rack)
-                    .ThenInclude(x => x.Datacenter)
-                .Include(x => x.PowerPorts)
-                    .ThenInclude(x => x.PduPort)
-                        .ThenInclude(x => x.Pdu)
-                            .ThenInclude(x => x.Rack)
-                                .ThenInclude(x => x.Datacenter)
-                .Include(x => x.NetworkPorts)
-                    .ThenInclude(x => x.ConnectedPort)
-                 .Include(x => x.NetworkPorts)
-                    .ThenInclude(x => x.ModelNetworkPort)
-                .Where(x => x.Id == assetId)
-                .AsNoTracking()
-                .SingleOrDefaultAsync();
+            return await _dbContext.Assets.SingleOrDefaultAsync(x => x.Id == assetId);
         }
 
         public async Task<int> AddAssetAsync(Asset asset)
@@ -136,10 +109,10 @@ namespace Web.Api.Infrastructure.Repositories
 
         public async Task<int> DeleteAssetAsync(Asset asset)
         {
-
             _dbContext.Assets.Remove(asset);
+            _dbContext.PowerConnections.RemoveRange(asset.PowerPorts.Select(o => o.PowerConnection).Where(o => o != null));
+            _dbContext.NetworkConnections.RemoveRange(asset.NetworkPorts.Select(o => o.NetworkConnection).Where(o => o != null));
             return await _dbContext.SaveChangesAsync();
-
         }
 
         public async Task<bool> AssetIsUniqueAsync(string hostname, Guid id = default)
@@ -153,26 +126,7 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<Asset> GetAssetForDecommissioning(Guid assetId)
         {
             return await _dbContext.Assets
-                .Include(x => x.Model)
-                .Include(x => x.Owner)
-                .Include(x => x.Rack)
-                    .ThenInclude(x => x.Datacenter)
-                .Include(x => x.NetworkPorts)
-                    .ThenInclude(x => x.ModelNetworkPort)
-                .Include(x => x.NetworkPorts)
-                    .ThenInclude(x => x.ConnectedPort)
-                        .ThenInclude(x => x.Asset)
-                 .Include(x => x.NetworkPorts)
-                    .ThenInclude(x => x.ConnectedPort)
-                        .ThenInclude(x => x.ModelNetworkPort)
-                .Include(x => x.PowerPorts)
-                    .ThenInclude(x => x.PduPort)
-                        .ThenInclude(x => x.Pdu)
-                            .ThenInclude(x => x.Rack)
-                                .ThenInclude(x => x.Datacenter)
-                .Where(x => x.Id == assetId)
-                .AsNoTracking()
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(x => x.Id == assetId);
         }
         public async Task<PagedList<DecommissionedAsset>> GetDecommissionedAssetsAsync(string datacenterName, string generalSearch, string decommissioner,
                     string dateStart, string dateEnd, string rackStart, string rackEnd, string sortBy, string isDesc, int page, int pageSize)
@@ -192,7 +146,6 @@ namespace Web.Api.Infrastructure.Repositories
                 .WhereIf(!string.IsNullOrEmpty(dateEnd), endDateCondition)
                 .WhereIf(!string.IsNullOrEmpty(datacenterName), datacenterCondition)
                 .PageBy(x => x.Id, page, pageSize)
-                .AsNoTracking()
                 .ToListAsync();
             assets = assets.Where(x => String.Compare(x.Rack[0].ToString().ToUpper(), rackStart[0].ToString()) >= 0 &&
                             String.Compare(x.Rack[0].ToString().ToUpper(), rackEnd[0].ToString()) <= 0 &&
@@ -207,6 +160,12 @@ namespace Web.Api.Infrastructure.Repositories
 
             return pagedList;
         }
+
+        public Asset GetAsset(int assetNumber)
+        {
+            return _dbContext.Assets.SingleOrDefault(asset => asset.AssetNumber == assetNumber);
+        }
+
         public async Task<int> AddDecomissionedAssetAsync(DecommissionedAsset asset)
         {
             _dbContext.DecommissionedAssets.Add(asset);
@@ -215,9 +174,7 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<DecommissionedAsset> GetDecommissionedAssetAsync(Guid assetId)
         {
             return await _dbContext.DecommissionedAssets
-                .Where(x => x.Id == assetId)
-                .AsNoTracking()
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(x => x.Id == assetId);
         }
 
         private static List<Asset> Sort(List<Asset> assets, string sortBy, string isDesc)

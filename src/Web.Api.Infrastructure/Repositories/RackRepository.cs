@@ -10,15 +10,17 @@ using Web.Api.Common.Extensions;
 using Web.Api.Infrastructure.DbContexts;
 using Web.Api.Infrastructure.Entities;
 using Web.Api.Infrastructure.Entities.Extensions;
+using Web.Api.Infrastructure.Interfaces;
 using Web.Api.Infrastructure.Repositories.Interfaces;
 
 namespace Web.Api.Infrastructure.Repositories
 {
-    public class RackRepository : IRackRepository
+    public class RackRepository<TDbContext> : IRackRepository
+        where TDbContext : DbContext, IApplicationDbContext
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly TDbContext _dbContext;
 
-        public RackRepository(ApplicationDbContext dbContext)
+        public RackRepository(TDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -29,13 +31,13 @@ namespace Web.Api.Infrastructure.Repositories
 
             var racks = await _dbContext.Racks
                 .WhereIf(datacenterId != null, x => x.DatacenterId == datacenterId)
-                .Include(x => x.Datacenter)
-                .Include(x => x.Assets)
-                    .ThenInclude(x => x.Model)
-                .Include(x => x.Assets)
-                    .ThenInclude(x => x.Owner)
+                //.Include(x => x.Datacenter)
+                //.Include(x => x.Assets)
+                //    .ThenInclude(x => x.Model)
+                //.Include(x => x.Assets)
+                //    .ThenInclude(x => x.Owner)
                 .PageBy(x => x.Id, page, pageSize)
-                .AsNoTracking()
+                //.AsNoTracking()
                 .ToListAsync();
             racks = Sort(racks, sortBy, isDesc);
             pagedList.AddRange(racks);
@@ -51,13 +53,13 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<List<Rack>> GetRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd, Guid? datacenterId)
         {
             var racks = await _dbContext.Racks
-                .Include(x => x.Assets)
-                    .ThenInclude(i => i.Model)
-                .Include(x => x.Assets)
-                    .ThenInclude(i => i.Owner)
+                //.Include(x => x.Assets)
+                //    .ThenInclude(i => i.Model)
+                //.Include(x => x.Assets)
+                //    .ThenInclude(i => i.Owner)
                 .Where(x => x.Column >= colStart && x.Column <= colEnd)
                 .WhereIf(datacenterId != null && datacenterId.Value != default, x => x.DatacenterId == datacenterId)
-                .AsNoTracking()
+                //.AsNoTracking()
                 .ToListAsync();
                 racks = racks.Where(x => x.Row[0] >= rowStart[0] && x.Row[0] <= rowEnd[0]).ToList();
 
@@ -67,20 +69,23 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<Rack> GetRackAsync(Guid rackId)
         {
             return await _dbContext.Racks
-                .Include(o => o.Pdus)
-                .ThenInclude(o => o.Ports)
+                //.Include(o => o.Pdus)
+                //.ThenInclude(o => o.Ports)
                 .Where(x => x.Id == rackId)
-                .AsNoTracking()
+                //.AsNoTracking()
                 .SingleOrDefaultAsync();
         }
 
-        public async Task<Rack> GetRackAsync(string row, int col)
+        public async Task<Rack> GetRackAsync(string row, int column, Guid datacenterId)
         {
             return await _dbContext.Racks
-                .Include(x => x.Assets)
-                .Where(x => x.Row == row && x.Column == col)
-                .AsNoTracking()
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(x => x.Row == row && x.Column == column && x.DatacenterId == datacenterId);
+        }
+
+        public Rack GetRack(string row, int column, Guid datacenterId)
+        {
+            return _dbContext.Racks
+                .SingleOrDefault(rack => rack.Row == row && rack.Column == column && rack.DatacenterId == datacenterId);
         }
         public async Task<int> AddRackAsync(Rack rack)
         {

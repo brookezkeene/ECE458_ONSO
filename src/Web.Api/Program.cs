@@ -17,9 +17,10 @@ namespace Web.Api
     {
         public static async Task Main(string[] args)
         {
-            var host = CreateHostBuilder(args).Build();
-            await host.MigrateDatabase<ApplicationDbContext>();
-            await host.MigrateDatabase<DefaultAuditLoggingDbContext>();
+            var host = CreateHostBuilder(args).Build()
+                .MigrateDatabase<ApplicationDbContext>()
+                .MigrateDatabase<AuditLogDbContext>();
+            await DbMigrationHelper.EnsureSeedData(host);
             await host.RunAsync();
         }
 

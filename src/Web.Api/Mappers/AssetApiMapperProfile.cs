@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
 using Web.Api.Common.Mappers;
 using Web.Api.Core.Dtos;
+using Web.Api.Core.Mappers;
 using Web.Api.Dtos;
 using Web.Api.Dtos.Assets;
 using Web.Api.Dtos.Assets.Create;
@@ -24,7 +25,18 @@ namespace Web.Api.Mappers
             CreateMap<AssetDto, AssetApiDto>()
                 .ForMember(x => x.ChangePlanId, opt => opt.Ignore())
                 .IncludeAllDerived()
-                .ReverseMap();
+                .ReverseMap()
+                .IncludeAllDerived();
+
+            CreateMap<AssetNetworkPortDto, AssetNetworkPortApiDto>()
+                .IncludeAllDerived()
+                .ReverseMap()
+                .IncludeAllDerived();
+
+            CreateMap<AssetPowerPortDto, AssetPowerPortApiDto>()
+                .IncludeAllDerived()
+                .ReverseMap()
+                .IncludeAllDerived();
 
             // Create
             CreateMap<CreateAssetPowerPortApiDto, AssetPowerPortDto>(MemberList.Source);
@@ -40,7 +52,7 @@ namespace Web.Api.Mappers
 
             // Read
             CreateMap<AssetDto, GetAssetsApiDto>()
-                .ForMember(o => o.Rack, opts => opts.MapFrom(src => src.Rack.Address))
+                .ForMember(o => o.Rack, opts => opts.MapFrom(src => src.Rack.RackAddress))
                 .ForMember(o => o.Owner, opts => opts.MapFrom(src => src.Owner.Username))
                 .ForMember(o => o.Datacenter, opts => opts.MapFrom(src => src.Rack.Datacenter.Name))
                 .IncludeMembers(o => o.Rack, o => o.Model)
@@ -83,7 +95,7 @@ namespace Web.Api.Mappers
             CreateMap<AssetPowerPortDto, CreateDecommissionedPowerPort>();
             CreateMap<AssetDto, DecommissionedAssetDto>()
                 .ForMember(o => o.Datacenter, opts => opts.MapFrom(src => src.Rack.Datacenter.Name))
-                .ForMember(o => o.RackAddress, opts => opts.MapFrom(src => src.Rack.Address))
+                .ForMember(o => o.RackAddress, opts => opts.MapFrom(src => src.Rack.RackAddress))
                 .ForMember(o => o.ModelName, opts => opts.MapFrom(src => src.Model.Vendor))
                 .ForMember(o => o.ModelNumber, opts => opts.MapFrom(src => src.Model.ModelNumber))
                 .ForMember(o => o.Hostname, opts => opts.MapFrom(src => src.Hostname))

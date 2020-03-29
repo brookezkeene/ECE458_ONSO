@@ -71,9 +71,9 @@ namespace Web.Api.Controllers
         }
 
         [HttpGet("{id}/roles")]
-        public async Task<ActionResult<List<string>>> GetUserRoles(Guid id)
+        public async Task<ActionResult<List<string>>> GetUserRoles(string id)
         {
-            var user = await _userManager.FindByIdAsync(id.ToString());
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
                 return NotFound("User not found.");
@@ -95,9 +95,9 @@ namespace Web.Api.Controllers
         }
 
         [HttpPut("{id}/roles")]
-        public async Task<IActionResult> PostUserRoles(Guid id, [FromBody] UpdateUserRoleApiDto roles)
+        public async Task<IActionResult> PostUserRoles(string id, [FromBody] UpdateUserRoleApiDto roles)
         {
-            var user = await _userManager.FindByIdAsync(id.ToString());
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
                 return NotFound("User not found.");

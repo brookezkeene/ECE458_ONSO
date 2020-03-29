@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Linq;
 using AutoMapper;
 using Microsoft.VisualBasic;
 using Web.Api.Common;
 using Web.Api.Common.Mappers;
 using Web.Api.Core.Dtos;
 using Web.Api.Infrastructure.Entities;
+using Web.Api.Infrastructure.Entities.Extensions;
 
 namespace Web.Api.Core.Mappers
 {
@@ -23,12 +23,25 @@ namespace Web.Api.Core.Mappers
                 .ReverseMap();
 
             CreateMap<Asset, AssetDto>()
-                .ReverseMap();
+                .ReverseMap()
+                .AfterMap<HydrateNetworkPortsFromModel>()
+                .AfterMap<HydratePowerPortsFromModel>();
+
             CreateMap<AssetPowerPort, AssetPowerPortDto>()
-                .ReverseMap();
+                .ForMember(o => o.PduPort, opts => opts.MapFrom(src => src.PduPort()))
+                .ForMember(o => o.PduPortId, opts => opts.MapFrom(src => src.PduPortId()))
+                .ReverseMap()
+                .AfterMap<CreatePowerConnection>();
+
             CreateMap<AssetNetworkPort, AssetNetworkPortDto>()
-                .ReverseMap();
+                .ForMember(o => o.ConnectedPortId, opts => opts.MapFrom(src => src.ConnectedPortId()))
+                .ForMember(o => o.ConnectedPort, opts => opts.MapFrom(src => src.ConnectedPort()))
+                .ReverseMap()
+                .AfterMap<CreateNetworkConnection>();
+
             CreateMap<PduPort, PduPortDto>()
+                .ForMember(o => o.AssetPowerPort, opts => opts.MapFrom(src => src.AssetPowerPort()))
+                .ForMember(o => o.AssetPowerPortId, opts => opts.MapFrom(src => src.AssetPowerPortId()))
                 .ReverseMap();
             CreateMap<Pdu, PduDto>()
                 .ReverseMap();
@@ -55,6 +68,17 @@ namespace Web.Api.Core.Mappers
                 .ReverseMap();
             CreateMap<ChangePlanItem, ChangePlanItemDto>()
                 .ReverseMap();
+
+            CreateMap<NetworkConnectionDto, NetworkConnection>()
+                .ForMember(o => o.Ports, opts => opts.MapFrom<AssetNetworkPortResolver>())
+                .ReverseMap();
+
+            CreateMap<PowerConnectionDto, PowerConnection>()
+                .ForMember(o => o.Ports, opts => opts.MapFrom<PowerPortResolver>())
+                .ReverseMap();
+
+            CreateMap<PowerPort, PowerPortDto>()
+                .IncludeAllDerived();
         }
     }
 }

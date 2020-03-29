@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Web.Api.Core.Helpers;
 
 namespace Web.Api.Core.Dtos
 {
-    public class DecommissionedAssetDto
+    public class DecommissionedAssetDto : IRackAddressed
     {
         public Guid Id { get; set; }
         public string Hostname { get; set; }

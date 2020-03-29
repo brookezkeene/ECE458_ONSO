@@ -173,7 +173,7 @@
 
                                             <v-container fluid
                                                          fill
-                                                         v-for="(port, index) in powerPorts" :key="index">
+                                                         v-for="(port, index) in editedItem.powerPorts" :key="index">
                                                 <v-layout align-center
                                                           justify-bottom>
                                                     <v-spacer></v-spacer>
@@ -183,30 +183,18 @@
                                                     <v-spacer></v-spacer>
                                                     <v-btn-toggle v-model="port.pduLocation"
                                                                   mandatory>
-                                                        <v-btn @click="setLocation('left')" value="true">
+                                                        <v-btn @click="setLocation(port)" value="left">
                                                             Left
                                                         </v-btn>
-                                                        <v-btn @click="setLocation('right')" value="false">
+                                                        <v-btn @click="setLocation(port)" value="right">
                                                             Right
                                                         </v-btn>
                                                     </v-btn-toggle>
                                                     <v-spacer></v-spacer>
-                                                    <v-autocomplete v-if="port.pduLocation"
-                                                                    v-model="editedItem.powerPorts[index].pduPortId"
-                                                                    :items="availablePortsInRack.right"
+                                                    <v-autocomplete v-model="port.pduPortId"
+                                                                    :items="availablePortsInRack[port.pduLocation]"
                                                                     item-text="number"
                                                                     item-value="id"
-                                                                    :return-object="false"
-                                                                    typeof="number"
-                                                                    clearable
-                                                                    placeholder="PDU Number">
-                                                    </v-autocomplete>
-                                                    <v-autocomplete v-if="!port.pduLocation"
-                                                                    v-model="editedItem.powerPorts[index].pduPortId"
-                                                                    :items="availablePortsInRack.left"
-                                                                    item-text="number"
-                                                                    item-value="id"
-                                                                    :return-object="false"
                                                                     typeof="number"
                                                                     clearable
                                                                     placeholder="PDU Number">
@@ -252,7 +240,7 @@
         components: {
             changePlanBar,
         },
-        inject: ['assetRepository', 'modelRepository', 'userRepository', 'rackRepository', 'datacenterRepository'],
+        inject: ['assetRepository', 'modelRepository', 'userRepository', 'rackRepository', 'datacenterRepository', 'networkRepository', 'powerRepository'],
         props: {
             id: String,
         },
@@ -336,7 +324,6 @@
             }
 
         },
-
         computed: {
             formTitle() {
                 return typeof this.id === 'undefined' ? 'New Item' : 'Edit Item'
@@ -352,36 +339,15 @@
         },
         methods: {
             save() {
-                console.log(this.editedItem);
-                console.log(this.selectedModel);
-
-                // Check if in a changeplan
+                // Check if in a change plan context
                 if (this.$store.getters.isChangePlan) {
                     this.editedItem.changePlanId = this.$store.getters.changePlan.id;
                 }
 
-                if (this.editedItem.id.length != 0) {
-
-                    for (var j = 0; j < this.editedItem.networkPorts.length; j++) {
-                        this.editedItem.networkPorts[j].modelNetworkPortId = this.selectedModel.networkPorts[j].id;
-                    }
-
-                    console.log(this.editedItem);
-
-                    this.assetRepository.update(this.editedItem).then(this.close());
-                } else {
-
-                    for (var i = 0; i < this.editedItem.networkPorts.length; i++) {
-                        this.editedItem.networkPorts[i].modelNetworkPortId = this.selectedModel.networkPorts[i].id;
-                    }
-
-                    console.log(this.editedItem);
-
-                    this.assetRepository.create(this.editedItem).then(this.close());
-                }
-                console.log(this.editedItem);
-                this.selectedRack = false;
-                this.selectedModelBool = false;
+                var promise = typeof this.id !== 'undefined'
+                    ? this.assetRepository.update(this.editedItem)
+                    : this.assetRepository.create(this.editedItem);
+                promise.then(this.close);
             },
             close() {
                 this.$router.push({ name: 'assets' })
@@ -389,7 +355,7 @@
                 this.selectedModelBool = false;
             },
             async sendNetworkPortRequest() {
-                this.networks = await this.datacenterRepository.networkPorts(this.datacenterID);
+                this.networks = await this.datacenterRepository.openNetworkPorts(this.datacenterID);
                 for (const network of this.networks) {
                     network.nameRackAssetNum = "Port name: " + network.name +
                         ",  " + "Hostname: " + network.assetHostname;
@@ -442,6 +408,7 @@
                             id: '',
                             macAddress: '',
                             connectedPortId: null,
+                            modelNetworkPortId: model.networkPorts[j].id
                         }
                         networkPortsArray.push(Object.assign({}, newPortInfo));
                     }
@@ -477,8 +444,8 @@
                     this.editedItem.powerPorts = powerPortsArray;
                 }
             },
-            setLocation(side) {
-                this.sidePortIsOn = side;
+            setLocation(port) {
+                port.pduPortId = null;
             }
         },
 
