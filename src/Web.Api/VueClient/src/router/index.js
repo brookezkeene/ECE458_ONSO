@@ -8,6 +8,7 @@ import ModelEdit from '@/components/ModelEdit'
 import Models from '@/components/Models'
 import assets from '@/components/Assets'
 import Racks from '@/components/Racks'
+import Datacenters from '@/components/Datacenters'
 import DatacenterEdit from '@/components/DatacenterEdit'
 import ImportExport from '@/components/Bulk'
 import Users from '@/components/Users'
@@ -24,7 +25,7 @@ import ChangePlannerDetails from '@/components/ChangePlannerDetails'
 import ChangePlanEdit from '@/components/ChangePlanEdit'
 import AssetLabels from '@/components/AssetLabels'
 import WorkOrder from '@/components/PrintableChangePlan'
-
+import store from '@/store/store'
 
 Vue.use(Router)
 
@@ -54,14 +55,14 @@ const routes = [
                 name: 'model-edit',
                 component: ModelEdit,
                 props: true,
-                meta: { admin: true }
+                meta: { permission: 'model' }
             },
             {
                 path: '/models/new',
                 name: 'model-create',
                 component: ModelEdit,
                 props: true,
-                meta: { admin: true }
+                meta: { permission: 'model' }
             },
             {
                 path: '/models/:id',
@@ -89,16 +90,19 @@ const routes = [
                 path: '/change-plan',
                 name: 'change-planner',
                 component: ChangePlanner,
+                meta: { permission: 'asset' }
             },
             {
                 path: '/change-plan/new',
                 name: 'change-plan-new',
                 component: ChangePlanEdit,
+                meta: { permission: 'asset' }
             },
             {
                 path: '/change-plan/edit/:id',
                 name: 'change-plan-edit',
                 component: ChangePlanEdit,
+                meta: { permission: 'asset'}
             },
             {
                 path: '/change-plan/details/:id',
@@ -123,14 +127,14 @@ const routes = [
                 name: 'asset-edit',
                 component: assetEdit,
                 props: true,
-                meta: { admin: true }
+                meta: { permission: 'asset' }
             },
             {
                 path: '/assets/new',
                 name: 'asset-new',
                 component: assetEdit,
                 props: true,
-                meta: { admin: true }
+                meta: { permission: 'asset' }
             },
             {
                 path: 'assets/labels',
@@ -144,18 +148,23 @@ const routes = [
                 component: Racks,
             },
             {
+                path: '/datacenters',
+                name: 'datacenters',
+                component: Datacenters,
+            },
+            {
                 path: '/datacenters/edit/:id',
                 name: 'datacenter-edit',
                 component: DatacenterEdit,
                 props: true,
-                meta: { admin: true }
+                meta: { permission: 'asset' }
             },
             {
                 path: '/datacenters/new',
                 name: 'datacenter-create',
                 component: DatacenterEdit,
                 props: true,
-                meta: { admin: true }
+                meta: { permission: 'asset' }
             },
             {
                 path: '/importexport',
@@ -176,6 +185,7 @@ const routes = [
                 path: '/users/new',
                 name: 'users-create',
                 component: UsersCreate,
+                meta: { permission: 'admin' }
             },
             {
                 path: '/reports',
@@ -185,7 +195,8 @@ const routes = [
             {
                 path: '/log',
                 name: 'log',
-                component: Log
+                component: Log,
+                meta: { permission: 'audit' }
             }
 
             ]
@@ -206,11 +217,12 @@ router.beforeEach((to, from, next) => {
                         path: '/login',
                         query: { redirect: to.fullPath }
                     })
-                } else if (to.matched.some(record => record.meta.admin)) {
-                    if (!auth.isAdmin()) {
-                        next(false)
-                    } else {
+                } else if (to.matched.some(record => record.meta.permission)) {
+                    // implementation of nav guards for multiple permissions (ev.3)
+                    if (store.getters.getPermissions.includes(to.meta.permission) || auth.isAdmin()) {
                         next()
+                    } else {
+                        next(false)
                     }
                 } else {
                     next()
