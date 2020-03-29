@@ -7,7 +7,6 @@ namespace Web.Api.Dtos.ChangePlans
 {
     public class UpdateChangePlanItemApiDto
     {
-        public Guid Id { get; set; }
         public Guid ChangePlanId { get; set; }
         public Guid AssetId { get; set; }
         public DateTime CreatedDate { get; set; }
