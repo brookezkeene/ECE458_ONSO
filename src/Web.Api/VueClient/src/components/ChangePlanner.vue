@@ -87,7 +87,7 @@
                                     </v-btn>
                                 </template>
 
-                                <span>Print Work Order</span>
+                                <span>Work Order</span>
                             </v-tooltip>
 
                             <v-tooltip top>
