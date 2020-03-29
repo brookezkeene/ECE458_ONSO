@@ -29,7 +29,7 @@
         },
         methods: {
             save() {
-                if (confirm('Are you sure you would like to save this change plan?')) {
+                if (confirm('Are you sure you would like to finish editing this change plan?')) {
                     this.$store.dispatch('endChangePlan');
                     this.$router.push({ name:'change-planner' })
                     // Save the change plan via api call
