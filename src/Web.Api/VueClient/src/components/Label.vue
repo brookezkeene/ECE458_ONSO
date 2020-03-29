@@ -1,105 +1,54 @@
 ﻿<template>
-    <div class="label" :style="labelStyle">
-        <span v-html="labelText" :style="spanStyle"></span>
-        <img :src="generatedImage" :alt="text">
+    <div class="label">
+        <svg class="barcode"
+             :jsbarcode-format="CODE128C"
+             :jsbarcode-value="value"
+             jsbarcode-textmargin="0"
+             jsbarcode-fontoptions="bold"
+             jsbarcode-height="15"
+             jsbarcode-width="2"
+             jsbarcode-margins="2"
+             :jsbarcode-text="text"></svg>
     </div>
 </template>
 
 <script>
+    //import bwipjs from 'bwip-js';
+    import JsBarcode from 'jsbarcode';
 
-export default {
-  name: 'Label',
-  props: {
-    text: String,
-    height: {
-      type: Number,
-      default: 75,
-    },
-    width: {
-      type: Number,
-      default: 262.5,
-    },
-    padding: {
-      type: Number,
-      default: 2,
-    },
-    rightMargin: {
-      type: Number,
-      default: 10,
-    },
-    barcodeHeightMM: {
-      type: Number,
-      default: 9.5
-    },
-    cornerRadius: {
-      type: Number,
-      default: 5,
-    }
-  },
-  data() {
-    return {
-      canvas: null,
-      generatedImage: null,
-      options: {
-        bcid: 'datamatrixrectangular',
-        scale: 2,
-        includetext: false,
-      }
-    };
-  },
-  mounted() {
-    this.canvas = document.createElement('canvas');
-    // Render a barcode if text has been passed in
-    if (this.text) {
-      this.generateBarcode(this.text);
-    }
-  },
-  watch: {
-    labelCodeRaw: 'generateBarcode',
-    barcodeHeightMM: function() {
-      this.generateBarcode(this.labelCodeRaw);
-    },
-  },
-  methods: {
-    generateBarcode() {
-
-    }
+    export default {
+        name: 'Label',
+        props: {
+            value: Number,
+            text: String,
         },
-  mounted () {
-    JsBarcode(".barcode").init();
-  }
-  computed: {
-    labelParts: function() {
-      return Array.from(this.text.split('|'));
-    },
-    labelCodeRaw: function() {
-      return this.labelParts[0];
-    },
-    labelText: function() {
-      const parts = this.labelParts;
-      parts.splice(0, 1);
-      return parts.join('<br>');
-    },
-    labelStyle: function() {
-      return {
-        height: `${this.height}px`,
-        width: `${this.width}px`,
-        padding: `${this.padding}px`,
-        'border-radius': `${this.cornerRadius}px`,
-        'margin-right': `${this.rightMargin}px`,
-        'text-align': 'center',
-      };
-    },
-    spanStyle: function() {
-      return {
-      }
-    },
-  }
-}
+        data() {
+            return {
+                canvas: null,
+                generatedImage: null,
+                options: {
+                    bcid: 'datamatrixrectangular',
+                    scale: 2,
+                    includetext: false,
+                }
+            };
+        },
+        mounted() {
+            JsBarcode(".barcode").init();
+        },
+        methods: {
+        },
+
+    }
 </script>
 
 <style lang="scss" scoped>
     .label {
+        height: 48px;
+        width: 168px;
+        padding: 0px;
+        margin-right: 10px;
+        text-align: center;
         display: inline-block;
         position: relative;
         vertical-align: middle;
