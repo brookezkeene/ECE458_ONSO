@@ -70,6 +70,19 @@
                                 <span>Asset Created</span>
                             </v-tooltip>
 
+                            <v-tooltip top>
+                                <template v-if="item.executionType==='decommission'" v-slot:activator="{ on }">
+                                    <v-btn icon v-on="on">
+                                        <v-icon medium
+                                                class="mr-2"
+                                                color="primary">
+                                            mdi-archive
+                                        </v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Asset Decommissioned</span>
+                            </v-tooltip>
+
                         </v-row>
 
                     </template>
@@ -123,6 +136,13 @@
                 this.changePlanItems.forEach(item => {
                     item.previousData = JSON.parse(item.previousData);
                     item.newData = JSON.parse(item.newData);
+                    if (item.executionType === 'decommission') {
+                        item.newData.Vendor = item.previousData.Model.Vendor;
+                        item.newData.ModelNumber = item.previousData.Model.Number;
+                        item.newData.Rack = item.previousData.Rack.RackLetter + item.previousData.Rack.RackNumber; 
+                        item.newData.Owner = item.previousData.OwnerName;
+                        item.newData.AssetNumber = item.previousData.AssetNumber;
+                    }
                 });
                 console.log(this.changePlanItems);
             },
