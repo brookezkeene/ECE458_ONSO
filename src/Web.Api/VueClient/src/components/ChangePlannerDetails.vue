@@ -17,17 +17,15 @@
                     </template>
 
                     <template v-slot:expanded-item="{ headers, item }">
-                        <div v-if="item.previousData!=null">
-                            <td></td>
-                            <td>{{item.previousData.Vendor}}</td>
-                            <td>{{item.previousData.ModelNumber}}</td>
-                            <td>{{item.previousData.AssetNumber}}</td>
-                            <td>{{item.previousData.Hostname}}</td>
-                            <td>{{item.previousData.Datacenter}}</td>
-                            <td>{{item.previousData.Rack}}</td>
-                            <td>{{item.previousData.RackPosition}}</td>
-                            <td>{{item.previousData.Owner}}</td>
-                        </div>
+                            <td v-if="item.previousData!=null"></td>
+                            <td v-if="item.previousData!=null">{{item.previousData.Vendor}}</td>
+                            <td v-if="item.previousData!=null">{{item.previousData.ModelNumber}}</td>
+                            <td v-if="item.previousData!=null">{{item.previousData.AssetNumber}}</td>
+                            <td v-if="item.previousData!=null">{{item.previousData.Hostname}}</td>
+                            <td v-if="item.previousData!=null">{{item.previousData.Datacenter}}</td>
+                            <td v-if="item.previousData!=null">{{item.previousData.Rack}}</td>
+                            <td v-if="item.previousData!=null">{{item.previousData.RackPosition}}</td>
+                            <td v-if="item.previousData!=null">{{item.previousData.Owner}}</td>
 
                     </template>
 
