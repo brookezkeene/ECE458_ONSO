@@ -58,14 +58,6 @@
     </div>
 </template>
 
-<style>
-    @media print {
-        .noPrint {
-            display: none;
-        }
-    }
-</style>
-
 <script>
 
     import auth from "../auth";
