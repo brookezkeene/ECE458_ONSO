@@ -492,6 +492,9 @@
                 this.editing = true;
                 var graph = await networkNeighborhood.createGraph(item.id);
                 var query = { Id: item.id, NetworkPortGraph: JSON.stringify(graph), Decommissioner: this.$store.state.username }
+                if (this.$store.getters.isChangePlan) {
+                    query.changePlanId = this.$store.getters.changePlan.id;
+                }
                 /*eslint-disable*/
                 console.log(query);
                 confirm('Are you sure you want to decommission this asset? \nThis will remove the asset from the assets table, and instead add it to the decommissioned assets table.') && this.assetRepository.decommission(query)

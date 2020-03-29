@@ -9,10 +9,7 @@ namespace Web.Api.Dtos.ChangePlans
     {
         public Guid ChangePlanId { get; set; }
         public DateTime CreatedDate { get; set; }
-        public Guid AssetId { get; set; }
-
         public string ExecutionType { get; set; }
         public string NewData { get; set; }
-        public string PreviousData { get; set; }
     }
 }
