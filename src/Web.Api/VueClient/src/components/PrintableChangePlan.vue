@@ -1,7 +1,12 @@
 ﻿
 <template>
     <v-card flat>
-        <v-card-title>Work Order Summary for {{$store.getters.changePlan.name}} in datacenter {{$store.getters.changePlan.datacenterName}} </v-card-title>
+        <v-card-title>
+            <span>Work Order Summary:</span>
+            <span v-if="$store.getters.changePlan.name">
+                {{$store.getters.changePlan.name}} in datacenter {{$store.getters.changePlan.datacenterName}}
+            </span>
+        </v-card-title>
         <div id='print'>
             <v-container>
                 <v-card flat>
