@@ -23,5 +23,6 @@ namespace Web.Api.Infrastructure.Interfaces
         DbSet<ChangePlan> ChangePlans { get; set; }
         DbSet<ChangePlanItem> ChangePlanItems { get; set; }
         Task<int> SaveChangesAsync();
+        int SaveChanges();
     }
 }

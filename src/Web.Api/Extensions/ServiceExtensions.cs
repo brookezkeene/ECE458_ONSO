@@ -80,6 +80,7 @@ namespace Web.Api.Extensions
             services.TryAddTransient<IPowerService, PowerService>();
             services.TryAddTransient<IAssetImportService, AssetImportService>();
             services.TryAddTransient<IChangePlanService, ChangePlanService>();
+            services.TryAddTransient<INetworkConnectionImportService, NetworkConnectionImportService>();
 
             services.AddHttpClient<PowerStateService>();
 

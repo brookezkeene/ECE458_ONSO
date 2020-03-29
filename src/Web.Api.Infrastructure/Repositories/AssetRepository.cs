@@ -9,6 +9,7 @@ using Web.Api.Common;
 using Web.Api.Common.Extensions;
 using Web.Api.Infrastructure.DbContexts;
 using Web.Api.Infrastructure.Entities;
+using Web.Api.Infrastructure.Extensions;
 using Web.Api.Infrastructure.Interfaces;
 using Web.Api.Infrastructure.Repositories.Interfaces;
 
@@ -98,21 +99,34 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<int> AddAssetAsync(Asset asset)
         {
             _dbContext.Assets.Add(asset);
-            return await _dbContext.SaveChangesAsync();
+            var added = await _dbContext.SaveChangesAsync();
+
+            _dbContext.DeletePreviousNetworkConnections();
+            _dbContext.DeletePreviousPowerConnections();
+
+            return added;
         }
 
         public async Task<int> UpdateAssetAsync(Asset asset)
         {
             _dbContext.Assets.Update(asset);
-            return await _dbContext.SaveChangesAsync();
+            var updated = await _dbContext.SaveChangesAsync();
+
+            _dbContext.DeletePreviousNetworkConnections();
+            _dbContext.DeletePreviousPowerConnections();
+
+            return updated;
         }
 
         public async Task<int> DeleteAssetAsync(Asset asset)
-        {
+        { 
             _dbContext.Assets.Remove(asset);
-            _dbContext.PowerConnections.RemoveRange(asset.PowerPorts.Select(o => o.PowerConnection).Where(o => o != null));
-            _dbContext.NetworkConnections.RemoveRange(asset.NetworkPorts.Select(o => o.NetworkConnection).Where(o => o != null));
-            return await _dbContext.SaveChangesAsync();
+            var deleted = await _dbContext.SaveChangesAsync();
+
+            _dbContext.DeletePreviousNetworkConnections();
+            _dbContext.DeletePreviousPowerConnections();
+
+            return deleted;
         }
 
         public async Task<bool> AssetIsUniqueAsync(string hostname, Guid id = default)

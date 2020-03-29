@@ -355,7 +355,7 @@
                 this.selectedModelBool = false;
             },
             async sendNetworkPortRequest() {
-                this.networks = await this.datacenterRepository.openNetworkPorts(this.datacenterID);
+                this.networks = await this.datacenterRepository.networkPorts(this.datacenterID);
                 for (const network of this.networks) {
                     network.nameRackAssetNum = "Port name: " + network.name +
                         ",  " + "Hostname: " + network.assetHostname;

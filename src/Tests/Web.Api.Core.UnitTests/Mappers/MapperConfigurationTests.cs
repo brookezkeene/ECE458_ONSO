@@ -94,6 +94,12 @@ namespace Web.Api.Core.UnitTests.Mappers
         }
 
         [Fact]
+        public void NetworkConnectionImportConfigurationIsValid()
+        {
+            _mapper.AssertConfigurationIsValid<NetworkConnectionImportMapperProfile>();
+        }
+
+        [Fact]
         public void AuditLogConfigurationIsValid()
         {
             _mapper.AssertConfigurationIsValid<AuditLogMapperProfile>();

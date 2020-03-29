@@ -17,11 +17,13 @@ namespace Web.Api.Controllers
     {
         private readonly IModelImportService _modelImportService;
         private readonly IAssetImportService _assetImportService;
+        private readonly INetworkConnectionImportService _networkConnectionImportService;
 
-        public ImportController(IModelImportService modelImportService, IAssetImportService assetImportService)
+        public ImportController(IModelImportService modelImportService, IAssetImportService assetImportService, INetworkConnectionImportService networkConnectionImportService)
         {
             _modelImportService = modelImportService;
             _assetImportService = assetImportService;
+            _networkConnectionImportService = networkConnectionImportService;
         }
 
         [HttpPost("models")]
@@ -61,6 +63,26 @@ namespace Web.Api.Controllers
         public async Task<ActionResult<BulkImportResultDto>> FinalizeAssetImport(Guid id)
         {
             var result = await _assetImportService.FinalizeImport(id);
+            return Ok(result);
+        }
+
+        [HttpPost("networkConnections")]
+        [DisableRequestSizeLimit]
+        public async Task<ActionResult<ImportValidationDto>> UploadNetworkConnections()
+        {
+            var file = Request.Form.Files.FirstOrDefault();
+            if (file == null || file.Length <= 0) return BadRequest();
+
+            await using var stream = file.OpenReadStream();
+            var result = await _networkConnectionImportService.HandleImport(stream);
+
+            return Ok(result);
+        }
+
+        [HttpGet("networkConnections/{id}")]
+        public async Task<ActionResult<BulkImportResultDto>> UploadNetworkConnections(Guid id)
+        {
+            var result = await _networkConnectionImportService.FinalizeImport(id);
             return Ok(result);
         }
     }

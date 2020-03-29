@@ -9,6 +9,7 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
     {
         Task<Guid> AddConnectionAsync(NetworkConnection connection);
         AssetNetworkPort GetNetworkPort(Guid portId);
+        AssetNetworkPort GetNetworkPort(string hostname, string portName);
         Task<NetworkConnection> GetConnectionAsync(Guid connectionId);
         Task<List<Guid>> AddConnectionsAsync(List<NetworkConnection> connections);
     }
