@@ -48,7 +48,8 @@
                                 <template v-if="item.executionType==='update'" v-slot:activator="{ on }">
                                     <v-btn icon v-on="on">
                                         <v-icon medium
-                                                class="mr-2">
+                                                class="mr-2"
+                                                color="primary">
                                             mdi-pencil
                                         </v-icon>
                                     </v-btn>
@@ -60,7 +61,8 @@
                                 <template v-if="item.executionType==='create'" v-slot:activator="{ on }">
                                     <v-btn icon v-on="on">
                                         <v-icon medium
-                                                class="mr-2">
+                                                class="mr-2"
+                                                color="primary">
                                             mdi-plus
                                         </v-icon>
                                     </v-btn>
