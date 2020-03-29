@@ -12,20 +12,20 @@
                               show-expand>
 
                     <template v-slot:item.data-table-expand="{ item, isExpanded, expand }">
-                        <v-btn icon @click="expand(true)" v-if="item.previousData!=null && !isExpanded"><v-icon>mdi-chevron-down</v-icon></v-btn>
+                        <v-btn icon @click="expand(true)" v-if="item.executionType=='update' && !isExpanded"><v-icon>mdi-chevron-down</v-icon></v-btn>
                         <v-btn icon @click="expand(false)" v-if="isExpanded"><v-icon>mdi-chevron-up</v-icon></v-btn>
                     </template>
 
                     <template v-slot:expanded-item="{ headers, item }">
-                            <td v-if="item.previousData!=null"></td>
-                            <td v-if="item.previousData!=null">{{item.previousData.Vendor}}</td>
-                            <td v-if="item.previousData!=null">{{item.previousData.ModelNumber}}</td>
-                            <td v-if="item.previousData!=null">{{item.previousData.AssetNumber}}</td>
-                            <td v-if="item.previousData!=null">{{item.previousData.Hostname}}</td>
-                            <td v-if="item.previousData!=null">{{item.previousData.Datacenter}}</td>
-                            <td v-if="item.previousData!=null">{{item.previousData.Rack}}</td>
-                            <td v-if="item.previousData!=null">{{item.previousData.RackPosition}}</td>
-                            <td v-if="item.previousData!=null">{{item.previousData.Owner}}</td>
+                            <td v-if="item.executionType=='update'"></td>
+                            <td v-if="item.executionType=='update'">{{item.previousData.Vendor}}</td>
+                            <td v-if="item.executionType=='update'">{{item.previousData.ModelNumber}}</td>
+                            <td v-if="item.executionType=='update'">{{item.previousData.AssetNumber}}</td>
+                            <td v-if="item.executionType=='update'">{{item.previousData.Hostname}}</td>
+                            <td v-if="item.executionType=='update'">{{item.previousData.Datacenter}}</td>
+                            <td v-if="item.executionType=='update'">{{item.previousData.Rack}}</td>
+                            <td v-if="item.executionType=='update'">{{item.previousData.RackPosition}}</td>
+                            <td v-if="item.executionType=='update'">{{item.previousData.Owner}}</td>
 
                     </template>
 
