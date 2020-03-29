@@ -104,6 +104,11 @@ namespace Web.Api.Controllers
             return Ok(response);
         }
 
+
+        /*
+         * WHAT'S STORED IN THE CHANGEPLANITEM DATA: ApiDto or DecommissionedAssets
+         */
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateAssetApiDto assetApiDto)
         {  
@@ -144,6 +149,8 @@ namespace Web.Api.Controllers
         public async Task<IActionResult> Put(UpdateAssetApiDto assetApiDto)
         {
             var assetDto = _mapper.Map<AssetDto>(assetApiDto);
+
+            //assetApiDto.LastUpdatedDate = DateTime.Now;
 
             if (assetApiDto.ChangePlanId != null && assetApiDto.ChangePlanId != Guid.Empty)
             {

@@ -129,7 +129,7 @@ namespace Web.Api.Controllers
                     await _assetService.CreateDecommissionedAssetAsync(decommisionedAsset);
                 }
             }
-                    
+
             return Ok();
         }
 
