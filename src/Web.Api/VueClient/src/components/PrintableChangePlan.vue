@@ -11,12 +11,12 @@
                                   class="pa-5"
                                   multi-sort
                                   show-expand
-                                  expanded="getRowsToExpand(changePlanItems)"
+                                  :expanded="getRowsToExpand"
                                   disable-pagination
                                   hide-default-footer>
 
                         <template v-slot:item.data-table-expand="{ item, isExpanded, expand }">
-                            <v-btn icon @click="expand(true)" v-if="item.executionType=='update' && !isExpanded"><v-icon>mdi-chevron-down</v-icon></v-btn>
+                            <v-btn icon v-if="item.executionType=='update' && !isExpanded"><v-icon>mdi-chevron-down</v-icon></v-btn>
                             <v-btn icon @click="expand(false)" v-if="isExpanded"><v-icon>mdi-chevron-up</v-icon></v-btn>
                         </template>
 
@@ -142,10 +142,10 @@
             }
         },
         computed: {
-            getRowsToExpand(items) {
+            getRowsToExpand() {
                 var arr = [];
                 var index = 0;
-                items.forEach(item => {
+                this.changePlanItems.forEach(item => {
                     if (item.executionType === "update") {
                         arr[index] = item;
                         index += 1;
