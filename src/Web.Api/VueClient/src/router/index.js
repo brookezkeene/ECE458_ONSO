@@ -8,6 +8,7 @@ import ModelEdit from '@/components/ModelEdit'
 import Models from '@/components/Models'
 import assets from '@/components/Assets'
 import Racks from '@/components/Racks'
+import Datacenters from '@/components/Datacenters'
 import DatacenterEdit from '@/components/DatacenterEdit'
 import ImportExport from '@/components/Bulk'
 import Users from '@/components/Users'
@@ -145,6 +146,11 @@ const routes = [
                 path: '/racks',
                 name: 'racks',
                 component: Racks,
+            },
+            {
+                path: '/datacenters',
+                name: 'datacenters',
+                component: Datacenters,
             },
             {
                 path: '/datacenters/edit/:id',

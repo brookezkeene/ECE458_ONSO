@@ -75,9 +75,10 @@
                     { title: 'Assets', path: '/assets', icon: 'mdi-server', sublinks: [
                         { title: 'Active Assets', path: '/assets'},
                         { title: 'Decommissioned Assets', path: '/decommissioned-assets' },
-                        { title: 'Change Planner', path: '/change-plan'},
                     ]},
-                    { title: 'Datacenters & Racks', path: '/racks', icon: 'mdi-view-day' },
+                    { title: 'Change Planner', path: '/change-planner', icon: 'mdi-clipboard-list-outline'},
+                    { title: 'Datacenters', path: '/datacenters', icon: 'mdi-factory' },
+                    { title: 'Racks', path: '/racks', icon: 'mdi-view-day' },
                     { title: 'Users', path: '/users', icon: 'mdi-account' },
                     { title: 'Reports', path: '/reports', icon: 'mdi-chart-pie' },
                     { title: 'Import/Export', path: '/importexport', icon: 'mdi-file-upload' },
@@ -91,6 +92,9 @@
             },
             filteredMenuItems() {
                 var newMenu = this.menuItems;
+                if (!this.$store.getters.hasAssetPermission && !this.$store.getters.isAdmin) {
+                    newMenu = newMenu.filter(h => h.title !== "Change Planner");
+                }
                 if (!this.$store.getters.hasAuditPermission && !this.$store.getters.isAdmin) {
                     newMenu = newMenu.filter(h => h.title !== "System Log");
                 }
