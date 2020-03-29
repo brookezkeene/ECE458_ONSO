@@ -77,7 +77,7 @@
                         { title: 'Decommissioned', path: '/decommissioned-assets' }
                     ]
                     },
-                    { title: 'Change Planner', path: '/change-planner', icon: 'mdi-clipboard-list-outline'},
+                    { title: 'Change Planner', path: '/change-plan', icon: 'mdi-clipboard-list-outline'},
                     { title: 'Datacenters', path: '/datacenters', icon: 'mdi-factory' },
                     { title: 'Racks', path: '/racks', icon: 'mdi-view-day' },
                     { title: 'Users', path: '/users', icon: 'mdi-account' },

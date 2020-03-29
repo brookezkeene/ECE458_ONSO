@@ -88,7 +88,7 @@ const routes = [
             },
             {
                 path: '/change-plan',
-                name: 'change-planner',
+                name: 'change-plan',
                 component: ChangePlanner,
                 meta: { permission: 'asset' }
             },
