@@ -64,6 +64,8 @@
 
     @media print {
         .label {
+            height: 48px;
+            width: 168px;
             border: 0;
         }
     }
