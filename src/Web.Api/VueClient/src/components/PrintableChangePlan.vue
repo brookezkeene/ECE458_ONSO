@@ -16,8 +16,7 @@
                                   hide-default-footer>
 
                         <template v-slot:item.data-table-expand="{ item, isExpanded, expand }">
-                            <v-btn icon v-if="item.executionType=='update' && !isExpanded"><v-icon>mdi-chevron-down</v-icon></v-btn>
-                            <v-btn icon @click="expand(false)" v-if="isExpanded"><v-icon>mdi-chevron-up</v-icon></v-btn>
+                            <v-btn icon v-if="isExpanded"><v-icon>mdi-chevron-up</v-icon></v-btn>
                         </template>
 
                         <template v-slot:expanded-item="{ headers, item }">
