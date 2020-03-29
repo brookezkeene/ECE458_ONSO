@@ -1,14 +1,6 @@
 <template>
     <v-card flat>
         <v-card-title>
-            Datacenters
-        </v-card-title>
-
-        <v-container>
-            <datacenter-table />
-        </v-container>
-
-        <v-card-title class="pt-10">
             Racks
         </v-card-title>
 
@@ -47,13 +39,11 @@
 </style>
 
 <script>
-import DatacenterTable from "./DatacenterTable"
 import RackForm from "./RackForm"
 import RackTable from "./RackTable"
 
     export default {
         components: {
-            DatacenterTable,
             RackForm,
             RackTable
         },
