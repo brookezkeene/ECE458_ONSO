@@ -518,6 +518,7 @@
             addLabels() {
                 /*eslint-disable*/
                 console.log(this.selectedAssets);
+                this.$router.push({ name: 'asset-labels', params: { assets: this.selectedAssets } })
             },
             turnOn(item) {
                 this.editing = true;

@@ -22,6 +22,7 @@ import DecommissionedAssetDetails from '@/components/DecommissionedAssetDetails'
 import ChangePlanner from '@/components/ChangePlanner'
 import ChangePlannerDetails from '@/components/ChangePlannerDetails'
 import ChangePlanEdit from '@/components/ChangePlanEdit'
+import AssetLabels from '@/components/AssetLabels'
 
 
 Vue.use(Router)
@@ -123,6 +124,12 @@ const routes = [
                 component: assetEdit,
                 props: true,
                 meta: { admin: true }
+            },
+            {
+                path: 'assets/labels',
+                name: 'asset-labels',
+                component: AssetLabels,
+                props: true
             },
             {
                 path: '/racks',
