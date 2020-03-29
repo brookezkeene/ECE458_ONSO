@@ -196,7 +196,6 @@ router.beforeEach((to, from, next) => {
                     if (store.getters.getPermissions.includes(to.meta.permission) || auth.isAdmin()) {
                         next()
                     } else {
-                        console.log(false)
                         next(false)
                     }
                 } else {
