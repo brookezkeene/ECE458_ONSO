@@ -13,7 +13,7 @@
 
                     <template v-slot:item.data-table-expand="{ item, isExpanded, expand }">
                         <v-btn icon @click="expand(true)" v-if="item.previousData!=null && !isExpanded"><v-icon>mdi-chevron-down</v-icon></v-btn>
-                        <v-btn icon @click="expand(false)" v-if="item.previousData==null && isExpanded"><v-icon>mdi-chevron-up</v-icon></v-btn>
+                        <v-btn icon @click="expand(false)" v-if="isExpanded"><v-icon>mdi-chevron-up</v-icon></v-btn>
                     </template>
 
                     <template v-slot:expanded-item="{ headers, item }">
