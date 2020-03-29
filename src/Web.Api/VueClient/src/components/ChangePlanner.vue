@@ -52,14 +52,11 @@
                                 mdi-check-circle-outline
                             </v-icon>
                         </div>
-<<<<<<< HEAD
-=======
                         <div v-else>
                             <v-icon>
                                 mdi-minus
                             </v-icon>
                         </div>
->>>>>>> 2799e4060daf8e863200b74096e924ee6e216e20
                     </template>
 
                     <template v-slot:item.action="{ item }">
