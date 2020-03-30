@@ -162,7 +162,7 @@ namespace Web.Api.Infrastructure.Repositories
                 {
                     return await _dbContext.Racks
                     .WhereIf(datacenterId != null, x => x.DatacenterId == datacenterId)
-                    .PageBy(x => x.Row.ToString() + x.Column.ToString(), page, pageSize, true)
+                    .PageBy(x => x.Row + x.Column.ToString(), page, pageSize, true)
                     .ToListAsync();
                 }
             }
