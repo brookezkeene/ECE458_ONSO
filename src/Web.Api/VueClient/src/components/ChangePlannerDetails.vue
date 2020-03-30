@@ -26,7 +26,7 @@
                         <td v-if="item.executionType=='update'">{{item.previousData.Rack}}</td>
                         <td v-if="item.executionType=='update'">{{item.previousData.RackPosition}}</td>
                         <td v-if="item.executionType=='update'">{{item.previousData.Owner}}</td>
-                        <td v-if="item.executionType=='update'">{{item.previousData.powerPorts}}</td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.powerConnections}}</td>
                         <td v-if="item.executionType=='update'">{{item.previousData.macAddresses}}</td>
                         <td v-if="item.executionType=='update'">{{item.previousData.networkConnections}}</td>
 
@@ -178,7 +178,7 @@
                                 }
                                 index2++;
                             })
-                            index3 = 0;
+                            var index3 = 0;
                             // Previous Power Ports
                             item.previousData.PowerPorts.forEach(powerPort => {
                                 if (powerPort.PduPort != undefined) {
