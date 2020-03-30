@@ -305,7 +305,11 @@
             this.assets = await this.assetRepository.list();
             this.users = await this.userRepository.list();
             this.racks = await this.rackRepository.list();
-            this.datacenters = await this.datacenterRepository.list();
+            if (this.$store.getters.isChangePlan) {
+                this.datacenters.push(this.$store.getters.changePlan.datacenterName);
+            } else {
+                this.datacenters = await this.datacenterRepository.list();
+            }
 
             for (const model of this.models) {
                 model.vendorModelNo = model.vendor + " " + model.modelNumber;
