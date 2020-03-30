@@ -173,6 +173,9 @@
                     .then(async () => {
                         this.getDataFromApi();
                     })
+                    .catch(() => {
+                        this.$emit('error-delete');
+                    })
             },
             async datacenterSearch() {
                 var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
@@ -183,7 +186,7 @@
                 this.getDataFromApi(); // re-call with same datacenter name if racks were added or deleted
             },
             itemPermission(item) {
-                if (this.admin || this.datacenterPermissions.includes(item.datacenter.description)) {
+                if (this.datacenterPermissions.includes(item.datacenter.description) || this.datacenterPermissions.includes("All Datacenters")) {
                     return true
                 }
                 else {
