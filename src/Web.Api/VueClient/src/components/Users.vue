@@ -60,6 +60,7 @@
                                                                   multiple
                                                                   label="Please select which datacenter(s) this extends to"
                                                                   placeholder="Select a datacenter or all datacenters"
+                                                                  :disabled="editedRoles.includes('admin')"
                                                                   class="pt-8 pl-4 pr-4"
                                                                   @change="checkAll">
                                                         </v-select>
@@ -282,6 +283,7 @@ import Auth from "../auth"
                         this.editedRoles.push(this.allRoles[i].name);
                     }
                 }
+                this.selectedDatacenters = "All Datacenters"
             }
         },
         checkAll() {

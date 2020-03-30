@@ -169,6 +169,9 @@ namespace Web.Api.Infrastructure.Migrations.ApplicationDb
                         .HasColumnType("nvarchar(63)")
                         .HasMaxLength(63);
 
+                    b.Property<DateTime>("LastUpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("ModelId")
                         .HasColumnType("uniqueidentifier");
 
@@ -225,6 +228,67 @@ namespace Web.Api.Infrastructure.Migrations.ApplicationDb
                     b.ToTable("AssetNetworkPort");
                 });
 
+            modelBuilder.Entity("Web.Api.Infrastructure.Entities.ChangePlan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CreatedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DatacenterDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("DatacenterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DatacenterName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ExecutedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ChangePlans");
+                });
+
+            modelBuilder.Entity("Web.Api.Infrastructure.Entities.ChangePlanItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AssetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ChangePlanId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ExecutionType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NewData")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PreviousData")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ChangePlanItems");
+                });
+
             modelBuilder.Entity("Web.Api.Infrastructure.Entities.Datacenter", b =>
                 {
                     b.Property<Guid>("Id")
@@ -263,8 +327,8 @@ namespace Web.Api.Infrastructure.Migrations.ApplicationDb
                     b.Property<string>("Datacenter")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Date")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("DateDecommissioned")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Decommissioner")
                         .HasColumnType("nvarchar(max)");
@@ -278,8 +342,14 @@ namespace Web.Api.Infrastructure.Migrations.ApplicationDb
                     b.Property<string>("ModelNumber")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OwnerName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Rack")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RackPosition")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

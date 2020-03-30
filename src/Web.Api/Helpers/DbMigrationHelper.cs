@@ -72,6 +72,13 @@ namespace Web.Api.Helpers
             {
                 await userManager.AddToRoleAsync(adminUser, "admin");
             }
+
+            var userClaims = await userManager.GetClaimsAsync(adminUser);
+            if (userClaims != null)
+            {
+                await userManager.RemoveClaimsAsync(adminUser, userClaims);
+            }
+            await userManager.AddClaimAsync(adminUser, new Claim("permission:datacenter", "All Datacenters"));
         }
     }
 }

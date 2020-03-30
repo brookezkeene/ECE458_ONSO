@@ -28,18 +28,7 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<PagedList<Rack>> GetRacksAsync(Guid? datacenterId, string sortBy, string isDesc, int page = 1, int pageSize = 10)
         {
             var pagedList = new PagedList<Rack>();
-
-            var racks = await _dbContext.Racks
-                .WhereIf(datacenterId != null, x => x.DatacenterId == datacenterId)
-                //.Include(x => x.Datacenter)
-                //.Include(x => x.Assets)
-                //    .ThenInclude(x => x.Model)
-                //.Include(x => x.Assets)
-                //    .ThenInclude(x => x.Owner)
-                .PageBy(x => x.Id, page, pageSize)
-                //.AsNoTracking()
-                .ToListAsync();
-            racks = Sort(racks, sortBy, isDesc);
+            var racks = await Sort(datacenterId,  sortBy,  isDesc,  page = 1,  pageSize = 10);
             pagedList.AddRange(racks);
             pagedList.TotalCount = await _dbContext.Racks
                 .WhereIf(datacenterId != null, x => x.Datacenter.Id == datacenterId)
@@ -157,35 +146,47 @@ namespace Web.Api.Infrastructure.Repositories
             return await _dbContext.Racks.Where(x => x.Row == rackRow && x.Column == rackColumn && x.Datacenter.Id == (datacenterId))
                 .AnyAsync();
         }
-        private static List<Rack> Sort(List<Rack> racks, string sortBy, string isDesc)
+        private async Task<List<Rack>> Sort(Guid? datacenterId, string sortBy, string isDesc, int page = 1, int pageSize = 10)
         {
-            if (string.IsNullOrEmpty(sortBy))
-            {
-                return racks;
-            }
-            if (sortBy.Equals("address"))
+
+            if (!string.IsNullOrEmpty(sortBy) && sortBy.Equals("address"))
             {
                 if (isDesc.Equals("false"))
                 {
-                    return racks.OrderBy(c => c.Row).ThenBy(c => c.Column).ToList();
+                    return await _dbContext.Racks
+                    .WhereIf(datacenterId != null, x => x.DatacenterId == datacenterId)
+                    .PageBy(x => x.Row + x.Column.ToString(), page, pageSize, false)
+                    .ToListAsync();
                 }
                 else if (isDesc.Equals("true"))
                 {
-                    return racks.OrderByDescending(q => q.Row).ThenByDescending(c => c.Column).ToList();
+                    return await _dbContext.Racks
+                    .WhereIf(datacenterId != null, x => x.DatacenterId == datacenterId)
+                    .PageBy(x => x.Row + x.Column.ToString(), page, pageSize, true)
+                    .ToListAsync();
                 }
             }
-            else if (sortBy.Equals("datacenter.description"))
+            else if (!string.IsNullOrEmpty(sortBy) && sortBy.Equals("datacenter.description"))
             {
                 if (isDesc.Equals("false"))
                 {
-                    return racks.OrderBy(c => c.Datacenter.Name).ToList();
+                    return await _dbContext.Racks
+                    .WhereIf(datacenterId != null, x => x.DatacenterId == datacenterId)
+                    .PageBy(x => x.Datacenter.Name, page, pageSize, false)
+                    .ToListAsync();
                 }
                 else if (isDesc.Equals("true"))
                 {
-                    return racks.OrderByDescending(q => q.Datacenter.Name).ToList();
+                    return await _dbContext.Racks
+                    .WhereIf(datacenterId != null, x => x.DatacenterId == datacenterId)
+                    .PageBy(x => x.Datacenter.Name, page, pageSize, true)
+                    .ToListAsync();
                 }
             }
-            return racks;
+            return await _dbContext.Racks
+                .WhereIf(datacenterId != null, x => x.DatacenterId == datacenterId)
+                .PageBy(x => x.Id, page, pageSize)
+                .ToListAsync();
         }
     }
 }

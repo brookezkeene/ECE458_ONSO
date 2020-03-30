@@ -1,14 +1,6 @@
 <template>
     <v-card flat>
         <v-card-title>
-            Datacenters
-        </v-card-title>
-
-        <v-container>
-            <datacenter-table />
-        </v-container>
-
-        <v-card-title class="pt-10">
             Racks
         </v-card-title>
 
@@ -21,7 +13,9 @@
         </v-container>
 
         <v-container align="center" justify="center">
-            <rack-table :updateData="updateData" v-on:updated="blockUpdate"></rack-table>
+            <rack-table :updateData="updateData" 
+                        v-on:updated="blockUpdate"
+                        v-on:error-delete="showError('delete')"></rack-table>
         </v-container>
 
         <v-snackbar v-model="updateSnackbar.show"
@@ -47,13 +41,11 @@
 </style>
 
 <script>
-import DatacenterTable from "./DatacenterTable"
 import RackForm from "./RackForm"
 import RackTable from "./RackTable"
 
     export default {
         components: {
-            DatacenterTable,
             RackForm,
             RackTable
         },

@@ -55,7 +55,7 @@
                                                                         label="Data Center"
                                                                         placeholder="Please select an existing datacenter"
                                                                         :rules="[rules.datacenterRules]"
-                                                                        :items="datacenters"
+                                                                        :items="filteredDatacenters"
                                                                         item-text="name"
                                                                         item-value="id">
                                                         </v-autocomplete>
@@ -247,7 +247,6 @@
         data() {
             return {
                 models: [],
-                assets: [],
                 users: [],
                 racks: [],
                 networks: [],
@@ -302,17 +301,20 @@
 
         async created() {
             this.models = await this.modelRepository.list();
-            this.assets = await this.assetRepository.list();
             this.users = await this.userRepository.list();
             this.racks = await this.rackRepository.list();
-            this.datacenters = await this.datacenterRepository.list();
+            if (this.$store.getters.isChangePlan) {
+                this.datacenters.push(this.$store.getters.changePlan.datacenterName);
+            } else {
+                this.datacenters = await this.datacenterRepository.list();
+            }
 
             for (const model of this.models) {
                 model.vendorModelNo = model.vendor + " " + model.modelNumber;
             }
 
-            if (typeof this.id !== 'undefined') {
-                this.editedItem = await this.assetRepository.find(this.id);
+            if (typeof this.id !== 'undefined' && this.id != 'new') {
+                this.editedItem = await this.assetRepository.find(this.id, this.$store.getters.isChangePlan);
                 /*eslint-disable*/
                 console.log(this.editedItem);
                 this.selectedModel = await this.modelRepository.find(this.editedItem.modelId);
@@ -325,6 +327,23 @@
 
         },
         computed: {
+            datacenterPermissions() {
+                return this.$store.getters.hasDatacenters
+            },
+            filteredDatacenters() {
+                if (!this.datacenterPermissions.includes("All Datacenters")) {
+                    var newDatacenters = []
+                    for (var i = 0; i < this.datacenters.length; i++) {
+                        if (this.datacenterPermissions.includes(this.datacenters[i].description)) {
+                            newDatacenters.push(this.datacenters[i]);
+                        }
+                    }
+                    return newDatacenters;
+                }
+                else {
+                    return this.datacenters;
+                }
+            },
             formTitle() {
                 return typeof this.id === 'undefined' ? 'New Item' : 'Edit Item'
             },
@@ -355,7 +374,7 @@
                 this.selectedModelBool = false;
             },
             async sendNetworkPortRequest() {
-                this.networks = await this.datacenterRepository.openNetworkPorts(this.datacenterID);
+                this.networks = await this.datacenterRepository.networkPorts(this.datacenterID);
                 for (const network of this.networks) {
                     network.nameRackAssetNum = "Port name: " + network.name +
                         ",  " + "Hostname: " + network.assetHostname;

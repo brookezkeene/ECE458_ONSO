@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -80,6 +81,7 @@ namespace Web.Api.Extensions
             services.TryAddTransient<IPowerService, PowerService>();
             services.TryAddTransient<IAssetImportService, AssetImportService>();
             services.TryAddTransient<IChangePlanService, ChangePlanService>();
+            services.TryAddTransient<INetworkConnectionImportService, NetworkConnectionImportService>();
 
             services.AddHttpClient<PowerStateService>();
 
@@ -98,8 +100,10 @@ namespace Web.Api.Extensions
             {
                     options.LoginPath = "/signin";
                     options.LogoutPath = "/signout";
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             }).AddDuke("Duke", "Duke", options =>
             {
+                options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
                 options.ClientId = "determined-shannon";
                 options.ClientSecret = "nAMi1*c6pF26mJFrBf3QY+IQU7crZCXaWxu=rmYFbAkT$dFWez";
             });

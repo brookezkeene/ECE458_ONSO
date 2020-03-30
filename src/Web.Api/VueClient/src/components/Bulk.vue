@@ -101,7 +101,7 @@
 
         <v-dialog v-model="importNetworkWizard" max-width="500px">
             <v-card>
-                <import-wizard v-on:close-file-chooser="closeImport"></import-wizard>
+                <import-wizard type="networkConnections" v-on:close-file-chooser="closeImport" @import-error="throwError(e)"></import-wizard>
             </v-card>
         </v-dialog>
 

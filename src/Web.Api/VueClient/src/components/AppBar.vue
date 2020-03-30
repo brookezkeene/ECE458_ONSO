@@ -1,6 +1,7 @@
 ﻿<template>
     <div v-if="!hide">
         <v-app-bar color="primary"
+                   class="noPrint"
                    dense
                    dark
                    app
@@ -32,6 +33,20 @@
     </div>
 
 </template>
+
+<style>
+    @media print {
+        .noPrint {
+            display: none;
+        }
+        .v-content {
+          padding: 0 !important;
+        }
+        @page {
+            margin: 0;
+        }
+    }
+</style>
 
 <script>
 

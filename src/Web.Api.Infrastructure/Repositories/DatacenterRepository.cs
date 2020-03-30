@@ -75,6 +75,7 @@ namespace Web.Api.Infrastructure.Repositories
                 //.Include(x => x.ConnectedPort).ThenInclude(x => x.ModelNetworkPort)
                 //.Include(x => x.ConnectedPort).ThenInclude(x => x.Asset)
                 .Where(x => x.Asset.Rack.Datacenter.Id == datacenterID)
+                .Where(x => x.NetworkConnectionId == null || x.NetworkConnectionId == Guid.Empty)
                 //.AsNoTracking()
                 .ToListAsync();
             return ports;

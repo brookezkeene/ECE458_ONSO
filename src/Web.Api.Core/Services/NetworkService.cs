@@ -37,5 +37,11 @@ namespace Web.Api.Core.Services
             var connections = _mapper.Map<List<NetworkConnection>>(connectionDtos);
             return await _repository.AddConnectionsAsync(connections);
         }
+
+        public AssetNetworkPortDto GetNetworkPort(string hostname, string portName)
+        {
+            var port = _repository.GetNetworkPort(hostname, portName);
+            return _mapper.Map<AssetNetworkPortDto>(port);
+        }
     }
 }
