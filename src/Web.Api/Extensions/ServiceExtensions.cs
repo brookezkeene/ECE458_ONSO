@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -99,6 +100,7 @@ namespace Web.Api.Extensions
             {
                     options.LoginPath = "/signin";
                     options.LogoutPath = "/signout";
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             }).AddDuke("Duke", "Duke", options =>
             {
                 options.ClientId = "determined-shannon";
