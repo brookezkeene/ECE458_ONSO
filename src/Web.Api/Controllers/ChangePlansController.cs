@@ -64,6 +64,10 @@ namespace Web.Api.Controllers
                 else if (changePlanItem.ExecutionType.Equals("update"))
                 {
                     assetDto = _mapper.Map<AssetDto>((JsonConvert.DeserializeObject<UpdateAssetApiDto>(changePlanItem.NewData)));
+                } 
+                else
+                {
+                    continue;
                 }
                 assetDto = await _changePlanService.FillFieldsInAssetApiForChangePlans(assetDto);
                 var assetApiDto = _mapper.Map<GetAssetApiDto>(assetDto);
