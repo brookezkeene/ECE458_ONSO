@@ -91,7 +91,7 @@
         },
         computed: {
             permission() {
-                return this.$store.getters.isAdmin || (this.$store.getters.hasAssetPermission && this.$store.getters.hasDatacenters.includes("All Datacenters"))
+                return this.$store.getters.isAdmin || this.$store.getters.hasDatacenters.includes("All Datacenters")
             },
             filteredHeaders() {
                 return (this.permission) ? this.headers : this.headers.filter(h => h.text !== "Actions")

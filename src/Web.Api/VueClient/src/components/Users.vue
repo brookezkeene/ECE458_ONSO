@@ -55,7 +55,6 @@
                                                         <v-select v-model="selectedDatacenters"
                                                                   :items="datacenters"
                                                                   item-text="description"
-                                                                  :item-disabled="disabledDatacenters"
                                                                   item-value=""
                                                                   :return-object="false"
                                                                   multiple
@@ -207,7 +206,6 @@ import Auth from "../auth"
         ],
         permissionsDialog: false,
         datacenters: [],
-        disabledDatacenters:[],
         selectedDatacenters: [],
         //valid: false,
         //rules: {
@@ -238,7 +236,6 @@ import Auth from "../auth"
                 this.users[i]["permissions"] = userRoles;
             }
             this.datacenters = await this.datacenterRepository.list();
-            this.disabledDatacenters = this.datacenters;
             var datacenter = {
                     description: "All Datacenters",
                     name: "All",
@@ -275,7 +272,6 @@ import Auth from "../auth"
             this.userRepository.findClaims(item.id)
                 .then((claims) => {
                     this.selectedDatacenters = claims[0].value.split(",");
-                    this.checkAll();
                 })
             this.permissionsDialog = true;
         },
