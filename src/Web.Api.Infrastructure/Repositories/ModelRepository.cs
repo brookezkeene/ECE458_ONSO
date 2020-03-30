@@ -29,26 +29,19 @@ namespace Web.Api.Infrastructure.Repositories
                 int memoryRangeStart, int memoryRangeEnd, string sortBy, string isDesc, int page = 1, int pageSize = 10)
         {
             var pagedList = new PagedList<Model>();
-            //if 
             Expression<Func<Model, bool>> vendorCondition = x => (x.Vendor.Contains(vendor));
             Expression<Func<Model, bool>> numberCondition = x => (x.ModelNumber.Contains(number));
-
-            var models = await _dbContext.Models
-                .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
-                .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
-                //.Include(x => x.NetworkPorts)
-                .PageBy(x => x.ModelNumber, page, pageSize)
-                //.AsNoTracking()
-                .ToListAsync();
-            models = models.Where(x => x.Height >= heightStart && x.Height <= heightEnd && 
-                x.EthernetPorts >= networkRangeStart && x.EthernetPorts <= networkRangeEnd &&
-               x.PowerPorts >= powerRangeStart && x.PowerPorts <= powerRangeEnd &&
-               x.Memory >= memoryRangeStart && x.Memory <= memoryRangeEnd).ToList();
-            models = Sort(models, sortBy, isDesc);
+            var models = await Sort( vendor,  number,  heightStart,  heightEnd,
+                 networkRangeStart,  networkRangeEnd,  powerRangeStart,  powerRangeEnd,
+                 memoryRangeStart,  memoryRangeEnd,  sortBy,  isDesc,  page = 1,  pageSize = 10);
             pagedList.AddRange(models);
             pagedList.TotalCount = await _dbContext.Models
                 .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
                 .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
+                .Where(x => x.Height >= heightStart && x.Height <= heightEnd &&
+                                x.EthernetPorts >= networkRangeStart && x.EthernetPorts <= networkRangeEnd &&
+                                x.PowerPorts >= powerRangeStart && x.PowerPorts <= powerRangeEnd &&
+                                x.Memory >= memoryRangeStart && x.Memory <= memoryRangeEnd)
                 .CountAsync();
             pagedList.PageSize = pageSize;
             pagedList.CurrentPage = page;
@@ -199,90 +192,185 @@ namespace Web.Api.Infrastructure.Repositories
             // 5. done
             model.NetworkPorts = ports;
         }
-        private static List<Model> Sort(List<Model> models, string sortBy, string isDesc)
+        private async Task<List<Model>> Sort(string vendor, string number, int heightStart, int heightEnd,
+                int networkRangeStart, int networkRangeEnd, int powerRangeStart, int powerRangeEnd,
+                int memoryRangeStart, int memoryRangeEnd, string sortBy, string isDesc, int page = 1, int pageSize = 10)
         {
+            Expression<Func<Model, bool>> vendorCondition = x => (x.Vendor.Contains(vendor));
+            Expression<Func<Model, bool>> numberCondition = x => (x.ModelNumber.Contains(number));
+
             if (string.IsNullOrEmpty(sortBy))
             {
-                return models ;
+                return await _dbContext.Models
+                    .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
+                    .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
+                    .Where(x => x.Height >= heightStart && x.Height <= heightEnd && x.EthernetPorts >= networkRangeStart && x.EthernetPorts <= networkRangeEnd &&
+                            x.PowerPorts >= powerRangeStart && x.PowerPorts <= powerRangeEnd && x.Memory >= memoryRangeStart && x.Memory <= memoryRangeEnd)
+                    .PageBy(x => x.Id, page, pageSize)
+                    .ToListAsync();
             }
             else if (sortBy.Equals("vendor"))
             {
-                if(isDesc.Equals("false"))
+                if (isDesc.Equals("false"))
                 {
-                    return models.OrderBy(q => q.Vendor).ToList();
-                } 
+                    return await _dbContext.Models
+                    .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
+                    .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
+                    .Where(x => x.Height >= heightStart && x.Height <= heightEnd && x.EthernetPorts >= networkRangeStart && x.EthernetPorts <= networkRangeEnd &&
+                            x.PowerPorts >= powerRangeStart && x.PowerPorts <= powerRangeEnd && x.Memory >= memoryRangeStart && x.Memory <= memoryRangeEnd)
+                    .PageBy(x => x.Vendor, page, pageSize, false)
+                    .ToListAsync();
+                }
                 else if (isDesc.Equals("true"))
                 {
-                    return models.OrderByDescending(q => q.Vendor).ToList();
+                    return await _dbContext.Models
+                    .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
+                    .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
+                    .Where(x => x.Height >= heightStart && x.Height <= heightEnd && x.EthernetPorts >= networkRangeStart && x.EthernetPorts <= networkRangeEnd &&
+                            x.PowerPorts >= powerRangeStart && x.PowerPorts <= powerRangeEnd && x.Memory >= memoryRangeStart && x.Memory <= memoryRangeEnd)
+                    .PageBy(x => x.Vendor, page, pageSize, true)
+                    .ToListAsync();
                 }
             }
             else if (sortBy.Equals("modelNumber"))
             {
                 if (isDesc.Equals("false"))
                 {
-                    return models.OrderBy(q => q.ModelNumber).ToList();
+                    return await _dbContext.Models
+                        .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
+                        .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
+                        .Where(x => x.Height >= heightStart && x.Height <= heightEnd && x.EthernetPorts >= networkRangeStart && x.EthernetPorts <= networkRangeEnd &&
+                            x.PowerPorts >= powerRangeStart && x.PowerPorts <= powerRangeEnd && x.Memory >= memoryRangeStart && x.Memory <= memoryRangeEnd)
+                        .PageBy(x => x.ModelNumber, page, pageSize, false)
+                        .ToListAsync();
                 }
                 else if (isDesc.Equals("true"))
                 {
-                    return models.OrderByDescending(q => q.ModelNumber).ToList();
+                    return await _dbContext.Models
+                        .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
+                        .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
+                       .Where(x => x.Height >= heightStart && x.Height <= heightEnd && x.EthernetPorts >= networkRangeStart && x.EthernetPorts <= networkRangeEnd &&
+                            x.PowerPorts >= powerRangeStart && x.PowerPorts <= powerRangeEnd && x.Memory >= memoryRangeStart && x.Memory <= memoryRangeEnd)
+                        .PageBy(x => x.ModelNumber, page, pageSize, true)
+                        .ToListAsync();
                 }
             }
             else if (sortBy.Equals("height"))
             {
                 if (isDesc.Equals("false"))
                 {
-                    return models.OrderBy(q => q.Height).ToList();
+                    return await _dbContext.Models
+                        .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
+                        .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
+                        .Where(x => x.Height >= heightStart && x.Height <= heightEnd && x.EthernetPorts >= networkRangeStart && x.EthernetPorts <= networkRangeEnd &&
+                            x.PowerPorts >= powerRangeStart && x.PowerPorts <= powerRangeEnd && x.Memory >= memoryRangeStart && x.Memory <= memoryRangeEnd)
+                        .PageBy(x => x.Height, page, pageSize, false)
+                        .ToListAsync();
                 }
                 else if (isDesc.Equals("true"))
                 {
-                    return models.OrderByDescending(q => q.Height).ToList();
+                    return await _dbContext.Models
+                        .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
+                        .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
+                        .Where(x => x.Height >= heightStart && x.Height <= heightEnd && x.EthernetPorts >= networkRangeStart && x.EthernetPorts <= networkRangeEnd &&
+                            x.PowerPorts >= powerRangeStart && x.PowerPorts <= powerRangeEnd && x.Memory >= memoryRangeStart && x.Memory <= memoryRangeEnd)
+                        .PageBy(x => x.Height, page, pageSize, true)
+                        .ToListAsync();
                 }
             }
             else if (sortBy.Equals("ethernetPorts"))
             {
                 if (isDesc.Equals("false"))
                 {
-                    return models.OrderBy(q => q.EthernetPorts).ToList();
+                    return await _dbContext.Models
+                        .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
+                        .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
+                        .Where(x => x.Height >= heightStart && x.Height <= heightEnd && x.EthernetPorts >= networkRangeStart && x.EthernetPorts <= networkRangeEnd &&
+                            x.PowerPorts >= powerRangeStart && x.PowerPorts <= powerRangeEnd && x.Memory >= memoryRangeStart && x.Memory <= memoryRangeEnd)
+                        .PageBy(x => x.EthernetPorts, page, pageSize, false)
+                        .ToListAsync();
                 }
                 else if (isDesc.Equals("true"))
                 {
-                    return models.OrderByDescending(q => q.EthernetPorts).ToList();
+                    return await _dbContext.Models
+                        .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
+                        .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
+                        .Where(x => x.Height >= heightStart && x.Height <= heightEnd && x.EthernetPorts >= networkRangeStart && x.EthernetPorts <= networkRangeEnd &&
+                            x.PowerPorts >= powerRangeStart && x.PowerPorts <= powerRangeEnd && x.Memory >= memoryRangeStart && x.Memory <= memoryRangeEnd)
+                        .PageBy(x => x.EthernetPorts, page, pageSize, true)
+                        .ToListAsync();
                 }
             }
             else if (sortBy.Equals("powerPorts"))
             {
                 if (isDesc.Equals("false"))
                 {
-                    return models.OrderBy(q => q.PowerPorts).ToList();
+                    return await _dbContext.Models
+                        .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
+                        .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
+                        .Where(x => x.Height >= heightStart && x.Height <= heightEnd && x.EthernetPorts >= networkRangeStart && x.EthernetPorts <= networkRangeEnd &&
+                            x.PowerPorts >= powerRangeStart && x.PowerPorts <= powerRangeEnd && x.Memory >= memoryRangeStart && x.Memory <= memoryRangeEnd)
+                        .PageBy(x => x.PowerPorts, page, pageSize, false)
+                        .ToListAsync();
                 }
                 else if (isDesc.Equals("true"))
                 {
-                    return models.OrderByDescending(q => q.PowerPorts).ToList();
+                    return await _dbContext.Models
+                         .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
+                         .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
+                         .Where(x => x.Height >= heightStart && x.Height <= heightEnd && x.EthernetPorts >= networkRangeStart && x.EthernetPorts <= networkRangeEnd &&
+                            x.PowerPorts >= powerRangeStart && x.PowerPorts <= powerRangeEnd && x.Memory >= memoryRangeStart && x.Memory <= memoryRangeEnd)
+                         .PageBy(x => x.PowerPorts, page, pageSize, true)
+                         .ToListAsync();
                 }
             }
             else if (sortBy.Equals("cpu"))
             {
                 if (isDesc.Equals("false"))
                 {
-                    return models.OrderBy(q => q.Cpu).ToList();
+                    return await _dbContext.Models
+                         .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
+                         .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
+                         .Where(x => x.Height >= heightStart && x.Height <= heightEnd && x.EthernetPorts >= networkRangeStart && x.EthernetPorts <= networkRangeEnd &&
+                            x.PowerPorts >= powerRangeStart && x.PowerPorts <= powerRangeEnd && x.Memory >= memoryRangeStart && x.Memory <= memoryRangeEnd)
+                         .PageBy(x => x.Cpu, page, pageSize, false)
+                         .ToListAsync();
                 }
                 else if (isDesc.Equals("true"))
                 {
-                    return models.OrderByDescending(q => q.Cpu).ToList();
+                    return await _dbContext.Models
+                        .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
+                        .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
+                        .Where(x => x.Height >= heightStart && x.Height <= heightEnd && x.EthernetPorts >= networkRangeStart && x.EthernetPorts <= networkRangeEnd &&
+                            x.PowerPorts >= powerRangeStart && x.PowerPorts <= powerRangeEnd && x.Memory >= memoryRangeStart && x.Memory <= memoryRangeEnd)
+                        .PageBy(x => x.Cpu, page, pageSize, true)
+                        .ToListAsync();
                 }
             }
-            else if (sortBy.Equals("memory"))
+            else //if (sortBy.Equals("memory"))
             {
                 if (isDesc.Equals("false"))
                 {
-                    return models.OrderBy(q => q.Memory).ToList();
+                    return await _dbContext.Models
+                         .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
+                         .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
+                         .Where(x => x.Height >= heightStart && x.Height <= heightEnd && x.EthernetPorts >= networkRangeStart && x.EthernetPorts <= networkRangeEnd &&
+                            x.PowerPorts >= powerRangeStart && x.PowerPorts <= powerRangeEnd && x.Memory >= memoryRangeStart && x.Memory <= memoryRangeEnd)
+                         .PageBy(x => x.Memory, page, pageSize, false)
+                         .ToListAsync();
                 }
-                else if (isDesc.Equals("true"))
+                else //if (isDesc.Equals("true"))
                 {
-                    return models.OrderByDescending(q => q.Memory).ToList();
+                    return await _dbContext.Models
+                        .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
+                        .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
+                        .Where(x => x.Height >= heightStart && x.Height <= heightEnd && x.EthernetPorts >= networkRangeStart && x.EthernetPorts <= networkRangeEnd &&
+                            x.PowerPorts >= powerRangeStart && x.PowerPorts <= powerRangeEnd && x.Memory >= memoryRangeStart && x.Memory <= memoryRangeEnd)
+                        .PageBy(x => x.Memory, page, pageSize, true)
+                        .ToListAsync();
                 }
             }
-            return models;
+            return null;
         }
     }
 }
