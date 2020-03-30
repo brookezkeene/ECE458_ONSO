@@ -34,6 +34,9 @@
                             <td v-if="item.executionType=='update'">{{item.previousData.Rack}}</td>
                             <td v-if="item.executionType=='update'">{{item.previousData.RackPosition}}</td>
                             <td v-if="item.executionType=='update'">{{item.previousData.Owner}}</td>
+                            <td v-if="item.executionType=='update'">{{item.previousData.powerPorts}}</td>
+                            <td v-if="item.executionType=='update'">{{item.previousData.macAddresses}}</td>
+                            <td v-if="item.executionType=='update'">{{item.previousData.networkConnections}}</td>
 
                         </template>
 
@@ -140,6 +143,9 @@
                     { text: 'Rack', value: 'newData.Rack' },
                     { text: 'Rack U', value: 'newData.RackPosition', },
                     { text: 'Owner Username', value: 'newData.Owner' },
+                    { text: 'Power Ports', value: 'newData.powerPorts' },
+                    { text: 'Network Port Mac Addresses', value: 'newData.macAddresses' },
+                    { text: 'Network Port Connections', value: 'newData.networkConnections' },
                     { text: 'Change', value: 'action', sortable: false },
                 ],
                 changePlanItems: [],
@@ -169,6 +175,7 @@
                 console.log(this.changePlanItems);
             },
             deserializeData() {
+                console.log(this.changePlanItems);
                 this.changePlanItems.forEach(item => {
                     item.previousData = JSON.parse(item.previousData);
                     item.newData = JSON.parse(item.newData);
@@ -178,6 +185,34 @@
                         item.newData.Rack = item.previousData.Rack.RackLetter + item.previousData.Rack.RackNumber;
                         item.newData.Owner = item.previousData.OwnerName;
                         item.newData.AssetNumber = item.previousData.AssetNumber;
+                    } else {
+                        var index = 0;
+                        item.newData.macAddresses = [];
+                        item.newData.networkConnections = [];
+                        item.previousData.macAddresses = [];
+                        item.previousData.networkConnections = [];
+                        // New Network Port Data 
+                        item.newData.NetworkPorts.forEach(networkPort => {
+                            item.newData.macAddresses[index] = networkPort.Name + ": " + networkPort.MacAddress +" " ;
+                            item.previousData.macAddresses[index] = networkPort.Name + ": " + networkPort.MacAddress +" ";
+                            if (networkPort.ConnectedPort != undefined) {
+                                item.newData.networkConnections[index] = networkPort.Name + ": Host " + networkPort.ConnectedPort.HostName + " Port " + networkPort.ConnectedPort.Name;
+                            }
+                            index++;
+                        });
+                        // Previous Network Port Data
+                        var index2 = 0;
+                        item.previousData.NetworkPorts.forEach(networkPort => {
+                            item.previousData.macAddresses[index2] = networkPort.Name + ": " + networkPort.MacAddress +" ";
+                            if (networkPort.ConnectedPort != undefined) {
+                                item.previousData.networkConnections[index2] = networkPort.Name + ": Host " + networkPort.ConnectedPort.HostName + " Port " + networkPort.ConnectedPort.Name;
+                            }
+                            index2++;
+                        })
+                        item.newData.powerPorts = JSON.stringify(item.newData.PowerPorts);
+                        item.newData.networkPorts = JSON.stringify(item.newData.NetworkPorts);
+                        item.previousData.powerPorts = JSON.stringify(item.previousData.PowerPorts);
+                        item.previousData.networkPorts = JSON.stringify(item.previousData.NetworkPorts);
                     }
                 });
                 console.log(this.changePlanItems);
