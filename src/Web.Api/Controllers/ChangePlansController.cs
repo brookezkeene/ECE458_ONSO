@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
 using Web.Api.Dtos.Assets.Create;
+using Web.Api.Dtos.Assets.Read;
 using Web.Api.Dtos.Assets.Update;
 using Web.Api.Dtos.ChangePlans;
 using Web.Api.Mappers;
@@ -53,6 +54,21 @@ namespace Web.Api.Controllers
         public async Task<ActionResult<List<ChangePlanItemDto>>> GetChangePlanItems(Guid id)
         {
             var response = await _changePlanService.GetChangePlanItemsAsync(id);
+            foreach (ChangePlanItemDto changePlanItem in response)
+            {
+                var assetDto = new AssetDto();
+                if (changePlanItem.ExecutionType.Equals("create"))
+                {
+                    assetDto = _mapper.Map<AssetDto>((JsonConvert.DeserializeObject<CreateAssetApiDto>(changePlanItem.NewData)));
+                }
+                else if (changePlanItem.ExecutionType.Equals("update"))
+                {
+                    assetDto = _mapper.Map<AssetDto>((JsonConvert.DeserializeObject<UpdateAssetApiDto>(changePlanItem.NewData)));
+                }
+                assetDto = await _changePlanService.FillFieldsInAssetApiForChangePlans(assetDto);
+                var assetApiDto = _mapper.Map<GetAssetApiDto>(assetDto);
+                changePlanItem.NewData = JsonConvert.SerializeObject(assetApiDto);
+            }
             return Ok(response);
         }
         [HttpPost("changeplan")]
@@ -102,7 +118,7 @@ namespace Web.Api.Controllers
             for (int i = 0; i < changePlanItems.Count(); i++)
             {
                 var changePlanItem = changePlanItems[i];
-                //NOTE: THE NEWDATA HERE IS A CreateAssetApiDto
+                //NOTE: THE NEWDATA HERE IS A CreateAssetApiDto (assetDto/asset entity cannot be serialized)
                 if (changePlanItem.ExecutionType.Equals("create"))
                 {
                     var assetApiDto = JsonConvert.DeserializeObject<CreateAssetApiDto>(changePlanItem.NewData);
@@ -110,7 +126,7 @@ namespace Web.Api.Controllers
                     var assetDto = _mapper.Map<AssetDto>(assetApiDto);
                     await _assetService.CreateAssetAsync(assetDto);
                 }
-                //NOTE: THE NEWDATA HERE IS A UpdateAssetApiDto
+                //NOTE: THE NEWDATA HERE IS A UpdateAssetApiDto (assetDto/asset entity cannot be serialized)
                 else if (changePlanItem.ExecutionType.Equals("update"))
                 {
                     var assetApiDto = JsonConvert.DeserializeObject<UpdateAssetApiDto>(changePlanItem.NewData);
