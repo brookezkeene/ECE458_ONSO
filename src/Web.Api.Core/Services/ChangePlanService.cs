@@ -150,14 +150,16 @@ namespace Web.Api.Core.Services
                     assetNetworkPortDto.ConnectedPort = _mapper.Map<AssetNetworkPortDto>(connectedPort);
                 }
             }
+            int count = 1;
             foreach (AssetPowerPortDto assetPowerPortDto in assetDto.PowerPorts)
             {
                 if(assetPowerPortDto.PduPortId != null)
                 {
                     var connectedPort = await _assetRepository.GetPowerPortAsync(assetPowerPortDto.PduPortId ?? Guid.Empty);
-
+                    assetPowerPortDto.Number = count;
                     assetPowerPortDto.PduPort = _mapper.Map<PduPortDto>(connectedPort);
                 }
+                count++;
             }
             return assetDto;
         }
