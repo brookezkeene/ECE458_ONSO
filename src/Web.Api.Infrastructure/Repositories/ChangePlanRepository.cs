@@ -37,6 +37,18 @@ namespace Web.Api.Infrastructure.Repositories
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
         }
+        public async Task<ChangePlanItem> GetChangePlanItemAsync(Guid changePlanId, Guid assetId)
+        {
+            var changePlan = await _dbContext.ChangePlanItems
+                .Where(x => x.ChangePlanId == changePlanId)
+                .Where(x => x.AssetId == assetId)
+                .Where(x => x.ExecutionType.Equals("update"))
+                .AsNoTracking()
+                .SingleOrDefaultAsync();
+
+            return changePlan;
+        }
+
 
         public async Task<PagedList<ChangePlan>> GetChangePlansAsync(Guid? createdById, int page = 1, int pageSize = 10)
         {

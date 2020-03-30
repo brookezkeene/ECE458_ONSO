@@ -36,7 +36,6 @@ namespace Web.Api.Controllers
         private readonly IModelService _modelSerivce;
         private readonly IRackService _rackService;
         private readonly IIdentityService _userService;
-        private readonly IApiErrorResources _errorResources;
 
         public AssetsController(IAssetService assetService, IMapper mapper, IApiErrorResources errorResources, PowerStateService powerStateService, 
             IChangePlanService changePlanService, IModelService modelService, IRackService rackService, IIdentityService userService)
@@ -218,6 +217,11 @@ namespace Web.Api.Controllers
             if (query.ChangePlanId != null && query.ChangePlanId != Guid.Empty)
             {
                 var changePlanId = query.ChangePlanId ?? Guid.Empty;
+                var updatedAsset = await _changePlanService.GetChangePlanItemAsync(changePlanId, query.Id);
+                if(updatedAsset != null)
+                {
+                    
+                }
                 var changePlanItemApiDto = new UpdateChangePlanItemApiDto
                 {
                     ChangePlanId = changePlanId,

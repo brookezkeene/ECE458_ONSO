@@ -36,7 +36,11 @@ namespace Web.Api.Core.Services
             var changePlanItem = await _repository.GetChangePlanItemAsync(changePlanItemId);
             return _mapper.Map<ChangePlanItemDto>(changePlanItem);
         }
-
+        public async Task<ChangePlanItemDto> GetChangePlanItemAsync(Guid changePlanId, Guid assetId)
+        {
+            var changePlanItem = await _repository.GetChangePlanItemAsync(changePlanId, assetId);
+            return _mapper.Map<ChangePlanItemDto>(changePlanItem);
+        }
         public async Task<PagedList<ChangePlanDto>> GetChangePlansAsync(Guid? createdById, int page = 1, int pageSize = 10)
         {
             var list = await _repository.GetChangePlansAsync(createdById, page, pageSize);
