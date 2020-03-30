@@ -247,7 +247,6 @@
         data() {
             return {
                 models: [],
-                assets: [],
                 users: [],
                 racks: [],
                 networks: [],
@@ -302,7 +301,6 @@
 
         async created() {
             this.models = await this.modelRepository.list();
-            this.assets = await this.assetRepository.list();
             this.users = await this.userRepository.list();
             this.racks = await this.rackRepository.list();
             if (this.$store.getters.isChangePlan) {
@@ -315,8 +313,8 @@
                 model.vendorModelNo = model.vendor + " " + model.modelNumber;
             }
 
-            if (typeof this.id !== 'undefined') {
-                this.editedItem = await this.assetRepository.find(this.id);
+            if (typeof this.id !== 'undefined' && this.id != 'new') {
+                this.editedItem = await this.assetRepository.find(this.id, this.$store.getters.isChangePlan);
                 /*eslint-disable*/
                 console.log(this.editedItem);
                 this.selectedModel = await this.modelRepository.find(this.editedItem.modelId);

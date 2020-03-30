@@ -4,8 +4,12 @@ import axios from 'axios';
 const resource = '/assets';
 
 export default {
-    find(id) {
-        return axios.get(`${resource}/${id}`)
+    find(id, changePlanId) {
+        const endpoint = typeof changePlanId === 'undefined' || !changePlanId
+            ? `${resource}/${id}`
+            : `${resource}/${id}/changePlan`;
+
+        return axios.get(endpoint)
             .then(response => response.data);
     },
     getPowerPortState(powerportid) {
