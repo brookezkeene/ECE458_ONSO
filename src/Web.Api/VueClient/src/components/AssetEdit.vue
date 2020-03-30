@@ -55,7 +55,7 @@
                                                                         label="Data Center"
                                                                         placeholder="Please select an existing datacenter"
                                                                         :rules="[rules.datacenterRules]"
-                                                                        :items="datacenters"
+                                                                        :items="filteredDatacenters"
                                                                         item-text="name"
                                                                         item-value="id">
                                                         </v-autocomplete>
@@ -325,6 +325,23 @@
 
         },
         computed: {
+            datacenterPermissions() {
+                return this.$store.getters.hasDatacenters
+            },
+            filteredDatacenters() {
+                if (!this.datacenterPermissions.includes("All Datacenters")) {
+                    var newDatacenters = []
+                    for (var i = 0; i < this.datacenters.length; i++) {
+                        if (this.datacenterPermissions.includes(this.datacenters[i].description)) {
+                            newDatacenters.push(this.datacenters[i]);
+                        }
+                    }
+                    return newDatacenters;
+                }
+                else {
+                    return this.datacenters;
+                }
+            },
             formTitle() {
                 return typeof this.id === 'undefined' ? 'New Item' : 'Edit Item'
             },

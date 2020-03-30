@@ -22,7 +22,7 @@
                     <v-row>
                         <v-col>
                             <v-select v-model="selectedDatacenter"
-                                      :items="datacenters"
+                                      :items="filteredDatacenters"
                                       item-text="description"
                                       item-value=""
                                       :return-object="false"
@@ -81,6 +81,23 @@
             this.datacenters = await this.datacenterRepository.list();
         },
         computed: {
+            datacenterPermissions() {
+                return this.$store.getters.hasDatacenters
+            },
+            filteredDatacenters() {
+                if (!this.datacenterPermissions.includes("All Datacenters")) {
+                    var newDatacenters = []
+                    for (var i = 0; i < this.datacenters.length; i++) {
+                        if (this.datacenterPermissions.includes(this.datacenters[i].description)) {
+                            newDatacenters.push(this.datacenters[i]);
+                        }
+                    }
+                    return newDatacenters;
+                }
+                else {
+                    return this.datacenters;
+                }
+            },
             formTitle() {
                 return typeof this.id === 'undefined' ? 'New Change Plan' : 'Edit Change Plan'
             },

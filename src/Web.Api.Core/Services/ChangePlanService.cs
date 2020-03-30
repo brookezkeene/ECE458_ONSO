@@ -86,7 +86,21 @@ namespace Web.Api.Core.Services
             await _repository.AddChangePlanItemAsync(entity);
             return entity.Id;
         }
-
+        public async Task<Guid> CreateChangePlanItemAsync(Guid changePlanId, Guid assetId, DecommissionedAssetDto decommissionedAsset, string createDecommissionedAsset)
+        {
+            var changePlanItemDto = new ChangePlanItemDto
+            {
+                ChangePlanId = changePlanId,
+                ExecutionType = "decommission",
+                AssetId = assetId,
+                NewData = JsonConvert.SerializeObject(decommissionedAsset),
+                PreviousData = createDecommissionedAsset,
+                CreatedDate = DateTime.Now
+            };
+            var entity = _mapper.Map<ChangePlanItem>(changePlanItemDto);
+            await _repository.AddChangePlanItemAsync(entity);
+            return entity.Id;
+        }
         public async Task<int> UpdateChangePlanItemAsync(ChangePlanItemDto changePlanItem)
         {
             var entity = _mapper.Map<ChangePlanItem>(changePlanItem);
@@ -134,6 +148,14 @@ namespace Web.Api.Core.Services
                 {
                     var connectedPort = await _assetRepository.GetNetworkPortAsync(assetNetworkPortDto.ConnectedPortId ?? Guid.Empty);
                     assetNetworkPortDto.ConnectedPort = _mapper.Map<AssetNetworkPortDto>(connectedPort);
+                }
+            }
+            foreach (AssetPowerPortDto assetPowerPortDto in assetDto.PowerPorts)
+            {
+                if(assetPowerPortDto.PduPortId != null)
+                {
+                    var connectedPort = await _assetRepository.GetNetworkPortAsync(assetPowerPortDto.PduPortId ?? Guid.Empty);
+                    assetPowerPortDto.PduPort = _mapper.Map<PduPortDto>(connectedPort);
                 }
             }
             return assetDto;
