@@ -67,6 +67,7 @@ namespace Web.Api.Controllers
                     {
                         var decommissionedAsset = response.Find(x => x.Id == changePlanItem.AssetId);
                         response.Remove(decommissionedAsset);
+                        response.TotalCount -= 1;
                         continue;
                     }
                     else if (changePlanItem.ExecutionType.Equals("create"))
