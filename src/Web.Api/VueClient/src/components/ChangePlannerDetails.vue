@@ -17,29 +17,19 @@
                     </template>
 
                     <template v-slot:expanded-item="{ headers, item }">
-                            <td v-if="item.executionType=='update'"></td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.Vendor}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.ModelNumber}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.AssetNumber}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.Hostname}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.Datacenter}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.Rack}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.RackPosition}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.Owner}}</td>
+                        <td v-if="item.executionType=='update'"></td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.Vendor}}</td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.ModelNumber}}</td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.AssetNumber}}</td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.Hostname}}</td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.Datacenter}}</td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.Rack}}</td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.RackPosition}}</td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.Owner}}</td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.powerConnections}}</td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.macAddresses}}</td>
+                        <td v-if="item.executionType=='update'">{{item.previousData.networkConnections}}</td>
 
-                    </template>
-
-                    <template v-slot:item.executed="{ item }">
-                        <div v-if="item.executedDate">
-                            <v-icon color="primary">
-                                mdi-check-circle-outline
-                            </v-icon>
-                        </div>
-                        <div v-else>
-                            <v-icon color="red">
-                                mdi-close-circle-outline
-                            </v-icon>
-                        </div>
                     </template>
 
                     <template v-slot:item.action="{ item }">
@@ -89,7 +79,7 @@
                 </v-data-table>
 
                 <div class="text-center">
-                    <v-btn color="primary" dark class="mb-2" @click="execute">Execute Change Plan</v-btn>
+                    <v-btn v-if="!executedDate" color="primary" dark class="mb-2" @click="execute">Execute Change Plan</v-btn>
                 </div>
             </v-card>
         </v-container>
@@ -103,8 +93,8 @@
 
     export default {
         name: 'changePlan-details',
-        inject: ['changePlanRepository'],
-        props: ['id'],
+        inject: ['changePlanRepository', 'assetRepository'],
+        props: ['id', 'executedDate'],
         data() {
             return {
                 loading: false,
@@ -117,6 +107,9 @@
                     { text: 'Rack', value: 'newData.Rack' },
                     { text: 'Rack U', value: 'newData.RackPosition', },
                     { text: 'Owner Username', value: 'newData.Owner' },
+                    { text: 'Power Ports', value: 'newData.powerConnections' },
+                    { text: 'Network Port Mac Addresses', value: 'newData.macAddresses' },
+                    { text: 'Network Port Connections', value: 'newData.networkConnections' },
                     { text: 'Change', value: 'action', sortable: false },
                 ],
                 changePlanItems: [],
@@ -128,20 +121,72 @@
         methods: {
             async initialize() {
                 this.changePlanItems = await this.changePlanRepository.listItems(this.id);
-                this.deserializeData();
+                this.deserializeData(this.changePlanItems);
                 /*eslint-disable*/
                 console.log(this.changePlanItems);
             },
-            deserializeData() {
-                this.changePlanItems.forEach(item => {
+            deserializeData(changePlanItems) {
+                console.log(changePlanItems);
+                changePlanItems.forEach(item => {
                     item.previousData = JSON.parse(item.previousData);
                     item.newData = JSON.parse(item.newData);
                     if (item.executionType === 'decommission') {
                         item.newData.Vendor = item.previousData.Model.Vendor;
                         item.newData.ModelNumber = item.previousData.Model.Number;
-                        item.newData.Rack = item.previousData.Rack.RackLetter + item.previousData.Rack.RackNumber; 
+                        item.newData.Rack = item.previousData.Rack.RackLetter + item.previousData.Rack.RackNumber;
                         item.newData.Owner = item.previousData.OwnerName;
                         item.newData.AssetNumber = item.previousData.AssetNumber;
+                    } else {
+                        var index = 0;
+                        if (item.newData != null) {
+                            item.newData.macAddresses = [];
+                            item.newData.networkConnections = [];
+                            item.newData.powerConnections = [];
+                                                    // New Network Port Data 
+                        item.newData.NetworkPorts.forEach(networkPort => {
+                            if (item.newData.macAddresses[index] != undefined) {
+                                item.newData.macAddresses[index] = networkPort.Name + ": " + networkPort.MacAddress +" " ;
+                            } 
+                            if (networkPort.ConnectedPort != undefined) {
+                                item.newData.networkConnections[index] = networkPort.Name + ": Host " + networkPort.ConnectedPort.Hostname + " Port " + networkPort.ConnectedPort.Name;
+                            }
+                            index++;
+                        });
+
+                        var index4 = 0;
+                        // New Power Ports
+                        item.newData.PowerPorts.forEach(powerPort => {
+                            if (powerPort.PduPort != undefined) {
+                                item.newData.powerConnections[index4] = powerPort.Number + ": " + powerPort.PduPort +" ";
+                            }
+                            index4++;
+                        })
+                        }
+                        if (item.previousData != null) {
+                            item.previousData.macAddresses = [];
+                            item.previousData.networkConnections = [];
+                            item.previousData.powerConnections = [];
+
+                            // Previous Network Port Data
+                            var index2 = 0;
+                            item.previousData.NetworkPorts.forEach(networkPort => {
+                                if (item.previousData.macAddresses[index2] != undefined) {
+                                    item.previousData.macAddresses[index2] = networkPort.Name + ": " + networkPort.MacAddress + " ";
+                                }
+                                if (networkPort.ConnectedPort != undefined) {
+                                    item.previousData.networkConnections[index2] = networkPort.Name + ": Host " + networkPort.ConnectedPort.Hostname + " Port " + networkPort.ConnectedPort.Name;
+                                }
+                                index2++;
+                            })
+                            var index3 = 0;
+                            // Previous Power Ports
+                            item.previousData.PowerPorts.forEach(powerPort => {
+                                if (powerPort.PduPort != undefined) {
+                                    item.previousData.powerConnections[index3] = powerPort.Number + ": " + powerPort.PduPort +" ";
+                                }
+                                index3++;
+                            })
+                        }
                     }
                 });
                 console.log(this.changePlanItems);

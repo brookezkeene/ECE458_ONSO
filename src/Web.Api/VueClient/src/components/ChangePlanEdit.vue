@@ -113,12 +113,10 @@
                 this.newItem.createdById = this.$store.getters.userId;
                 console.log(this.newItem)
                 this.changePlanRepository.create(this.newItem);
-                this.close()
+                this.close();
             },
-            close() {
-                setTimeout(() => {
-                    this.$router.push({ name: 'change-plan' })
-                }, 300)
+            async close() {
+                this.$router.push({ name: 'change-plan' });
             },
         }
     }
