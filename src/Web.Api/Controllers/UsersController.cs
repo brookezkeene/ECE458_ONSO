@@ -113,11 +113,6 @@ namespace Web.Api.Controllers
             foreach (var role in roles.Roles)
             {
                 requestedRolesExist &= await _roleManager.RoleExistsAsync(role);
-                // check if user's new permissions include assets
-                if (role == "asset")
-                {
-                    containsAsset = true;
-                }
             }
             if (!requestedRolesExist)
             {
@@ -128,24 +123,22 @@ namespace Web.Api.Controllers
             await _userManager.RemoveFromRolesAsync(user, allRoles);
 
             var add = await _userManager.AddToRolesAsync(user, roles.Roles);
-            // add all datacenters to claims
-            if (containsAsset)
-            {
-                var userClaims = await _userManager.GetClaimsAsync(user);
-                if (userClaims != null)
-                {
-                    await _userManager.RemoveClaimsAsync(user, userClaims);
-                }
 
-                // default user to global datacenter permission
-                if (roles.Datacenters == "" || roles.Datacenters.Contains("All Datacenters"))
-                {
-                    await _userManager.AddClaimAsync(user, new Claim("permission:datacenter", "All Datacenters"));
-                }
-                else
-                {
-                    await _userManager.AddClaimAsync(user, new Claim("permission:datacenter", roles.Datacenters));
-                }
+            // add all datacenters to claims
+            var userClaims = await _userManager.GetClaimsAsync(user);
+            if (userClaims != null)
+            {
+                await _userManager.RemoveClaimsAsync(user, userClaims);
+            }
+
+            // default user to global datacenter permission
+            if (roles.Datacenters == "" || roles.Datacenters.Contains("All Datacenters"))
+            {
+                await _userManager.AddClaimAsync(user, new Claim("permission:datacenter", "All Datacenters"));
+            }
+            else
+            {
+                await _userManager.AddClaimAsync(user, new Claim("permission:datacenter", roles.Datacenters));
             }
 
             return Ok(add);
