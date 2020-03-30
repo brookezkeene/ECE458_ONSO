@@ -70,6 +70,18 @@ namespace Web.Api.Infrastructure.DbContexts
 
         public Task<int> SaveChangesAsync()
         {
+            SetTimestamps();
+            return base.SaveChangesAsync();
+        }
+
+        public override int SaveChanges()
+        {
+            SetTimestamps();
+            return base.SaveChanges();
+        }
+
+        private void SetTimestamps()
+        {
             var assetEntries = ChangeTracker
                 .Entries<Asset>()
                 .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)
@@ -105,8 +117,6 @@ namespace Web.Api.Infrastructure.DbContexts
                         break;
                 }
             }
-
-            return base.SaveChangesAsync();
         }
     }
 }

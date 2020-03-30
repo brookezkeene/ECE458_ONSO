@@ -17,11 +17,21 @@ namespace Web.Api.Core.Services
     public class ChangePlanService : IChangePlanService
     {
         private readonly IChangePlanRepository _repository;
+        private readonly IAssetRepository _assetRepository;
+        private readonly IModelRepository _modelRepository;
+        private readonly IRackRepository _rackRepository;
+        private readonly IIdentityRepository _userRepository;
         private readonly IMapper _mapper;
 
-        public ChangePlanService(IChangePlanRepository repository, IMapper mapper)
+        public ChangePlanService(IChangePlanRepository repository, IAssetRepository assetRepository, IModelRepository modelRepository, 
+                                IRackRepository rackRepository, IIdentityRepository userRepository, IMapper mapper)
         {
+            
             _repository = repository;
+            _assetRepository = assetRepository;
+            _modelRepository = modelRepository;
+            _rackRepository = rackRepository;
+            _userRepository = userRepository;
             _mapper = mapper;
         }
 
@@ -34,9 +44,14 @@ namespace Web.Api.Core.Services
         public async Task<ChangePlanItemDto> GetChangePlanItemAsync(Guid changePlanItemId)
         {
             var changePlanItem = await _repository.GetChangePlanItemAsync(changePlanItemId);
+
             return _mapper.Map<ChangePlanItemDto>(changePlanItem);
         }
-
+        public async Task<ChangePlanItemDto> GetChangePlanItemAsync(Guid changePlanId, Guid assetId)
+        {
+            var changePlanItem = await _repository.GetChangePlanItemAsync(changePlanId, assetId);
+            return _mapper.Map<ChangePlanItemDto>(changePlanItem);
+        }
         public async Task<PagedList<ChangePlanDto>> GetChangePlansAsync(Guid? createdById, int page = 1, int pageSize = 10)
         {
             var list = await _repository.GetChangePlansAsync(createdById, page, pageSize);
@@ -48,7 +63,16 @@ namespace Web.Api.Core.Services
             var list = await _repository.GetChangePlanItemsAsync(changePlanId);
             return _mapper.Map<List<ChangePlanItemDto>>(list);
         }
-
+        public async Task<List<ChangePlanItemDto>> GetDecommissionedChangePlanItemsAsync(Guid changePlanId)
+        {
+            var list = await _repository.GetDecommissionedChangePlanItemsAsync(changePlanId);
+            return _mapper.Map<List<ChangePlanItemDto>>(list);
+        }
+        public async Task<List<ChangePlanItemDto>> GetAsssetChangePlanItemsAsync(Guid changePlanId)
+        {
+            var list = await _repository.GetAssetChangePlanItemsAsync(changePlanId);
+            return _mapper.Map<List<ChangePlanItemDto>>(list);
+        }
         public async Task<Guid> CreateChangePlanAsync(ChangePlanDto changePlan)
         {
             var entity = _mapper.Map<ChangePlan>(changePlan);
@@ -62,7 +86,21 @@ namespace Web.Api.Core.Services
             await _repository.AddChangePlanItemAsync(entity);
             return entity.Id;
         }
-
+        public async Task<Guid> CreateChangePlanItemAsync(Guid changePlanId, Guid assetId, DecommissionedAssetDto decommissionedAsset, string createDecommissionedAsset)
+        {
+            var changePlanItemDto = new ChangePlanItemDto
+            {
+                ChangePlanId = changePlanId,
+                ExecutionType = "decommission",
+                AssetId = assetId,
+                NewData = JsonConvert.SerializeObject(decommissionedAsset),
+                PreviousData = createDecommissionedAsset,
+                CreatedDate = DateTime.Now
+            };
+            var entity = _mapper.Map<ChangePlanItem>(changePlanItemDto);
+            await _repository.AddChangePlanItemAsync(entity);
+            return entity.Id;
+        }
         public async Task<int> UpdateChangePlanItemAsync(ChangePlanItemDto changePlanItem)
         {
             var entity = _mapper.Map<ChangePlanItem>(changePlanItem);
@@ -94,5 +132,37 @@ namespace Web.Api.Core.Services
             var changePlanItemsEntities = _mapper.Map<List<ChangePlanItem>>(changePlanItems);
             return await _repository.ExecuteChangePlan(changePlanItemsEntities);
         }
+        public async Task<AssetDto> FillFieldsInAssetApiForChangePlans(AssetDto assetDto)
+        {
+            assetDto.Model = _mapper.Map<ModelDto>(await _modelRepository.GetModelAsync(assetDto.ModelId));
+            assetDto.Rack = _mapper.Map<RackDto>(await _rackRepository.GetRackAsync(assetDto.RackId));
+            if (assetDto.OwnerId != null || assetDto.OwnerId != Guid.Empty)
+            {
+                assetDto.Owner = _mapper.Map<UserDto>(await _userRepository.GetUserAsync(assetDto.OwnerId ?? Guid.Empty));
+            }
+            foreach(AssetNetworkPortDto assetNetworkPortDto in assetDto.NetworkPorts)
+            {
+                var networkPortModelId = assetNetworkPortDto.ModelNetworkPortId;
+                assetNetworkPortDto.ModelNetworkPort = assetDto.Model.NetworkPorts.Find(x => x.Id == networkPortModelId);
+                if (assetNetworkPortDto.ConnectedPortId != null)
+                {
+                    var connectedPort = await _assetRepository.GetNetworkPortAsync(assetNetworkPortDto.ConnectedPortId ?? Guid.Empty);
+                    assetNetworkPortDto.ConnectedPort = _mapper.Map<AssetNetworkPortDto>(connectedPort);
+                }
+            }
+            int count = 1;
+            foreach (AssetPowerPortDto assetPowerPortDto in assetDto.PowerPorts)
+            {
+                if(assetPowerPortDto.PduPortId != null)
+                {
+                    var connectedPort = await _assetRepository.GetPowerPortAsync(assetPowerPortDto.PduPortId ?? Guid.Empty);
+                    assetPowerPortDto.Number = count;
+                    assetPowerPortDto.PduPort = _mapper.Map<PduPortDto>(connectedPort);
+                }
+                count++;
+            }
+            return assetDto;
+        }
+
     }
 }

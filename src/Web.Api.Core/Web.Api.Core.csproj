@@ -17,4 +17,8 @@
     <ProjectReference Include="..\Web.Api.Infrastructure\Web.Api.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Mappers\Import\NetworkConnections\" />
+  </ItemGroup>
+
 </Project>

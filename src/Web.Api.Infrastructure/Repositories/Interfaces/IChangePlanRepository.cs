@@ -11,8 +11,11 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
     {
         Task<ChangePlan> GetChangePlanAsync(Guid changePlanId);
         Task<ChangePlanItem> GetChangePlanItemAsync(Guid changePlanItemId);
+        Task<ChangePlanItem> GetChangePlanItemAsync(Guid changePlanId, Guid assetId);
         Task<PagedList<ChangePlan>> GetChangePlansAsync(Guid? createdById, int page = 1, int pageSize = 10);
         Task<List<ChangePlanItem>> GetChangePlanItemsAsync(Guid changePlanId);
+        Task<List<ChangePlanItem>> GetDecommissionedChangePlanItemsAsync(Guid changePlanId);
+        Task<List<ChangePlanItem>> GetAssetChangePlanItemsAsync(Guid changePlanId);
         Task<int> AddChangePlanAsync(ChangePlan changePlan);
         Task<int> AddChangePlanItemAsync(ChangePlanItem changePlanItem);
         Task<int> UpdateChangePlanAsync(ChangePlan changePlan);

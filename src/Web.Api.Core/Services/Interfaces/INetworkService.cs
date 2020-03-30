@@ -10,5 +10,6 @@ namespace Web.Api.Core.Services.Interfaces
         Task<Guid> CreateConnectionAsync(NetworkConnectionDto connectionDto);
         Task<NetworkConnectionDto> GetConnectionAsync(Guid connectionId);
         Task<List<Guid>> CreateConnectionsAsync(List<NetworkConnectionDto> connectionDtos);
+        AssetNetworkPortDto GetNetworkPort(string hostname, string portName);
     }
 }

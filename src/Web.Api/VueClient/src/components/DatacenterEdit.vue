@@ -83,7 +83,7 @@
             },
             close() {
                 setTimeout(() => {
-                    this.$router.push({ name: 'racks' })
+                    this.$router.push({ name: 'datacenters' })
                 }, 300)
             },
         }

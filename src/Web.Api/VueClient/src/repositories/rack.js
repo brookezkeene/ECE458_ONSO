@@ -59,7 +59,7 @@ export default {
             datacenterId: datacenter
         };
 
-        return axios.post(`${resource}/range`, null, { params: query } ).then(response => response.data).catch(error => error);
+        return axios.post(`${resource}/range`, null, { params: query } )
     },
     deleteInRange(start, end, datacenter) {
         const { rowLetter: startRow, rackNumber: startCol } = splitAddress(start);
@@ -73,9 +73,6 @@ export default {
         };
 
         return axios.delete(`${resource}/range`, { params: query })
-            .then(response => {
-                return response.data;
-            }).catch(error => error);
     },
     getPdus(rackid, location) {
         return axios.get(`${resource}/${rackid}/pdus`)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Web.Api.Infrastructure.Entities;
+using Web.Api.Infrastructure.Extensions;
 using Web.Api.Infrastructure.Interfaces;
 using Web.Api.Infrastructure.Repositories.Interfaces;
 
@@ -24,12 +25,20 @@ namespace Web.Api.Infrastructure.Repositories
             await _dbContext.NetworkConnections.AddAsync(connection);
             await _dbContext.SaveChangesAsync();
 
+            _dbContext.DeletePreviousNetworkConnections();
+
             return connection.Id;
         }
 
         public AssetNetworkPort GetNetworkPort(Guid portId)
         {
             return _dbContext.AssetNetworkPort.Find(portId);
+        }
+
+        public AssetNetworkPort GetNetworkPort(string hostname, string portName)
+        {
+            return _dbContext.AssetNetworkPort
+                .SingleOrDefault(port => port.Asset.Hostname == hostname && port.ModelNetworkPort.Name == portName);
         }
 
         public async Task<NetworkConnection> GetConnectionAsync(Guid connectionId)
@@ -41,6 +50,9 @@ namespace Web.Api.Infrastructure.Repositories
         {
             await _dbContext.NetworkConnections.AddRangeAsync(connections);
             await _dbContext.SaveChangesAsync();
+
+            _dbContext.DeletePreviousNetworkConnections();
+
 
             return connections.Select(conn => conn.Id)
                 .ToList();

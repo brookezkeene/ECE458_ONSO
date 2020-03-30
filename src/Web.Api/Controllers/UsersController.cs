@@ -136,7 +136,16 @@ namespace Web.Api.Controllers
                 {
                     await _userManager.RemoveClaimsAsync(user, userClaims);
                 }
-                await _userManager.AddClaimAsync(user, new Claim("permission:datacenter", roles.Datacenters));
+
+                // default user to global datacenter permission
+                if (roles.Datacenters == "" || roles.Datacenters.Contains("All Datacenters"))
+                {
+                    await _userManager.AddClaimAsync(user, new Claim("permission:datacenter", "All Datacenters"));
+                }
+                else
+                {
+                    await _userManager.AddClaimAsync(user, new Claim("permission:datacenter", roles.Datacenters));
+                }
             }
 
             return Ok(add);

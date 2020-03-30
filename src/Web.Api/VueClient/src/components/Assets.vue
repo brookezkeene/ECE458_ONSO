@@ -232,7 +232,7 @@
                     </template>
 
                     <template v-slot:item.power="{ item }">
-                        <v-row v-if="item.hasNetworkManagedPower && powerPermission">
+                        <v-row v-if="displayPower(item)">
                             <v-item-group dense
                                           light
                                           tile>
@@ -365,9 +365,9 @@
             filteredHeaders() {
                 var newHeaders = this.headers;
 
-                if (!this.powerPermission) {
-                    newHeaders = newHeaders.filter(h => h.text !== "Power")
-                }
+                //if (!this.powerPermission || this.$store.getters.isChangePlan) {
+                //    newHeaders = newHeaders.filter(h => h.text !== "Power")
+                //}
                 if (!this.permission) {
                     newHeaders = newHeaders.filter(h => h.text !== "Actions")
                 }
@@ -518,6 +518,10 @@
             addLabels() {
                 /*eslint-disable*/
                 console.log(this.selectedAssets);
+                this.$router.push({ name: 'asset-labels', params: { assets: this.selectedAssets } })
+            },
+            displayPower(item) {
+                return item.hasNetworkManagedPower && (this.powerPermission || (item.ownerId == this.$store.getters.userId))
             },
             turnOn(item) {
                 this.editing = true;

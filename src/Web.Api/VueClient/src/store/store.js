@@ -35,6 +35,9 @@ export default new Vuex.Store({
      Documentation: https://vuex.vuejs.org/guide/getters.html
      */
     getters: {
+        getPermissions: state => {
+            return state.myPermissions
+        },
         hasModelPermission: state => {
             return state.myPermissions.includes("model")
         },
@@ -111,6 +114,13 @@ export default new Vuex.Store({
             state.changePlanDatacenterId = changePlan.datacenterId;
             state.changePlanId = changePlan.changePlanId;
         },
+        CURR_CHANGE_PLAN(state, changePlan) {
+            state.changePlanName = changePlan.name;
+            state.changePlanDatacenterName = changePlan.datacenterName;
+            state.changePlanDatacenterDescription = changePlan.datacenterDescription;
+            state.changePlanDatacenterId = changePlan.datacenterId;
+            state.changePlanId = changePlan.changePlanId;
+        },
         END_CHANGE_PLAN(state) {
             state.changePlan = false;
         },
@@ -142,6 +152,10 @@ export default new Vuex.Store({
         startChangePlan({ commit }, changePlan) {
             console.log(changePlan);
             commit('START_CHANGE_PLAN', changePlan);
+        },
+        saveChangePlan({ commit }, changePlan) {
+            console.log(changePlan);
+            commit('CURR_CHANGE_PLAN', changePlan);
         },
         endChangePlan({ commit }) {
             commit('END_CHANGE_PLAN');
