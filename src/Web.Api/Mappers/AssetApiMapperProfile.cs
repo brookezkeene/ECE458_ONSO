@@ -82,7 +82,8 @@ namespace Web.Api.Mappers
 
             CreateMap<AssetDto, CreateDecommissionedAsset>()
                 .ForMember(o => o.OwnerName, opts => opts.MapFrom(src => src.Owner.Username))
-                .ForMember(o => o.NetworkPortGraph, opts => opts.Ignore());
+                .ForMember(o => o.NetworkPortGraph, opts => opts.Ignore())
+                .ForMember(o => o.FullNetworkPorts, opts => opts.Ignore());
             CreateMap<RackDto, CreateDecommissionedRack>()
                 .ForMember(o => o.RackLetter, opts => opts.MapFrom(src => src.RowLetter));
             CreateMap<ModelDto, CreateDecommissionedModel>()
