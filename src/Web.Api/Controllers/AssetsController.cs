@@ -117,11 +117,12 @@ namespace Web.Api.Controllers
             if (assetApiDto.ChangePlanId != null && assetApiDto.ChangePlanId != Guid.Empty)
             {
                 var changePlanId = assetApiDto.ChangePlanId ?? Guid.Empty;
-                var changePlanItemApiDto = new CreateChangePlanItemApiDto
+                var changePlanItemApiDto = new ChangePlanItemDto
                 {
                     ChangePlanId = changePlanId,
                     ExecutionType = "create",
-                    NewData = JsonConvert.SerializeObject(assetApiDto)
+                    NewData = JsonConvert.SerializeObject(assetApiDto),
+                    CreatedDate = DateTime.Now,
                 };
                 var changePlanItemDto = _mapper.Map<ChangePlanItemDto>(changePlanItemApiDto);
                 createdId = await _changePlanService.CreateChangePlanItemAsync(changePlanItemDto);
@@ -155,7 +156,7 @@ namespace Web.Api.Controllers
             {
                 var changePlanId = assetApiDto.ChangePlanId ?? Guid.Empty;
                 var originalAsset = _mapper.Map<GetAssetApiDto>(await _assetService.GetAssetAsync(assetApiDto.Id));
-                var changePlanItemApiDto = new UpdateChangePlanItemApiDto
+                var changePlanItemApiDto = new ChangePlanItemDto
                 {
                     ChangePlanId = changePlanId,
                     ExecutionType = "update",
@@ -222,7 +223,7 @@ namespace Web.Api.Controllers
                 {
                     
                 }
-                var changePlanItemApiDto = new UpdateChangePlanItemApiDto
+                var changePlanItemApiDto = new ChangePlanItemDto
                 {
                     ChangePlanId = changePlanId,
                     ExecutionType = "decommission",
@@ -236,11 +237,8 @@ namespace Web.Api.Controllers
             }
             else
             {
-
-                var getAssetApiDto = _mapper.Map<GetAssetApiDto>(await _assetService.GetAssetAsync(query.Id));
-
                 //deleting asset from active asset column
-                await _assetService.DeleteAssetAsync(_mapper.Map<AssetDto>(getAssetApiDto));
+                await _assetService.DeleteAssetAsync(query.Id);
                 await _assetService.CreateDecommissionedAssetAsync(decommissionedAsset);
             }
 

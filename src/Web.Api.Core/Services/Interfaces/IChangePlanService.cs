@@ -13,6 +13,7 @@ namespace Web.Api.Core.Services.Interfaces
         Task<ChangePlanItemDto> GetChangePlanItemAsync(Guid changePlanItemId);
         Task<PagedList<ChangePlanDto>> GetChangePlansAsync(Guid? createdById, int page = 1, int pageSize = 10);
         Task<List<ChangePlanItemDto>> GetChangePlanItemsAsync(Guid changePlanId);
+        Task<ChangePlanItemDto> GetChangePlanItemAsync(Guid changePlanId, Guid assetId);
         Task<List<ChangePlanItemDto>> GetDecommissionedChangePlanItemsAsync(Guid changePlanId);
         Task<List<ChangePlanItemDto>> GetAsssetChangePlanItemsAsync(Guid changePlanId);
         Task<Guid> CreateChangePlanAsync(ChangePlanDto changePlan);
