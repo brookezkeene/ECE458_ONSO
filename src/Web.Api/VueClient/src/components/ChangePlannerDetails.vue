@@ -76,10 +76,11 @@
                         </v-row>
 
                     </template>
-                    <div class="text-center">
-                        <v-btn color="primary" v-if="!item.executedDate" dark class="mb-2" @click="execute">Execute Change Plan</v-btn>
-                    </div>
                 </v-data-table>
+
+                <div class="text-center">
+                    <v-btn v-if="!executedDate" color="primary" dark class="mb-2" @click="execute">Execute Change Plan</v-btn>
+                </div>
             </v-card>
         </v-container>
         <v-spacer></v-spacer>
@@ -93,7 +94,7 @@
     export default {
         name: 'changePlan-details',
         inject: ['changePlanRepository', 'assetRepository'],
-        props: ['id'],
+        props: ['id', 'executedDate'],
         data() {
             return {
                 loading: false,

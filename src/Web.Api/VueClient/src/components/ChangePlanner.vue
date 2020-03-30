@@ -203,7 +203,7 @@
         showDetails(item) {
             if (!this.editing) {
                 console.log(item);
-                this.$router.push({ name: 'change-plan-details', params: {id: item.id } })
+                this.$router.push({ name: 'change-plan-details', params: { id: item.id, executedDate: item.executedDate } })
             }
             this.editing = false;
         },
