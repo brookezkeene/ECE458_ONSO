@@ -1,0 +1,21 @@
+#!/bin/bash
+
+echo 'Backup type ->' $1
+
+sudo docker exec -t Web.Api.Infrastructure.SqlServer /opt/mssql-tools/bin/sqlcmd \
+        -S localhost -U sa -P Password_123 \
+        -Q " \
+        DECLARE @FileName VARCHAR(1000);
+        SELECT @FileName = (SELECT '/var/opt/mssql/backup/$1/webapi_' + CONVERT(VARCHAR(500), GETDATE(), 112) + '.bak');
+        SELECT @FileName;
+        BACKUP DATABASE [webapi]
+        TO DISK = @FileName
+        WITH NOFORMAT,
+             NOINIT,
+             NAME = 'webapi-full',
+             SKIP,
+             NOREWIND,
+             NOUNLOAD,
+             STATS = 10;
+        "
+

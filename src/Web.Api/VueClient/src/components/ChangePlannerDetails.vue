@@ -156,9 +156,9 @@
                 });
                 console.log(this.changePlanItems);
             },
-            execute(item) {
-                (confirm('Are you sure you want to execute this change plan?') && this.changePlanRepository.execute(item))
-                    .then(() => {
+            execute() {
+                (confirm('Are you sure you want to execute this change plan?') && this.changePlanRepository.execute(this.$store.getters.changePlan.id))
+                    .then( () => {
                         this.$router.push({ name: 'change-plan' })
                     });
             },
