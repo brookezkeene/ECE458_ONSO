@@ -1,6 +1,7 @@
 <template>
     <div v-if="!loading">
         <v-card flat>
+            <ChangePlanBar></ChangePlanBar>
             <v-card-title>
                 <span class="headline">Asset Details</span>
             </v-card-title>
@@ -88,8 +89,11 @@
                             </v-card>
                         </v-card>
 
-                        <v-btn small class="mt-4" color="primary" outlined v-if="!viewPowerPorts" @click="showNames">View Power Port Status</v-btn>
-                        <v-btn dark class="mt-4" small color="primary" outlined v-else href @click="hideNames">Hide Power Port Status</v-btn>
+                        <v-container v-if="!changePlanId()">
+                            <v-btn small class="mt-4" color="primary" outlined v-if="!viewPowerPorts" @click="showNames">View Power Port Status</v-btn>
+                            <v-btn dark class="mt-4" small color="primary" outlined v-else href @click="hideNames">Hide Power Port Status</v-btn>
+                        </v-container>
+
                         <div v-if="viewPowerPorts">
                             <v-card max-height="300px" class="overflow-y-auto" flat>
                                 <v-card-text v-for="(object,index) in powerPorts.powerPorts" :key="index"> Port {{object.pduPort}}: {{object.status}} </v-card-text>
@@ -98,7 +102,7 @@
                     </v-col>
                 </v-row>
                 <v-row v-if="showNeighborhood">
-                    <network-neighborhood v-bind:id="asset.id" @click="nodeClicked"></network-neighborhood>
+                    <network-neighborhood v-bind:id="id" @click="nodeClicked"></network-neighborhood>
                 </v-row>
             </v-card-text>
 
@@ -109,31 +113,6 @@
             <a href="javascript:history.go(-1)"> Go Back</a>
 
         </v-card>
-
-        <!--<template name="powerPortTable">
-            <p>Power Ports</p>
-            <v-container fill max-width="50%">
-                <v-simple-table dense class="text-center">
-                    <thead>
-                        <tr>
-                            <th class="text-center">Asset Port Number</th>
-                            <th class="text-center">Pdu Port</th>
-                            <th class="text-center">Power</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(object, index) in asset.powerPorts" :key="index">
-                            <td> {{object.number}} </td>
-                            <td>{{ object.pduPort }}</td>
-                        </tr>
-                        <tr v-for="(object, index) in powerPorts.powerPorts" :key="index">
-                            <td> {{object.status}} </td>
-                        </tr>
-                    </tbody>
-                </v-simple-table>
-            </v-container>
-        </template>-->
-
     </div>
 
 </template>
@@ -149,14 +128,18 @@
 
 <script>
     import NetworkNeighborhood from "./NetworkNeighborhood"
+    import ChangePlanBar from "@/components/ChangePlanStatusBar"
     export default {
         name: 'asset-details',
         inject: ['assetRepository', 'rackRepository'],
         item: null,
         components: {
-            NetworkNeighborhood
+            NetworkNeighborhood,
+            ChangePlanBar
         },
-        props: ['id'],
+        props: {
+            id: String
+        },
         data() {
             return {
                 loading: false,
@@ -182,11 +165,15 @@
             this.initialize();
         },
         methods: {
+            changePlanId() {
+                if (this.$store.getters.isChangePlan)
+                    return this.$store.getters.changePlan.id;
+            },
             async initialize() {
                 /*eslint-disable*/
                 if (!this.loading) this.loading = true;
                 console.log(this.id);
-                this.asset = await this.assetRepository.find(this.id);
+                this.asset = await this.assetRepository.find(this.id, this.$store.getters.isChangePlan);
                 console.log(this.asset);
                 this.loading = false;
                 if (this.asset.owner === undefined) {

@@ -153,10 +153,10 @@ namespace Web.Api.Core.Services
             int count = 1;
             foreach (AssetPowerPortDto assetPowerPortDto in assetDto.PowerPorts)
             {
-                if(assetPowerPortDto.PduPortId != null)
+                assetPowerPortDto.Number = count;
+                if (assetPowerPortDto.PduPortId != null)
                 {
                     var connectedPort = await _assetRepository.GetPowerPortAsync(assetPowerPortDto.PduPortId ?? Guid.Empty);
-                    assetPowerPortDto.Number = count;
                     assetPowerPortDto.PduPort = _mapper.Map<PduPortDto>(connectedPort);
                 }
                 count++;
