@@ -74,6 +74,7 @@ namespace Web.Api.Controllers
                     else if (changePlanItem.ExecutionType.Equals("create"))
                     {
                          changePlanAssetDto = _mapper.Map<AssetDto>((JsonConvert.DeserializeObject<CreateAssetApiDto>(changePlanItem.NewData)));
+                         changePlanAssetDto.Id = changePlanItem.Id;
                     }
                     else if (changePlanItem.ExecutionType.Equals("update"))
                     {
@@ -98,6 +99,18 @@ namespace Web.Api.Controllers
             var asset = await _assetService.GetAssetAsync(id);
 
             var response = _mapper.Map<GetAssetApiDto>(asset);
+            return Ok(response);
+        }
+
+        [HttpGet("{id}/changePlan")]
+        public async Task<ActionResult<GetAssetApiDto>> GetByIdFromChangePlan(Guid id)
+        {
+            var item = await _changePlanService.GetChangePlanItemAsync(id);
+            var assetDto = _mapper.Map<AssetDto>(JsonConvert.DeserializeObject<CreateAssetApiDto>(item.NewData));
+            await _changePlanService.FillFieldsInAssetApiForChangePlans(assetDto);
+
+            var response = _mapper.Map<GetAssetApiDto>(assetDto);
+
             return Ok(response);
         }
 

@@ -216,7 +216,7 @@
                             </v-tooltip>
 
                             <v-tooltip top>
-                                <template v-if="!$store.getters.isChangePlan" v-slot:activator="{ on }">
+                                <template v-if="!changePlanId()" v-slot:activator="{ on }">
                                     <v-btn icon v-on="on"
                                            @click="deleteItem(item)">
                                         <v-icon medium
@@ -365,9 +365,9 @@
             filteredHeaders() {
                 var newHeaders = this.headers;
 
-                //if (!this.powerPermission || this.$store.getters.isChangePlan) {
-                //    newHeaders = newHeaders.filter(h => h.text !== "Power")
-                //}
+                if (!this.powerPermission || this.$store.getters.isChangePlan) {
+                    newHeaders = newHeaders.filter(h => h.text !== "Power")
+                }
                 if (!this.permission) {
                     newHeaders = newHeaders.filter(h => h.text !== "Actions")
                 }
@@ -422,10 +422,8 @@
                 console.log("this is the sorting stuff")
                 console.log(this.assetSearchQuery);
 
-                if (this.$store.getters.isChangePlan) {
-                    this.assetSearchQuery.changePlanId = this.$store.getters.changePlan.id;
-                    console.log(this.assetSearchQuery);
-                }
+                this.assetSearchQuery.changePlanId = this.changePlanId();
+                   
                 var info = await this.assetRepository.tablelist(this.assetSearchQuery);
                 this.assets = info.data;
                 return info;
@@ -492,9 +490,7 @@
                 this.editing = true;
                 var graph = await networkNeighborhood.createGraph(item.id);
                 var query = { Id: item.id, NetworkPortGraph: JSON.stringify(graph), Decommissioner: this.$store.state.username }
-                if (this.$store.getters.isChangePlan) {
-                    query.changePlanId = this.$store.getters.changePlan.id;
-                }
+                query.changePlanId = this.changePlanId();
                 /*eslint-disable*/
                 console.log(query);
                 confirm('Are you sure you want to decommission this asset? \nThis will remove the asset from the assets table, and instead add it to the decommissioned assets table.') && this.assetRepository.decommission(query)
@@ -561,6 +557,10 @@
             },
             closeDetail() {
                 this.instructionsDialog = false;
+            },
+            changePlanId() {
+                if (this.$store.getters.isChangePlan)
+                    return this.$store.getters.changePlan.id;
             },
             showDetails(item) {
                 if (!this.editing) {
