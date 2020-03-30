@@ -154,7 +154,8 @@ namespace Web.Api.Core.Services
             {
                 if(assetPowerPortDto.PduPortId != null)
                 {
-                    var connectedPort = await _assetRepository.GetNetworkPortAsync(assetPowerPortDto.PduPortId ?? Guid.Empty);
+                    var connectedPort = await _assetRepository.GetPowerPortAsync(assetPowerPortDto.PduPortId ?? Guid.Empty);
+
                     assetPowerPortDto.PduPort = _mapper.Map<PduPortDto>(connectedPort);
                 }
             }

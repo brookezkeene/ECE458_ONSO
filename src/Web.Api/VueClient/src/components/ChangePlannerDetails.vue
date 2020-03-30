@@ -107,7 +107,7 @@
                     { text: 'Rack', value: 'newData.Rack' },
                     { text: 'Rack U', value: 'newData.RackPosition', },
                     { text: 'Owner Username', value: 'newData.Owner' },
-                    { text: 'Power Ports', value: 'newData.powerPorts' },
+                    { text: 'Power Ports', value: 'newData.powerConnections' },
                     { text: 'Network Port Mac Addresses', value: 'newData.macAddresses' },
                     { text: 'Network Port Connections', value: 'newData.networkConnections' },
                     { text: 'Change', value: 'action', sortable: false },
@@ -138,32 +138,55 @@
                         item.newData.AssetNumber = item.previousData.AssetNumber;
                     } else {
                         var index = 0;
-                        item.newData.macAddresses = [];
-                        item.newData.networkConnections = [];
-                        item.previousData.macAddresses = [];
-                        item.previousData.networkConnections = [];
-                        // New Network Port Data 
+                        if (item.newData != null) {
+                            item.newData.macAddresses = [];
+                            item.newData.networkConnections = [];
+                            item.newData.powerConnections = [];
+                                                    // New Network Port Data 
                         item.newData.NetworkPorts.forEach(networkPort => {
-                            item.newData.macAddresses[index] = networkPort.Name + ": " + networkPort.MacAddress +" " ;
-                            item.previousData.macAddresses[index] = networkPort.Name + ": " + networkPort.MacAddress +" ";
+                            if (item.newData.macAddresses[index] != undefined) {
+                                item.newData.macAddresses[index] = networkPort.Name + ": " + networkPort.MacAddress +" " ;
+                            } 
                             if (networkPort.ConnectedPort != undefined) {
                                 item.newData.networkConnections[index] = networkPort.Name + ": Host " + networkPort.ConnectedPort.Hostname + " Port " + networkPort.ConnectedPort.Name;
                             }
                             index++;
                         });
-                        // Previous Network Port Data
-                        var index2 = 0;
-                        item.previousData.NetworkPorts.forEach(networkPort => {
-                            item.previousData.macAddresses[index2] = networkPort.Name + ": " + networkPort.MacAddress +" ";
-                            if (networkPort.ConnectedPort != undefined) {
-                                item.previousData.networkConnections[index2] = networkPort.Name + ": Host " + networkPort.ConnectedPort.Hostname + " Port " + networkPort.ConnectedPort.Name;
+
+                        var index4 = 0;
+                        // New Power Ports
+                        item.newData.PowerPorts.forEach(powerPort => {
+                            if (powerPort.PduPort != undefined) {
+                                item.newData.powerConnections[index4] = powerPort.Number + ": " + powerPort.PduPort +" ";
                             }
-                            index2++;
+                            index4++;
                         })
-                        item.newData.powerPorts = JSON.stringify(item.newData.PowerPorts);
-                        item.newData.networkPorts = JSON.stringify(item.newData.NetworkPorts);
-                        item.previousData.powerPorts = JSON.stringify(item.previousData.PowerPorts);
-                        item.previousData.networkPorts = JSON.stringify(item.previousData.NetworkPorts);
+                        }
+                        if (item.previousData != null) {
+                            item.previousData.macAddresses = [];
+                            item.previousData.networkConnections = [];
+                            item.previousData.powerConnections = [];
+
+                            // Previous Network Port Data
+                            var index2 = 0;
+                            item.previousData.NetworkPorts.forEach(networkPort => {
+                                if (item.previousData.macAddresses[index2] != undefined) {
+                                    item.previousData.macAddresses[index2] = networkPort.Name + ": " + networkPort.MacAddress + " ";
+                                }
+                                if (networkPort.ConnectedPort != undefined) {
+                                    item.previousData.networkConnections[index2] = networkPort.Name + ": Host " + networkPort.ConnectedPort.Hostname + " Port " + networkPort.ConnectedPort.Name;
+                                }
+                                index2++;
+                            })
+                            index3 = 0;
+                            // Previous Power Ports
+                            item.previousData.PowerPorts.forEach(powerPort => {
+                                if (powerPort.PduPort != undefined) {
+                                    item.previousData.powerConnections[index3] = powerPort.Number + ": " + powerPort.PduPort +" ";
+                                }
+                                index3++;
+                            })
+                        }
                     }
                 });
                 console.log(this.changePlanItems);
