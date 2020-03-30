@@ -103,6 +103,7 @@ namespace Web.Api.Extensions
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             }).AddDuke("Duke", "Duke", options =>
             {
+                options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
                 options.ClientId = "determined-shannon";
                 options.ClientSecret = "nAMi1*c6pF26mJFrBf3QY+IQU7crZCXaWxu=rmYFbAkT$dFWez";
             });
