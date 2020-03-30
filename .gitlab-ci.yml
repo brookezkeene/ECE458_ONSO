@@ -15,6 +15,8 @@ build_and_test:
 
 deploy_production:
   stage: deploy
+  variables:
+    VIRTUAL_HOST: onso.colab.duke.edu
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker-compose -f ./src/docker-compose.yml build
@@ -23,13 +25,15 @@ deploy_production:
     - docker-compose -H "ssh://vcm@vcm-12801.vm.duke.edu" -f ./src/docker-compose.yml up -d
   environment:
     name: production
-    url: http://vcm-12801.vm.duke.edu/
+    url: https://onso.colab.duke.edu/
   when: manual
   only:
     - master
 
 deploy_staging:
   stage: deploy
+  variables:
+    VIRTUAL_HOST: onso-staging.colab.duke.edu
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker-compose -f ./src/docker-compose.yml build
@@ -38,12 +42,14 @@ deploy_staging:
     - docker-compose -H "ssh://vcm@vcm-12874.vm.duke.edu" -f ./src/docker-compose.yml up -d
   environment:
     name: staging
-    url: http://vcm-12874.vm.duke.edu/
+    url: https://onso-staging.colab.duke.edu/
   only:
     - dev
 
 deploy_dev:
   stage: deploy
+  variables:
+    VIRTUAL_HOST: onso-dev.colab.duke.edu
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker-compose -f ./src/docker-compose.yml build
@@ -52,12 +58,14 @@ deploy_dev:
     - docker-compose -H "ssh://vcm@vcm-13071.vm.duke.edu" -f ./src/docker-compose.yml up -d
   environment:
     name: dev
-    url: http://vcm-13071.vm.duke.edu/
+    url: https://onso-dev.colab.duke.edu/
   only:
     - /^ev\d\/sprint\d$/
 
 deploy_cannon:
   stage: deploy
+  variables:
+    VIRTUAL_HOST: onso-cannon.colab.duke.edu
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker-compose -f ./src/docker-compose.yml build
@@ -66,6 +74,6 @@ deploy_cannon:
     - docker-compose -H "ssh://vcm@vcm-13156.vm.duke.edu" -f ./src/docker-compose.yml up -d
   environment:
     name: cannon
-    url: http://vcm-13156.vm.duke.edu/
+    url: https://onso-cannon.colab.duke.edu/
   only:
-    - feature/audit-logging
+    - feature/https

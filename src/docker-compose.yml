@@ -1,17 +1,28 @@
 version: '3.4'
 
 services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - /etc/letsencrypt/live/${VIRTUAL_HOST}:/etc/nginx/certs
+    depends_on:
+      - web.api
   web.api:
     image: ${CI_REGISTRY_IMAGE-webapi}
     build:
       context: .
       dockerfile: Web.Api/Dockerfile
-    ports:
-      - 80:80
-      - 443:443
     environment:
       - "ConnectionStrings__ApplicationDbConnection=Server=db;Database=webapi;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true"
       - "ASPNETCORE_ENVIRONMENT=Development"
+      - ASPNETCORE_URLS=http://+:8080
+      - VIRTUAL_HOST
+      - VIRTUAL_PORT=8080
     depends_on:
       - db
   db:
