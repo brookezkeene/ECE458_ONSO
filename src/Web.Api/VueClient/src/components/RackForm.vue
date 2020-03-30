@@ -97,7 +97,7 @@ export default {
                 return;
             }
             // check if user has permission for given datacenter
-            if (this.datacenterPermissions.includes(this.selectedDatacenter)) {
+            if (this.datacenterPermissions.includes(this.selectedDatacenter) || this.datacenterPermissions.includes("All Datacenters")) {
                 var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
 
                 await this.rackRepository.createInRange(this.range.start, this.range.end, searchDatacenter.id)
@@ -122,7 +122,7 @@ export default {
                 return;
             }
             // check if user has permission for given datacenter
-            if (this.datacenterPermissions.includes(this.selectedDatacenter)) {
+            if (this.datacenterPermissions.includes(this.selectedDatacenter) || this.datacenterPermissions.includes("All Datacenters")) {
                 var searchDatacenter = this.datacenters.find(o => o.description === this.selectedDatacenter);
 
                 await this.rackRepository.deleteInRange(this.range.start, this.range.end, searchDatacenter.id)
