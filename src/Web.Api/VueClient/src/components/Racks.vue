@@ -13,7 +13,9 @@
         </v-container>
 
         <v-container align="center" justify="center">
-            <rack-table :updateData="updateData" v-on:updated="blockUpdate"></rack-table>
+            <rack-table :updateData="updateData" 
+                        v-on:updated="blockUpdate"
+                        v-on:error-delete="showError('delete')"></rack-table>
         </v-container>
 
         <v-snackbar v-model="updateSnackbar.show"

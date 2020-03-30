@@ -80,12 +80,7 @@ namespace Web.Api.Controllers
                         var updatedAsset = response.Find(x => x.Id == changePlanItem.AssetId);
                         response.Remove(updatedAsset);
                     }
-                    changePlanAssetDto.Model = await _modelSerivce.GetModelAsync(changePlanAssetDto.ModelId);
-                    changePlanAssetDto.Rack = await _rackService.GetRackDtoAsync(changePlanAssetDto.RackId);
-                    if (changePlanAssetDto.OwnerId != null || changePlanAssetDto.OwnerId != Guid.Empty)
-                    {
-                        changePlanAssetDto.Owner = await _userService.GetUserAsync(changePlanAssetDto.OwnerId ?? Guid.Empty);
-                    }
+                    changePlanAssetDto = await _changePlanService.FillFieldsInAssetApiForChangePlans(changePlanAssetDto);
                     changePlanAssetList.Add(_mapper.Map<GetAssetApiDto>(changePlanAssetDto));
                 }
                 response.AddRange(changePlanAssetList);

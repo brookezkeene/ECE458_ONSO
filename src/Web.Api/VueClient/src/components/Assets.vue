@@ -365,7 +365,7 @@
             filteredHeaders() {
                 var newHeaders = this.headers;
 
-                if (!this.powerPermission) {
+                if (!this.powerPermission || this.$store.getters.isChangePlan) {
                     newHeaders = newHeaders.filter(h => h.text !== "Power")
                 }
                 if (!this.permission) {
