@@ -1,6 +1,7 @@
 ﻿<template>
     <div v-if="!loading">
         <v-card flat>
+            <ChangePlanBar></ChangePlanBar>
             <v-card-title>
                 <span class="headline">Decommissioned Asset Details</span>
             </v-card-title>
@@ -63,9 +64,22 @@
                         <v-label>MAC Addresses</v-label>
                         <v-card flat class="overflow-y-auto">
                             <v-card flat outlined class="overflow-y-auto" max-height="300px">
-                                <div v-for="(port,index) in asset.data.NetworkPorts" :key="index">
-                                    <v-card-text>{{port.Name}} : {{port.MacAddress}}</v-card-text>
-                                </div>
+                                <v-simple-table dense>
+                                    <template v-slot:default>
+                                        <thead>
+                                            <tr>
+                                                <th class="text-left">Name</th>
+                                                <th class="text-left">MAC</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="port in asset.data.NetworkPorts" :key="port.id">
+                                                <td>{{ port.Name }}</td>
+                                                <td>{{ port.MacAddress }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </template>
+                                </v-simple-table>
                             </v-card>
                         </v-card>
                     </v-col>
@@ -74,12 +88,25 @@
                         <v-label>Network Port Connections</v-label>
                         <v-card flat class="overflow-y-auto">
                             <v-card flat outlined class="overflow-y-auto" max-height="300px">
-                                <div v-for="(port,index) in asset.data.NetworkPorts" :key="index">
-                                    <div v-if="port.connectedPort!=undefined">
-                                        <v-card-text>{{port.MacAddress}} : {{port.ConnectedPort.MacAddress}}</v-card-text>
-                                    </div>
-                                </div>
-                        </v-card>
+                                <v-simple-table dense>
+                                    <template v-slot:default>
+                                        <thead>
+                                            <tr>
+                                                <th class="text-left">Name</th>
+                                                <th class="text-left">Hostname</th>
+                                                <th class="text-left">Name</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="port in asset.data.NetworkPorts" :key="port.id">
+                                                <td>{{ port.Name }}</td>
+                                                <td>{{ port.ConnectedPort && port.ConnectedPort.Hostname }}</td>
+                                                <td>{{ port.ConnectedPort && port.ConnectedPort.Name }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </template>
+                                </v-simple-table>
+                            </v-card>
                         </v-card>
 
                         <v-btn small class="mt-4" color="primary" outlined v-if="!showNeighborhood" @click="showNeighborhood = true">View Network Neighborhood</v-btn>
@@ -90,9 +117,22 @@
                         <v-label>Power Port Connections</v-label>
                         <v-card flat class="overflow-y-auto">
                             <v-card flat outlined class="overflow-y-auto">
-                                <div v-for="(port,index) in asset.data.PowerPorts" :key="index">
-                                    <v-card-text>{{port.Number}} : {{port.PduPort}}</v-card-text>
-                                </div>
+                                <v-simple-table dense>
+                                    <template v-slot:default>
+                                        <thead>
+                                            <tr>
+                                                <th class="text-left">#</th>
+                                                <th class="text-left">Port</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="port in asset.data.PowerPorts" :key="port.id">
+                                                <td>{{ port.Number }}</td>
+                                                <td>{{ port.PduPort }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </template>
+                                </v-simple-table>
                             </v-card>
                         </v-card>
                     </v-col>
@@ -109,31 +149,6 @@
             <a href="javascript:history.go(-1)"> Go Back</a>
 
         </v-card>
-
-        <!--<template name="powerPortTable">
-            <p>Power Ports</p>
-            <v-container fill max-width="50%">
-                <v-simple-table dense class="text-center">
-                    <thead>
-                        <tr>
-                            <th class="text-center">Asset Port Number</th>
-                            <th class="text-center">Pdu Port</th>
-                            <th class="text-center">Power</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(object, index) in asset.powerPorts" :key="index">
-                            <td> {{object.number}} </td>
-                            <td>{{ object.pduPort }}</td>
-                        </tr>
-                        <tr v-for="(object, index) in powerPorts.powerPorts" :key="index">
-                            <td> {{object.status}} </td>
-                        </tr>
-                    </tbody>
-                </v-simple-table>
-            </v-container>
-        </template>-->
-
     </div>
 
 </template>
@@ -150,12 +165,14 @@
 
 <script>
     import NetworkNeighborhood from "./NetworkNeighborhood"
+    import ChangePlanBar from './ChangePlanStatusBar';
     export default {
         name: 'decommissioned-asset-details',
         inject: ['assetRepository', 'rackRepository'],
         item: null,
         components: {
-            NetworkNeighborhood
+            NetworkNeighborhood,
+            ChangePlanBar
         },
         props: ['id'],
         data() {
@@ -169,8 +186,7 @@
                     owner: '',
                     comment: '',
                     vendor: '',
-                    modelNumber: '',
-                    powerPorts: [],
+                    modelNumber: ''
                 },
                 ownerPresent: true, // in case the asset does not have an owner, don't need null pointer bc not a required field.
                 viewNames: false,
@@ -183,18 +199,31 @@
             this.initialize();
         },
         methods: {
+            changePlanId() {
+                if (this.$store.getters.isChangePlan)
+                    return this.$store.getters.changePlan.id;
+            },
             async initialize() {
                 /*eslint-disable*/
                 if (!this.loading) this.loading = true;
-                this.asset = await this.assetRepository.getDecommissionedAsset(this.id);
-                console.log(this.asset);
+
+                const asset = await this.assetRepository.getDecommissionedAsset(this.id, this.changePlanId());
+                
+
                 this.loading = false;
-                if (this.asset.owner === undefined) {
+                if (asset.owner === undefined) {
                     this.ownerPresent = false;
                 }
+
                 // Turn data blob into fields to be read in table
-                var assetInfo = JSON.parse(this.asset.data);
-                this.asset.data = assetInfo;
+                asset.data = JSON.parse(asset.data);
+
+                asset.data.NetworkPorts = asset.data.FullNetworkPorts;
+                asset.data.PowerPorts.forEach(port => port.status = undefined);
+                asset.data.NetworkPorts.sort((a, b) => a.Number - b.Number);
+                asset.data.PowerPorts.sort((a, b) => a.Number - b.Number);
+
+                this.asset = asset;
             },
             async fetchPowerPortIds() {
                 var powerPortStates = [];
@@ -203,14 +232,15 @@
                 console.log(powerPortStates);
                 for (var i = 0; i<powerPortStates.powerPorts.length; i++) {
                     if (powerPortStates.powerPorts[i].status=='0') {
-                        powerPortStates.powerPorts[i].status = 'On';
+                        powerPortStates.powerPorts[i].status = 'on';
                     } else {
-                        powerPortStates.powerPorts[i].status = 'Off'
+                        powerPortStates.powerPorts[i].status = 'off'
                     }
-                    var name = powerPortStates.powerPorts[i].port.split('-');
-                    console.log(name);
-                    powerPortStates.powerPorts[i].port = name[2][3] + " " + name[2][4];
                 }
+                this.asset.PowerPorts.forEach(port => {
+                    var maybeState = powerPortStates.powerPorts.find(o => o.port === port.pduPort);
+                    port.status = maybeState && maybeState.status;
+                })
                 return powerPortStates;
             },
             async showNames() {

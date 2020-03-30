@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Web.Api.Dtos.Assets.Read;
 
 namespace Web.Api.Dtos.Assets.Create
 {
@@ -17,7 +18,9 @@ namespace Web.Api.Dtos.Assets.Create
         public List<CreateDecommissionedNetworkPort> NetworkPorts { get; set; }
         public List<CreateDecommissionedPowerPort> PowerPorts { get; set; }
         public string NetworkPortGraph { get; set; }
+        public List<GetAssetNetworkPortApiDto> FullNetworkPorts { get; set; }
     }
+
     public class CreateDecommissionedRack
     {
         public string RackLetter { get; set; }
@@ -32,10 +35,8 @@ namespace Web.Api.Dtos.Assets.Create
     {
         public string MacAddress { get; set; }
         public string HostName { get; set; }
-        //the number and name i'll get from the model network port
         public int Number { get; set; }
         public string Name { get; set; }
-        public CreateDecommissionedNetworkPort ConnectedPort { get; set; }
     }
     public class CreateDecommissionedPowerPort
     {

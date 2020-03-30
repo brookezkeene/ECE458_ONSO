@@ -106,6 +106,10 @@ namespace Web.Api.Controllers
         public async Task<ActionResult<GetAssetApiDto>> GetByIdFromChangePlan(Guid id)
         {
             var item = await _changePlanService.GetChangePlanItemAsync(id);
+            if (item == null)
+            {
+                return await GetById(id);
+            }
             var assetDto = _mapper.Map<AssetDto>(JsonConvert.DeserializeObject<CreateAssetApiDto>(item.NewData));
             await _changePlanService.FillFieldsInAssetApiForChangePlans(assetDto);
 
@@ -216,8 +220,11 @@ namespace Web.Api.Controllers
             var assetDto = await _assetService.GetAssetForDecommissioning(query.Id);
             var createDecommissionedAsset  = _mapper.Map<CreateDecommissionedAsset>(assetDto);
 
+            var getAssetApiDto = _mapper.Map<GetAssetApiDto>(assetDto);
+
             //adding network graph to the asset
             createDecommissionedAsset.NetworkPortGraph = query.NetworkPortGraph;
+            createDecommissionedAsset.FullNetworkPorts = getAssetApiDto.NetworkPorts;
 
             //creating a new decommissionedAssetDto from assetDto, filling in the data, decommissioner, and date
             var decommissionedAsset = _mapper.Map<DecommissionedAssetDto>(assetDto);
@@ -261,6 +268,20 @@ namespace Web.Api.Controllers
             var asset = await _assetService.GetDecommissionedAssetAsync(id);
             return Ok(asset);
         }
+
+        [HttpGet("{id}/decommission/changePlan")]
+        public async Task<ActionResult<DecommissionedAssetDto>> GetDecommissionedFromChangePlan(Guid id)
+        {
+            var item = await _changePlanService.GetChangePlanItemAsync(id);
+            if (item == null)
+            {
+                return await GetDecommissioned(id);
+            }
+            var asset = JsonConvert.DeserializeObject<DecommissionedAssetDto>(item.NewData);
+
+            return Ok(asset);
+        }
+
         [HttpGet("decommission")]
         public async Task<ActionResult<PagedList<DecommissionedAssetDto>>> GetManyDecommissioned([FromQuery] SearchAssetQuery query)
         {
@@ -276,6 +297,7 @@ namespace Web.Api.Controllers
                 foreach(ChangePlanItemDto changePlanItem in decommissionedChangePlans)
                 {
                     var decommissionedAsset = JsonConvert.DeserializeObject<DecommissionedAssetDto>(changePlanItem.NewData);
+                    decommissionedAsset.Id = changePlanItem.Id;
                     decommissionedAssets.Add(decommissionedAsset);
                 }
                 response.AddRange(decommissionedAssets);

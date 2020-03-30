@@ -94,13 +94,13 @@ namespace Web.Api.Infrastructure.Repositories
         {
             return await _dbContext.AssetNetworkPort
                 .Where(x => x.Id == id)
-                .SingleAsync();      
+                .SingleOrDefaultAsync();      
         }
         public async Task<PduPort> GetPowerPortAsync(Guid id)
         {
             return await _dbContext.PduPort
                 .Where(x => x.Id == id)
-                .SingleAsync();
+                .SingleOrDefaultAsync();
         }
         public async Task<Asset> GetAssetAsync(Guid assetId)
         {

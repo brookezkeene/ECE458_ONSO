@@ -163,6 +163,5 @@ namespace Web.Api.Core.Services
             }
             return assetDto;
         }
-
     }
 }
