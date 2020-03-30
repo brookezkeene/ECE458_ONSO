@@ -126,7 +126,16 @@ namespace Web.Api.Core.Services
             {
                 assetDto.Owner = _mapper.Map<UserDto>(await _userRepository.GetUserAsync(assetDto.OwnerId ?? Guid.Empty));
             }
-            
+            foreach(AssetNetworkPortDto assetNetworkPortDto in assetDto.NetworkPorts)
+            {
+                var networkPortModelId = assetNetworkPortDto.ModelNetworkPortId;
+                assetNetworkPortDto.ModelNetworkPort = assetDto.Model.NetworkPorts.Find(x => x.Id == networkPortModelId);
+                if (assetNetworkPortDto.ConnectedPortId != null)
+                {
+                    var connectedPort = await _assetRepository.GetNetworkPortAsync(assetNetworkPortDto.ConnectedPortId ?? Guid.Empty);
+                    assetNetworkPortDto.ConnectedPort = _mapper.Map<AssetNetworkPortDto>(connectedPort);
+                }
+            }
             return assetDto;
         }
 

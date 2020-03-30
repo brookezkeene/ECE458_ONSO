@@ -118,7 +118,7 @@ namespace Web.Api.Controllers
             for (int i = 0; i < changePlanItems.Count(); i++)
             {
                 var changePlanItem = changePlanItems[i];
-                //NOTE: THE NEWDATA HERE IS A CreateAssetApiDto
+                //NOTE: THE NEWDATA HERE IS A CreateAssetApiDto (assetDto/asset entity cannot be serialized)
                 if (changePlanItem.ExecutionType.Equals("create"))
                 {
                     var assetApiDto = JsonConvert.DeserializeObject<CreateAssetApiDto>(changePlanItem.NewData);
@@ -126,7 +126,7 @@ namespace Web.Api.Controllers
                     var assetDto = _mapper.Map<AssetDto>(assetApiDto);
                     await _assetService.CreateAssetAsync(assetDto);
                 }
-                //NOTE: THE NEWDATA HERE IS A UpdateAssetApiDto
+                //NOTE: THE NEWDATA HERE IS A UpdateAssetApiDto (assetDto/asset entity cannot be serialized)
                 else if (changePlanItem.ExecutionType.Equals("update"))
                 {
                     var assetApiDto = JsonConvert.DeserializeObject<UpdateAssetApiDto>(changePlanItem.NewData);

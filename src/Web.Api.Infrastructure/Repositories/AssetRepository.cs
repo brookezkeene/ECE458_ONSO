@@ -90,6 +90,12 @@ namespace Web.Api.Infrastructure.Repositories
             return ports;
         }
 
+        public async Task<AssetNetworkPort> GetNetworkPortAsync(Guid id)
+        {
+            return await _dbContext.AssetNetworkPort
+                .Where(x => x.Id == id)
+                .SingleAsync();      
+        }
 
         public async Task<Asset> GetAssetAsync(Guid assetId)
         {
