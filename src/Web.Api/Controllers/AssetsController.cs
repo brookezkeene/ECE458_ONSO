@@ -152,6 +152,7 @@ namespace Web.Api.Controllers
 
             if (assetApiDto.ChangePlanId != null && assetApiDto.ChangePlanId != Guid.Empty)
             {
+
                 var changePlanId = assetApiDto.ChangePlanId ?? Guid.Empty;
                 var originalAsset = _mapper.Map<GetAssetApiDto>(await _assetService.GetAssetAsync(assetApiDto.Id));
                 var changePlanItemApiDto = new ChangePlanItemDto

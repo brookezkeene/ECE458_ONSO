@@ -96,7 +96,12 @@ namespace Web.Api.Infrastructure.Repositories
                 .Where(x => x.Id == id)
                 .SingleAsync();      
         }
-
+        public async Task<PduPort> GetPowerPortAsync(Guid id)
+        {
+            return await _dbContext.PduPort
+                .Where(x => x.Id == id)
+                .SingleAsync();
+        }
         public async Task<Asset> GetAssetAsync(Guid assetId)
         {
             return await _dbContext.Assets.SingleOrDefaultAsync(x => x.Id == assetId);
