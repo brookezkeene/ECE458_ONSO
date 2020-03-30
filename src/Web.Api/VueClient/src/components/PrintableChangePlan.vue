@@ -1,6 +1,6 @@
 ﻿
 <template>
-    <v-card flat>
+    <v-card flat id="card">
         <v-card-title>
             <span>Work Order Summary:</span>
             <span v-if="$store.getters.changePlan.name">
@@ -9,97 +9,99 @@
         </v-card-title>
         <div id='print'>
             <v-container>
-                <v-card flat>
-                    <v-spacer></v-spacer>
-                    <v-data-table :headers="headers"
-                                  :items="changePlanItems"
-                                  class="pa-5"
-                                  multi-sort
-                                  show-expand
-                                  :expanded="getRowsToExpand"
-                                  disable-pagination
-                                  hide-default-footer>
+                <v-layout child-flex>
+                    <v-card flat>
+                        <v-spacer></v-spacer>
+                        <v-data-table :headers="headers"
+                                      :items="changePlanItems"
+                                      multi-sort
+                                      show-expand
+                                      :expanded="getRowsToExpand"
+                                      disable-pagination
+                                      hide-default-footer
+                                      class="scaled">
 
-                        <template v-slot:item.data-table-expand="{ item, isExpanded, expand }">
-                            <v-btn icon v-if="isExpanded"><v-icon>mdi-chevron-up</v-icon></v-btn>
-                        </template>
+                            <template v-slot:item.data-table-expand="{ item, isExpanded, expand }">
+                                <v-btn id="noPrint" icon v-if="isExpanded"><v-icon>mdi-chevron-up</v-icon></v-btn>
+                            </template>
 
-                        <template v-slot:expanded-item="{ headers, item }">
-                            <td v-if="item.executionType=='update'"></td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.Vendor}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.ModelNumber}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.AssetNumber}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.Hostname}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.Datacenter}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.Rack}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.RackPosition}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.Owner}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.powerPorts}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.macAddresses}}</td>
-                            <td v-if="item.executionType=='update'">{{item.previousData.networkConnections}}</td>
+                            <template v-slot:expanded-item="{ headers, item }">
+                                <td v-if="item.executionType=='update'"></td>
+                                <td v-if="item.executionType=='update'">{{item.previousData.Vendor}}</td>
+                                <td v-if="item.executionType=='update'">{{item.previousData.ModelNumber}}</td>
+                                <td v-if="item.executionType=='update'">{{item.previousData.AssetNumber}}</td>
+                                <td v-if="item.executionType=='update'">{{item.previousData.Hostname}}</td>
+                                <td v-if="item.executionType=='update'">{{item.previousData.Datacenter}}</td>
+                                <td v-if="item.executionType=='update'">{{item.previousData.Rack}}</td>
+                                <td v-if="item.executionType=='update'">{{item.previousData.RackPosition}}</td>
+                                <td v-if="item.executionType=='update'">{{item.previousData.Owner}}</td>
+                                <td v-if="item.executionType=='update'">{{item.previousData.powerPorts}}</td>
+                                <td v-if="item.executionType=='update'">{{item.previousData.macAddresses}}</td>
+                                <td v-if="item.executionType=='update'">{{item.previousData.networkConnections}}</td>
 
-                        </template>
+                            </template>
 
-                        <template v-slot:item.executed="{ item }">
-                            <div v-if="item.executedDate">
-                                <v-icon color="primary">
-                                    mdi-check-circle-outline
-                                </v-icon>
-                            </div>
-                            <div v-else>
-                                <v-icon color="red">
-                                    mdi-close-circle-outline
-                                </v-icon>
-                            </div>
-                        </template>
+                            <template v-slot:item.executed="{ item }">
+                                <div v-if="item.executedDate">
+                                    <v-icon color="primary">
+                                        mdi-check-circle-outline
+                                    </v-icon>
+                                </div>
+                                <div v-else>
+                                    <v-icon color="red">
+                                        mdi-close-circle-outline
+                                    </v-icon>
+                                </div>
+                            </template>
 
-                        <template v-slot:item.action="{ item }">
-                            <v-row>
-                                <v-tooltip top>
-                                    <template v-if="item.executionType==='update'" v-slot:activator="{ on }">
-                                        <v-btn icon v-on="on">
-                                            <v-icon medium
-                                                    class="mr-2"
-                                                    color="primary">
-                                                mdi-pencil
-                                            </v-icon>
-                                        </v-btn>
-                                    </template>
-                                    <span>Asset Edited</span>
-                                </v-tooltip>
+                            <template v-slot:item.action="{ item }">
+                                <v-row>
+                                    <v-tooltip top>
+                                        <template v-if="item.executionType==='update'" v-slot:activator="{ on }">
+                                            <v-btn icon v-on="on">
+                                                <v-icon medium
+                                                        class="mr-2"
+                                                        color="primary">
+                                                    mdi-pencil
+                                                </v-icon>
+                                            </v-btn>
+                                        </template>
+                                        <span>Asset Edited</span>
+                                    </v-tooltip>
 
-                                <v-tooltip top>
-                                    <template v-if="item.executionType==='create'" v-slot:activator="{ on }">
-                                        <v-btn icon v-on="on">
-                                            <v-icon medium
-                                                    class="mr-2"
-                                                    color="primary">
-                                                mdi-plus
-                                            </v-icon>
-                                        </v-btn>
-                                    </template>
-                                    <span>Asset Created</span>
-                                </v-tooltip>
+                                    <v-tooltip top>
+                                        <template v-if="item.executionType==='create'" v-slot:activator="{ on }">
+                                            <v-btn icon v-on="on">
+                                                <v-icon medium
+                                                        class="mr-2"
+                                                        color="primary">
+                                                    mdi-plus
+                                                </v-icon>
+                                            </v-btn>
+                                        </template>
+                                        <span>Asset Created</span>
+                                    </v-tooltip>
 
-                                <v-tooltip top>
-                                    <template v-if="item.executionType==='decommission'" v-slot:activator="{ on }">
-                                        <v-btn icon v-on="on">
-                                            <v-icon medium
-                                                    class="mr-2"
-                                                    color="primary">
-                                                mdi-archive
-                                            </v-icon>
-                                        </v-btn>
-                                    </template>
-                                    <span>Asset Decommissioned</span>
-                                </v-tooltip>
+                                    <v-tooltip top>
+                                        <template v-if="item.executionType==='decommission'" v-slot:activator="{ on }">
+                                            <v-btn icon v-on="on">
+                                                <v-icon medium
+                                                        class="mr-2"
+                                                        color="primary">
+                                                    mdi-archive
+                                                </v-icon>
+                                            </v-btn>
+                                        </template>
+                                        <span>Asset Decommissioned</span>
+                                    </v-tooltip>
 
-                            </v-row>
+                                </v-row>
 
-                        </template>
-                    </v-data-table>
+                            </template>
+                        </v-data-table>
 
-                </v-card>
+                    </v-card>
+                </v-layout>
             </v-container>
         </div>
         <v-spacer></v-spacer>
@@ -109,6 +111,10 @@
 
 <style scoped>
     @media print {
+
+        .scaled {
+          transform: scale(0.9); /* Equal to scaleX(0.7) scaleY(0.7) */
+        }
 
         .noPrint {
             display: none;
@@ -136,10 +142,10 @@
                 loading: false,
                 headers: [
                     { text: 'Model Vendor', value: 'newData.Vendor' },
-                    { text: 'Model Number', value: 'newData.ModelNumber', },
-                    { text: 'Asset Number', value: 'newData.AssetNumber', },
+                    { text: 'Model No.', value: 'newData.ModelNumber', },
+                    { text: 'Asset No.', value: 'newData.AssetNumber', },
                     { text: 'Hostname', value: 'newData.Hostname' },
-                    { text: 'Datacenter', value: 'newData.Datacenter' },
+                    { text: 'Center', value: 'newData.Datacenter' },
                     { text: 'Rack', value: 'newData.Rack' },
                     { text: 'Rack U', value: 'newData.RackPosition', },
                     { text: 'Owner Username', value: 'newData.Owner' },
@@ -196,7 +202,7 @@
                             item.newData.macAddresses[index] = networkPort.Name + ": " + networkPort.MacAddress +" " ;
                             item.previousData.macAddresses[index] = networkPort.Name + ": " + networkPort.MacAddress +" ";
                             if (networkPort.ConnectedPort != undefined) {
-                                item.newData.networkConnections[index] = networkPort.Name + ": Host " + networkPort.ConnectedPort.HostName + " Port " + networkPort.ConnectedPort.Name;
+                                item.newData.networkConnections[index] = networkPort.Name + ": Host " + networkPort.ConnectedPort.Hostname + " Port " + networkPort.ConnectedPort.Name;
                             }
                             index++;
                         });
@@ -205,7 +211,7 @@
                         item.previousData.NetworkPorts.forEach(networkPort => {
                             item.previousData.macAddresses[index2] = networkPort.Name + ": " + networkPort.MacAddress +" ";
                             if (networkPort.ConnectedPort != undefined) {
-                                item.previousData.networkConnections[index2] = networkPort.Name + ": Host " + networkPort.ConnectedPort.HostName + " Port " + networkPort.ConnectedPort.Name;
+                                item.previousData.networkConnections[index2] = networkPort.Name + ": Host " + networkPort.ConnectedPort.Hostname + " Port " + networkPort.ConnectedPort.Name;
                             }
                             index2++;
                         })

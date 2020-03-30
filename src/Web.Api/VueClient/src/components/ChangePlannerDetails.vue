@@ -32,19 +32,6 @@
 
                     </template>
 
-                    <template v-slot:item.executed="{ item }">
-                        <div v-if="item.executedDate">
-                            <v-icon color="primary">
-                                mdi-check-circle-outline
-                            </v-icon>
-                        </div>
-                        <div v-else>
-                            <v-icon color="red">
-                                mdi-close-circle-outline
-                            </v-icon>
-                        </div>
-                    </template>
-
                     <template v-slot:item.action="{ item }">
                         <v-row>
                             <v-tooltip top>
@@ -89,11 +76,10 @@
                         </v-row>
 
                     </template>
+                    <div class="text-center">
+                        <v-btn color="primary" v-if="!item.executedDate" dark class="mb-2" @click="execute">Execute Change Plan</v-btn>
+                    </div>
                 </v-data-table>
-
-                <div class="text-center">
-                    <v-btn color="primary" dark class="mb-2" @click="execute">Execute Change Plan</v-btn>
-                </div>
             </v-card>
         </v-container>
         <v-spacer></v-spacer>
@@ -160,7 +146,7 @@
                             item.newData.macAddresses[index] = networkPort.Name + ": " + networkPort.MacAddress +" " ;
                             item.previousData.macAddresses[index] = networkPort.Name + ": " + networkPort.MacAddress +" ";
                             if (networkPort.ConnectedPort != undefined) {
-                                item.newData.networkConnections[index] = networkPort.Name + ": Host " + networkPort.ConnectedPort.HostName + " Port " + networkPort.ConnectedPort.Name;
+                                item.newData.networkConnections[index] = networkPort.Name + ": Host " + networkPort.ConnectedPort.Hostname + " Port " + networkPort.ConnectedPort.Name;
                             }
                             index++;
                         });
@@ -169,7 +155,7 @@
                         item.previousData.NetworkPorts.forEach(networkPort => {
                             item.previousData.macAddresses[index2] = networkPort.Name + ": " + networkPort.MacAddress +" ";
                             if (networkPort.ConnectedPort != undefined) {
-                                item.previousData.networkConnections[index2] = networkPort.Name + ": Host " + networkPort.ConnectedPort.HostName + " Port " + networkPort.ConnectedPort.Name;
+                                item.previousData.networkConnections[index2] = networkPort.Name + ": Host " + networkPort.ConnectedPort.Hostname + " Port " + networkPort.ConnectedPort.Name;
                             }
                             index2++;
                         })
