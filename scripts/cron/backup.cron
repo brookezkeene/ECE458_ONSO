@@ -1,0 +1,4 @@
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+* * * * *       run-parts --report --arg=daily /home/vcm/cron/jobs >> /home/vcm/cron/logs/backup.log
+
