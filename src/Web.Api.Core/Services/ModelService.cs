@@ -57,7 +57,7 @@ namespace Web.Api.Core.Services
             var entity = _mapper.Map<Model>(model);
             var updated = await _repository.UpdateModelAsync(entity);
 
-            await _auditEventLogger.LogEventAsync(new ModelUpdatedEvent(model));
+            //await _auditEventLogger.LogEventAsync(new ModelUpdatedEvent(model));
             return updated;
         }
 
@@ -66,16 +66,17 @@ namespace Web.Api.Core.Services
             var entity = _mapper.Map<Model>(model);
             var added = await _repository.AddModelAsync(entity);
 
-            await _auditEventLogger.LogEventAsync(new ModelCreatedEvent(model));
+            //await _auditEventLogger.LogEventAsync(new ModelCreatedEvent(model));
             return added;
         }
 
-        public async Task DeleteModelAsync(ModelDto model)
+        public async Task DeleteModelAsync(Guid modelId)
         {
+            var model = await _repository.GetModelAsync(modelId);
             var entity = _mapper.Map<Model>(model);
             await _repository.DeleteModelAsync(entity);
 
-            await _auditEventLogger.LogEventAsync(new ModelDeletedEvent(model));
+            //await _auditEventLogger.LogEventAsync(new ModelDeletedEvent(model));
         }
     }
 }
