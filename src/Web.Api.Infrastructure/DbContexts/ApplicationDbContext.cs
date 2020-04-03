@@ -66,6 +66,7 @@ namespace Web.Api.Infrastructure.DbContexts
         public DbSet<ChangePlanItem> ChangePlanItems { get; set; }
         public DbSet<NetworkConnection> NetworkConnections { get; set; }
         public DbSet<PowerConnection> PowerConnections { get; set; }
+        public DbSet<Pdu> Pdu { get; set; }
         public DbSet<PduPort> PduPort { get; set; }
 
         public Task<int> SaveChangesAsync()

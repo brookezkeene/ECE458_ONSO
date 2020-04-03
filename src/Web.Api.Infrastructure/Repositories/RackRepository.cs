@@ -97,6 +97,7 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<int> CreateRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd,
             Guid datacenterId)
         {
+            var racksToAdd = new List<Rack>();
             for (var r = rowStart[0]; r <= rowEnd[0]; r++)
             {
                 var row = r.ToString().ToUpper();
@@ -104,7 +105,7 @@ namespace Web.Api.Infrastructure.Repositories
                 {
                     if (!await _dbContext.Racks.AnyAsync(o => o.Row == row && o.Column == col && o.Datacenter.Id == datacenterId))
                     {
-                        await _dbContext.Racks.AddAsync(new Rack
+                        racksToAdd.Add(new Rack
                         {
                             Column = col, Row = row, DatacenterId = datacenterId,
                             Pdus = (new[] {PduLocation.L, PduLocation.R}).Select(loc => new Pdu
@@ -119,12 +120,15 @@ namespace Web.Api.Infrastructure.Repositories
                 }
             }
 
+            await _dbContext.Racks.AddRangeAsync(racksToAdd);
+
             return await _dbContext.SaveChangesAsync();
         }
 
         public async Task<int> DeleteRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd,
             Guid datacenterId)
         {
+            var racksToRemove = new List<Rack>();
             for (var r = rowStart[0]; r <= rowEnd[0]; r++)
             {
                 var row = r.ToString();
@@ -135,9 +139,14 @@ namespace Web.Api.Infrastructure.Repositories
                             .Where(o => o.Row == row && o.Column == col && !o.Assets.Any())
                             .Where(o => o.Datacenter.Id.Equals(datacenterId))
                             .ToListAsync();
-                    eligibleForDeletion.ForEach(rack => _dbContext.Remove(rack));
+                    racksToRemove.AddRange(eligibleForDeletion);
                 }
             }
+
+            _dbContext.PduPort.RemoveRange(racksToRemove.SelectMany(o => o.Pdus)
+                .SelectMany(o => o.Ports));
+            _dbContext.Pdu.RemoveRange(racksToRemove.SelectMany(o => o.Pdus));
+            _dbContext.Racks.RemoveRange(racksToRemove);
             return await _dbContext.SaveChangesAsync();
         }
 

@@ -19,6 +19,7 @@ namespace Web.Api.Infrastructure.Interfaces
         DbSet<DecommissionedAsset> DecommissionedAssets { get; set; }
         DbSet<NetworkConnection> NetworkConnections { get; set; }
         DbSet<PowerConnection> PowerConnections { get; set; }
+        DbSet<Pdu> Pdu { get; set; }
         DbSet<PduPort> PduPort { get; set; }
         DbSet<ChangePlan> ChangePlans { get; set; }
         DbSet<ChangePlanItem> ChangePlanItems { get; set; }
