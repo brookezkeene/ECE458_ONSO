@@ -65,8 +65,12 @@ export default {
                 return response.data;
             }).catch(error => error);
     },
-    getDecommissionedAsset(id) {
-        return axios.get(`${resource}/${id}/decommission`)
+    getDecommissionedAsset(id, isChangePlan) {
+        const endpoint = !isChangePlan
+            ? `${resource}/${id}/decommission`
+            : `${resource}/${id}/decommission/changePlan`;
+
+        return axios.get(endpoint)
             .then(response => {
                 return response.data;
             });

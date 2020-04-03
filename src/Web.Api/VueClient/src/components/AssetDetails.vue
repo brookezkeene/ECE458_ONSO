@@ -56,9 +56,22 @@
                         <v-label>MAC Addresses</v-label>
                         <v-card flat class="overflow-y-auto">
                             <v-card flat outlined class="overflow-y-auto"  max-height="300px">
-                                <div v-for="(port,index) in asset.networkPorts" :key="index">
-                                    <v-card-text>{{port.name}} : {{port.macAddress}}</v-card-text>
-                                </div>
+                                <v-simple-table dense>
+                                    <template v-slot:default>
+                                        <thead>
+                                            <tr>
+                                                <th class="text-left">Name</th>
+                                                <th class="text-left">MAC</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="port in asset.networkPorts" :key="port.id">
+                                                <td>{{ port.name }}</td>
+                                                <td>{{ port.macAddress }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </template>
+                                </v-simple-table>
                             </v-card>
                         </v-card>
                     </v-col>
@@ -67,11 +80,24 @@
                         <v-label>Network Port Connections</v-label>
                         <v-card flat class="overflow-y-auto">
                             <v-card flat outlined class="overflow-y-auto" max-height="300px">
-                                <div v-for="(port,index) in asset.networkPorts" :key="index">
-                                    <div v-if="port.connectedPort!=undefined">
-                                        <v-card-text>{{port.number}} : {{port.connectedPort.number}}</v-card-text>
-                                    </div>
-                                </div>
+                                <v-simple-table dense>
+                                    <template v-slot:default>
+                                        <thead>
+                                            <tr>
+                                                <th class="text-left">Name</th>
+                                                <th class="text-left">Hostname</th>
+                                                <th class="text-left">Name</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="port in asset.networkPorts" :key="port.id">
+                                                <td>{{ port.name }}</td>
+                                                <td>{{ port.connectedPort && port.connectedPort.hostname }}</td>
+                                                <td>{{ port.connectedPort && port.connectedPort.name }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </template>
+                                </v-simple-table> 
                             </v-card>
                         </v-card>
 
@@ -83,22 +109,30 @@
                         <v-label>Power Port Connections</v-label>
                         <v-card flat class="overflow-y-auto">
                             <v-card flat outlined class="overflow-y-auto">
-                                <div v-for="(port,index) in asset.powerPorts" :key="index">
-                                    <v-card-text>{{port.number}} : {{port.pduPort}}</v-card-text>
-                                </div>
+                                <v-simple-table dense>
+                                    <template v-slot:default>
+                                        <thead>
+                                            <tr>
+                                                <th class="text-left">#</th>
+                                                <th class="text-left">Port</th>
+                                                <th class="text-left">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="port in asset.powerPorts" :key="port.id">
+                                                <td>{{ port.number }}</td>
+                                                <td>{{ port.pduPort }}</td>
+                                                <td>{{ port.status }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </template>
+                                </v-simple-table>
                             </v-card>
                         </v-card>
 
                         <v-container v-if="!changePlanId()">
-                            <v-btn small class="mt-4" color="primary" outlined v-if="!viewPowerPorts" @click="showNames">View Power Port Status</v-btn>
-                            <v-btn dark class="mt-4" small color="primary" outlined v-else href @click="hideNames">Hide Power Port Status</v-btn>
+                            <v-btn small class="mt-4" color="primary" outlined :disabled="viewPowerPorts" @click="showNames">View Power Port Status</v-btn>
                         </v-container>
-
-                        <div v-if="viewPowerPorts">
-                            <v-card max-height="300px" class="overflow-y-auto" flat>
-                                <v-card-text v-for="(object,index) in powerPorts.powerPorts" :key="index"> Port {{object.pduPort}}: {{object.status}} </v-card-text>
-                            </v-card>
-                        </div>
                     </v-col>
                 </v-row>
                 <v-row v-if="showNeighborhood">
@@ -138,7 +172,8 @@
             ChangePlanBar
         },
         props: {
-            id: String
+            id: String,
+            cpId: String
         },
         data() {
             return {
@@ -151,8 +186,7 @@
                     owner: '',
                     comment: '',
                     vendor: '',
-                    modelNumber: '',
-                    powerPorts: [],
+                    modelNumber: ''
                 },
                 ownerPresent: true, // in case the asset does not have an owner, don't need null pointer bc not a required field.
                 viewNames: false,
@@ -173,8 +207,11 @@
                 /*eslint-disable*/
                 if (!this.loading) this.loading = true;
                 console.log(this.id);
-                this.asset = await this.assetRepository.find(this.id, this.$store.getters.isChangePlan);
-                console.log(this.asset);
+                const asset = await this.assetRepository.find(this.id, this.changePlanId());
+                asset.powerPorts.forEach(port => port.status = undefined);
+                asset.networkPorts.sort((a, b) => a.number - b.number);
+                asset.powerPorts.sort((a, b) => a.number - b.number);
+                this.asset = asset;
                 this.loading = false;
                 if (this.asset.owner === undefined) {
                     this.ownerPresent = false;
@@ -187,14 +224,15 @@
                 console.log(powerPortStates);
                 for (var i = 0; i<powerPortStates.powerPorts.length; i++) {
                     if (powerPortStates.powerPorts[i].status=='0') {
-                        powerPortStates.powerPorts[i].status = 'On';
+                        powerPortStates.powerPorts[i].status = 'on';
                     } else {
-                        powerPortStates.powerPorts[i].status = 'Off'
+                        powerPortStates.powerPorts[i].status = 'off'
                     }
-                    var name = powerPortStates.powerPorts[i].port.split('-');
-                    console.log(name);
-                    powerPortStates.powerPorts[i].port = name[2][3] + " " + name[2][4];
                 }
+                this.asset.powerPorts.forEach(port => {
+                    var maybeState = powerPortStates.powerPorts.find(o => o.port === port.pduPort);
+                    port.status = maybeState && maybeState.status;
+                })
                 return powerPortStates;
             },
             async showNames() {

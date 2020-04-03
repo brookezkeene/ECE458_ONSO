@@ -35,6 +35,9 @@ namespace Web.Api.Infrastructure.Repositories
 
 
             var assets = await _dbContext.Assets
+                .Include(asset => asset.Rack)
+                .ThenInclude(rack => rack.Pdus)
+                .ThenInclude(pdu => pdu.Ports)
                 .WhereIf(datacenterId != null, x => x.Rack.Datacenter.Id == datacenterId)
                 .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
                 .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
@@ -94,17 +97,24 @@ namespace Web.Api.Infrastructure.Repositories
         {
             return await _dbContext.AssetNetworkPort
                 .Where(x => x.Id == id)
-                .SingleAsync();      
+                .SingleOrDefaultAsync();      
         }
         public async Task<PduPort> GetPowerPortAsync(Guid id)
         {
             return await _dbContext.PduPort
                 .Where(x => x.Id == id)
-                .SingleAsync();
+                .SingleOrDefaultAsync();
         }
         public async Task<Asset> GetAssetAsync(Guid assetId)
         {
-            return await _dbContext.Assets.SingleOrDefaultAsync(x => x.Id == assetId);
+            return await _dbContext.Assets
+                .Include(asset => asset.Rack)
+                .ThenInclude(rack => rack.Pdus)
+                .ThenInclude(pdu => pdu.Ports)
+                .Include(asset => asset.Rack)
+                .ThenInclude(rack => rack.Pdus)
+                .ThenInclude(pdu => pdu.Ports)
+                .SingleOrDefaultAsync(x => x.Id == assetId);
         }
 
         public async Task<int> AddAssetAsync(Asset asset)
