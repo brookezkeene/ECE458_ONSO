@@ -33,7 +33,7 @@ namespace Web.Api.Infrastructure.Repositories
             Expression<Func<Model, bool>> numberCondition = x => (x.ModelNumber.Contains(number));
             var models = await Sort( vendor,  number,  heightStart,  heightEnd,
                  networkRangeStart,  networkRangeEnd,  powerRangeStart,  powerRangeEnd,
-                 memoryRangeStart,  memoryRangeEnd,  sortBy,  isDesc,  page = 1,  pageSize = 10);
+                 memoryRangeStart,  memoryRangeEnd,  sortBy,  isDesc,  page,  pageSize);
             pagedList.AddRange(models);
             pagedList.TotalCount = await _dbContext.Models
                 .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
