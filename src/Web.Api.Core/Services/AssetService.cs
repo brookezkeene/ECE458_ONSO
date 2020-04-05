@@ -64,7 +64,7 @@ namespace Web.Api.Core.Services
             var entity = _mapper.Map<Asset>(asset);
             await _repository.AddAssetAsync(entity);
 
-            //await _auditEventLogger.LogEventAsync(new AssetCreatedEvent(asset));
+            await _auditEventLogger.LogEventAsync(new AssetCreatedEvent(asset));
 
             return entity.Id;
         }
@@ -82,6 +82,9 @@ namespace Web.Api.Core.Services
         {
             var entity = _mapper.Map<Asset>(asset);
             await _repository.DeleteAssetAsync(entity);
+
+            //await _auditEventLogger.LogEventAsync(new AssetDeletedEvent(asset));
+
         }
 
         public async Task<int> UpdateAssetAsync(AssetDto asset)
