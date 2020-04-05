@@ -115,15 +115,15 @@ namespace Web.Api.Core.Services
             return updated;
         }
 
-        public async Task DeleteChangePlanAsync(ChangePlanDto changePlan)
+        public async Task DeleteChangePlanAsync(Guid changePlanId)
         {
-            var entity = _mapper.Map<ChangePlan>(changePlan);
+            var entity = await _repository.GetChangePlanAsync(changePlanId);
             await _repository.DeleteChangePlanAsync(entity);
         }
 
-        public async Task DeleteChangePlanItemAsync(ChangePlanItemDto changePlanItem)
+        public async Task DeleteChangePlanItemAsync(Guid changePlanItemId)
         {
-            var entity = _mapper.Map<ChangePlanItem>(changePlanItem);
+            var entity = await _repository.GetChangePlanItemAsync(changePlanItemId);
             await _repository.DeleteChangePlanItemAsync(entity);
         }
 

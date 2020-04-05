@@ -66,14 +66,13 @@ namespace Web.Api.Core.Services
             var entity = _mapper.Map<Model>(model);
             var added = await _repository.AddModelAsync(entity);
 
-            //await _auditEventLogger.LogEventAsync(new ModelCreatedEvent(model));
+            await _auditEventLogger.LogEventAsync(new ModelCreatedEvent(model));
             return added;
         }
 
         public async Task DeleteModelAsync(Guid modelId)
         {
-            var model = await _repository.GetModelAsync(modelId);
-            var entity = _mapper.Map<Model>(model);
+            var entity = await _repository.GetModelAsync(modelId);
             await _repository.DeleteModelAsync(entity);
 
             //await _auditEventLogger.LogEventAsync(new ModelDeletedEvent(model));
