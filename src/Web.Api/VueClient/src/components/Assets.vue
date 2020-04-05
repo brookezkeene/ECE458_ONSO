@@ -48,8 +48,8 @@
                                                   :items="datacenters"
                                                   item-text="description"
                                                   item-value=""
-                                                  :return-object="false"
                                                   label="Datacenter"
+                                                  @change="initialize()"
                                                   placeholder="Select a datacenter or all datacenters"
                                                   class="pt-8 pl-4">
                                         </v-select>
@@ -75,7 +75,7 @@
                                     <v-text-field prepend-inner-icon="mdi-magnify"
                                                   :search-input.sync="vendorSearch"
                                                   v-model="vendorSearch"
-                                                  @input="getAssetsFromApi()"
+                                                  @input="initialize()"
                                                   cache-items
                                                   flat
                                                   hide-no-data
@@ -93,7 +93,7 @@
                                     <v-text-field prepend-inner-icon="mdi-magnify"
                                                   :search-input.sync="numberSearch"
                                                   v-model="numberSearch"
-                                                  @input="getAssetsFromApi()"
+                                                  @input="initialize()"
                                                   cache-items
                                                   flat
                                                   hide-no-data
@@ -112,7 +112,7 @@
                                     <v-text-field prepend-inner-icon="mdi-magnify"
                                                   :search-input.sync="hostnameSearch"
                                                   v-model="hostnameSearch"
-                                                  @input="getAssetsFromApi()"
+                                                  @input="initialize()"
                                                   cache-items
                                                   flat
                                                   hide-no-data
@@ -132,14 +132,14 @@
                             <v-col cols="6">
                                 <v-row class="pl-10 pt-1">
                                     <v-text-field v-model="startRackValue"
-                                                  @input="getAssetsFromApi()"
+                                                  @input="initialize()"
                                                   placeholder="Start"
                                                   type="text"
                                                   label="Rack Range"
                                                   style="width:0">
                                     </v-text-field>
                                     <v-text-field v-model="endRackValue"
-                                                  @input="getAssetsFromApi()"
+                                                  @input="initialize()"
                                                   type="text"
                                                   placeholder="End"
                                                   style="width:0">
@@ -390,19 +390,9 @@
                 deep: true
             },
         },
-        mounted() {
-            this.getAssetsFromApi()
-                .then(data => {
-                    this.assets = data.data;
-                    this.totalItems = data.totalCount;
-                    this.loading = false;
-                })
-        },
-
         async created() { 
             this.createPage();
         },
-
         methods: {
             createPage() {
                 this.initializeDatacenters();
@@ -455,8 +445,12 @@
                 return '';
             },
             async initialize() {
-                //await this.getAssetsFromApi();
-                this.loading = false;
+                await this.getAssetsFromApi()
+                    .then(data => {
+                        this.assets = data.data;
+                        this.totalItems = data.totalCount;
+                        this.loading = false;
+                    });
             },
             async initializeDatacenters() {
                 var datacenter;

@@ -33,16 +33,6 @@ namespace Web.Api.Infrastructure.Repositories
             Expression<Func<Asset, bool>> vendorCondition = x => (x.Model.Vendor.Contains(vendor));
             Expression<Func<Asset, bool>> numberCondition = x => (x.Model.ModelNumber.Contains(number));
 
-            var allassets = await _dbContext.Assets
-                                .WhereIf(datacenterId != null, x => x.Rack.Datacenter.Id == datacenterId)
-                .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
-                .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
-                .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
-                .Where(x => String.Compare(x.Rack.Row.ToUpper(), rackStart[0].ToString()) >= 0 &&
-                            String.Compare(x.Rack.Row.ToUpper(), rackEnd[0].ToString()) <= 0 &&
-                            x.Rack.Column >= int.Parse(rackStart.Substring(1)) &&
-                            x.Rack.Column <= int.Parse(rackEnd.Substring(1)))
-                .ToListAsync();
             var assets = await _dbContext.Assets
                 .Include(asset => asset.Rack)
                 .ThenInclude(rack => rack.Pdus)
@@ -59,7 +49,7 @@ namespace Web.Api.Infrastructure.Repositories
                 .ToListAsync();
             assets = Sort(assets, sortBy, isDesc);
             pagedList.AddRange(assets);
-            pagedList.TotalCount = pagedList.TotalCount = await _dbContext.Assets
+            pagedList.TotalCount = await _dbContext.Assets
                 .WhereIf(datacenterId != null, x => x.Rack.Datacenter.Id == datacenterId)
                 .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
                 .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
