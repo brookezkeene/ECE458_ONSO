@@ -32,8 +32,7 @@
                               @click:row="showDetails"
                               :server-items-length="totalItems"
                               :show-select="labelGen"
-                              :options.sync="options"
-                              :key="selectedDatacenter">
+                              :options.sync="options">
 
                     <template v-slot:top v-slot:item.action="{ item }">
                         <v-toolbar flat>
@@ -408,7 +407,7 @@
             createPage() {
                 this.initializeDatacenters();
                 this.initialize();
-                this.getAssetsFromApi();
+                //this.getAssetsFromApi();
                 if (this.$store.getters.isChangePlan) {
                     this.modifyAssetsForChangePlan();
                 }
@@ -456,7 +455,7 @@
                 return '';
             },
             async initialize() {
-                await this.getAssetsFromApi();
+                //await this.getAssetsFromApi();
                 this.loading = false;
             },
             async initializeDatacenters() {
