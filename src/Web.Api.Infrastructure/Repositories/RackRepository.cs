@@ -28,7 +28,7 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<PagedList<Rack>> GetRacksAsync(Guid? datacenterId, string sortBy, string isDesc, int page = 1, int pageSize = 10)
         {
             var pagedList = new PagedList<Rack>();
-            var racks = await Sort(datacenterId,  sortBy,  isDesc,  page = 1,  pageSize = 10);
+            var racks = await Sort(datacenterId,  sortBy,  isDesc,  page,  pageSize);
             pagedList.AddRange(racks);
             pagedList.TotalCount = await _dbContext.Racks
                 .WhereIf(datacenterId != null, x => x.Datacenter.Id == datacenterId)
