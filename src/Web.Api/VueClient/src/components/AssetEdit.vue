@@ -1,11 +1,18 @@
 <template>
-    <div v-if="!loading">
+    <div>
         <v-card flat>
             <changePlanBar></changePlanBar>
             <v-card-title>
                 <span class="headline">{{formTitle}}</span>
             </v-card-title>
-            <v-card-text>
+            <v-card-text v-if="loading">
+                <v-container fluid>
+                    <v-progress-circular :size="75"
+                                         indeterminate>
+                    </v-progress-circular>
+                </v-container>
+            </v-card-text>
+            <v-card-text v-if="!loading">
                 <v-container>
                     <v-form v-model="valid">
                         <v-expansion-panels multiple :hover=true :value="panel">
@@ -232,7 +239,7 @@
 </style>
 
 <script>
-
+    /* eslint-disable */
     import changePlanBar from '@/components/ChangePlanStatusBar';
 
     export default {
@@ -251,7 +258,7 @@
                 racks: [],
                 networks: [],
                 datacenters: [],
-                loading: false,
+                loading: true,
                 titles: [
                     "Basic Asset Information",
                     "Mac Addresses",
@@ -300,31 +307,35 @@
         },
 
         async created() {
-            this.models = await this.modelRepository.list();
-            this.users = await this.userRepository.list();
-            this.racks = await this.rackRepository.list();
-            if (this.$store.getters.isChangePlan) {
-                this.datacenters.push(this.$store.getters.changePlan.datacenterName);
-            } else {
-                this.datacenters = await this.datacenterRepository.list();
-            }
+            const getModels = this.modelRepository.list()
+                .then(models => {
+                    models.forEach(model => model.vendorModelNo = model.vendor + " " + model.modelNumber);
+                    this.models = models;
+                })
 
-            for (const model of this.models) {
-                model.vendorModelNo = model.vendor + " " + model.modelNumber;
-            }
+            const getUsers = this.userRepository.list()
+                .then(users => this.users = users);
 
-            if (typeof this.id !== 'undefined' && this.id != 'new') {
-                this.editedItem = await this.assetRepository.find(this.id, this.$store.getters.isChangePlan);
-                /*eslint-disable*/
-                console.log(this.editedItem);
-                this.selectedModel = await this.modelRepository.find(this.editedItem.modelId);
-                this.makeNetworkPorts(this.selectedModel);
-                this.makePowerPorts(this.selectedModel);
-                this.selectedModelBool = true;
-                this.selectedRack = true;
-                this.rackSelected();
-            }
+            const getDatacenters = this.$store.getters.isChangePlan
+                ? Promise.resolve(this.datacenters.push(this.$store.getters.changePlan.datacenterName))
+                : this.datacenterRepository.list().then(datacenters => this.datacenters = datacenters);
 
+            const getAsset = typeof this.id === 'undefined' || this.id === 'new'
+                ? Promise.resolve()
+                : this.assetRepository.find(this.id, this.$store.getters.isChangePlan)
+                    .then(asset => this.editedItem = asset)
+                    .then(() => this.modelRepository.find(this.editedItem.modelId))
+                    .then(model => this.selectedModel = model)
+                    .then(() => {
+                        this.makeNetworkPorts(this.selectedModel);
+                        this.makePowerPorts(this.selectedModel);
+                        this.selectedModelBool = true;
+                        this.selectedRack = true;
+                        this.rackSelected();
+                    });
+
+            Promise.all([getModels, getUsers, getDatacenters, getAsset])
+                .then(() => this.loading = false);
         },
         computed: {
             datacenterPermissions() {
