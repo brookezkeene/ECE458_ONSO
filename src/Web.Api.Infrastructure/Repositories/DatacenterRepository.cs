@@ -54,6 +54,10 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<List<AssetNetworkPort>> GetOpenNetworkPortsFromDatacenterAsync(Guid datacenterId)
         {
             return await _dbContext.AssetNetworkPort
+                .Include(port => port.Asset)
+                .ThenInclude(asset => asset.Rack)
+                .ThenInclude(rack => rack.Pdus)
+                .ThenInclude(pdu => pdu.Ports)
                 .Where(port => port.NetworkConnectionId == null)
                 .Where(port => port.Asset.Rack.DatacenterId == datacenterId)
                 .ToListAsync();
@@ -70,10 +74,10 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<List<AssetNetworkPort>> GetNetworkPortFromDatacenterAsync(Guid datacenterID)
         {
             var ports = await _dbContext.AssetNetworkPort
-                //.Include(x => x.ModelNetworkPort)
-                //.Include(x => x.Asset).ThenInclude(x => x.Rack)
-                //.Include(x => x.ConnectedPort).ThenInclude(x => x.ModelNetworkPort)
-                //.Include(x => x.ConnectedPort).ThenInclude(x => x.Asset)
+                .Include(port => port.Asset)
+                .ThenInclude(asset => asset.Rack)
+                .ThenInclude(rack => rack.Pdus)
+                .ThenInclude(pdu => pdu.Ports)
                 .Where(x => x.Asset.Rack.Datacenter.Id == datacenterID)
                 .Where(x => x.NetworkConnectionId == null || x.NetworkConnectionId == Guid.Empty)
                 //.AsNoTracking()
@@ -90,6 +94,9 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<Datacenter> GetDatacenterAsync(Guid datacenterId)
         {
             return await _dbContext.Datacenters
+                .Include(dc => dc.Racks)
+                .ThenInclude(rack => rack.Pdus)
+                .ThenInclude(pdu => pdu.Ports)
                 .Where(x => x.Id == datacenterId)
                 //.AsNoTracking()
                 .SingleAsync();
@@ -102,6 +109,9 @@ namespace Web.Api.Infrastructure.Repositories
             Expression<Func<Datacenter, bool>> searchCondition = x => (x.Name.Contains(search) || x.Description.Contains(search));
 
             var datacenters = await _dbContext.Datacenters
+                .Include(dc => dc.Racks)
+                .ThenInclude(rack => rack.Pdus)
+                .ThenInclude(pdu => pdu.Ports)
                 .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
                 .PageBy(x => x.Name, page, pageSize)
                 //.AsNoTracking()

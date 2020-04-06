@@ -42,10 +42,9 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<List<Rack>> GetRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd, Guid? datacenterId)
         {
             var racks = await _dbContext.Racks
-                //.Include(x => x.Assets)
-                //    .ThenInclude(i => i.Model)
-                //.Include(x => x.Assets)
-                //    .ThenInclude(i => i.Owner)
+                .Include(rack => rack.Pdus)
+                .ThenInclude(pdu => pdu.Ports)
+                .Include(rack => rack.Assets)
                 .Where(x => x.Column >= colStart && x.Column <= colEnd)
                 .WhereIf(datacenterId != null && datacenterId.Value != default, x => x.DatacenterId == datacenterId)
                 //.AsNoTracking()
@@ -68,12 +67,18 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<Rack> GetRackAsync(string row, int column, Guid datacenterId)
         {
             return await _dbContext.Racks
+                .Include(rack => rack.Pdus)
+                .ThenInclude(pdu => pdu.Ports)
+                .Include(rack => rack.Assets)
                 .SingleOrDefaultAsync(x => x.Row == row && x.Column == column && x.DatacenterId == datacenterId);
         }
 
         public Rack GetRack(string row, int column, Guid datacenterId)
         {
             return _dbContext.Racks
+                .Include(rack => rack.Pdus)
+                .ThenInclude(pdu => pdu.Ports)
+                .Include(rack => rack.Assets)
                 .SingleOrDefault(rack => rack.Row == row && rack.Column == column && rack.DatacenterId == datacenterId);
         }
         public async Task<int> AddRackAsync(Rack rack)
@@ -157,20 +162,22 @@ namespace Web.Api.Infrastructure.Repositories
         }
         private async Task<List<Rack>> Sort(Guid? datacenterId, string sortBy, string isDesc, int page = 1, int pageSize = 10)
         {
-
+            var query = _dbContext.Racks
+                .WhereIf(datacenterId != null, x => x.DatacenterId == datacenterId)
+                .Include(rack => rack.Pdus)
+                .ThenInclude(pdu => pdu.Ports)
+                .Include(rack => rack.Assets);
             if (!string.IsNullOrEmpty(sortBy) && sortBy.Equals("address"))
             {
                 if (isDesc.Equals("false"))
                 {
-                    return await _dbContext.Racks
-                    .WhereIf(datacenterId != null, x => x.DatacenterId == datacenterId)
+                    return await query
                     .PageBy(x => x.Row + x.Column.ToString(), page, pageSize, false)
                     .ToListAsync();
                 }
                 else if (isDesc.Equals("true"))
                 {
-                    return await _dbContext.Racks
-                    .WhereIf(datacenterId != null, x => x.DatacenterId == datacenterId)
+                    return await query
                     .PageBy(x => x.Row + x.Column.ToString(), page, pageSize, true)
                     .ToListAsync();
                 }
@@ -179,21 +186,18 @@ namespace Web.Api.Infrastructure.Repositories
             {
                 if (isDesc.Equals("false"))
                 {
-                    return await _dbContext.Racks
-                    .WhereIf(datacenterId != null, x => x.DatacenterId == datacenterId)
+                    return await query
                     .PageBy(x => x.Datacenter.Name, page, pageSize, false)
                     .ToListAsync();
                 }
                 else if (isDesc.Equals("true"))
                 {
-                    return await _dbContext.Racks
-                    .WhereIf(datacenterId != null, x => x.DatacenterId == datacenterId)
+                    return await query
                     .PageBy(x => x.Datacenter.Name, page, pageSize, true)
                     .ToListAsync();
                 }
             }
-            return await _dbContext.Racks
-                .WhereIf(datacenterId != null, x => x.DatacenterId == datacenterId)
+            return await query
                 .PageBy(x => x.Id, page, pageSize)
                 .ToListAsync();
         }
