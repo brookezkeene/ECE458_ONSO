@@ -174,6 +174,20 @@ const routes = [
                 props: true,
             },
             {
+                path: '/:type/edit/:id',
+                name: 'offline-storage-edit',
+                component: DatacenterEdit,
+                props: true,
+                meta: { permission: 'asset' }
+            },
+            {
+                path: '/:type/new',
+                name: 'offline-storage-create',
+                component: DatacenterEdit,
+                props: true,
+                meta: { permission: 'asset' }
+            },
+            {
                 path: '/importexport',
                 name: 'import-export',
                 component: ImportExport,
