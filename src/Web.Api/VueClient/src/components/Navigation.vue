@@ -78,8 +78,8 @@
                     ]},
                     { title: 'Change Planner', path: '/change-plan', icon: 'mdi-clipboard-list-outline'},
                     { title: 'Sites', path: '/sites', icon: 'mdi-factory', sublinks: [
-                        { title: 'Datacenters', name: 'datacenters', type: 'Datacenters'},
-                        { title: 'Offline Storage', name: 'offline-storage', type: 'Offline Storage Sites'}
+                        { title: 'Datacenters', name: 'datacenters', type: 'datacenters'},
+                        { title: 'Offline Storage', name: 'offline-storage', type: 'offline-storage'}
                     ]},
                     { title: 'Racks', path: '/racks', icon: 'mdi-view-day' },
                     { title: 'Users', path: '/users', icon: 'mdi-account' },
@@ -113,7 +113,7 @@
                 if (item.type != undefined) {
                     this.$router.push({ name: item.name, params: { type: item.type } });
                 } else {
-                    this.$router.push({ name: item.name, params: { type: item.type } });
+                    this.$router.push({ name: item.name });
                 }
             }
         }

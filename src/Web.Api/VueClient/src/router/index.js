@@ -148,9 +148,10 @@ const routes = [
                 component: Racks,
             },
             {
-                path: '/datacenters',
+                path: '/:type',
                 name: 'datacenters',
                 component: Datacenters,
+                props: true,
             },
             {
                 path: '/datacenters/edit/:id',
@@ -167,7 +168,7 @@ const routes = [
                 meta: { permission: 'asset' }
             },
             {
-                path: '/offline-storage',
+                path: '/:type',
                 name: 'offline-storage',
                 component: Datacenters,
                 props: true,

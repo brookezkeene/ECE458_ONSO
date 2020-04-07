@@ -1,6 +1,6 @@
 ﻿<template>
     <v-card flat>
-        <v-card-title>{{type}}</v-card-title>
+        <v-card-title>{{name}}</v-card-title>
         <v-container>
             <v-card>
                 <v-data-table :headers="filteredHeaders"
@@ -101,9 +101,16 @@
             filteredHeaders() {
                 return (this.permission) ? this.headers : this.headers.filter(h => h.text !== "Actions")
             },
+            name() {
+                if (this.type === 'offline-storage') {
+                    return 'Offline Storage Sites'
+                } else {
+                    return 'Datacenters';
+                }
+            }
         },
         async created () {
-            this.initialize()
+            this.initialize();
         },
         methods: {
             async initialize() {
