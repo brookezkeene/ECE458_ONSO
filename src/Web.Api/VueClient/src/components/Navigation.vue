@@ -11,7 +11,7 @@
             <v-list>
                 <div v-for="item in filteredMenuItems"
                     :key="item.title">
-                    <v-list-item v-if="item.title!='Assets'"
+                    <v-list-item v-if="item.title!='Assets' && item.title!='Sites'"
                                  color="primary"
                                  :to="item.path">
                         <v-list-item-icon>
@@ -75,10 +75,12 @@
                     { title: 'Assets', path: '/assets', icon: 'mdi-server', sublinks: [
                         { title: 'Active Assets', path: '/assets'},
                         { title: 'Decommissioned', path: '/decommissioned-assets' }
-                    ]
-                    },
+                    ]},
                     { title: 'Change Planner', path: '/change-plan', icon: 'mdi-clipboard-list-outline'},
-                    { title: 'Datacenters', path: '/datacenters', icon: 'mdi-factory' },
+                    { title: 'Sites', path: '/sites', icon: 'mdi-factory', sublinks: [
+                        { title: 'Datacenters', path: '/datacenters'},
+                        { title: 'Offline Storage', path: '/offline-storage' }
+                    ]},
                     { title: 'Racks', path: '/racks', icon: 'mdi-view-day' },
                     { title: 'Users', path: '/users', icon: 'mdi-account' },
                     { title: 'Reports', path: '/reports', icon: 'mdi-chart-pie' },
