@@ -167,6 +167,12 @@ const routes = [
                 meta: { permission: 'asset' }
             },
             {
+                path: '/offline-storage',
+                name: 'offline-storage',
+                component: Datacenters,
+                props: true,
+            },
+            {
                 path: '/importexport',
                 name: 'import-export',
                 component: ImportExport,
