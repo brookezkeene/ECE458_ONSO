@@ -119,10 +119,17 @@
                 this.loading = false;
             },
             openCreate() {
-                this.$router.push({ name: 'datacenter-create' })
-            },
+                if (this.type === 'datacenters') {
+                    this.$router.push({ name: 'datacenter-create', params: { type: 'datacenters' } })
+                } else {
+                    this.$router.push({ name: 'offline-storage-create', params: { type: 'offline-storage'} })
+                }            },
             editItem(item) {
-                this.$router.push({ name: 'datacenter-edit', params: { id: item.id } })
+                if (this.type === 'datacenters') {
+                    this.$router.push({ name: 'datacenter-edit', params: { id: item.id, type: 'datacenters' } })
+                } else {
+                    this.$router.push({ name: 'offline-storage-edit', params: { id: item.id, type: 'offline-storage'} })
+                }
             },
             async deleteItem(item) {
                 var ifRacks = await this.rackRepository.list(item.id)
