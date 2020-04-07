@@ -73,7 +73,7 @@
                 menuItems: [
                     { title: 'Models', path: '/models', icon: 'mdi-table-large' },
                     { title: 'Assets', path: '/assets', icon: 'mdi-server', sublinks: [
-                        { title: 'Active Assets', name: 'assets'},
+                        { title: 'Active', name: 'assets'},
                         { title: 'Decommissioned', name: 'decommissioned-assets' },
                         { title: 'Offline', name: '/offline-assets'}
                     ]},
