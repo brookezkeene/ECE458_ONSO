@@ -1,72 +1,78 @@
 ﻿<template>
-    <v-card>
-        <v-data-table :headers="filteredHeaders"
-                      :items="datacenters"
-                      :search="search"
-                      class="pa-10"
-                      multi-sort>
-            <template v-slot:top>
+    <v-card flat>
+        <v-card-title>{{name}}</v-card-title>
+        <v-container>
+            <v-card>
+                <v-data-table :headers="filteredHeaders"
+                              :items="datacenters"
+                              :search="search"
+                              class="pa-10"
+                              multi-sort>
+                    <template v-slot:top>
 
-                <v-toolbar flat color="white">
-                    <v-toolbar-title>Datacenters</v-toolbar-title>
+                        <v-toolbar flat color="white">
 
-                    <v-spacer></v-spacer>
+                            <v-toolbar flat>
+                                <v-autocomplete :loading="loading"
+                                                :items="datacenters"
+                                                :search-input.sync="search"
+                                                prepend-inner-icon="mdi-magnify"
+                                                cache-items
+                                                flat
+                                                hide-no-data
+                                                hide-details
+                                                item-text="name"
+                                                label="Search"
+                                                single-line
+                                                solo-inverted></v-autocomplete>
+                                <v-spacer></v-spacer>
+                                <v-spacer></v-spacer>
+                            </v-toolbar>
 
-                    <v-btn v-if="permission" color="primary" dark class="mb-2" @click="openCreate">Add Datacenter</v-btn>
-                </v-toolbar>
+                            <v-btn v-if="permission && type==='datacenters'" color="primary" dark class="mb-2" @click="openCreate">Add Datacenter</v-btn>
+                            <v-btn v-if="permission && type==='offline-storage'" color="primary" dark class="mb-2" @click="openCreate">Add Offline Storage Site</v-btn>
 
-                <v-toolbar flat>
-                    <v-autocomplete :loading="loading"
-                                    :items="datacenters"
-                                    :search-input.sync="search"
-                                    prepend-inner-icon="mdi-magnify"
-                                    cache-items
-                                    flat
-                                    hide-no-data
-                                    hide-details
-                                    item-text="name"
-                                    label="Search"
-                                    single-line
-                                    solo-inverted></v-autocomplete>
-                    <v-spacer></v-spacer>
-                    <v-spacer></v-spacer>
-                </v-toolbar>
+                        </v-toolbar>
 
-            </template>
+                    </template>
 
-            <template v-slot:item.action="{ item }">
-                <v-row class="pl-2">
-                    <v-icon medium
-                            @click="editItem(item)">mdi-pencil</v-icon>
-                    <v-icon medium
-                            @click="deleteItem(item)">mdi-delete</v-icon>
-                </v-row>
-            </template>
+                    <template v-slot:item.action="{ item }">
+                        <v-row class="pl-2">
+                            <v-icon medium
+                                    @click="editItem(item)">mdi-pencil</v-icon>
+                            <v-icon medium
+                                    @click="deleteItem(item)">mdi-delete</v-icon>
+                        </v-row>
+                    </template>
 
-            <template v-slot:no-data>
-                <v-btn color="primary" @click="initialize">Refresh</v-btn>
-            </template>
-        </v-data-table>
-        <v-snackbar v-model="updateSnackbar.show"
-                    :bottom=true
-                    class="black--text"
-                    :color="updateSnackbar.color"
-                    :timeout=5000>
-            {{updateSnackbar.message}}
-            <v-btn dark
-                   class="black--text"
-                   text
-                   @click="updateSnackbar.show = false">
-                Close
-            </v-btn>
-        </v-snackbar>
+                    <template v-slot:no-data>
+                        <v-btn color="primary" @click="initialize">Refresh</v-btn>
+                    </template>
+                </v-data-table>
+                <v-snackbar v-model="updateSnackbar.show"
+                            :bottom=true
+                            class="black--text"
+                            :color="updateSnackbar.color"
+                            :timeout=5000>
+                    {{updateSnackbar.message}}
+                    <v-btn dark
+                           class="black--text"
+                           text
+                           @click="updateSnackbar.show = false">
+                        Close
+                    </v-btn>
+                </v-snackbar>
+            </v-card>
+        </v-container>
     </v-card>
+
 </template>
 
 <script>
     export default {
         name: 'datacenter-table',
         inject: ['datacenterRepository', 'rackRepository'],
+        props: ['type'],
         item: null,
         data () {
             return {
@@ -96,9 +102,16 @@
             filteredHeaders() {
                 return (this.permission) ? this.headers : this.headers.filter(h => h.text !== "Actions")
             },
+            name() {
+                if (this.type === 'offline-storage') {
+                    return 'Offline Storage Sites'
+                } else {
+                    return 'Datacenters';
+                }
+            }
         },
         async created () {
-            this.initialize()
+            this.initialize();
         },
         methods: {
             async initialize() {

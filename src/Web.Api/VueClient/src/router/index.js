@@ -8,7 +8,7 @@ import ModelEdit from '@/components/ModelEdit'
 import Models from '@/components/Models'
 import assets from '@/components/Assets'
 import Racks from '@/components/Racks'
-import Datacenters from '@/components/Datacenters'
+import Datacenters from '@/components/DatacenterTable'
 import DatacenterEdit from '@/components/DatacenterEdit'
 import ImportExport from '@/components/Bulk'
 import Users from '@/components/Users'
@@ -148,9 +148,10 @@ const routes = [
                 component: Racks,
             },
             {
-                path: '/datacenters',
+                path: '/:type',
                 name: 'datacenters',
                 component: Datacenters,
+                props: true,
             },
             {
                 path: '/datacenters/edit/:id',
@@ -167,7 +168,7 @@ const routes = [
                 meta: { permission: 'asset' }
             },
             {
-                path: '/offline-storage',
+                path: '/:type',
                 name: 'offline-storage',
                 component: Datacenters,
                 props: true,

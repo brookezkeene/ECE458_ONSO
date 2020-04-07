@@ -32,10 +32,10 @@
                                     <v-list-item-title>{{ item.title }}</v-list-item-title>
                                 </v-list-item-content>
                             </template>
-
+                            
                             <v-list-item v-for="sublink in item.sublinks"
                                          :key="sublink.title"
-                                         :to="sublink.path"
+                                         @click="route(sublink)"
                                          color="primary">
 
                                 <v-list-item-content>
@@ -73,13 +73,13 @@
                 menuItems: [
                     { title: 'Models', path: '/models', icon: 'mdi-table-large' },
                     { title: 'Assets', path: '/assets', icon: 'mdi-server', sublinks: [
-                        { title: 'Active Assets', path: '/assets'},
-                        { title: 'Decommissioned', path: '/decommissioned-assets' }
+                        { title: 'Active Assets', name: 'assets'},
+                        { title: 'Decommissioned', name: 'decommissioned-assets' }
                     ]},
                     { title: 'Change Planner', path: '/change-plan', icon: 'mdi-clipboard-list-outline'},
                     { title: 'Sites', path: '/sites', icon: 'mdi-factory', sublinks: [
-                        { title: 'Datacenters', path: '/datacenters'},
-                        { title: 'Offline Storage', path: '/offline-storage' }
+                        { title: 'Datacenters', name: 'datacenters', type: 'datacenters'},
+                        { title: 'Offline Storage', name: 'offline-storage', type: 'offline-storage'}
                     ]},
                     { title: 'Racks', path: '/racks', icon: 'mdi-view-day' },
                     { title: 'Users', path: '/users', icon: 'mdi-account' },
@@ -109,6 +109,13 @@
                 auth.logout();
                 this.$router.push({ name: 'login' });
             },
+            route(item) {
+                if (item.type != undefined) {
+                    this.$router.push({ name: item.name, params: { type: item.type } });
+                } else {
+                    this.$router.push({ name: item.name });
+                }
+            }
         }
     }
 </script>
