@@ -29,7 +29,8 @@
                                 <v-spacer></v-spacer>
                             </v-toolbar>
 
-                            <v-btn v-if="permission" color="primary" dark class="mb-2" @click="openCreate">Add Datacenter</v-btn>
+                            <v-btn v-if="permission && type==='datacenters'" color="primary" dark class="mb-2" @click="openCreate">Add Datacenter</v-btn>
+                            <v-btn v-if="permission && type==='offline-storage'" color="primary" dark class="mb-2" @click="openCreate">Add Offline Storage Site</v-btn>
 
                         </v-toolbar>
 
