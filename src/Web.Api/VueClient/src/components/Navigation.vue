@@ -74,7 +74,8 @@
                     { title: 'Models', path: '/models', icon: 'mdi-table-large' },
                     { title: 'Assets', path: '/assets', icon: 'mdi-server', sublinks: [
                         { title: 'Active Assets', name: 'assets'},
-                        { title: 'Decommissioned', name: 'decommissioned-assets' }
+                        { title: 'Decommissioned', name: 'decommissioned-assets' },
+                        { title: 'Offline', name: '/offline-assets'}
                     ]},
                     { title: 'Change Planner', path: '/change-plan', icon: 'mdi-clipboard-list-outline'},
                     { title: 'Sites', path: '/sites', icon: 'mdi-factory', sublinks: [

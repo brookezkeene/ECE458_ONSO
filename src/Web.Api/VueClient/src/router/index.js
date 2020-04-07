@@ -81,6 +81,11 @@ const routes = [
                 component: DecommissionedAssets,
             },
             {
+                path: '/offline-assets',
+                name: 'offline-assets', //Change when we have offline assets page
+                component: assets, //Change when we have offline assets page
+            },
+            {
                 path: '/decommissioned-assets/:id',
                 name: 'decommissioned-asset-details',
                 component: DecommissionedAssetDetails,
