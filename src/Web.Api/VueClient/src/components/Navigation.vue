@@ -78,8 +78,8 @@
                     ]},
                     { title: 'Change Planner', path: '/change-plan', icon: 'mdi-clipboard-list-outline'},
                     { title: 'Sites', path: '/sites', icon: 'mdi-factory', sublinks: [
-                        { title: 'Datacenters', name: 'datacenters', type: 'datacenter'},
-                        { title: 'Offline Storage', name: 'offline-storage', type: 'offline'}
+                        { title: 'Datacenters', name: 'datacenters', type: 'Datacenters'},
+                        { title: 'Offline Storage', name: 'offline-storage', type: 'Offline Storage Sites'}
                     ]},
                     { title: 'Racks', path: '/racks', icon: 'mdi-view-day' },
                     { title: 'Users', path: '/users', icon: 'mdi-account' },

@@ -11,28 +11,26 @@
                     <template v-slot:top>
 
                         <v-toolbar flat color="white">
-                            <v-toolbar-title>Datacenters</v-toolbar-title>
 
-                            <v-spacer></v-spacer>
+                            <v-toolbar flat>
+                                <v-autocomplete :loading="loading"
+                                                :items="datacenters"
+                                                :search-input.sync="search"
+                                                prepend-inner-icon="mdi-magnify"
+                                                cache-items
+                                                flat
+                                                hide-no-data
+                                                hide-details
+                                                item-text="name"
+                                                label="Search"
+                                                single-line
+                                                solo-inverted></v-autocomplete>
+                                <v-spacer></v-spacer>
+                                <v-spacer></v-spacer>
+                            </v-toolbar>
 
                             <v-btn v-if="permission" color="primary" dark class="mb-2" @click="openCreate">Add Datacenter</v-btn>
-                        </v-toolbar>
 
-                        <v-toolbar flat>
-                            <v-autocomplete :loading="loading"
-                                            :items="datacenters"
-                                            :search-input.sync="search"
-                                            prepend-inner-icon="mdi-magnify"
-                                            cache-items
-                                            flat
-                                            hide-no-data
-                                            hide-details
-                                            item-text="name"
-                                            label="Search"
-                                            single-line
-                                            solo-inverted></v-autocomplete>
-                            <v-spacer></v-spacer>
-                            <v-spacer></v-spacer>
                         </v-toolbar>
 
                     </template>
