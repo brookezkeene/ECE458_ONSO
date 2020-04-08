@@ -85,6 +85,9 @@ namespace Web.Api.Mappers
                 .ForMember(o => o.Decommissioner, opts => opts.Ignore())
                 .ForMember(o => o.DateDecommissioned, opts => opts.Ignore());
 
+            CreateMap<UpdateAssetApiDto, CreateAssetApiDto>();
+            CreateMap<UpdateAssetNetworkPortApiDto, CreateAssetNetworkPortApiDto>();
+            CreateMap<UpdateAssetPowerPortApiDto, CreateAssetPowerPortApiDto>();
             CreateMap<AssetDto, DecommissionedAssetDto>()
                 .ForMember(o => o.Datacenter, opts => opts.MapFrom(src => src.Rack.Datacenter.Name))
                 .ForMember(o => o.RackAddress, opts => opts.MapFrom(src => src.Rack.RackAddress))

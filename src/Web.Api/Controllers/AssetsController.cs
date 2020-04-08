@@ -202,6 +202,11 @@ namespace Web.Api.Controllers
                 var originalAsset = _mapper.Map<GetAssetApiDto>(await _assetService.GetAssetAsync(assetApiDto.Id));
                 if(originalAsset == null)
                 {
+                    var createdItem = await _changePlanService.GetChangePlanItemAsync(changePlanId, assetApiDto.Id);
+                    var newAsset = _mapper.Map<CreateAssetApiDto>(assetApiDto);
+                    string newData = JsonConvert.SerializeObject(newAsset);
+                    createdItem.NewData = newData;
+                    await _changePlanService.UpdateChangePlanItemAsync(createdItem);
                     return NoContent();
                 }
                 var changePlanItemApiDto = new ChangePlanItemDto

@@ -404,11 +404,19 @@
         },
         methods: {
             save() {
+               
+
                 // Check if in a change plan context
                 if (this.$store.getters.isChangePlan) {
                     this.editedItem.changePlanId = this.$store.getters.changePlan.id;
+                    if (this.editedItem.id == "00000000-0000-0000-0000-000000000000" && this.id !== 'undefined') {
+                        this.editedItem.id = this.id;
+
+                    }
                 }
 
+
+            
                 var promise = typeof this.id !== 'undefined'
                     ? this.assetRepository.update(this.editedItem)
                     : this.assetRepository.create(this.editedItem);
