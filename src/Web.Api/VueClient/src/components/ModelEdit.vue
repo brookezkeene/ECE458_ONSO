@@ -9,6 +9,16 @@
                 <v-form v-model="valid">
                     <v-row>
                         <v-col cols="12" sm="6" md="4">
+                            <v-select v-model="newItem.mountType"
+                                      :items="mountTypes"
+                                      label="Mount Type"
+                                      placeholder="Select a mount type"
+                                      @change="checkType">
+                            </v-select>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model="newItem.vendor"
                                         item-text="vendor"
                                         item-value=""
@@ -26,22 +36,29 @@
                                           :rules="[rules.modelRules]"
                                           counter="50"></v-text-field>
                         </v-col>
-                        <v-col cols="12" sm="6" md="4">
+                        <v-col v-if="!isBlade"
+                               cols="12" sm="6" md="4">
                             <v-text-field v-model.number="newItem.height"
                                           label="Height (in Rack U)"
                                           placeholder="Please enter a height"
                                           type="number"
                                           :rules="[rules.heightRules]"></v-text-field>
                         </v-col>
-                        <v-col cols="12" sm="6" md="4">
+                    </v-row>
+                    <v-row>
+                        <v-col v-if="!isBlade"
+                               cols="12" sm="6" md="4">
                             <v-text-field v-model.number="newItem.ethernetPorts" label="Network Ports" type="number" @change="networkPortNum"
                                           :rules="[rules.ethernetPortRules]"></v-text-field>
                             <a href="#" @click="openNamesDialog">Add Network Port Names</a>
                         </v-col>
-                        <v-col cols="12" sm="6" md="4">
+                        <v-col v-if="!isBlade"
+                               cols="12" sm="6" md="4">
                             <v-text-field v-model.number="newItem.powerPorts" label="Power Ports" type="number"
                                           :rules="[rules.powerPortRules]"></v-text-field>
                         </v-col>
+                    </v-row>
+                    <v-row>
                         <v-col cols="12" sm="6" md="4">
                             <v-text-field v-model="newItem.cpu" label="CPU" placeholder="i.e. Intel Xeon E5520 2.2GHz" counter="50"></v-text-field>
                         </v-col>
@@ -149,7 +166,8 @@
                     memory: 0,
                     storage: '',
                     comment: '',
-                    networkPorts: []
+                    networkPorts: [],
+                    mountType: '',
                 },
                 namesDialog: false,
                 editedIndex: -1,
@@ -157,6 +175,11 @@
                 //for UPDATE: if the user changes the size of the ethernetports/closes the
                 //names dialog, the newItem will still have original value from database
                 networkPortNames: [],
+                mountTypes: [
+                    { text: 'Normal Rackmount Gear', value: 'normal' },
+                    { text: 'Blade Chassis', value: 'chassis' },
+                    { text: 'Blade', value: 'blade' },
+                ],
                 rules: {
                     vendorRules: v => /^(?=\s*\S).*$/.test(v) || 'Vendor is required',
                     modelRules: v => /^(?!\s*$).+/.test(v) || 'Model Number is required',
@@ -182,6 +205,9 @@
             formTitle() {
                 return typeof this.id === 'undefined' ? 'New Item' : 'Edit Item'
             },
+            isBlade() {
+                return this.newItem.mountType === 'blade'
+            }
         },
         methods: {
             async save() {
@@ -296,6 +322,11 @@
                     count++
                 }
                 return count;
+            },
+            checkType() {
+                /*eslint-disable*/
+                console.log(this.newItem.mountType)
+                console.log(this.isBlade)
             },
             validationCreateAndUpdate(result) {
                 if (result != null && result.length != 0) {
