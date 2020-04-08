@@ -6,6 +6,16 @@
                 <span class="headline">Asset Details</span>
             </v-card-title>
             <v-card-text>
+                <v-row v-if="isDecommissioned" >
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Time Decommissioned</v-label>
+                        <v-card-text> {{asset.dateDecommissioned}} </v-card-text>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                        <v-label>Decommissioned By</v-label>
+                        <v-card-text> {{asset.decommissioner}} </v-card-text>
+                    </v-col>
+                </v-row>
                 <v-row>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Model Vendor</v-label>
@@ -106,6 +116,7 @@
                     modelNumber: ''
                 },
                 ownerPresent: true, // in case the asset does not have an owner, don't need null pointer bc not a required field.
+                isDecommissioned: false,
             };
         },
         created() {
@@ -133,6 +144,9 @@
                 this.loading = false;
                 if (this.asset.owner === undefined) {
                     this.ownerPresent = false;
+                }
+                if (this.asset.networkPortGraph !== undefined) {
+                    this.isDecommissioned = true;
                 }
             },
 

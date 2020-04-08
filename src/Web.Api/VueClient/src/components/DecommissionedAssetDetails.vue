@@ -3,10 +3,10 @@
         <v-card flat>
             <ChangePlanBar></ChangePlanBar>
             <v-card-title>
-                <span class="headline">Decommissioned Asset Details</span>
+                <span class="headline">Asset Details</span>
             </v-card-title>
             <v-card-text>
-                <v-row>
+                <v-row v-if="isDecommissioned">
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Time Decommissioned</v-label>
                         <v-card-text> {{asset.dateDecommissioned}} </v-card-text>
@@ -19,11 +19,13 @@
                 <v-row>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Model Vendor</v-label>
-                        <v-card-text> {{asset.modelName}} </v-card-text>
+                        <v-card-text> {{asset.vendor}} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                        <v-label>Model Number</v-label>
-                        <v-card-text> {{ asset.modelNumber }} </v-card-text>
+                        <v-label>Model</v-label>
+                        <v-card-text>
+                            <router-link :to="{ name: 'model-details', params: { id: asset.modelId } }"> {{ asset.modelNumber }} </router-link>
+                        </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Host Name</v-label>
@@ -36,26 +38,26 @@
                         <v-card-text> {{asset.datacenter}} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                        <v-label>Rack</v-label>
-                        <v-card-text> {{asset.rackAddress}} </v-card-text>
+                        <v-label>Rack Number</v-label>
+                        <v-card-text> {{asset.rack}} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Rack Position</v-label>
-                        <v-card-text> {{asset.data.RackPosition}} </v-card-text>
+                        <v-card-text> {{asset.rackPosition}} </v-card-text>
                     </v-col>
                 </v-row>
                 <v-row>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Asset Number</v-label>
-                        <v-card-text> {{asset.data.AssetNumber}} </v-card-text>
+                        <v-card-text> {{asset.assetNumber}} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Owner Username</v-label>
-                        <v-card-text v-if="ownerPresent"> {{asset.data.OwnerName}} </v-card-text>
+                        <v-card-text v-if="ownerPresent"> {{asset.owner}} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Comment</v-label>
-                        <v-textarea :value="asset.data.Comment" disabled>  </v-textarea>
+                        <v-textarea :value="asset.comment" disabled>  </v-textarea>
                     </v-col>
                 </v-row>
                 <v-row>
@@ -73,9 +75,9 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="port in asset.data.NetworkPorts" :key="port.id">
-                                                <td>{{ port.Name }}</td>
-                                                <td>{{ port.MacAddress }}</td>
+                                            <tr v-for="port in asset.networkPorts" :key="port.id">
+                                                <td>{{ port.name }}</td>
+                                                <td>{{ port.macAddress }}</td>
                                             </tr>
                                         </tbody>
                                     </template>
@@ -98,10 +100,10 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="port in asset.data.NetworkPorts" :key="port.id">
-                                                <td>{{ port.Name }}</td>
-                                                <td>{{ port.ConnectedPort && port.ConnectedPort.Hostname }}</td>
-                                                <td>{{ port.ConnectedPort && port.ConnectedPort.Name }}</td>
+                                            <tr v-for="port in asset.networkPorts" :key="port.id">
+                                                <td>{{ port.name }}</td>
+                                                <td>{{ port.connectedPort && port.connectedPort.hostname }}</td>
+                                                <td>{{ port.connectedPort && port.connectedPort.name }}</td>
                                             </tr>
                                         </tbody>
                                     </template>
@@ -123,22 +125,31 @@
                                             <tr>
                                                 <th class="text-left">#</th>
                                                 <th class="text-left">Port</th>
+                                                <th class="text-left">Status</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="port in asset.data.PowerPorts" :key="port.id">
-                                                <td>{{ port.Number }}</td>
-                                                <td>{{ port.PduPort }}</td>
+                                            <tr v-for="port in asset.powerPorts" :key="port.id">
+                                                <td>{{ port.number }}</td>
+                                                <td>{{ port.pduPort }}</td>
+                                                <td>{{ port.status }}</td>
                                             </tr>
                                         </tbody>
                                     </template>
                                 </v-simple-table>
                             </v-card>
                         </v-card>
+
+                        <v-container v-if="!changePlanId() && !isDecommissioned">
+                            <v-btn small class="mt-4" color="primary" outlined :disabled="viewPowerPorts" @click="showNames">View Power Port Status</v-btn>
+                        </v-container>
                     </v-col>
                 </v-row>
-                <v-row v-if="showNeighborhood">
-                    <network-neighborhood v-bind:id=undefined v-bind:networkJson="asset.data.NetworkPortGraph"></network-neighborhood>
+                <v-row v-if="showNeighborhood && !isDecommissioned">
+                    <network-neighborhood v-bind:id="id" @click="nodeClicked"></network-neighborhood>
+                </v-row>
+                <v-row v-if="showNeighborhood && isDecommissioned">
+                    <network-neighborhood v-bind:id=undefined v-bind:networkJson="asset.networkPortGraph"></network-neighborhood>
                 </v-row>
             </v-card-text>
 
@@ -165,21 +176,24 @@
 
 <script>
     import NetworkNeighborhood from "./NetworkNeighborhood"
-    import ChangePlanBar from './ChangePlanStatusBar';
+    import ChangePlanBar from "@/components/ChangePlanStatusBar"
     export default {
-        name: 'decommissioned-asset-details',
+        name: 'asset-details',
         inject: ['assetRepository', 'rackRepository'],
         item: null,
         components: {
             NetworkNeighborhood,
             ChangePlanBar
         },
-        props: ['id'],
+        props: {
+            id: String,
+            cpId: String
+        },
         data() {
             return {
                 loading: false,
                 asset: {
-                    id:'',
+                    id: '',
                     hostname: '',
                     rack: '',
                     rackPosition: '',
@@ -192,7 +206,8 @@
                 viewNames: false,
                 viewPowerPorts: false,
                 powerPorts: {},
-                showNeighborhood: false
+                showNeighborhood: false,
+                isDecommissioned: false,
             };
         },
         created() {
@@ -206,38 +221,33 @@
             async initialize() {
                 /*eslint-disable*/
                 if (!this.loading) this.loading = true;
-
-                const asset = await this.assetRepository.getDecommissionedAsset(this.id, this.changePlanId());
-                
-
+                console.log(this.id);
+                const asset = await this.assetRepository.find(this.id, this.changePlanId());
+                asset.powerPorts.forEach(port => port.status = undefined);
+                asset.networkPorts.sort((a, b) => a.number - b.number);
+                asset.powerPorts.sort((a, b) => a.number - b.number);
+                this.asset = asset;
                 this.loading = false;
-                if (asset.owner === undefined) {
+                if (this.asset.owner === undefined) {
                     this.ownerPresent = false;
                 }
-
-                // Turn data blob into fields to be read in table
-                asset.data = JSON.parse(asset.data);
-
-                asset.data.NetworkPorts = asset.data.FullNetworkPorts;
-                asset.data.PowerPorts.forEach(port => port.status = undefined);
-                asset.data.NetworkPorts.sort((a, b) => a.Number - b.Number);
-                asset.data.PowerPorts.sort((a, b) => a.Number - b.Number);
-
-                this.asset = asset;
+                if (this.asset.networkPortGraph !== undefined) {
+                    this.isDecommissioned = true;
+                }
             },
             async fetchPowerPortIds() {
                 var powerPortStates = [];
                 /*eslint-disable*/
                 powerPortStates = await this.assetRepository.getPowerPortState(this.asset.id);
                 console.log(powerPortStates);
-                for (var i = 0; i<powerPortStates.powerPorts.length; i++) {
-                    if (powerPortStates.powerPorts[i].status=='0') {
+                for (var i = 0; i < powerPortStates.powerPorts.length; i++) {
+                    if (powerPortStates.powerPorts[i].status == '0') {
                         powerPortStates.powerPorts[i].status = 'on';
                     } else {
                         powerPortStates.powerPorts[i].status = 'off'
                     }
                 }
-                this.asset.PowerPorts.forEach(port => {
+                this.asset.powerPorts.forEach(port => {
                     var maybeState = powerPortStates.powerPorts.find(o => o.port === port.pduPort);
                     port.status = maybeState && maybeState.status;
                 })
@@ -251,6 +261,11 @@
             hideNames() {
                 this.viewPowerPorts = false;
             },
+            nodeClicked(e) {
+                /* eslint-disable no-unused-vars, no-console */
+                console.log('clicked');
+                this.$router.push({ name: 'asset-details', params: { id: e } });
+            }
 
         }
     }

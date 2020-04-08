@@ -347,9 +347,9 @@
             const getUsers = this.userRepository.list()
                 .then(users => this.users = users);
 
-            const getDatacenters = this.$store.getters.isChangePlan
+            const getDatacenters = /*this.$store.getters.isChangePlan
                 ? Promise.resolve(this.datacenters.push(this.$store.getters.changePlan.datacenterName))
-                : this.datacenterRepository.list().then(datacenters => this.datacenters = datacenters);
+                :*/ this.datacenterRepository.list().then(datacenters => this.datacenters = datacenters);
 
             const getAsset = typeof this.id === 'undefined' || this.id === 'new'
                 ? Promise.resolve()

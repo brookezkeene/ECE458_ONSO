@@ -45,7 +45,14 @@ namespace Web.Api.Infrastructure.Repositories
                 .Where(x => x.ExecutionType.Equals("update"))
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
-
+            if(changePlan == null)
+            {
+                changePlan = await _dbContext.ChangePlanItems
+                    .Where(x => x.ChangePlanId == changePlanId)
+                    .Where(x => x.Id == assetId)
+                    .AsNoTracking()
+                    .SingleOrDefaultAsync();
+            }
             return changePlan;
         }
 
