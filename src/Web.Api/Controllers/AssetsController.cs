@@ -60,7 +60,6 @@ namespace Web.Api.Controllers
                 var changePlanId = query.ChangePlanId ?? Guid.Empty;
                 var changePlanItems = await _changePlanService.GetChangePlanItemsAsync(changePlanId);
                 var decommissionedChangePlans = await _changePlanService.GetDecommissionedChangePlanItemsAsync(changePlanId);
-                List<GetAssetApiDto> changePlanAssetList = new List<GetAssetApiDto>();
                 foreach (ChangePlanItemDto changePlanItem in changePlanItems)
                 {
                     var changePlanAssetDto = new AssetDto();
@@ -84,10 +83,10 @@ namespace Web.Api.Controllers
                         if (decommissionedChangePlans.Find(x => x.AssetId == updatedAsset.Id) != null) { continue; }
                     }
                     changePlanAssetDto = await _changePlanService.FillFieldsInAssetApiForChangePlans(changePlanAssetDto);
-                    changePlanAssetList.Add(_mapper.Map<GetAssetApiDto>(changePlanAssetDto));
+                    response.Add(_mapper.Map<GetAssetApiDto>(changePlanAssetDto));
+                    response.TotalCount++;
                 }
-                response.AddRange(changePlanAssetList);
-                response.TotalCount += changePlanAssetList.Count();
+                
             }
 
             return Ok(response);
