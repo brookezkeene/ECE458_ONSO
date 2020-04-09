@@ -375,7 +375,6 @@
                 return newHeaders;
             },
             formTitle() {
-                console.log('TYPE: ' + this.type);
                 if (this.type === 'active') {
                     return 'Assets';
                 } else if (this.type === 'decommissioned') {
