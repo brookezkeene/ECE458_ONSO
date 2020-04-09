@@ -153,47 +153,47 @@ const routes = [
                 component: Racks,
             },
             {
-                path: '/:type',
+                path: 'sites/:type/',
                 name: 'datacenters',
                 component: Datacenters,
                 props: true,
             },
             {
-                path: '/datacenters/edit/:id',
+                path: 'sites/:type/edit/:id',
                 name: 'datacenter-edit',
                 component: DatacenterEdit,
                 props: true,
                 meta: { permission: 'asset' }
             },
             {
-                path: '/datacenters/new',
+                path: 'sites/:type/new',
                 name: 'datacenter-create',
                 component: DatacenterEdit,
                 props: true,
                 meta: { permission: 'asset' }
             },
             {
-                path: '/:type',
+                path: 'sites/:type/',
                 name: 'offline-storage',
                 component: Datacenters,
                 props: true,
             },
             {
-                path: '/:type/edit/:id',
+                path: 'sites/:type/edit/:id',
                 name: 'offline-storage-edit',
                 component: DatacenterEdit,
                 props: true,
                 meta: { permission: 'asset' }
             },
             {
-                path: '/:type/new',
+                path: 'sites/:type/new',
                 name: 'offline-storage-create',
                 component: DatacenterEdit,
                 props: true,
                 meta: { permission: 'asset' }
             },
             {
-                path: '/importexport',
+                path: '/import-export',
                 name: 'import-export',
                 component: ImportExport,
             },

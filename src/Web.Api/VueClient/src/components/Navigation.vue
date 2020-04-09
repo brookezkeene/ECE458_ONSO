@@ -85,7 +85,7 @@
                     { title: 'Racks', path: '/racks', icon: 'mdi-view-day' },
                     { title: 'Users', path: '/users', icon: 'mdi-account' },
                     { title: 'Reports', path: '/reports', icon: 'mdi-chart-pie' },
-                    { title: 'Import/Export', path: '/importexport', icon: 'mdi-file-upload' },
+                    { title: 'Import/Export', path: '/import-export', icon: 'mdi-file-upload' },
                     { title: 'System Log', path: '/log', icon: 'mdi-post' },
                 ],
             }
