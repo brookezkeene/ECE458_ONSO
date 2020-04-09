@@ -152,40 +152,20 @@ const routes = [
             },
             {
                 path: 'sites/:type/',
-                name: 'datacenters',
+                name: 'sites',
                 component: Datacenters,
                 props: true,
             },
             {
                 path: 'sites/:type/edit/:id',
-                name: 'datacenter-edit',
+                name: 'sites-edit',
                 component: DatacenterEdit,
                 props: true,
                 meta: { permission: 'asset' }
             },
             {
                 path: 'sites/:type/new',
-                name: 'datacenter-create',
-                component: DatacenterEdit,
-                props: true,
-                meta: { permission: 'asset' }
-            },
-            {
-                path: 'sites/:type/',
-                name: 'offline-storage',
-                component: Datacenters,
-                props: true,
-            },
-            {
-                path: 'sites/:type/edit/:id',
-                name: 'offline-storage-edit',
-                component: DatacenterEdit,
-                props: true,
-                meta: { permission: 'asset' }
-            },
-            {
-                path: 'sites/:type/new',
-                name: 'offline-storage-create',
+                name: 'sites-create',
                 component: DatacenterEdit,
                 props: true,
                 meta: { permission: 'asset' }

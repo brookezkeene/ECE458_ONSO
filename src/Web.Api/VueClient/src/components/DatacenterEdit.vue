@@ -95,7 +95,7 @@
             },
             close() {
                 setTimeout(() => {
-                    this.$router.push({ name: 'datacenters' })
+                    this.$router.push({ name: 'sites', params: { type: this.type } })
                 }, 300)
             },
         }
