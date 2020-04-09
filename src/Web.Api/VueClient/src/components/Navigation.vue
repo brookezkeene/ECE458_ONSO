@@ -73,18 +73,19 @@
                 menuItems: [
                     { title: 'Models', path: '/models', icon: 'mdi-table-large' },
                     { title: 'Assets', path: '/assets', icon: 'mdi-server', sublinks: [
-                        { title: 'Active Assets', name: 'assets'},
-                        { title: 'Decommissioned', name: 'decommissioned-assets' }
+                        { title: 'Active', name: 'assets', type: 'active'},
+                        { title: 'Decommissioned', name: 'decommissioned', type: 'decommissioned'},
+                        { title: 'Offline', name: 'assets', type: 'offline'}
                     ]},
                     { title: 'Change Planner', path: '/change-plan', icon: 'mdi-clipboard-list-outline'},
                     { title: 'Sites', path: '/sites', icon: 'mdi-factory', sublinks: [
-                        { title: 'Datacenters', name: 'datacenters', type: 'datacenters'},
-                        { title: 'Offline Storage', name: 'offline-storage', type: 'offline-storage'}
+                        { title: 'Datacenters', name: 'sites', type: 'datacenters'},
+                        { title: 'Offline Storage', name: 'sites', type: 'offline-storage'}
                     ]},
                     { title: 'Racks', path: '/racks', icon: 'mdi-view-day' },
                     { title: 'Users', path: '/users', icon: 'mdi-account' },
                     { title: 'Reports', path: '/reports', icon: 'mdi-chart-pie' },
-                    { title: 'Import/Export', path: '/importexport', icon: 'mdi-file-upload' },
+                    { title: 'Import/Export', path: '/import-export', icon: 'mdi-file-upload' },
                     { title: 'System Log', path: '/log', icon: 'mdi-post' },
                 ],
             }

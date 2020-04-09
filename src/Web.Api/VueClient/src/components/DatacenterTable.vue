@@ -29,8 +29,8 @@
                                 <v-spacer></v-spacer>
                             </v-toolbar>
 
-                            <v-btn v-if="permission && type==='datacenters'" color="primary" dark class="mb-2" @click="openCreate">Add Datacenter</v-btn>
-                            <v-btn v-if="permission && type==='offline-storage'" color="primary" dark class="mb-2" @click="openCreate">Add Offline Storage Site</v-btn>
+                            <v-btn v-if="permission && type==='datacenters'" color="primary" dark class="mb-2" @click="createItem">Add Datacenter</v-btn>
+                            <v-btn v-if="permission && type==='offline-storage'" color="primary" dark class="mb-2" @click="createItem">Add Offline Storage Site</v-btn>
 
                         </v-toolbar>
 
@@ -105,7 +105,7 @@
             name() {
                 if (this.type === 'offline-storage') {
                     return 'Offline Storage Sites'
-                } else {
+                } else if (this.type === 'datacenters') {
                     return 'Datacenters';
                 }
             }
@@ -118,18 +118,11 @@
                 this.datacenters = await this.datacenterRepository.list();
                 this.loading = false;
             },
-            openCreate() {
-                if (this.type === 'datacenters') {
-                    this.$router.push({ name: 'datacenter-create', params: { type: 'datacenters' } })
-                } else {
-                    this.$router.push({ name: 'offline-storage-create', params: { type: 'offline-storage'} })
-                }            },
+            createItem() {
+                this.$router.push({ name: 'sites-create', params: { type: this.type } })
+            },
             editItem(item) {
-                if (this.type === 'datacenters') {
-                    this.$router.push({ name: 'datacenter-edit', params: { id: item.id, type: 'datacenters' } })
-                } else {
-                    this.$router.push({ name: 'offline-storage-edit', params: { id: item.id, type: 'offline-storage'} })
-                }
+                this.$router.push({ name: 'sites-edit', params: { id: item.id, type: this.type } })
             },
             async deleteItem(item) {
                 var ifRacks = await this.rackRepository.list(item.id)
@@ -140,6 +133,7 @@
                     this.updateSnackbar.message = 'Racks of this datacenter exist, cannot delete';
                     return;
                 }
+                // todo: will have to change delete for offline storage
                 confirm('Are you sure you want to delete this item?') && this.datacenterRepository.delete(item)
                     .then(async () => {
                         await this.initialize();

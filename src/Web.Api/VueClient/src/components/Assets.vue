@@ -1,7 +1,7 @@
 <template>
     <v-card flat>
         <changePlanBar></changePlanBar>
-        <v-card-title>Assets</v-card-title>
+        <v-card-title>{{formTitle}}</v-card-title>
         <v-container>
             <v-card flat>
                 <v-layout>
@@ -283,6 +283,7 @@
             changePlanBar,
         },
         inject: ['assetRepository', 'datacenterRepository'],
+        props: ['type'],
         data() {
             return {
                 changePlanner: false,
@@ -372,6 +373,15 @@
                 }
 
                 return newHeaders;
+            },
+            formTitle() {
+                if (this.type === 'active') {
+                    return 'Assets';
+                } else if (this.type === 'decommissioned') {
+                    return 'Decommissioned Assets';
+                } else if (this.type === 'offline') {
+                    return 'Assets in Offline Storage';
+                }
             },
         },
         watch: {

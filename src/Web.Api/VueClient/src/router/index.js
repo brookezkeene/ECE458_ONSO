@@ -70,14 +70,43 @@ const routes = [
                 component: ModelDetails,
                 props: true,
             },
+            // Will use the same path for decommissioned, offline, and active assets
             {
-                path: '/assets',
+                path: '/assets/:type',
                 name: 'assets',
                 component: assets,
+                props: true
             },
             {
-                path: '/decommissioned-assets',
-                name: 'decommissioned-assets',
+                path: 'assets/:type/:id',
+                name: 'asset-details',
+                component: assetDetails,
+                props: true,
+            },
+            {
+                path: '/assets/:type/edit/:id',
+                name: 'asset-edit',
+                component: assetEdit,
+                props: true,
+                meta: { permission: 'asset' }
+            },
+            {
+                path: '/assets/:type/new',
+                name: 'asset-new',
+                component: assetEdit,
+                props: true,
+                meta: { permission: 'asset' }
+            },
+            {
+                path: 'assets/:type/labels',
+                name: 'asset-labels',
+                component: AssetLabels,
+                props: true
+            },
+            // will be deprecated once the schema is fixed
+            {
+                path: 'assets/:type',
+                name: 'decommissioned',
                 component: DecommissionedAssets,
             },
             {
@@ -117,78 +146,32 @@ const routes = [
                 props: true,
             },
             {
-                path: '/assets/:id',
-                name: 'asset-details',
-                component: assetDetails,
-                props: true,
-            },
-            {
-                path: '/assets/edit/:id',
-                name: 'asset-edit',
-                component: assetEdit,
-                props: true,
-                meta: { permission: 'asset' }
-            },
-            {
-                path: '/assets/new',
-                name: 'asset-new',
-                component: assetEdit,
-                props: true,
-                meta: { permission: 'asset' }
-            },
-            {
-                path: 'assets/labels',
-                name: 'asset-labels',
-                component: AssetLabels,
-                props: true
-            },
-            {
                 path: '/racks',
                 name: 'racks',
                 component: Racks,
             },
             {
-                path: '/:type',
-                name: 'datacenters',
+                path: 'sites/:type/',
+                name: 'sites',
                 component: Datacenters,
                 props: true,
             },
             {
-                path: '/datacenters/edit/:id',
-                name: 'datacenter-edit',
+                path: 'sites/:type/edit/:id',
+                name: 'sites-edit',
                 component: DatacenterEdit,
                 props: true,
                 meta: { permission: 'asset' }
             },
             {
-                path: '/datacenters/new',
-                name: 'datacenter-create',
+                path: 'sites/:type/new',
+                name: 'sites-create',
                 component: DatacenterEdit,
                 props: true,
                 meta: { permission: 'asset' }
             },
             {
-                path: '/:type',
-                name: 'offline-storage',
-                component: Datacenters,
-                props: true,
-            },
-            {
-                path: '/:type/edit/:id',
-                name: 'offline-storage-edit',
-                component: DatacenterEdit,
-                props: true,
-                meta: { permission: 'asset' }
-            },
-            {
-                path: '/:type/new',
-                name: 'offline-storage-create',
-                component: DatacenterEdit,
-                props: true,
-                meta: { permission: 'asset' }
-            },
-            {
-                path: '/importexport',
+                path: '/import-export',
                 name: 'import-export',
                 component: ImportExport,
             },
