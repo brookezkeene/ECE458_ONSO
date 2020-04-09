@@ -347,9 +347,13 @@
             const getUsers = this.userRepository.list()
                 .then(users => this.users = users);
 
-            const getDatacenters = /*this.$store.getters.isChangePlan
+            const getDatacenters = this.$store.getters.isChangePlan
                 ? Promise.resolve(this.datacenters.push(this.$store.getters.changePlan.datacenterName))
-                :*/ this.datacenterRepository.list().then(datacenters => this.datacenters = datacenters);
+                : this.datacenterRepository.list().then(datacenters => this.datacenters = datacenters);
+            //if in a change plan, make an explicit call to fill the racks - otherwise racks don't fill?
+            if (this.$store.getters.isChangePlan) {
+                 this.racks = await this.rackRepository.list(this.datacenterID);
+            }
 
             const getAsset = typeof this.id === 'undefined' || this.id === 'new'
                 ? Promise.resolve()
@@ -404,19 +408,15 @@
         },
         methods: {
             save() {
-               
-
                 // Check if in a change plan context
                 if (this.$store.getters.isChangePlan) {
                     this.editedItem.changePlanId = this.$store.getters.changePlan.id;
-                    if (this.editedItem.id == "00000000-0000-0000-0000-000000000000" && this.id !== 'undefined') {
+                    //this if statement is met IF an asset is created in the change planner and now it is being updated 
+                    if (this.id !== 'undefined') {
                         this.editedItem.id = this.id;
-
                     }
                 }
 
-
-            
                 var promise = typeof this.id !== 'undefined'
                     ? this.assetRepository.update(this.editedItem)
                     : this.assetRepository.create(this.editedItem);

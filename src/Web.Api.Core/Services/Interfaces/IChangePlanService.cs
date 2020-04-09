@@ -18,7 +18,7 @@ namespace Web.Api.Core.Services.Interfaces
         Task<List<ChangePlanItemDto>> GetAsssetChangePlanItemsAsync(Guid changePlanId);
         Task<Guid> CreateChangePlanAsync(ChangePlanDto changePlan);
         Task<Guid> CreateChangePlanItemAsync(ChangePlanItemDto changePlanItem);
-        Task<Guid> CreateChangePlanItemAsync(Guid changePlanId, Guid assetId, DecommissionedAssetDto decommissionedAsset, string createDecommissionedAsset);
+        Task<Guid> CreateChangePlanItemAsync(Guid changePlanId, Guid assetId, DecommissionedAssetDto decommissionedAsset);
         Task<int> UpdateChangePlanAsync(ChangePlanDto changePlan);
         Task<int> UpdateChangePlanItemAsync(ChangePlanItemDto changePlanItem);
         Task DeleteChangePlanAsync(Guid changePlanId);

@@ -5,11 +5,7 @@ const resource = '/assets';
 
 export default {
     find(id, changePlanId) {
-        const endpoint = typeof changePlanId === 'undefined' || !changePlanId
-            ? `${resource}/${id}`
-            : `${resource}/${id}/changePlan`;
-
-        return axios.get(endpoint)
+        return axios.get(`${resource}/${id}`)
             .then(response => response.data);
     },
     getPowerPortState(powerportid) {
