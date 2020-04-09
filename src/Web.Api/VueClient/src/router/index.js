@@ -70,20 +70,44 @@ const routes = [
                 component: ModelDetails,
                 props: true,
             },
+            // Will use the same path for decommissioned, offline, and active assets
             {
-                path: '/assets',
+                path: '/assets/:type',
                 name: 'assets',
                 component: assets,
+                props: true
             },
             {
-                path: '/decommissioned-assets',
-                name: 'decommissioned-assets',
+                path: 'assets/:type/:id',
+                name: 'asset-details',
+                component: assetDetails,
+                props: true,
+            },
+            {
+                path: '/assets/:type/edit/:id',
+                name: 'asset-edit',
+                component: assetEdit,
+                props: true,
+                meta: { permission: 'asset' }
+            },
+            {
+                path: '/assets/:type/new',
+                name: 'asset-new',
+                component: assetEdit,
+                props: true,
+                meta: { permission: 'asset' }
+            },
+            {
+                path: 'assets/:type/labels',
+                name: 'asset-labels',
+                component: AssetLabels,
+                props: true
+            },
+            // will be deprecated once the schema is fixed
+            {
+                path: 'assets/:type',
+                name: 'decommissioned',
                 component: DecommissionedAssets,
-            },
-            {
-                path: '/offline-assets',
-                name: 'offline-assets', //Change when we have offline assets page
-                component: assets, //Change when we have offline assets page
             },
             {
                 path: '/decommissioned-assets/:id',
@@ -120,32 +144,6 @@ const routes = [
                 name: 'work-order',
                 component: WorkOrder,
                 props: true,
-            },
-            {
-                path: '/assets/:id',
-                name: 'asset-details',
-                component: assetDetails,
-                props: true,
-            },
-            {
-                path: '/assets/edit/:id',
-                name: 'asset-edit',
-                component: assetEdit,
-                props: true,
-                meta: { permission: 'asset' }
-            },
-            {
-                path: '/assets/new',
-                name: 'asset-new',
-                component: assetEdit,
-                props: true,
-                meta: { permission: 'asset' }
-            },
-            {
-                path: 'assets/labels',
-                name: 'asset-labels',
-                component: AssetLabels,
-                props: true
             },
             {
                 path: '/racks',
