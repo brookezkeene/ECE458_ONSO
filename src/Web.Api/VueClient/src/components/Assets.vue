@@ -184,6 +184,18 @@
                         </v-row>
                     </template>
 
+                    <!-- TODO: Integrate Custom Location Column -->
+                    <template v-slot:item.location="{ item }">
+                        <!-- v-if="item.mountType === blade" -->
+                        <div v-if="true"> 
+                            Rack {{ item.rack }}, {{ item.rackPosition }} U
+                        </div>
+                        <!-- location for blades -->
+                        <div v-else>
+                            Chassis {{ item.rack }}, Slot {{ item.rackPosition }}
+                        </div>
+                    </template>
+
                     <template v-if="permission" v-slot:item.action="{ item }">
                         <v-row>
                             <v-tooltip top>
@@ -311,8 +323,7 @@
                     { text: 'Asset No.', value: 'assetNumber'},
                     { text: 'Hostname', value: 'hostname' },
                     { text: 'Datacenter', value: 'datacenter' },
-                    { text: 'Rack', value: 'rack' },
-                    { text: 'Rack U', value: 'rackPosition', },
+                    { text: 'Location', value: 'location' },
                     { text: 'Owner', value: 'owner' },
                     { text: 'Power', value: 'power', sortable: false },
                     { text: 'Actions', value: 'action', sortable: false },
