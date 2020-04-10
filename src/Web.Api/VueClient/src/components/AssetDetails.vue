@@ -111,6 +111,11 @@
         created() {
             this.initialize();
         },
+        beforeRouteUpdate(to, from, next) {
+            this.id = to.params.id;
+            this.$route.params.id = to.params.id;
+            this.initialize();
+        },
         methods: {
             changePlanId() {
                 if (this.$store.getters.isChangePlan)
