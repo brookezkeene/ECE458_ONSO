@@ -86,7 +86,7 @@ namespace Web.Api.Core.Services
             await _repository.AddChangePlanItemAsync(entity);
             return entity.Id;
         }
-        public async Task<Guid> CreateChangePlanItemAsync(Guid changePlanId, Guid assetId, DecommissionedAssetDto decommissionedAsset, string createDecommissionedAsset)
+        public async Task<Guid> CreateChangePlanItemAsync(Guid changePlanId, Guid assetId, DecommissionedAssetDto decommissionedAsset)
         {
             var changePlanItemDto = new ChangePlanItemDto
             {
@@ -94,7 +94,7 @@ namespace Web.Api.Core.Services
                 ExecutionType = "decommission",
                 AssetId = assetId,
                 NewData = JsonConvert.SerializeObject(decommissionedAsset),
-                PreviousData = createDecommissionedAsset,
+                PreviousData = decommissionedAsset.Data,
                 CreatedDate = DateTime.Now
             };
             var entity = _mapper.Map<ChangePlanItem>(changePlanItemDto);
