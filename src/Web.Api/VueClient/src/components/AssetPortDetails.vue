@@ -99,7 +99,7 @@
     export default {
         name: 'asset-port-details',
         inject: ['assetRepository'],
-        props: ['asset', 'id', 'showConnections'],
+        props: ['asset', 'id', 'type'],
         components: {
             NetworkNeighborhood
         },
@@ -110,6 +110,15 @@
                 powerPorts: {},
                 showNeighborhood: false
             };
+        },
+        computed: {
+            showConnections() {
+                if (this.type === 'offline') {
+                    return false
+                } else {
+                    return true
+                }
+            }
         },
         methods: {
             changePlanId() {
