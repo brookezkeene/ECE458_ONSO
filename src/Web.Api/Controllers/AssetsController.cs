@@ -137,40 +137,6 @@ namespace Web.Api.Controllers
             return Ok(); 
         }
 
-        [HttpGet("{id}/changePlan")]
-        public async Task<ActionResult<GetAssetApiDto>> GetByIdFromChangePlan(Guid id)
-        {
-            var item = await _changePlanService.GetChangePlanItemAsync(id);
-            if (item == null)
-            {
-                return await GetById(id);
-            }
-
-            //if the change plan item is a decommissioned asset
-            if (item.ExecutionType.Equals("decommission"))
-            {
-                var decommissionedAssetDto = (JsonConvert.DeserializeObject<DecommissionedAssetDto>(item.NewData));
-                var decommission = JsonConvert.DeserializeObject<CreateDecommissionedAsset>(decommissionedAssetDto.Data);
-                return Ok(decommission);
-            }
-
-            //if the change plan item is a created or updated item
-            var assetDto = new AssetDto();
-            if (item.ExecutionType.Equals("create"))
-            {
-                assetDto = _mapper.Map<AssetDto>(JsonConvert.DeserializeObject<CreateAssetApiDto>(item.NewData));                
-            }
-            else if (item.ExecutionType.Equals("update"))
-            {
-                assetDto = _mapper.Map<AssetDto>(JsonConvert.DeserializeObject<UpdateAssetApiDto>(item.NewData));
-            }
-            await _changePlanService.FillFieldsInAssetApiForChangePlans(assetDto);
-            var response = _mapper.Map<GetAssetApiDto>(assetDto);
-            return Ok(response);
-
-        }
-
-
         /*
          * WHAT'S STORED IN THE CHANGEPLANITEM DATA: ApiDto or DecommissionedAssets
          */
@@ -321,15 +287,7 @@ namespace Web.Api.Controllers
 
             return Ok();
         }
-        
-
-        [HttpGet("{id}/decommission")]
-        public async Task<ActionResult<DecommissionedAssetDto>> GetDecommissioned(Guid id)
-        {
-            var assetDto = await _assetService.GetDecommissionedAssetAsync(id);
-            var assetApi = JsonConvert.DeserializeObject<CreateDecommissionedAsset>(assetDto.Data);
-            return Ok(assetApi);
-        }
+       
 
         [HttpGet("decommission")]
         public async Task<ActionResult<PagedList<DecommissionedAssetDto>>> GetManyDecommissioned([FromQuery] SearchAssetQuery query)
