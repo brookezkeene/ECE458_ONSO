@@ -120,6 +120,11 @@
                 }
             }
         },
+        beforeRouteUpdate(to, from, next) {
+            this.id = to.params.id;
+            this.$route.params.id = to.params.id;
+            this.initialize();
+        },
         methods: {
             changePlanId() {
                 if (this.$store.getters.isChangePlan)
@@ -155,7 +160,7 @@
                 /* eslint-disable no-unused-vars, no-console */
                 console.log('clicked');
                 this.$router.push({ name: 'asset-details', params: { id: e } });
-            }
+            },
         }
     }
 </script>
