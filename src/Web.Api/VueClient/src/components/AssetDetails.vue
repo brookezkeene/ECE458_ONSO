@@ -111,7 +111,7 @@
         created() {
             this.initialize();
         },
-        beforeRouteUpdate(to, from, next) {
+        beforeRouteUpdate(to) {
             this.id = to.params.id;
             this.$route.params.id = to.params.id;
             this.initialize();
