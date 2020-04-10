@@ -379,7 +379,7 @@
                     return 'Assets';
                 } else if (this.type === 'decommissioned') {
                     return 'Decommissioned Assets';
-                } else if (this.type === 'offline') {
+                } else {
                     return 'Assets in Offline Storage';
                 }
             },
