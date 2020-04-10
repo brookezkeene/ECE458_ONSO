@@ -184,19 +184,10 @@
                         </v-row>
                     </template>
 
-                    <template v-slot:header="{ props: { headers } }">
-                        <thead>
-                            <tr>
-                                <th :colspan="headers.length">
-                                    This is a header
-                                </th>
-                            </tr>
-                        </thead>
-                    </template>
                     <!-- TODO: Integrate Custom Location Column -->
                     <template v-slot:item.location="{ item }">
                         <!-- v-if="item.mountType === blade" -->
-                        <div v-if="false"> 
+                        <div v-if="true"> 
                             Rack {{ item.rack }}, {{ item.rackPosition }} U
                         </div>
                         <!-- location for blades -->
