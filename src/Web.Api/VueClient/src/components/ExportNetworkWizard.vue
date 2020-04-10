@@ -53,7 +53,7 @@
                             </a>.
                             <div class="pt-10">
                                 <downloadCsv :data="exportRaw"
-                                             name="models.csv"
+                                             name="networkconnections.csv"
                                              type="csv">
                                     <v-spacer></v-spacer>
                                     <v-btn>

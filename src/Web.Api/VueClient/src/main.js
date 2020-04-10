@@ -6,7 +6,7 @@ import VuetifyDialog from "vuetify-dialog";
 import axios from 'axios';
 import router from './router';
 import serviceContainer from './service-container';
-import JsonCSV from 'vue-json-excel'
+import JsonCSV from 'vue-json-csv'
 import store from './store/store'
 
 Vue.component('downloadCsv', JsonCSV)
