@@ -4,7 +4,7 @@
             <v-stepper-header>
                 <v-stepper-step step="1" :complete="step > 1">Select Filters</v-stepper-step>
                 <v-divider></v-divider>
-                <v-stepper-step step="2" :complete="step > 2">Confirm</v-stepper-step>
+                <v-stepper-step step="2" :complete="close">Confirm</v-stepper-step>
             </v-stepper-header>
 
             <v-stepper-items>
@@ -141,7 +141,7 @@
             },
             close() {
                 this.step = 1;
-                this.$emit('close-model-export');
+                this.$emit('close-network-export');
             },
             handleError() {
                 this.networkErrorDialog = true;
