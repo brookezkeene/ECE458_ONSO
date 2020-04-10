@@ -105,7 +105,7 @@
             name() {
                 if (this.type === 'offline-storage') {
                     return 'Offline Storage Sites'
-                } else if (this.type === 'datacenters') {
+                } else {
                     return 'Datacenters';
                 }
             }
