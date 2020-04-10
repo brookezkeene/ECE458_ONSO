@@ -158,7 +158,7 @@
                 newItem: {
                     vendor: '',
                     modelNumber: '',
-                    height: 0,
+                    height: 1,
                     displayColor: '',
                     ethernetPorts: 0,
                     powerPorts: 0,
@@ -214,6 +214,7 @@
                 if (this.validationInputs(this.newItem) > 0) {
                     return;
                 }
+                // TODO: possible alter blade data depending on backend integration
                 if (typeof this.id !== 'undefined') {
                     this.newItem.displayColor = this.newItem.displayColor.substring(0, 7);
 
@@ -230,6 +231,7 @@
                         return;
                     }
                 }
+               
                 this.close()
             },
             close() {
@@ -309,7 +311,7 @@
                     this.updateSnackbar.message = this.updateSnackbar.message + 'Model Number field is required. ';
                     count++;
                 }
-                if (item.height <= 0 || item.height > 42 || !(/^[0-9]*$/.test(item.height))) {
+                if ((item.height <= 0 || item.height > 42 || !(/^[0-9]*$/.test(item.height))) && !this.isBlade) {
                     this.updateSnackbar.show = true;
                     this.updateSnackbar.color = 'red lighten-4';
                     this.updateSnackbar.message = this.updateSnackbar.message + 'The height of the model must be a valid number greater than 0 and less than 42. ';
