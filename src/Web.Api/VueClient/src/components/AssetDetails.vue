@@ -52,7 +52,7 @@
                 </v-row>
                 <!--NEW port detail page so we can exclude altogether for different kinds of assets-->
                 <!--TODO: make show connections false for offline assets-->
-                <PortDetails :asset="asset" :id="id" :showConnections="true"></PortDetails> 
+                <PortDetails :asset="asset" :id="id" :type="type"></PortDetails> 
             </v-card-text>
 
             <v-spacer />
@@ -89,7 +89,8 @@
         },
         props: {
             id: String,
-            cpId: String
+            cpId: String,
+            type: String,
         },
         data() {
             return {
