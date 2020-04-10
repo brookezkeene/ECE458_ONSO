@@ -25,7 +25,7 @@
                     </v-card>
                 </v-card>
             </v-col>
-            <v-col cols="12" sm="6" md="4">
+            <v-col v-if="showConnections" cols="12" sm="6" md="4">
                 <!--network port connections-->
                 <v-label>Network Port Connections</v-label>
                 <v-card flat class="overflow-y-auto">
@@ -54,7 +54,7 @@
                 <v-btn small class="mt-4" color="primary" outlined v-if="!showNeighborhood" @click="showNeighborhood = true">View Network Neighborhood</v-btn>
                 <v-btn small class="mt-4" color="primary" outlined v-if="showNeighborhood" @click="showNeighborhood = false">Hide Network Neighborhood</v-btn>
             </v-col>
-            <v-col cols="12" sm="6" md="4">
+            <v-col v-if="showConnections" cols="12" sm="6" md="4">
                 <!--power port connections-->
                 <v-label>Power Port Connections</v-label>
                 <v-card flat class="overflow-y-auto">
@@ -99,7 +99,7 @@
     export default {
         name: 'asset-port-details',
         inject: ['assetRepository'],
-        props: ['asset', 'id'],
+        props: ['asset', 'id', 'showConnections'],
         components: {
             NetworkNeighborhood
         },

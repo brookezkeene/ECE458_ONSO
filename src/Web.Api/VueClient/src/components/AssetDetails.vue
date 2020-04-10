@@ -51,7 +51,8 @@
                     </v-col>
                 </v-row>
                 <!--NEW port detail page so we can exclude altogether for different kinds of assets-->
-                <PortDetails :asset="asset" :id="id"></PortDetails>
+                <!--TODO: make show connections false for offline assets-->
+                <PortDetails :asset="asset" :id="id" :showConnections="true"></PortDetails> 
             </v-card-text>
 
             <v-spacer />
