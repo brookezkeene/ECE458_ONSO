@@ -53,7 +53,7 @@
                             </a>.
                             <div class="pt-10">
                                 <downloadCsv :data="exportRaw"
-                                             name="models.csv"
+                                             name="assets.csv"
                                              type="csv">
                                     <v-spacer></v-spacer>
                                     <v-btn>
@@ -160,7 +160,7 @@
             },
             close() {
                 this.step = 1;
-                this.$emit('close-model-export');
+                this.$emit('close-asset-export');
             },
             handleError() {
                 this.assetErrorDialog = true;

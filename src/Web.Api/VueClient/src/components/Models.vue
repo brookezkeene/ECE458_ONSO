@@ -222,7 +222,8 @@
                         align: 'left',
                         value: 'vendor'
                     },
-                    { text: 'Model Number', value: 'modelNumber', },
+                    { text: 'Model Number', value: 'modelNumber' },
+                    { text: 'Mount Type', value: 'modelNumber' }, // TODO: change value to mountType
                     { text: 'Height', value: 'height' },
                     { text: 'Display Color', value: 'coloricon', sortable: false },
                     { text: 'Network Ports', value: 'ethernetPorts' }, // TODO: change value to networkPorts!

@@ -16,6 +16,11 @@
                         <v-card-text> {{model.modelNumber}} </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
+                        <v-label>Mount Type </v-label>
+                        <v-card-text> {{model.mountType}} </v-card-text>
+                    </v-col>
+                    <v-col v-if="!isBlade"
+                           cols="12" sm="6" md="4">
                         <v-label>Height </v-label>
                         <v-card-text> {{model.height}} </v-card-text>
                     </v-col>
@@ -31,11 +36,13 @@
                         <v-label>Storage </v-label>
                         <v-card-text> {{model.storage}} </v-card-text>
                     </v-col>
-                    <v-col cols="12" sm="6" md="4">
+                    <v-col v-if="!isBlade"
+                           cols="12" sm="6" md="4">
                         <v-label>Power Ports </v-label>
                         <v-card-text> {{model.powerPorts}} </v-card-text>
                     </v-col>
-                    <v-col cols="12" sm="6" md="4">
+                    <v-col v-if="!isBlade"
+                           cols="12" sm="6" md="4">
                         <v-label>Network Ports </v-label>
                         <v-card-text> {{model.ethernetPorts}} </v-card-text> <!--networkPorts-->
 
@@ -50,13 +57,13 @@
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Display Color </v-label>
-                            <v-card-text>
-                                {{model.displayColor}}
-                                <v-icon class="mr-2"
-                                        :color=model.displayColor>
-                                    mdi-circle
-                                </v-icon>
-                            </v-card-text>
+                        <v-card-text>
+                            {{model.displayColor}}
+                            <v-icon class="mr-2"
+                                    :color=model.displayColor>
+                                mdi-circle
+                            </v-icon>
+                        </v-card-text>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Comment </v-label>
@@ -127,6 +134,12 @@
         watch: {
             id: function () {
                 this.fetchModel();
+            }
+        },
+        computed: {
+            isBlade() {
+                //return this.model.mountType === 'blade'
+                return false // TODO: remove this and replace with line above when backend is integrated
             }
         },
         methods: {

@@ -81,19 +81,13 @@ namespace Web.Api.Mappers
             CreateMap<AssetPowerPortStateDto, GetAssetPowerPortStateApiDto>();
 
             CreateMap<AssetDto, CreateDecommissionedAsset>()
-                .ForMember(o => o.OwnerName, opts => opts.MapFrom(src => src.Owner.Username))
                 .ForMember(o => o.NetworkPortGraph, opts => opts.Ignore())
-                .ForMember(o => o.FullNetworkPorts, opts => opts.Ignore());
-            CreateMap<RackDto, CreateDecommissionedRack>()
-                .ForMember(o => o.RackLetter, opts => opts.MapFrom(src => src.RowLetter));
-            CreateMap<ModelDto, CreateDecommissionedModel>()
-                .ForMember(o => o.Number, opts => opts.MapFrom(src => src.ModelNumber));
-            CreateMap<AssetNetworkPortDto, CreateDecommissionedNetworkPort>()
-                .ForMember(o => o.HostName, opts => opts.MapFrom(src => src.Asset.Hostname))
-                .ForMember(o => o.Number, opts => opts.MapFrom(src => src.ModelNetworkPort.Number))
-                .ForMember(o => o.Name, opts => opts.MapFrom(src => src.ModelNetworkPort.Name))
-                .ReverseMap();
-            CreateMap<AssetPowerPortDto, CreateDecommissionedPowerPort>();
+                .ForMember(o => o.Decommissioner, opts => opts.Ignore())
+                .ForMember(o => o.DateDecommissioned, opts => opts.Ignore());
+
+            CreateMap<UpdateAssetApiDto, CreateAssetApiDto>();
+            CreateMap<UpdateAssetNetworkPortApiDto, CreateAssetNetworkPortApiDto>();
+            CreateMap<UpdateAssetPowerPortApiDto, CreateAssetPowerPortApiDto>();
             CreateMap<AssetDto, DecommissionedAssetDto>()
                 .ForMember(o => o.Datacenter, opts => opts.MapFrom(src => src.Rack.Datacenter.Name))
                 .ForMember(o => o.RackAddress, opts => opts.MapFrom(src => src.Rack.RackAddress))
@@ -104,6 +98,13 @@ namespace Web.Api.Mappers
                 .ForMember(o => o.Decommissioner, opts => opts.Ignore())
                 .ForMember(o => o.Data, opts => opts.Ignore())
                 .ForMember(o => o.DateDecommissioned, opts => opts.Ignore())
+                .ReverseMap();
+            CreateMap<CreateDecommissionedAsset, DecommissionedAssetDto>()
+                .ForMember(o => o.Datacenter, opts => opts.MapFrom(src => src.Datacenter))
+                .ForMember(o => o.RackAddress, opts => opts.MapFrom(src => src.Rack))
+                .ForMember(o => o.ModelName, opts => opts.MapFrom(src => src.Vendor))
+                .ForMember(o => o.OwnerName, opts => opts.MapFrom(src => src.Owner))
+                .ForMember(o => o.Data, opts => opts.Ignore())
                 .ReverseMap();
         }
     }

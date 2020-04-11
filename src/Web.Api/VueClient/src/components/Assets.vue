@@ -1,7 +1,7 @@
 <template>
     <v-card flat>
         <changePlanBar></changePlanBar>
-        <v-card-title>Assets</v-card-title>
+        <v-card-title>{{formTitle}}</v-card-title>
         <v-container>
             <v-card flat>
                 <v-layout>
@@ -184,6 +184,18 @@
                         </v-row>
                     </template>
 
+                    <!-- TODO: Integrate Custom Location Column -->
+                    <template v-slot:item.location="{ item }">
+                        <!-- v-if="item.mountType === blade" -->
+                        <div v-if="true"> 
+                            Rack {{ item.rack }}, {{ item.rackPosition }} U
+                        </div>
+                        <!-- location for blades -->
+                        <div v-else>
+                            Chassis {{ item.rack }}, Slot {{ item.rackPosition }}
+                        </div>
+                    </template>
+
                     <template v-if="permission" v-slot:item.action="{ item }">
                         <v-row>
                             <v-tooltip top>
@@ -283,6 +295,7 @@
             changePlanBar,
         },
         inject: ['assetRepository', 'datacenterRepository'],
+        props: ['type'],
         data() {
             return {
                 changePlanner: false,
@@ -310,8 +323,7 @@
                     { text: 'Asset No.', value: 'assetNumber'},
                     { text: 'Hostname', value: 'hostname' },
                     { text: 'Datacenter', value: 'datacenter' },
-                    { text: 'Rack', value: 'rack' },
-                    { text: 'Rack U', value: 'rackPosition', },
+                    { text: 'Location', value: 'location' },
                     { text: 'Owner', value: 'owner' },
                     { text: 'Power', value: 'power', sortable: false },
                     { text: 'Actions', value: 'action', sortable: false },
@@ -372,6 +384,15 @@
                 }
 
                 return newHeaders;
+            },
+            formTitle() {
+                if (this.type === 'active') {
+                    return 'Assets';
+                } else if (this.type === 'decommissioned') {
+                    return 'Decommissioned Assets';
+                } else {
+                    return 'Assets in Offline Storage';
+                }
             },
         },
         watch: {

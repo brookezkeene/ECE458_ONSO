@@ -5,11 +5,7 @@ const resource = '/assets';
 
 export default {
     find(id, changePlanId) {
-        const endpoint = typeof changePlanId === 'undefined' || !changePlanId
-            ? `${resource}/${id}`
-            : `${resource}/${id}/changePlan`;
-
-        return axios.get(endpoint)
+        return axios.get(`${resource}/${id}`)
             .then(response => response.data);
     },
     getPowerPortState(powerportid) {
@@ -65,16 +61,7 @@ export default {
                 return response.data;
             }).catch(error => error);
     },
-    getDecommissionedAsset(id, isChangePlan) {
-        const endpoint = !isChangePlan
-            ? `${resource}/${id}/decommission`
-            : `${resource}/${id}/decommission/changePlan`;
 
-        return axios.get(endpoint)
-            .then(response => {
-                return response.data;
-            });
-    },
     getDecommissionedAssets() {
         var query = {
             pageSize: 2000000000,
