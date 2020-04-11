@@ -19,6 +19,8 @@ namespace Web.Api.Infrastructure.Entities
         public string ModelNumber { get; set; }
 
         [Required]
+        public string MountType { get; set; }
+
         [Range(1, int.MaxValue)] // positive number
         public int Height { get; set; }
 
