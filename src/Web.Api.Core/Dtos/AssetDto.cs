@@ -18,9 +18,13 @@ namespace Web.Api.Core.Dtos
         public string Hostname { get; set; }
         public int RackPosition { get; set; }
         public string Comment { get; set; }
-        public IEnumerable<int> SlotsOccupied => Model == null ? null : Enumerable.Range(RackPosition, Model.Height);
+        public IEnumerable<int> SlotsOccupied => Model == null ? null : Enumerable.Range(RackPosition, Model.Height ?? 0);
         public int? AssetNumber { get; set; }
         public List<AssetPowerPortDto> PowerPorts { get; set; }
         public List<AssetNetworkPortDto> NetworkPorts { get; set; }
+        public virtual List<AssetDto> Blades { get; set; }
+        public Guid? ChassisId { get; set; }
+        public int? ChassisSlot { get; set; }
+        public bool? BladePowerState { get; set; }
     }
 }
