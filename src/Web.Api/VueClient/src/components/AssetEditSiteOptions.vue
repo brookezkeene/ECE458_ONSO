@@ -87,7 +87,8 @@
             }
         },
         async created() {
-            const getDatacenters = this.$store.getters.isChangePlan
+            // Getting datacenters
+            this.$store.getters.isChangePlan
                 ? Promise.resolve(this.datacenters.push(this.$store.getters.changePlan.datacenterName))
                 : this.datacenterRepository.list().then( datacenters => {
                     this.datacenters = datacenters;
@@ -121,8 +122,8 @@
 
                     if (!this.isBlade) {
                         this.racks = await this.rackRepository.list(this.datacenterID);
-                        this.sendNetworkPortRequest();
-                        return true;
+/*                        this.sendNetworkPortRequest(); //this request will always be sent if racks are updated, need different behavior for blades
+*/                        return true;
                     }
                     else {
                         // TODO: for blades, get all blade chassis in the datacenter and set this equal to racks
@@ -141,7 +142,7 @@
                 }*/
 /*                availablePorts.sort(a, b => a - b); //sorting port numbers so that they are easier to see in frontend
 */              this.availablePortsInRack = availablePorts;
-                console.log(this.availablePortsInRack);
+                this.$emit('selectedRack', this.selectedRack);
             },
         }
 

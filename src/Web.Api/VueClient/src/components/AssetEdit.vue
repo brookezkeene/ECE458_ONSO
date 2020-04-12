@@ -57,7 +57,7 @@
 
                                             <div>
                                                 <!--Datacenter/Offline storage options-->
-                                                <SiteOptions v-on:getDatacenters="getDatacenters=true" :editedItem="editedItem" :isBlade="isBlade"></SiteOptions>
+                                                <SiteOptions v-on:selectedRack="rackSelected" v-on:getDatacenters="getDatacenters=true" :editedItem="editedItem" :isBlade="isBlade"></SiteOptions>
                                             </div>
 
                                             <div>
@@ -95,8 +95,9 @@
                                             v-if="index===2">
                                         <div v-if="!isBlade">
                                             <div>
-                                                <p v-if="editedItem.networkPorts.length > 0">Enter a MAC Address and a connection for each Network Port below.</p>
+                                                <p v-if="editedItem.networkPorts.length === 0">This model has no network ports.</p>
                                                 <p v-else>No model selected. Please select a model first.</p>
+                                                <p v-if="editedItem.networkPorts.length > 0 && selectedModelBool">Enter a MAC Address and a connection for each Network Port below.</p>
                                             </div>
                                             <v-container fluid
                                                          fill
@@ -138,8 +139,9 @@
                                             v-if="index===3">
                                         <div v-if="!isBlade">
                                             <div>
-                                                <p v-if="(selectedRack && selectedModelBool) || (id!=undefined)">Enter the PDU and PDU Number for each Power Port below.</p>
-                                                <p v-else>No model or rack selected. Please select a model and a rack first.</p>
+                                                <p v-if="(editedItem.powerPorts.length===0) || (id!=undefined)">This model has no power ports.</p>
+                                                <p v-else-if="(selectedRack && selectedModelBool) || (id!=undefined)">Enter the PDU and PDU Number for each Power Port below.</p>
+                                                <p v-else>No model/rack selected. Please select a model and a rack first.</p>
                                             </div>
                                             <div v-if="(selectedRack && selectedModelBool) || (id!=undefined)">
 
@@ -348,6 +350,7 @@
                         ",  " + "Hostname: " + network.assetHostname;
 
                 }
+
             },
             async modelSelected() {
                 this.selectedModelBool = true;
@@ -355,6 +358,10 @@
                 console.log(this.selectedModel);
                 this.makeNetworkPorts(this.selectedModel);
                 this.makePowerPorts(this.selectedModel);
+            },
+            async rackSelected() {
+                this.rackSelected = true;
+                this.sendNetworkPortRequest();
             },
             makeNetworkPorts(model) {
                 console.log(model);
