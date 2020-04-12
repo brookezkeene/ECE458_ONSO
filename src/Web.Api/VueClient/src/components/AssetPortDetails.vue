@@ -1,5 +1,5 @@
 ﻿<template>
-    <v-container>
+    <v-card flat>
         <v-row>
             <v-col cols="12" sm="6" md="4">
                 <!--MAC Addresses-->
@@ -88,7 +88,7 @@
         <v-row v-if="showNeighborhood">
             <network-neighborhood v-bind:id="id" @click="nodeClicked"></network-neighborhood>
         </v-row>
-    </v-container>
+    </v-card>
 
 </template>
 
