@@ -20,6 +20,10 @@ namespace Web.Api.Core.Mappers.Import.Assets
                 .ForMember(o => o.NetworkPorts, opts => opts.Ignore())
                 .ForMember(o => o.PowerPorts, opts => opts.Ignore())
                 .ForMember(o => o.LastUpdatedDate, opts => opts.MapFrom(src => DateTime.Now))
+                .ForMember(x => x.ChassisId, opt => opt.Ignore())
+                .ForMember(x => x.Blades, opt => opt.Ignore())
+                .ForMember(x => x.BladePowerState, opt => opt.Ignore())
+                .ForMember(x => x.ChassisSlot, opt => opt.Ignore())
                 .AfterMap<HydrateAssetPowerPorts>();
         }
     }
