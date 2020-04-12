@@ -82,9 +82,9 @@
             ],
             "rack": "string",
             "height": 0,
-            "vendor": "string",
-            "modelNumber": "string",
-            "displayColor": "string",
+            "vendor": "Dell",
+            "modelNumber": "R100",
+            "displayColor": "#FF0000",
             "owner": "string",
             "datacenterId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
             "datacenter": "string",
@@ -133,9 +133,9 @@
             ],
             "rack": "string",
             "height": 0,
-            "vendor": "string",
-            "modelNumber": "string",
-            "displayColor": "string",
+            "vendor": "Cisco",
+            "modelNumber": "O200",
+            "displayColor": "#FFA600",
             "owner": "string",
             "datacenterId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
             "datacenter": "string",
@@ -184,9 +184,9 @@
             ],
             "rack": "string",
             "height": 0,
-            "vendor": "string",
-            "modelNumber": "string",
-            "displayColor": "string",
+            "vendor": "Intel",
+            "modelNumber": "Y300",
+            "displayColor": "#FBFF00",
             "owner": "string",
             "datacenterId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
             "datacenter": "string",
@@ -235,9 +235,9 @@
             ],
             "rack": "string",
             "height": 0,
-            "vendor": "string",
-            "modelNumber": "string",
-            "displayColor": "string",
+            "vendor": "Dell",
+            "modelNumber": "G400",
+            "displayColor": "#00FF00",
             "owner": "string",
             "datacenterId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
             "datacenter": "string",
@@ -286,9 +286,9 @@
             ],
             "rack": "string",
             "height": 0,
-            "vendor": "string",
-            "modelNumber": "string",
-            "displayColor": "string",
+            "vendor": "Intel",
+            "modelNumber": "B500",
+            "displayColor": "#00FFFB",
             "owner": "string",
             "datacenterId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
             "datacenter": "string",
@@ -337,9 +337,9 @@
             ],
             "rack": "string",
             "height": 0,
-            "vendor": "string",
-            "modelNumber": "string",
-            "displayColor": "string",
+            "vendor": "Cisco",
+            "modelNumber": "P600",
+            "displayColor": "#9500FF",
             "owner": "string",
             "datacenterId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
             "datacenter": "string",
@@ -361,8 +361,36 @@
 export default {
     /* Function to create text and styling for each blade */
     createSlots() {
-        /*eslint-disable*/
-        console.log("createSlot called")
-        return
+        // create base slots
+        var blades = [];
+        for (var i = 0; i < 14; i++) {
+            var blade = {
+                value: false,
+                text: '',
+                id: '',
+                style: { backgroundColor: 'black' },
+            };
+            blades.push(blade);
+        }
+
+        // fill slots with blade data
+        var numBlades = Object.keys(bladeChassis1.blades).length;
+        for (var j = 0; j < numBlades; j++) {
+            var slot = bladeChassis1.blades[j].slot - 1;
+            var backgroundColor = bladeChassis1.blades[j].displayColor;
+            var textColor = this.getContrast50(backgroundColor);
+
+            blades[slot].value = true;
+            blades[slot].text = bladeChassis1.blades[j].vendor + ' ' + bladeChassis1.blades[j].modelNumber;
+            blades[slot].id = bladeChassis1.blades[j].id;
+            blades[slot].style = { color: textColor, backgroundColor: backgroundColor };
+        }
+
+        return blades;
+    },
+
+    getContrast50(hexcolor) {
+        hexcolor = hexcolor.replace('#', '');
+        return (parseInt(hexcolor, 16) > 0xffffff / 2) ? 'black' : 'white';
     }
 }
