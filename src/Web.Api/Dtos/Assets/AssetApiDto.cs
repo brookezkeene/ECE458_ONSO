@@ -12,6 +12,7 @@ namespace Web.Api.Dtos.Assets
         public Guid? OwnerId { get; set; }
         public Guid ModelId { get; set; }
         public int? AssetNumber { get; set; }
+        
 
     }
 }

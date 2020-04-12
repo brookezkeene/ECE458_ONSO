@@ -32,5 +32,9 @@ namespace Web.Api.Infrastructure.Entities
 
         public virtual List<AssetPowerPort> PowerPorts { get; set; }
         public virtual List<AssetNetworkPort> NetworkPorts { get; set; }
+        public virtual List<Asset> Blades { get; set; }
+        public Guid ChassisId { get; set; }
+        public int ChassisSlot { get; set; }
+        public bool BladePowerState { get; set; }
     }
 }

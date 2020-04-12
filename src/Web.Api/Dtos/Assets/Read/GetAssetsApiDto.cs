@@ -15,5 +15,6 @@ namespace Web.Api.Dtos.Assets.Read
         public bool HasNetworkManagedPower { get; set; }
         public Guid Id { get; set; }
         public DateTime LastUpdatedDate { get; set; }
+        public string MountType { get; set; }
     }
 }

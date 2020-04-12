@@ -126,11 +126,20 @@ namespace Web.Api.Infrastructure.Repositories
 
         public async Task<int> AddAssetAsync(Asset asset)
         {
+            //asset.ChassisId = Guid.Parse("5579cbbc-481b-4aaa-b505-08d7dddb2b31");
             _dbContext.Assets.Add(asset);
             var added = await _dbContext.SaveChangesAsync();
 
             _dbContext.DeletePreviousNetworkConnections();
             _dbContext.DeletePreviousPowerConnections();
+
+            if (asset.ChassisId != null && asset.ChassisId != Guid.Empty)
+            {
+                var chassis = await GetAssetAsync(asset.ChassisId);
+                chassis.Blades.Add(asset);
+                _dbContext.Assets.Update(chassis);
+                await _dbContext.SaveChangesAsync();
+            }
 
             return added;
         }
@@ -147,12 +156,24 @@ namespace Web.Api.Infrastructure.Repositories
         }
 
         public async Task<int> DeleteAssetAsync(Asset asset)
-        { 
+        {
+            if (asset.Blades != null && asset.Blades.Count != 0)
+            {
+                while (asset.Blades != null && asset.Blades.Count != 0)
+                {
+                    var remove = await GetAssetAsync(asset.Blades[0].Id);
+                    _dbContext.Assets.Remove(remove);
+                    //await _dbContext.SaveChangesAsync();
+                }
+            }
+
             _dbContext.Assets.Remove(asset);
             var deleted = await _dbContext.SaveChangesAsync();
 
             _dbContext.DeletePreviousNetworkConnections();
             _dbContext.DeletePreviousPowerConnections();
+
+
 
             return deleted;
         }
