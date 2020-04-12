@@ -32,7 +32,8 @@
                               @click:row="showDetails"
                               :server-items-length="totalItems"
                               :show-select="labelGen"
-                              :options.sync="options">
+                              :options.sync="options"
+                              :loading="loading">
 
                     <template v-slot:top v-slot:item.action="{ item }">
                         <v-toolbar flat>
