@@ -14,7 +14,7 @@ namespace Web.Api.Dtos.Bulk.Export
         public int? memory { get; set; }
         public string storage { get; set; }
         public string comment { get; set; }
-        public List<ExportModelNetworkPortDto> network_port_name { get; set; }
+        public List<ExportModelNetworkPortDto> network_port_names { get; set; }
     }
     public class ExportModelNetworkPortDto
     {
