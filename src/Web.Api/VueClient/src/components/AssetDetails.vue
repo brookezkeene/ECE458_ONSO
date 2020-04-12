@@ -63,13 +63,23 @@
                 <!--NEW port detail page so we can exclude altogether for different kinds of assets-->
                 <!--TODO: make show connections false for offline assets-->
                 <PortDetails :asset="asset" :id="id" :type="type"></PortDetails> 
+                <!--Blade Chassis Diagram - TODO: make v-if depend on mountType -->
+                <div v-if="true">
+                    <v-label>Blade Diagram</v-label>
+                    <v-card-text>
+                        <blade-diagram :id="asset.id"></blade-diagram>
+                    </v-card-text>
+                    <v-card-text>
+                        <a href="">View Blade Chassis Details</a>
+                    </v-card-text>
+                </div>
             </v-card-text>
 
             <v-spacer />
 
             <!--Back button to return to main page-->
             <v-spacer></v-spacer>
-            <a href="javascript:history.go(-1)"> Go Back</a>
+            <a href="javascript:history.go(-1)">Go Back</a>
 
         </v-card>
     </div>
@@ -88,6 +98,7 @@
 <script>
     import ChangePlanBar from "@/components/ChangePlanStatusBar"
     import PortDetails from '@/components/AssetPortDetails'
+    import BladeDiagram from '@/components/BladeDiagram'
 
     export default {
         name: 'asset-details',
@@ -96,6 +107,7 @@
         components: {
             ChangePlanBar,
             PortDetails,
+            BladeDiagram
         },
         props: {
             id: String,
