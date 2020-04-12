@@ -37,13 +37,10 @@
                         <v-label>Data Center</v-label>
                         <v-card-text> {{asset.datacenter}} </v-card-text>
                     </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                        <v-label>Rack Number</v-label>
-                        <v-card-text> {{asset.rack}} </v-card-text>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                        <v-label>Rack Position</v-label>
-                        <v-card-text> {{asset.rackPosition}} </v-card-text>
+                    <v-col>
+                        <v-label>Location</v-label>
+                        <v-card-text v-if="!isBlade"> Rack {{asset.rack}}, Rack Position {{asset.rackPosition}} </v-card-text>
+                        <v-card-text v-else> Blade Chassis {{asset.rack}}, Slot {{asset.rackPosition}} </v-card-text>
                     </v-col>
                 </v-row>
                 <v-row>
@@ -62,7 +59,10 @@
                 </v-row>
                 <!--NEW port detail page so we can exclude altogether for different kinds of assets-->
                 <!--TODO: make show connections false for offline assets-->
-                <PortDetails :asset="asset" :id="id" :type="type"></PortDetails> 
+                <PortDetails v-if="!isBlade"
+                             :asset="asset" 
+                             :id="id" 
+                             :type="type"></PortDetails> 
             </v-card-text>
 
             <v-spacer />
@@ -118,6 +118,12 @@
                 ownerPresent: true, // in case the asset does not have an owner, don't need null pointer bc not a required field.
                 isDecommissioned: false,
             };
+        },
+        computed: {
+            isBlade() {
+                // TODO: implement based on mountType
+                return false
+            }
         },
         created() {
             this.initialize();
