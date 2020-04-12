@@ -97,10 +97,11 @@
                 var temp = await this.exportRepository.exportModel(this.query);
                 var i; var j;
                 for (i = 0; i < temp.length; i++) {
-                    var networkPorts = temp[i].network_ports;
+                    var networkPorts = temp[i].network_port_name;
                     var netPortLength = networkPorts.length;
-                    delete temp[i].network_ports;
+                    delete temp[i].network_port_name;
                     for (j = 0; j < netPortLength; j++) {
+                        if (j > 3) break;
                         var name = "network_port_name_" + (j + 1).toString();
                         temp[i][`${name}`] = networkPorts[j].network_port_name;
                     }
