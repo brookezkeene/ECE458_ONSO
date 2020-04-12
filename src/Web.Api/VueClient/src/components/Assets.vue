@@ -305,6 +305,10 @@
                         </v-row>
                     </template>
 
+                    <template>
+
+                    </template>
+
                     <template v-slot:no-data>
                         <v-btn color="primary" @click="initialize">Refresh</v-btn>
                     </template>
@@ -636,6 +640,14 @@
                 console.log(this.selectedDatacenter);
                 console.log("In a change plan!");
             },
+            async moveToOffline(item) {
+                this.editing = true
+                // Add backend call to move to offline assets (assetRepository.addOffline and also remove from active assets)
+            },
+            async moveToActive(item) {
+                this.editing = true
+                // Add backend call to move to active assets (assetRepository.add() and also need to remove from offline assets)
+            }
         },
     }
 </script>
