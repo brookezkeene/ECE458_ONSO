@@ -388,8 +388,6 @@
             formTitle() {
                 if (this.type === 'active') {
                     return 'Assets';
-                } else if (this.type === 'decommissioned') {
-                    return 'Decommissioned Assets';
                 } else {
                     return 'Assets in Offline Storage';
                 }
