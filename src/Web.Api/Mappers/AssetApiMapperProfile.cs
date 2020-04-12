@@ -52,6 +52,7 @@ namespace Web.Api.Mappers
 
             // Read
             CreateMap<AssetDto, GetAssetsApiDto>()
+                .ForMember(o => o.MountType, opts => opts.MapFrom(src => src.Model.MountType))
                 .ForMember(o => o.Rack, opts => opts.MapFrom(src => src.Rack.RackAddress))
                 .ForMember(o => o.Owner, opts => opts.MapFrom(src => src.Owner.Username))
                 .ForMember(o => o.Datacenter, opts => opts.MapFrom(src => src.Rack.Datacenter.Name))

@@ -8,7 +8,8 @@ namespace Web.Api.Dtos.Models.Update
         public Guid Id { get; set; }
         public string Vendor { get; set; }
         public string ModelNumber { get; set; }
-        public int Height { get; set; }
+        public string MountType { get; set; }
+        public int? Height { get; set; }
         public string DisplayColor { get; set; }
         public string Cpu { get; set; }
         public string Storage { get; set; }

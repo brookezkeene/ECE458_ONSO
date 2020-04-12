@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Web.Api.Infrastructure.DbContexts;
 
 namespace Web.Api.Infrastructure.Migrations.ApplicationDb
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200411052325_ModelMountType")]
+    partial class ModelMountType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -157,22 +159,10 @@ namespace Web.Api.Infrastructure.Migrations.ApplicationDb
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AssetId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("AssetNumber")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValueSql("NEXT VALUE FOR AssetNumberSequence");
-
-                    b.Property<bool>("BladePowerState")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("ChassisId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("ChassisSlot")
-                        .HasColumnType("int");
 
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
@@ -197,8 +187,6 @@ namespace Web.Api.Infrastructure.Migrations.ApplicationDb
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AssetId");
 
                     b.HasIndex("AssetNumber")
                         .IsUnique();
@@ -710,10 +698,6 @@ namespace Web.Api.Infrastructure.Migrations.ApplicationDb
 
             modelBuilder.Entity("Web.Api.Infrastructure.Entities.Asset", b =>
                 {
-                    b.HasOne("Web.Api.Infrastructure.Entities.Asset", null)
-                        .WithMany("Blades")
-                        .HasForeignKey("AssetId");
-
                     b.HasOne("Web.Api.Infrastructure.Entities.Model", "Model")
                         .WithMany("Assets")
                         .HasForeignKey("ModelId")

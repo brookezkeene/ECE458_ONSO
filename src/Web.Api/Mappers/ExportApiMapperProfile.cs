@@ -19,13 +19,13 @@ namespace Web.Api.Mappers
                 .ForMember(o => o.model_number, opts => opts.MapFrom(src => src.ModelNumber))
                 .ForMember(o => o.height, opts => opts.MapFrom(src => src.Height))
                 .ForMember(o => o.display_color, opts => opts.MapFrom(src => src.DisplayColor))
-                .ForMember(o => o.ethernet_ports, opts => opts.MapFrom(src => src.EthernetPorts))
+                .ForMember(o => o.network_ports, opts => opts.MapFrom(src => src.EthernetPorts))
                 .ForMember(o => o.power_ports, opts => opts.MapFrom(src => src.PowerPorts))
                 .ForMember(o => o.cpu, opts => opts.MapFrom(src => src.Cpu))
                 .ForMember(o => o.memory, opts => opts.MapFrom(src => src.Memory))
                 .ForMember(o => o.storage, opts => opts.MapFrom(src => src.Storage))
                 .ForMember(o => o.comment, opts => opts.MapFrom(src => src.Comment))
-                .ForMember(o => o.network_ports, opts => opts.MapFrom(src => src.NetworkPorts));
+                .ForMember(o => o.network_port_names, opts => opts.MapFrom(src => src.NetworkPorts));
             CreateMap<AssetDto, ExportAssetDto>()
                 .ForMember(o => o.asset_number, opts => opts.MapFrom(src => src.AssetNumber))
                 .ForMember(o => o.hostname, opts => opts.MapFrom(src => src.Hostname))
