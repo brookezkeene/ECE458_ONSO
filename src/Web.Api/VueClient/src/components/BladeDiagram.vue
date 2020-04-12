@@ -23,7 +23,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="i in 2">
+                    <tr v-for="i in 2" :key="i">
                         <td class="frame"></td>
                         <td v-for="(blade, index) in blades"
                             :key="index"
