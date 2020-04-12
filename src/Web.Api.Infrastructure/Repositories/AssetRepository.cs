@@ -41,7 +41,10 @@ namespace Web.Api.Infrastructure.Repositories
                 .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
                 .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
                 .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
-                .Where(x => String.Compare(x.Rack.Row.ToUpper(), rackStart[0].ToString()) >= 0 &&
+                //If we don't want the blades to appear on the table.... but how to add in the search requirements?
+                //.Where(asset => !asset.Model.MountType.Equals("blade"))
+                .Where(x => x.RackId != null && x.RackId != Guid.Empty && 
+                            String.Compare(x.Rack.Row.ToUpper(), rackStart[0].ToString()) >= 0 &&
                             String.Compare(x.Rack.Row.ToUpper(), rackEnd[0].ToString()) <= 0 &&
                             x.Rack.Column >= int.Parse(rackStart.Substring(1)) &&
                             x.Rack.Column <= int.Parse(rackEnd.Substring(1)))
@@ -54,7 +57,8 @@ namespace Web.Api.Infrastructure.Repositories
                 .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
                 .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
                 .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
-                .Where(x => String.Compare(x.Rack.Row.ToUpper(), rackStart[0].ToString()) >= 0 &&
+                .Where(x => x.RackId != null && x.RackId != Guid.Empty &&
+                            String.Compare(x.Rack.Row.ToUpper(), rackStart[0].ToString()) >= 0 &&
                             String.Compare(x.Rack.Row.ToUpper(), rackEnd[0].ToString()) <= 0 &&
                             x.Rack.Column >= int.Parse(rackStart.Substring(1)) &&
                             x.Rack.Column <= int.Parse(rackEnd.Substring(1)))

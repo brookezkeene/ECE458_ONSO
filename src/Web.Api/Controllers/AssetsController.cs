@@ -37,7 +37,7 @@ namespace Web.Api.Controllers
         private readonly IRackService _rackService;
         private readonly IIdentityService _userService;
 
-        public AssetsController(IAssetService assetService, IMapper mapper, IApiErrorResources errorResources, PowerStateService powerStateService, 
+        public AssetsController(IAssetService assetService, IMapper mapper, IApiErrorResources errorResources, PowerStateService powerStateService,
             IChangePlanService changePlanService, IModelService modelService, IRackService rackService, IIdentityService userService)
         {
             _assetService = assetService;
@@ -63,7 +63,7 @@ namespace Web.Api.Controllers
                 foreach (ChangePlanItemDto changePlanItem in changePlanItems)
                 {
                     var changePlanAssetDto = new AssetDto();
-                    if(changePlanItem.ExecutionType.Equals("decommission"))
+                    if (changePlanItem.ExecutionType.Equals("decommission"))
                     {
                         var decommissionedAsset = response.Find(x => x.Id == changePlanItem.AssetId);
                         response.Remove(decommissionedAsset);
@@ -72,8 +72,8 @@ namespace Web.Api.Controllers
                     }
                     else if (changePlanItem.ExecutionType.Equals("create"))
                     {
-                         changePlanAssetDto = _mapper.Map<AssetDto>((JsonConvert.DeserializeObject<CreateAssetApiDto>(changePlanItem.NewData)));
-                         changePlanAssetDto.Id = changePlanItem.Id;
+                        changePlanAssetDto = _mapper.Map<AssetDto>((JsonConvert.DeserializeObject<CreateAssetApiDto>(changePlanItem.NewData)));
+                        changePlanAssetDto.Id = changePlanItem.Id;
                     }
                     else if (changePlanItem.ExecutionType.Equals("update"))
                     {
@@ -86,7 +86,7 @@ namespace Web.Api.Controllers
                     response.Add(_mapper.Map<GetAssetApiDto>(changePlanAssetDto));
                     response.TotalCount++;
                 }
-                
+
             }
 
             return Ok(response);
@@ -134,7 +134,7 @@ namespace Web.Api.Controllers
                 return Ok(_mapper.Map<GetAssetApiDto>(assetDto));
             }
             //nothign was found 
-            return Ok(); 
+            return Ok();
         }
 
         /*
@@ -143,7 +143,7 @@ namespace Web.Api.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateAssetApiDto assetApiDto)
-        {  
+        {
             var assetDto = _mapper.Map<AssetDto>(assetApiDto);
 
             Guid createdId;
@@ -168,7 +168,7 @@ namespace Web.Api.Controllers
             var createdAssetDto = await _assetService.GetAssetAsync(createdId);
             var response = _mapper.Map<GetAssetApiDto>(createdAssetDto);
 
-            return CreatedAtAction(nameof(GetById), new {id = createdId}, response);
+            return CreatedAtAction(nameof(GetById), new { id = createdId }, response);
         }
 
         [HttpDelete("{id}")]
@@ -190,7 +190,7 @@ namespace Web.Api.Controllers
 
                 var changePlanId = assetApiDto.ChangePlanId ?? Guid.Empty;
                 var originalAsset = _mapper.Map<GetAssetApiDto>(await _assetService.GetAssetAsync(assetApiDto.Id));
-                if(originalAsset == null)
+                if (originalAsset == null)
                 {
                     var createdItem = await _changePlanService.GetChangePlanItemAsync(changePlanId, assetApiDto.Id);
                     var newAsset = _mapper.Map<CreateAssetApiDto>(assetApiDto);
@@ -248,7 +248,9 @@ namespace Web.Api.Controllers
             if (assetDto != null && query.ChangePlanId == null)
             {
                 var decommissionedAsset = CreateDecommissionedAsset(assetDto, query);
-                
+                //check to see if it's a blade chassis, if yes, decommission + delete all the blades within it too
+                //decommissionedAsset already has the information of all the blades in it already
+                await DecommissionBladeChassis(assetDto, query);
                 //deleting asset from active asset column + adding the decommissioned asset to the table
                 await _assetService.DeleteAssetAsync(query.Id);
                 await _assetService.CreateDecommissionedAssetAsync(decommissionedAsset);
@@ -275,10 +277,11 @@ namespace Web.Api.Controllers
                     }
                     var updateadAssetDto = await _changePlanService.FillFieldsInAssetApiForChangePlans(newAssetDto);
                     decommissionedAsset = CreateDecommissionedAsset(updateadAssetDto, query);
+
                 }
                 //this asset to be decommissioned was not found in the change assets items and 
                 //it has been found in the assets data
-                else if (assetDto!=null) 
+                else if (assetDto != null)
                 {
                     decommissionedAsset = CreateDecommissionedAsset(assetDto, query);
                 }
@@ -287,7 +290,7 @@ namespace Web.Api.Controllers
 
             return Ok();
         }
-       
+
 
         [HttpGet("decommission")]
         public async Task<ActionResult<PagedList<DecommissionedAssetDto>>> GetManyDecommissioned([FromQuery] SearchAssetQuery query)
@@ -301,7 +304,7 @@ namespace Web.Api.Controllers
                 var changePlanId = query.ChangePlanId ?? Guid.Empty;
                 var decommissionedChangePlans = await _changePlanService.GetDecommissionedChangePlanItemsAsync(changePlanId);
                 List<DecommissionedAssetDto> decommissionedAssets = new List<DecommissionedAssetDto>();
-                foreach(ChangePlanItemDto changePlanItem in decommissionedChangePlans)
+                foreach (ChangePlanItemDto changePlanItem in decommissionedChangePlans)
                 {
                     var decommissionedAsset = JsonConvert.DeserializeObject<DecommissionedAssetDto>(changePlanItem.NewData);
                     //making sure decommissioned asset id is the change plan id for "getting" purposes
@@ -329,5 +332,39 @@ namespace Web.Api.Controllers
             decommissionedAsset.Data = jsonString;
             return decommissionedAsset;
         }
+        private async Task<ActionResult> DecommissionBladeChassis(AssetDto assetDto, DecommissionedAssetQuery query)
+        {
+
+            while (assetDto.Blades != null && assetDto.Blades.Count != 0)
+            {
+                var blade = await _assetService.GetAssetAsync(assetDto.Blades.First().Id);
+                var decommissionedAsset = CreateDecommissionedAsset(blade, query);
+                await _assetService.DeleteAssetAsync(blade.Id);
+                await _assetService.CreateDecommissionedAssetAsync(decommissionedAsset);
+            }
+
+
+            return Ok();
+        }
+        //CHECK HERE TO SEE IF BLADES HAVE IDS - IF SO, ARE THE IDS THE CHANGE PLAN ITEM IDS?
+       /* private async Task<ActionResult> DecommissionBladeChassisChangePlan(AssetDto assetDto, DecommissionedAssetQuery query)
+        {
+            while (assetDto.Blades != null && assetDto.Blades.Count != 0)
+            {
+                var blade = await _assetService.GetAssetAsync(assetDto.Blades.First().Id);
+                if (blade == null) {
+                    if (updatedAssetChangePlan.ExecutionType.Equals("create"))
+                    {
+                        var updatedAssetApi = JsonConvert.DeserializeObject<CreateAssetApiDto>(updatedAssetChangePlan.NewData);
+                        newAssetDto = _mapper.Map<AssetDto>(updatedAssetApi);
+                    }
+                    else if (updatedAssetChangePlan != null && updatedAssetChangePlan.ExecutionType.Equals("update"))
+                    {
+                        var updatedAssetApi = JsonConvert.DeserializeObject<UpdateAssetApiDto>(updatedAssetChangePlan.NewData);
+                        newAssetDto = _mapper.Map<AssetDto>(updatedAssetApi);
+                    }
+                }
+            }
+        }*/
     }
 }
