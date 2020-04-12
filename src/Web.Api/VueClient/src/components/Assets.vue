@@ -212,6 +212,35 @@
                                 <span>Edit Asset</span>
                             </v-tooltip>
 
+
+                            <v-tooltip v-if="type==='active'" top>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn icon v-on="on"
+                                           @click="moveToOffline(item)">
+                                        <v-icon medium
+                                                class="mr-2">
+                                            mdi-server-minus
+                                        </v-icon>
+                                    </v-btn>
+                                </template>
+
+                                <span>Move To Offline Storage</span>
+                            </v-tooltip>
+
+                            <v-tooltip v-if="type==='offline'" top>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn icon v-on="on"
+                                           @click="moveToActive(item)">
+                                        <v-icon medium
+                                                class="mr-2">
+                                            mdi-server-plus
+                                        </v-icon>
+                                    </v-btn>
+                                </template>
+
+                                <span>Move To Datacenter</span>
+                            </v-tooltip>
+
                             <v-tooltip top>
                                 <template v-slot:activator="{ on }">
                                     <v-btn icon v-on="on"
@@ -239,6 +268,7 @@
 
                                 <span>Delete Asset</span>
                             </v-tooltip>
+
                         </v-row>
                     </template>
 

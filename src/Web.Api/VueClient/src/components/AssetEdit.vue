@@ -16,7 +16,7 @@
                 <v-container>
                     <v-form v-model="valid">
                         <v-expansion-panels multiple :hover=true :value="panel">
-                            <v-expansion-panel v-for="(title, index) in titles"
+                            <v-expansion-panel v-for="(title, index) in activeTitles"
                                                :key="title">
                                 <v-expansion-panel-header>{{title}}</v-expansion-panel-header>
                                 <v-expansion-panel-content>
@@ -96,7 +96,7 @@
                                     <v-card class="overflow-y-auto"
                                             max-height="500px"
                                             flat
-                                            v-if="index===2">
+                                            v-if="index===2 && type!='offline'">
                                         <div v-if="!isBlade">
                                             <div>
                                                 <p v-if="editedItem.networkPorts.length === 0">This model has no network ports.</p>
@@ -140,7 +140,7 @@
                                     <v-card class="overflow-y-auto"
                                             max-height="500px"
                                             flat
-                                            v-if="index===3">
+                                            v-if="index===3&& type!='offline'">
                                         <div v-if="!isBlade">
                                             <div>
                                                 <p v-if="(editedItem.powerPorts.length===0) || (id!=undefined)">This model has no power ports.</p>
@@ -328,6 +328,13 @@
             isBlade() {
                 //return this.editedItem.mountType === 'blade'
                 return false // TODO: replace this with line above when integrating with backend
+            },
+            activeTitles() {
+                if (this.type === 'offline') {
+                    this.titles.pop();
+                    this.titles.pop();
+                }
+                return this.titles;
             }
         },
         methods: {
