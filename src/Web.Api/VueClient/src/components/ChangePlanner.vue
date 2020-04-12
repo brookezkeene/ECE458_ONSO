@@ -195,7 +195,7 @@
                 changePlanId: item.id
             };
             this.$store.dispatch('startChangePlan', changePlan);
-            this.$router.push({ name: 'assets'})
+            this.$router.push({ name: 'assets', params: { type: 'active' } });
         },
         addItem(item) {            
             this.$router.push({ name: 'change-plan-new' })

@@ -56,69 +56,8 @@
                                             </div>
 
                                             <div>
-                                                <v-row>
-                                                    <v-col cols="12" sm="6" md="4">
-                                                        <v-autocomplete v-model="editedItem.datacenterId"
-                                                                        label="Datacenter"
-                                                                        placeholder="Please select an existing datacenter"
-                                                                        :rules="[rules.datacenterRules]"
-                                                                        :items="filteredDatacenters"
-                                                                        item-text="name"
-                                                                        item-value="id">
-                                                        </v-autocomplete>
-                                                    </v-col>
-                                                    <!-- Will need to update to show only racks from the selected datacenter -->
-                                                    <v-col v-if="!isBlade"
-                                                           cols="12" sm="6" md="4">
-                                                        <v-autocomplete v-if="!editedItem.datacenterId.length==0 && updateRacks()"
-                                                                        v-model="editedItem.rackId"
-                                                                        label="Rack Number"
-                                                                        placeholder="Please select a rack"
-                                                                        :rules="[rules.rackRules]"
-                                                                        :items="racks"
-                                                                        item-text="address"
-                                                                        item-value="id"
-                                                                        @change="rackSelected">
-                                                        </v-autocomplete>
-                                                    </v-col>
-                                                    <v-col v-if="!isBlade"
-                                                           cols="12" sm="6" md="4">
-                                                        <v-text-field v-if="!editedItem.datacenterId.length==0 && updateRacks()"
-                                                                      v-model.number="editedItem.rackPosition"
-                                                                      placeholder="Please enter a rack U for the asset"
-                                                                      :rules="[rules.rackuRules]"
-                                                                      label="Rack Position"
-                                                                      type="number">
-                                                        </v-text-field>
-                                                    </v-col>
-
-                                                    <!-- Blade Specific Fields (Blade Chassis & Slot) -->
-                                                    <!-- TODO: replace edited item fields in v-model to integrate-->
-                                                    <v-col v-if="isBlade"
-                                                           cols="12" sm="6" md="4">
-                                                        <v-autocomplete v-if="!editedItem.datacenterId.length==0 && updateRacks()"
-                                                                        v-model="editedItem.rackId"
-                                                                        label="Blade Chassis"
-                                                                        placeholder="Please select a blade chassis for this blade"
-                                                                        :items="racks"
-                                                                        item-text="address"
-                                                                        item-value="id"
-                                                                        :rules="[rules.rackRules]"
-                                                                        @change="rackSelected">
-                                                        </v-autocomplete>
-                                                    </v-col>
-                                                    <!-- Will need to update to show only slots in the selected blade chassis -->
-                                                    <v-col v-if="isBlade"
-                                                           cols="12" sm="6" md="4">
-                                                        <v-text-field v-if="!editedItem.datacenterId.length==0 && updateRacks()"
-                                                                      v-model="editedItem.rackPosition"
-                                                                      label="Slot"
-                                                                      placeholder="Please enter a slot for this blade"
-                                                                      type="number"
-                                                                      :rules="[rules.slotRules]">
-                                                        </v-text-field>
-                                                    </v-col>
-                                                </v-row>
+                                                <!--Datacenter/Offline storage options-->
+                                                <SiteOptions v-on:getDatacenters="getDatacenters=true" :editedItem="editedItem" :isBlade="isBlade"></SiteOptions>
                                             </div>
 
                                             <div>
@@ -271,11 +210,13 @@
 <script>
     /* eslint-disable */
     import changePlanBar from '@/components/ChangePlanStatusBar';
+    import SiteOptions from '@/components/AssetEditSiteOptions.vue';
 
     export default {
         name: 'asset-edit',
         components: {
             changePlanBar,
+            SiteOptions
         },
         inject: ['assetRepository', 'modelRepository', 'userRepository', 'rackRepository', 'datacenterRepository', 'networkRepository', 'powerRepository'],
         props: {
@@ -285,7 +226,6 @@
             return {
                 models: [],
                 users: [],
-                racks: [],
                 networks: [],
                 datacenters: [],
                 loading: true,
@@ -327,13 +267,13 @@
                     modelRules: v => /^(?!\s*$).+/.test(v) || 'Model is required',
                     hostnameRules: v => /^(?![0-9]+$)(?!.*-$)(?!-)[a-zA-Z0-9-]{1,63}$/.test(v) || 'Valid hostname is required',
                     assetRules: v => (/^[1-9]\d{5}$/.test(v) || (v || '').length==0) || 'Invalid Asset Number',
-                    datacenterRules: v => /^(?!\s*$).+/.test(v) || 'Datacenter is required',
                     rackRules: v => /^(?!\s*$).+/.test(v) || 'Location is required',
                     rackuRules: v => (/^(?!\s*$).+/.test(v) && v > 0 && v < 43) || 'Valid rack U is required',
                     slotRules: v => (/^(?!\s*$).+/.test(v) && v > 0 && v < 15) || 'Valid slot is required',
                     macAddressRules: v => (/^([0-9A-Fa-f]{2}[\W_]*){5}([0-9A-Fa-f]{2})$/.test(v) || /^$/.test(v)) || 'Invalid MAC Address.'
                 },
-                valid: true
+                valid: true,
+                getDatacenters: false,
             }
         },
 
@@ -346,10 +286,6 @@
 
             const getUsers = this.userRepository.list()
                 .then(users => this.users = users);
-
-            const getDatacenters = this.$store.getters.isChangePlan
-                ? Promise.resolve(this.datacenters.push(this.$store.getters.changePlan.datacenterName))
-                : this.datacenterRepository.list().then(datacenters => this.datacenters = datacenters);
 
             const getAsset = typeof this.id === 'undefined' || this.id === 'new'
                 ? Promise.resolve()
@@ -365,27 +301,11 @@
                         this.rackSelected();
                     });
 
-            Promise.all([getModels, getUsers, getDatacenters, getAsset])
+            /*getdatacenter needs to get emitted from child component*/
+            Promise.all([getModels, getUsers, this.getDatacenters, getAsset])
                 .then(() => this.loading = false);
         },
         computed: {
-            datacenterPermissions() {
-                return this.$store.getters.hasDatacenters
-            },
-            filteredDatacenters() {
-                if (!this.datacenterPermissions.includes("All Datacenters")) {
-                    var newDatacenters = []
-                    for (var i = 0; i < this.datacenters.length; i++) {
-                        if (this.datacenterPermissions.includes(this.datacenters[i].description)) {
-                            newDatacenters.push(this.datacenters[i]);
-                        }
-                    }
-                    return newDatacenters;
-                }
-                else {
-                    return this.datacenters;
-                }
-            },
             formTitle() {
                 return typeof this.id === 'undefined' ? 'New Item' : 'Edit Item'
             },
@@ -420,30 +340,12 @@
                 this.selectedModelBool = false;
             },
             async sendNetworkPortRequest() {
-                this.networks = await this.datacenterRepository.networkPorts(this.datacenterID);
+                this.networks = await this.datacenterRepository.networkPorts(this.datacenterIDd);
                 for (const network of this.networks) {
                     network.nameRackAssetNum = "Port name: " + network.name +
                         ",  " + "Hostname: " + network.assetHostname;
 
                 }
-            },
-            async updateRacks() {
-                if (this.datacenterID != this.editedItem.datacenterId) {
-
-                    this.datacenterID = this.editedItem.datacenterId;
-
-                    if (!this.isBlade) {
-                        this.racks = await this.rackRepository.list(this.datacenterID);
-                        this.sendNetworkPortRequest();
-                        return true;
-                    }
-                    else {
-                        // TODO: for blades, get all blade chassis in the datacenter and set this equal to racks
-                        this.racks = [];
-                        return true;
-                    }
-                }
-                return false;
             },
             async modelSelected() {
                 this.selectedModelBool = true;
@@ -451,17 +353,6 @@
                 console.log(this.selectedModel);
                 this.makeNetworkPorts(this.selectedModel);
                 this.makePowerPorts(this.selectedModel);
-            },
-            async rackSelected() {
-                this.selectedRack = true;
-                let availablePorts = {};
-                availablePorts = await this.rackRepository.getPdus(this.editedItem.rackId);
-/*                for (var i = 0; i < availablePorts.length; i++) {
-                    availablePorts[i].number = +port.number;
-                }*/
-/*                availablePorts.sort(a, b => a - b); //sorting port numbers so that they are easier to see in frontend
-*/              this.availablePortsInRack = availablePorts;
-                console.log(this.availablePortsInRack);
             },
             makeNetworkPorts(model) {
                 console.log(model);
@@ -519,7 +410,18 @@
             },
             setLocation(port) {
                 port.pduPortId = null;
-            }
+            },
+            async rackSelected() {
+                this.selectedRack = true;
+                let availablePorts = {};
+                availablePorts = await this.rackRepository.getPdus(this.editedItem.rackId);
+/*                for (var i = 0; i < availablePorts.length; i++) {
+                    availablePorts[i].number = +port.number;
+                }*/
+/*                availablePorts.sort(a, b => a - b); //sorting port numbers so that they are easier to see in frontend
+*/              this.availablePortsInRack = availablePorts;
+                console.log(this.availablePortsInRack);
+            },
         },
 
     }
