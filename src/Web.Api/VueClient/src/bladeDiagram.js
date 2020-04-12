@@ -359,8 +359,10 @@
 };
 
 export default {
+    /*eslint-disable*/
     /* Function to create text and styling for each blade */
     createSlots(assetId) {
+        console.log(assetId);
         // create base slots
         var blades = [];
         for (var i = 0; i < 14; i++) {
