@@ -11,19 +11,20 @@
                                 item-text="name"
                                 item-value="id">
                 </v-autocomplete>
-                <v-col v-if="type==='offline'" cols="12" sm="6" md="4">
-                    <v-autocomplete v-model="editedItem.datacenterId"
-                                    label="Offline Storage"
-                                    placeholder="Please select an existing offline storage site"
-                                    :rules="[rules.offlineRules]"
-                                    :items="filteredDatacenters"
-                                    item-text="name"
-                                    item-value="id">
-                    </v-autocomplete>
-                </v-col>
+            </v-col>
+            <!--todo: replace this data with offline storage data-->
+            <v-col v-else cols="12" sm="6" md="4">
+                <v-autocomplete v-model="editedItem.datacenterId"
+                                label="Offline Storage"
+                                placeholder="Please select an existing offline storage site"
+                                :rules="[rules.offlineRules]"
+                                :items="filteredDatacenters"
+                                item-text="name"
+                                item-value="id">
+                </v-autocomplete>
             </v-col>
             <!-- Will need to update to show only racks from the selected datacenter -->
-            <v-col v-if="!isBlade"
+            <v-col v-if="!isBlade && type==='active'"
                    cols="12" sm="6" md="4">
                 <v-autocomplete v-if="!editedItem.datacenterId.length==0 && updateRacks()"
                                 v-model="editedItem.rackId"
@@ -36,7 +37,7 @@
                                 @change="rackSelected">
                 </v-autocomplete>
             </v-col>
-            <v-col v-if="!isBlade"
+            <v-col v-if="!isBlade && type==='active'"
                    cols="12" sm="6" md="4">
                 <v-text-field v-if="!editedItem.datacenterId.length==0 && updateRacks()"
                               v-model.number="editedItem.rackPosition"
