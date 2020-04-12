@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Web.Api.Dtos.Assets.Read
 {
@@ -16,5 +17,6 @@ namespace Web.Api.Dtos.Assets.Read
         public Guid Id { get; set; }
         public DateTime LastUpdatedDate { get; set; }
         public string MountType { get; set; }
+        public virtual List<GetAssetsApiDto> Blades { get; set; }
     }
 }
