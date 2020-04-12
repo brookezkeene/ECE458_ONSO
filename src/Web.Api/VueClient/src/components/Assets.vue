@@ -306,7 +306,16 @@
                     </template>
 
                     <template>
-
+                        <v-dialog v-model="toOffline" scrollable max-width="300px">
+                            <v-card>
+                                <v-card-title>
+                                    HELLO
+                                </v-card-title>
+                                <SiteOptions :editedItem="assets"
+                                             :isBlade="false"
+                                             :type="type"></SiteOptions>
+                            </v-card>
+                        </v-dialog>
                     </template>
 
                     <template v-slot:no-data>
@@ -348,7 +357,8 @@
                 search: '',
                 options: {},
                 totalItems: 0,
-
+                toActive: false,
+                toOffline: false,
 
                 // Table data.
                 headers: [
@@ -642,10 +652,12 @@
             },
             async moveToOffline(item) {
                 this.editing = true
+                this.toOffline = true
                 // Add backend call to move to offline assets (assetRepository.addOffline and also remove from active assets)
             },
             async moveToActive(item) {
                 this.editing = true
+                this.toActive = true
                 // Add backend call to move to active assets (assetRepository.add() and also need to remove from offline assets)
             }
         },
