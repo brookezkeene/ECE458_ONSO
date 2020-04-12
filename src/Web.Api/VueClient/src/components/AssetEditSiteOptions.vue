@@ -2,7 +2,7 @@
     <template>
 
         <v-row>
-            <v-col cols="12" sm="6" md="4">
+            <v-col v-if="type==='active'" cols="12" sm="6" md="4">
                 <v-autocomplete v-model="editedItem.datacenterId"
                                 label="Datacenter"
                                 placeholder="Please select an existing datacenter"
@@ -11,6 +11,16 @@
                                 item-text="name"
                                 item-value="id">
                 </v-autocomplete>
+                <v-col v-if="type==='offline'" cols="12" sm="6" md="4">
+                    <v-autocomplete v-model="editedItem.datacenterId"
+                                    label="Offline Storage"
+                                    placeholder="Please select an existing offline storage site"
+                                    :rules="[rules.offlineRules]"
+                                    :items="filteredDatacenters"
+                                    item-text="name"
+                                    item-value="id">
+                    </v-autocomplete>
+                </v-col>
             </v-col>
             <!-- Will need to update to show only racks from the selected datacenter -->
             <v-col v-if="!isBlade"
@@ -71,7 +81,7 @@
     export default {
 
         name: 'asset-edit-site',
-        props: ['editedItem', 'isBlade'],
+        props: ['editedItem', 'isBlade', 'isOffline', 'type'],
         inject: ['datacenterRepository', 'rackRepository'],
         data()  {
             return {
@@ -79,6 +89,7 @@
                 datacenterID: '',
                 racks: [],
                 rules: {
+                    offlineRules: v => /^(?!\s*$).+/.test(v) || 'Offline storage site is required',
                     datacenterRules: v => /^(?!\s*$).+/.test(v) || 'Datacenter is required',
                     rackuRules: v => (/^(?!\s*$).+/.test(v) && v > 0 && v < 43) || 'Valid rack U is required',
                     rackRules: v => /^(?!\s*$).+/.test(v) || 'Location is required',
@@ -87,13 +98,25 @@
             }
         },
         async created() {
-            // Getting datacenters
-            this.$store.getters.isChangePlan
+            // Getting datacenters or offline assets
+            /*eslint-disable*/
+            console.log(this.type);
+            if (this.type = "offline") {
+                this.$store.getters.isChangePlan
+                ? Promise.resolve(this.datacenters.push(this.$store.getters.changePlan.datacenterName)) // todo: this will change to getting from the offline endpoint
+                : this.datacenterRepository.list().then( datacenters => {
+                    this.datacenters = datacenters;
+                    this.$emit('getDatacenters', true)
+                })
+            } else {
+                this.$store.getters.isChangePlan
                 ? Promise.resolve(this.datacenters.push(this.$store.getters.changePlan.datacenterName))
                 : this.datacenterRepository.list().then( datacenters => {
                     this.datacenters = datacenters;
                     this.$emit('getDatacenters', true)
                 })
+            }
+
         },
         computed: {
             datacenterPermissions() {

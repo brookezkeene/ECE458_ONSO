@@ -410,6 +410,8 @@
             },
         },
         async created() { 
+            /* eslint-disable no-unused-vars, no-console */
+            console.log(this.type)
             this.createPage();
         },
         methods: {
@@ -426,7 +428,6 @@
                 const { sortBy, sortDesc, page, itemsPerPage } = this.options;
                 
                 this.fillQuery(sortBy, sortDesc, page, itemsPerPage);
-                /* eslint-disable no-unused-vars, no-console */
                 console.log("this is the sorting stuff")
                 console.log(this.assetSearchQuery);
 
@@ -518,10 +519,10 @@
             editItem(item) {
                 this.editing = true;
                 console.log(item);
-                this.$router.push({ name: 'asset-edit', params: { id: item.id} })
+                this.$router.push({ name: 'asset-edit', params: { id: item.id, type: this.type} })
             },
             addItem() {
-                this.$router.push({ name: 'asset-new' })
+                this.$router.push({ name: 'asset-new',  params: { type: this.type} })
             },
             addLabels() {
                 /*eslint-disable*/
@@ -576,7 +577,7 @@
             },
             showDetails(item) {
                 if (!this.editing) {
-                    this.$router.push({ name: 'asset-details', params: { id: item.id } })
+                    this.$router.push({ name: 'asset-details', params: { id: item.id, type: this.type } })
                 }
                 this.editing = false;
             },

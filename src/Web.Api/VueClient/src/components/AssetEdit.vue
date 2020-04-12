@@ -57,7 +57,11 @@
 
                                             <div>
                                                 <!--Datacenter/Offline storage options-->
-                                                <SiteOptions v-on:selectedRack="rackSelected" v-on:getDatacenters="getDatacenters=true" :editedItem="editedItem" :isBlade="isBlade"></SiteOptions>
+                                                <SiteOptions v-on:selectedRack="rackSelected" 
+                                                             v-on:getDatacenters="getDatacenters=true" 
+                                                             :editedItem="editedItem" 
+                                                             :isBlade="isBlade"
+                                                             :type="type"></SiteOptions>
                                             </div>
 
                                             <div>
@@ -218,11 +222,12 @@
         name: 'asset-edit',
         components: {
             changePlanBar,
-            SiteOptions
+            SiteOptions,
         },
         inject: ['assetRepository', 'modelRepository', 'userRepository', 'rackRepository', 'datacenterRepository', 'networkRepository', 'powerRepository'],
         props: {
             id: String,
+            type: String,
         },
         data() {
             return {
@@ -278,6 +283,9 @@
         },
 
         async created() {
+
+            console.log(this.type);
+
             const getModels = this.modelRepository.list()
                 .then(models => {
                     models.forEach(model => model.vendorModelNo = model.vendor + " " + model.modelNumber);
