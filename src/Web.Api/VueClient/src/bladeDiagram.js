@@ -360,7 +360,7 @@
 
 export default {
     /* Function to create text and styling for each blade */
-    createSlots() {
+    createSlots(assetId) {
         // create base slots
         var blades = [];
         for (var i = 0; i < 14; i++) {
@@ -368,7 +368,7 @@ export default {
                 value: false,
                 text: '',
                 id: '',
-                style: { backgroundColor: 'black' },
+                style: { backgroundColor: 'white' },
             };
             blades.push(blade);
         }
