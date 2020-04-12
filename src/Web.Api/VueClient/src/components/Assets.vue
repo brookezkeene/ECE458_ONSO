@@ -213,6 +213,35 @@
                                 <span>Edit Asset</span>
                             </v-tooltip>
 
+
+                            <v-tooltip v-if="type==='active'" top>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn icon v-on="on"
+                                           @click="moveToOffline(item)">
+                                        <v-icon medium
+                                                class="mr-2">
+                                            mdi-server-minus
+                                        </v-icon>
+                                    </v-btn>
+                                </template>
+
+                                <span>Move To Offline Storage</span>
+                            </v-tooltip>
+
+                            <v-tooltip v-if="type==='offline'" top>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn icon v-on="on"
+                                           @click="moveToActive(item)">
+                                        <v-icon medium
+                                                class="mr-2">
+                                            mdi-server-plus
+                                        </v-icon>
+                                    </v-btn>
+                                </template>
+
+                                <span>Move To Datacenter</span>
+                            </v-tooltip>
+
                             <v-tooltip top>
                                 <template v-slot:activator="{ on }">
                                     <v-btn icon v-on="on"
@@ -240,6 +269,7 @@
 
                                 <span>Delete Asset</span>
                             </v-tooltip>
+
                         </v-row>
                     </template>
 
@@ -274,6 +304,19 @@
                                 </v-btn>
                             </v-item-group>
                         </v-row>
+                    </template>
+
+                    <template>
+                        <v-dialog v-model="toOffline" scrollable max-width="300px">
+                            <v-card>
+                                <v-card-title>
+                                    HELLO
+                                </v-card-title>
+                                <SiteOptions :editedItem="assets"
+                                             :isBlade="false"
+                                             :type="type"></SiteOptions>
+                            </v-card>
+                        </v-dialog>
                     </template>
 
                     <template v-slot:no-data>
@@ -315,7 +358,8 @@
                 search: '',
                 options: {},
                 totalItems: 0,
-
+                toActive: false,
+                toOffline: false,
 
                 // Table data.
                 headers: [
@@ -389,8 +433,6 @@
             formTitle() {
                 if (this.type === 'active') {
                     return 'Assets';
-                } else if (this.type === 'decommissioned') {
-                    return 'Decommissioned Assets';
                 } else {
                     return 'Assets in Offline Storage';
                 }
@@ -413,6 +455,8 @@
             },
         },
         async created() { 
+            /* eslint-disable no-unused-vars, no-console */
+            console.log(this.type)
             this.createPage();
         },
         methods: {
@@ -429,7 +473,6 @@
                 const { sortBy, sortDesc, page, itemsPerPage } = this.options;
                 
                 this.fillQuery(sortBy, sortDesc, page, itemsPerPage);
-                /* eslint-disable no-unused-vars, no-console */
                 console.log("this is the sorting stuff")
                 console.log(this.assetSearchQuery);
 
@@ -521,10 +564,10 @@
             editItem(item) {
                 this.editing = true;
                 console.log(item);
-                this.$router.push({ name: 'asset-edit', params: { id: item.id} })
+                this.$router.push({ name: 'asset-edit', params: { id: item.id, type: this.type} })
             },
             addItem() {
-                this.$router.push({ name: 'asset-new' })
+                this.$router.push({ name: 'asset-new',  params: { type: this.type} })
             },
             addLabels() {
                 /*eslint-disable*/
@@ -579,7 +622,7 @@
             },
             showDetails(item) {
                 if (!this.editing) {
-                    this.$router.push({ name: 'asset-details', params: { id: item.id } })
+                    this.$router.push({ name: 'asset-details', params: { id: item.id, type: this.type } })
                 }
                 this.editing = false;
             },
@@ -608,6 +651,16 @@
                 console.log(this.selectedDatacenter);
                 console.log("In a change plan!");
             },
+            async moveToOffline(item) {
+                this.editing = true
+                this.toOffline = true
+                // Add backend call to move to offline assets (assetRepository.addOffline and also remove from active assets)
+            },
+            async moveToActive(item) {
+                this.editing = true
+                this.toActive = true
+                // Add backend call to move to active assets (assetRepository.add() and also need to remove from offline assets)
+            }
         },
     }
 </script>

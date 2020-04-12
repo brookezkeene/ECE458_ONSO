@@ -10,6 +10,7 @@
                                   :options.sync="options"
                                   :server-items-length="totalItems"
                                   class="pa-10"
+                                  :loading="loading"
                                   @click:row="showDetails">
                         <template v-slot:top v-slot:item.action="{ item }">
 
@@ -162,7 +163,7 @@
                             </v-row>
                         </template>
                         <template v-slot:no-data>
-                            <v-btn color="primary" @click="initialize">Reset</v-btn>
+                            <v-btn color="primary" @click="initialize">Refresh</v-btn>
                         </template>
                     </v-data-table>
                 </v-card>
@@ -334,6 +335,7 @@
 
                 var info = await this.modelRepository.tablelist(this.searchQuery);
                 this.models = info.data;
+                this.loading = false;
                 return info;
             },
             async initialize() {
