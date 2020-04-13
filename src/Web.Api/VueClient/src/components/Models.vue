@@ -145,15 +145,11 @@
 
                         </template>
 
-<<<<<<< HEAD
                         <!-- Mount Type -->
-=======
->>>>>>> integrating blade chassis/blade model creation and view
                         <template v-slot:item.type="{ item }">
                             {{typeMap[item.mountType]}}
                         </template>
 
-<<<<<<< HEAD
                         <!-- Blade Omitted Fields -->
                         <template v-slot:item.mHeight="{ item }">
                             <div v-if="item.mountType != 'blade'">
@@ -180,8 +176,6 @@
                             </div>
                         </template>
 
-=======
->>>>>>> integrating blade chassis/blade model creation and view
                         <template v-slot:item.coloricon="{ item }">
                             <v-icon class="mr-2"
                                     :color=item.displayColor>
@@ -261,13 +255,8 @@
                         value: 'vendor'
                     },
                     { text: 'Model Number', value: 'modelNumber' },
-<<<<<<< HEAD
                     { text: 'Mount Type', value: 'type' }, 
                     { text: 'Height', value: 'mHeight' },
-=======
-                    { text: 'Mount Type', value: 'type' }, // TODO: change value to mountType
-                    { text: 'Height', value: 'height' },
->>>>>>> integrating blade chassis/blade model creation and view
                     { text: 'Display Color', value: 'coloricon', sortable: false },
                     { text: 'Network Ports', value: 'netPorts' }, 
                     { text: 'Power Ports', value: 'powPorts' },
