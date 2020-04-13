@@ -130,7 +130,7 @@ namespace Web.Api.Infrastructure.Repositories
 
         public async Task<int> AddAssetAsync(Asset asset)
         {
-            //asset.ChassisId = Guid.Parse("fc7dd01e-54a8-4a2e-1c45-08d7de8bceb8");
+            asset.ChassisId = Guid.Parse("fc7dd01e-54a8-4a2e-1c45-08d7de8bceb8");
             _dbContext.Assets.Add(asset);
             var added = await _dbContext.SaveChangesAsync();
 

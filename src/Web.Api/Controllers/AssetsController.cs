@@ -335,15 +335,12 @@ namespace Web.Api.Controllers
         private async Task<ActionResult> DecommissionBladeChassis(AssetDto assetDto, DecommissionedAssetQuery query)
         {
 
-            while (assetDto.Blades != null && assetDto.Blades.Count != 0)
+            foreach (AssetDto blade in assetDto.Blades)
             {
-                var blade = await _assetService.GetAssetAsync(assetDto.Blades.First().Id);
                 var decommissionedAsset = CreateDecommissionedAsset(blade, query);
                 await _assetService.DeleteAssetAsync(blade.Id);
                 await _assetService.CreateDecommissionedAssetAsync(decommissionedAsset);
             }
-
-
             return Ok();
         }
         //CHECK HERE TO SEE IF BLADES HAVE IDS - IF SO, ARE THE IDS THE CHANGE PLAN ITEM IDS?
