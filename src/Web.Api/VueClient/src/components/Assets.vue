@@ -8,7 +8,7 @@
                     <v-spacer></v-spacer>
                     <v-tooltip top>
                         <template v-slot:activator="{ on }">
-                            <v-switch v-model="labelGen" 
+                            <v-switch v-model="labelGen"
                                       label="Asset Label Mode"
                                       v-on="on"
                                       class="pa-3"></v-switch>
@@ -19,7 +19,7 @@
                 </v-layout>
             </v-card>
         </v-container>
-        
+
         <v-container>
             <v-card>
                 <v-spacer></v-spacer>
@@ -158,7 +158,7 @@
                         <v-row>
                             <span style="white-space:nowrap">Select All</span>
                         </v-row>
-                        
+
                         <v-simple-checkbox color="primary"
                                            class="pb-4"
                                            v-bind="props"
@@ -188,7 +188,7 @@
                     <!-- TODO: Integrate Custom Location Column -->
                     <template v-slot:item.location="{ item }">
                         <!-- v-if="item.mountType === blade" -->
-                        <div v-if="true"> 
+                        <div v-if="true">
                             Rack {{ item.rack }}, {{ item.rackPosition }} U
                         </div>
                         <!-- location for blades -->
@@ -306,25 +306,50 @@
                         </v-row>
                     </template>
 
-                    <template>
-                        <v-dialog v-model="toOffline" scrollable max-width="300px">
-                            <v-card>
-                                <v-card-title>
-                                    HELLO
-                                </v-card-title>
-                                <SiteOptions :editedItem="assets"
-                                             :isBlade="false"
-                                             :type="type"></SiteOptions>
-                            </v-card>
-                        </v-dialog>
-                    </template>
-
                     <template v-slot:no-data>
                         <v-btn color="primary" @click="initialize">Refresh</v-btn>
                     </template>
                 </v-data-table>
             </v-card>
         </v-container>
+
+        <template>
+            <v-row justify="center">
+                <v-dialog v-model="toOffline" scrollable max-width="500px">
+                    <v-card class="pa-3">
+                        <v-card-title>
+                            Move Asset to Offline Storage
+                        </v-card-title>
+                        <SiteOptions :editedItem="assets"
+                                     :isBlade="false"
+                                     :type='active'></SiteOptions>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color='primary' @click="moveToOffline">Move</v-btn>
+                            <v-btn color='primary' @click="toOffline=false">Cancel</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+            </v-row>
+
+            <v-row justify="center">
+                <v-dialog v-model="toActive" scrollable max-width="1000px">
+                    <v-card class="pa-3">
+                        <v-card-title>
+                            Move Asset to Offline Storage
+                        </v-card-title>
+                        <SiteOptions :editedItem="assets"
+                                     :isBlade="false"
+                                     :type='offline'></SiteOptions>
+
+                        <v-btn @click="moveToActive">Move</v-btn>
+                        <v-btn @click="toActive=false">Cancel</v-btn>
+
+                    </v-card>
+                </v-dialog>
+            </v-row>
+        </template>
+
     </v-card>
 </template>
 
@@ -332,11 +357,14 @@
 
     import networkNeighborhood from '@/networkNeighborhood';
     import changePlanBar from '@/components/ChangePlanStatusBar';
+    import SiteOptions from '@/components/AssetEditSiteOptions.vue';
+
 
     export default {
 
         components: {
             changePlanBar,
+            SiteOptions
         },
         inject: ['assetRepository', 'datacenterRepository'],
         props: ['type'],
@@ -651,14 +679,18 @@
                 console.log(this.selectedDatacenter);
                 console.log("In a change plan!");
             },
-            async moveToOffline(item) {
-                this.editing = true
-                this.toOffline = true
+            moveToOffline(item) {
+                if (this.toOffline) {
+                    //insert repo call
+                }
+                this.editing = true;
+                this.toOffline = true;
+                console.log(this.toOffline)
                 // Add backend call to move to offline assets (assetRepository.addOffline and also remove from active assets)
             },
             async moveToActive(item) {
-                this.editing = true
-                this.toActive = true
+                this.editing = true;
+                this.toActive = true;
                 // Add backend call to move to active assets (assetRepository.add() and also need to remove from offline assets)
             }
         },

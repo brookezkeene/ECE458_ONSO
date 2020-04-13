@@ -216,7 +216,7 @@
 <script>
     /* eslint-disable */
     import changePlanBar from '@/components/ChangePlanStatusBar';
-    import SiteOptions from '@/components/AssetEditSiteOptions.vue';
+    import SiteOptions from '@/components/AssetEditSiteOptions';
 
     export default {
         name: 'asset-edit',
