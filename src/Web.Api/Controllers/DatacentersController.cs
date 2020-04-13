@@ -54,7 +54,13 @@ namespace Web.Api.Controllers
 
             return Ok(response);
         }
-
+        [HttpGet("{id}/chassis")]
+        public async Task<ActionResult<List<GetAssetApiDto>>> GetChassis(Guid id)
+        {
+            var ports = await _datacenterService.GetChassisOfDataCenterAsync(id);
+            var response = _mapper.Map<List<GetAssetsApiDto>>(ports);
+            return Ok(response);
+        }
         [HttpGet("{id}/networkports/open")]
         public async Task<ActionResult<List<GetAssetNetworkPortFromDatacenterDto>>> GetOpenNetworkPorts(Guid id)
         {

@@ -63,6 +63,15 @@ namespace Web.Api.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<Asset>> GetChassisFromDatacenterAsync(Guid datacenterId)
+        {
+            return await _dbContext.Assets
+                .Include(asset => asset.Model)
+                .Where(asset => asset.Model.MountType.Equals("chassis"))
+                .Where(asset => asset.Rack.DatacenterId == datacenterId)
+                .ToListAsync();
+        }
+
         public async Task<bool> DatacenterIsUniqueAsync(string name, string description, Guid id = default)
         {
             return !await _dbContext.Datacenters
