@@ -108,6 +108,16 @@ namespace Web.Api.Core.Services
             return updated;
         }
 
+        public async Task<int> CreateAssetAsync(AssetDto assetDto, ChangePlanItemDto changePlanItemDto)
+        {
+            var entity = _mapper.Map<Asset>(assetDto);
+            var updated = await _assetRepository.AddAssetAsync(entity);
+            changePlanItemDto.AssetId = entity.Id;
+            var changePlanItem = _mapper.Map<ChangePlanItem>(changePlanItemDto);
+            await _repository.UpdateChangePlanItemAsync(changePlanItem);
+            return updated;
+        }
+
         public async Task<int> UpdateChangePlanAsync(ChangePlanDto changePlan)
         {
             var entity = _mapper.Map<ChangePlan>(changePlan);

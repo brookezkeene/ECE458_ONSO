@@ -131,7 +131,7 @@ namespace Web.Api.Controllers
                     var assetApiDto = JsonConvert.DeserializeObject<CreateAssetApiDto>(changePlanItem.NewData);
                     //assetApiDto.LastUpdatedDate = DateTime.Now;
                     var assetDto = _mapper.Map<AssetDto>(assetApiDto);
-                    await _assetService.CreateAssetAsync(assetDto);
+                    await _changePlanService.CreateAssetAsync(assetDto, changePlanItem);
                 }
                 //NOTE: THE NEWDATA HERE IS A UpdateAssetApiDto (assetDto/asset entity cannot be serialized)
                 else if (changePlanItem.ExecutionType.Equals("update"))
@@ -144,15 +144,38 @@ namespace Web.Api.Controllers
                 //NOTE: THE NEWDATA HERE IS A DecommissionedAssetDto
                 else if (changePlanItem.ExecutionType.Equals("decommission"))
                 {
-                    var decommisionedAsset =
-                        JsonConvert.DeserializeObject<DecommissionedAssetDto>(changePlanItem.NewData);
-                    decommisionedAsset.DateDecommissioned = DateTime.Now;
+                    var decommisionedAsset = JsonConvert.DeserializeObject<DecommissionedAssetDto>(changePlanItem.NewData);
+                    
+                    if (await _assetService.GetAssetAsync(changePlanItem.AssetId) != null) {
+                        decommisionedAsset.DateDecommissioned = DateTime.Now;   
+                    } 
+                    else
+                    {
+                        var item = await _changePlanService.GetChangePlanItemAsync(changePlanItem.AssetId);
+                        var assetDto = await _assetService.GetAssetAsync(item.AssetId);
+                        var createDecommissionedAsset = JsonConvert.DeserializeObject<CreateDecommissionedAsset>(decommisionedAsset.Data);
+                        decommisionedAsset = CreateDecommissionedAsset(assetDto, createDecommissionedAsset);
+                    }
                     await _assetService.DeleteAssetAsync(decommisionedAsset.Id);
                     await _assetService.CreateDecommissionedAssetAsync(decommisionedAsset);
                 }
             }
 
             return Ok();
+        }
+        private DecommissionedAssetDto CreateDecommissionedAsset(AssetDto assetDto, CreateDecommissionedAsset decommissionedAssetDto)
+        {
+            //creating the createDecommissionedAsset from the assetDto
+            var createDecommissionedAsset = _mapper.Map<CreateDecommissionedAsset>(assetDto);
+            //adding network graph, person who decommissioned, and date decommissioned to decommissioned asset info
+            createDecommissionedAsset.NetworkPortGraph = decommissionedAssetDto.NetworkPortGraph;
+            createDecommissionedAsset.Decommissioner = decommissionedAssetDto.Decommissioner;
+            createDecommissionedAsset.DateDecommissioned = DateTime.Now;
+            var jsonString = JsonConvert.SerializeObject(createDecommissionedAsset);
+            //creating a new decommissionedAssetDto + filling in the data
+            var decommissionedAsset = _mapper.Map<DecommissionedAssetDto>(createDecommissionedAsset);
+            decommissionedAsset.Data = jsonString;
+            return decommissionedAsset;
         }
     }
 }
