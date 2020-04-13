@@ -64,7 +64,11 @@ namespace Web.Api.Core.Services
             var networkports = await _repository.GetNetworkPortFromDatacenterAsync(datacenterId);
             return _mapper.Map<List<AssetNetworkPortDto>>(networkports);
         }
-
+        public async Task<List<AssetDto>> GetChassisOfDataCenterAsync(Guid datacenterId)
+        {
+            var networkports = await _repository.GetChassisFromDatacenterAsync(datacenterId);
+            return _mapper.Map<List<AssetDto>>(networkports);
+        }
         public async Task<PagedList<DatacenterDto>> GetDatacentersAsync(string search, int page = 1, int pageSize = 10)
         {
             var pagedList = await _repository.GetDatacentersAsync(search, page, pageSize);
