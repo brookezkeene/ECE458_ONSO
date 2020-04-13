@@ -322,7 +322,7 @@
                         </v-card-title>
                         <SiteOptions :editedItem="assets"
                                      :isBlade="false"
-                                     :type='active'></SiteOptions>
+                                     :type="'offline'"></SiteOptions>
                         <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn color='primary' @click="moveToOffline">Move</v-btn>
@@ -336,15 +336,16 @@
                 <v-dialog v-model="toActive" scrollable max-width="1000px">
                     <v-card class="pa-3">
                         <v-card-title>
-                            Move Asset to Offline Storage
+                            Move Asset to Datacenter and Rack
                         </v-card-title>
                         <SiteOptions :editedItem="assets"
                                      :isBlade="false"
-                                     :type='offline'></SiteOptions>
-
-                        <v-btn @click="moveToActive">Move</v-btn>
-                        <v-btn @click="toActive=false">Cancel</v-btn>
-
+                                     :type="'active'"></SiteOptions>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color='primary' @click="moveToActive">Move</v-btn>
+                            <v-btn color='primary' @click="toActive=false">Cancel</v-btn>
+                        </v-card-actions>
                     </v-card>
                 </v-dialog>
             </v-row>
