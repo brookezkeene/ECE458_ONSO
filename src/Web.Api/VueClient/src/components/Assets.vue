@@ -326,7 +326,7 @@
                         <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn color='primary' @click="moveToOffline">Move</v-btn>
-                            <v-btn color='primary' @click="toOffline=false">Cancel</v-btn>
+                            <v-btn color='primary' @click="closeMove">Cancel</v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
@@ -344,7 +344,7 @@
                         <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn color='primary' @click="moveToActive">Move</v-btn>
-                            <v-btn color='primary' @click="toActive=false">Cancel</v-btn>
+                            <v-btn color='primary' @click="closeMove">Cancel</v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
@@ -686,13 +686,17 @@
                 }
                 this.editing = true;
                 this.toOffline = true;
-                console.log(this.toOffline)
                 // Add backend call to move to offline assets (assetRepository.addOffline and also remove from active assets)
             },
             async moveToActive(item) {
                 this.editing = true;
                 this.toActive = true;
                 // Add backend call to move to active assets (assetRepository.add() and also need to remove from offline assets)
+            },
+            closeMove() {
+                console.log(this.toOffline);
+                this.toOffline = false;
+                this.toActive = false;
             }
         },
     }
