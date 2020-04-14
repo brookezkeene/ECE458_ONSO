@@ -217,7 +217,7 @@
                             <v-tooltip v-if="type==='active'" top>
                                 <template v-slot:activator="{ on }">
                                     <v-btn icon v-on="on"
-                                           @click="moveToOffline(item)">
+                                           @click="moveAsset(item)">
                                         <v-icon medium
                                                 class="mr-2">
                                             mdi-server-minus
@@ -231,7 +231,7 @@
                             <v-tooltip v-if="type==='offline'" top>
                                 <template v-slot:activator="{ on }">
                                     <v-btn icon v-on="on"
-                                           @click="moveToActive(item)">
+                                           @click="moveAsset(item)">
                                         <v-icon medium
                                                 class="mr-2">
                                             mdi-server-plus
@@ -312,45 +312,6 @@
                 </v-data-table>
             </v-card>
         </v-container>
-
-        <template>
-            <v-row justify="center">
-                <v-dialog v-model="toOffline" scrollable max-width="500px">
-                    <v-card class="pa-3">
-                        <v-card-title>
-                            Move Asset to Offline Storage
-                        </v-card-title>
-                        <SiteOptions :editedItem="assets"
-                                     :isBlade="false"
-                                     :type="'offline'"></SiteOptions>
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color='primary' @click="moveToOffline">Move</v-btn>
-                            <v-btn color='primary' @click="closeMove">Cancel</v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
-            </v-row>
-
-            <v-row justify="center">
-                <v-dialog v-model="toActive" scrollable max-width="1000px">
-                    <v-card class="pa-3">
-                        <v-card-title>
-                            Move Asset to Datacenter and Rack
-                        </v-card-title>
-                        <SiteOptions :editedItem="assets"
-                                     :isBlade="false"
-                                     :type="'active'"></SiteOptions>
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color='primary' @click="moveToActive">Move</v-btn>
-                            <v-btn color='primary' @click="closeMove">Cancel</v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
-            </v-row>
-        </template>
-
     </v-card>
 </template>
 
@@ -358,14 +319,11 @@
 
     import networkNeighborhood from '@/networkNeighborhood';
     import changePlanBar from '@/components/ChangePlanStatusBar';
-    import SiteOptions from '@/components/AssetEditSiteOptions.vue';
-
 
     export default {
 
         components: {
             changePlanBar,
-            SiteOptions
         },
         inject: ['assetRepository', 'datacenterRepository'],
         props: ['type'],
@@ -389,6 +347,7 @@
                 totalItems: 0,
                 toActive: false,
                 toOffline: false,
+                refresh: 0,
 
                 // Table data.
                 headers: [
@@ -680,23 +639,9 @@
                 console.log(this.selectedDatacenter);
                 console.log("In a change plan!");
             },
-            moveToOffline(item) {
-                if (this.toOffline) {
-                    //insert repo call
-                }
+            moveAsset(item) {
                 this.editing = true;
-                this.toOffline = true;
-                // Add backend call to move to offline assets (assetRepository.addOffline and also remove from active assets)
-            },
-            async moveToActive(item) {
-                this.editing = true;
-                this.toActive = true;
-                // Add backend call to move to active assets (assetRepository.add() and also need to remove from offline assets)
-            },
-            closeMove() {
-                console.log(this.toOffline);
-                this.toOffline = false;
-                this.toActive = false;
+                this.$router.push({ name: 'move-asset', params: {type: this.type, item: item}})
             }
         },
     }
