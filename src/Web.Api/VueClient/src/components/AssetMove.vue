@@ -1,11 +1,12 @@
 ﻿<template>
     <v-card class="pa-3">
-        <v-card-title v-if="type==='offline'"> Move Asset to Rack in Datacenter</v-card-title>
-        <v-card-title v-if="type==='active'"> Move Asset to Offline Storage</v-card-title>
+        <v-card-title v-if="type==='offline'"> Move Asset {{item.assetNumber}} to a Datacenter</v-card-title>
+        <v-card-title v-if="type==='active'"> Move Asset {{item.assetNumber}} to Offline Storage</v-card-title>
 
         <SiteOptions :editedItem="assets"
                      :isBlade="false"
                      :type="type"></SiteOptions>
+
         <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color='primary' @click="moveToOffline">Move</v-btn>
@@ -19,8 +20,17 @@
 
     export default {
         props: ['item', 'type'],
+        inject: ['assetRepository'],
         components: {
             SiteOptions
+        },
+        data() {
+            return {
+                assets: [],
+            }
+        },
+        async created() {
+            this.assets = await this.assetRepository.list();
         },
         methods: {
             async moveToOffline() {
