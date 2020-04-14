@@ -94,6 +94,7 @@
                     datacenterRules: v => /^(?!\s*$).+/.test(v) || 'Datacenter is required',
                     rackuRules: v => (/^(?!\s*$).+/.test(v) && v > 0 && v < 43) || 'Valid rack U is required',
                     rackRules: v => /^(?!\s*$).+/.test(v) || 'Location is required',
+                    slotRules: v => (/^(?!\s*$).+/.test(v) && v > 0 && v < 15) || 'Valid slot is required',
                 }
 
             }
