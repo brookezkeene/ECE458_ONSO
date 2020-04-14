@@ -9,7 +9,8 @@
                                 :rules="[rules.datacenterRules]"
                                 :items="filteredDatacenters"
                                 item-text="name"
-                                item-value="id">
+                                item-value="id"
+                                @change="updateRacks">
                 </v-autocomplete>
             </v-col>
             <!--todo: replace this data with offline storage data-->
@@ -53,11 +54,11 @@
             <v-col v-if="isBlade"
                    cols="12" sm="6" md="4">
                 <v-autocomplete v-if="!editedItem.datacenterId.length==0 && updateRacks()"
-                                v-model="editedItem.rackId"
+                                v-model="editedItem.chassisId"
                                 label="Blade Chassis"
                                 placeholder="Please select a blade chassis for this blade"
-                                :items="racks"
-                                item-text="address"
+                                :items="chassis"
+                                item-text="hostname"
                                 item-value="id"
                                 :rules="[rules.rackRules]"
                                 @change="rackSelected">
@@ -67,7 +68,7 @@
             <v-col v-if="isBlade"
                    cols="12" sm="6" md="4">
                 <v-text-field v-if="!editedItem.datacenterId.length==0 && updateRacks()"
-                              v-model="editedItem.rackPosition"
+                              v-model="editedItem.chassisSlot"
                               label="Slot"
                               placeholder="Please enter a slot for this blade"
                               type="number"
@@ -89,6 +90,7 @@
                 datacenters: [],
                 datacenterID: '',
                 racks: [],
+                chassis: [],
                 rules: {
                     offlineRules: v => /^(?!\s*$).+/.test(v) || 'Offline storage site is required',
                     datacenterRules: v => /^(?!\s*$).+/.test(v) || 'Datacenter is required',
@@ -152,7 +154,8 @@
                     }
                     else {
                         // TODO: for blades, get all blade chassis in the datacenter and set this equal to racks
-                        this.racks = [];
+                        this.chassis = await this.datacenterRepository.chassis(this.datacenterID);
+                        this.editedItem.rackId = null;
                         return true;
                     }
                 }
@@ -160,13 +163,17 @@
             },
             async rackSelected() {
                 this.selectedRack = true;
-                let availablePorts = {};
-                availablePorts = await this.rackRepository.getPdus(this.editedItem.rackId);
-/*                for (var i = 0; i < availablePorts.length; i++) {
-                    availablePorts[i].number = +port.number;
-                }*/
-/*                availablePorts.sort(a, b => a - b); //sorting port numbers so that they are easier to see in frontend
-*/              this.availablePortsInRack = availablePorts;
+
+                if (!this.isBlade) {
+                    let availablePorts = {};
+                    availablePorts = await this.rackRepository.getPdus(this.editedItem.rackId);
+    /*                for (var i = 0; i < availablePorts.length; i++) {
+                        availablePorts[i].number = +port.number;
+                    }*/
+    /*                availablePorts.sort(a, b => a - b); //sorting port numbers so that they are easier to see in frontend
+    */              this.availablePortsInRack = availablePorts;
+                }
+                
                 this.$emit('selectedRack', this.selectedRack);
             },
         }
