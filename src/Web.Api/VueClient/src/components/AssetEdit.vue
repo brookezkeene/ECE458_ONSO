@@ -437,8 +437,11 @@
             },
             async rackSelected() {
                 this.selectedRack = true;
+                
                 let availablePorts = {};
-                availablePorts = await this.rackRepository.getPdus(this.editedItem.rackId);
+                if (this.mountType !== 'blade') {
+                    availablePorts = await this.rackRepository.getPdus(this.editedItem.rackId);
+                }
 /*                for (var i = 0; i < availablePorts.length; i++) {
                     availablePorts[i].number = +port.number;
                 }*/

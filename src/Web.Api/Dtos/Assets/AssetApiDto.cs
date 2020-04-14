@@ -5,7 +5,7 @@ namespace Web.Api.Dtos.Assets
     public abstract class AssetApiDto
     {
         public Guid? ChangePlanId { get; set; }
-        public Guid RackId { get; set; }
+        public Guid? RackId { get; set; }
         public string Hostname { get; set; }
         public string Comment { get; set; }
         public int RackPosition { get; set; }
