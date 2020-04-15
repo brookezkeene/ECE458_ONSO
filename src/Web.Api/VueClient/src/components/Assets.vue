@@ -189,10 +189,45 @@
 
                     <!-- TODO: integrate Expandable Rows for Blades -->
                     <template v-slot:item.data-table-expand="{ item, isExpanded, expand }">
-                        <v-btn icon v-if="isExpanded"><v-icon>mdi-chevron-up</v-icon></v-btn>
-                    </template>
+                        <v-btn icon v-if="item.blades.length > 0 && isExpanded" 
+                               @click="editing=true; expand(false)">
+                            <v-icon>mdi-chevron-up</v-icon>
+                        </v-btn>
+                        <v-btn icon v-if="item.blades.length > 0 && !isExpanded" 
+                               @click="editing=true; expand(true)">
+                            <v-icon>mdi-chevron-down</v-icon>
+                        </v-btn>
 
+                    </template>
                     <template v-slot:expanded-item="{ headers, item }">
+                        <td :colspan="headers.length">
+                            <thead>
+                                <th>Blades</th>
+                                <th>Vendor</th>
+                                <th>Model No.</th>
+                                <th>Asset No.</th>
+                                <th>Hostname</th>
+                                <th>Datacenter</th>
+                                <th>Slot</th>
+                                <th>Owner</th>
+                                <th></th>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(blade, index) in item.blades"
+                                    :key="index"
+                                    @click="showDetails(blade)">
+                                    <td></td>
+                                    <td>{{item.blades[index].vendor}}</td>
+                                    <td>{{item.blades[index].modelNumber}}</td>
+                                    <td>{{item.blades[index].assetNumber}}</td>
+                                    <td>{{item.blades[index].hostname}}</td>
+                                    <td>{{item.blades[index].datacenter}}</td>
+                                    <td>{{item.blades[index].chassisSlot}}</td>
+                                    <td>{{item.blades[index].owner}}</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </td>
                     </template>
 
                     <!-- TODO: Integrate Custom Location Column -->
