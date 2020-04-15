@@ -8,7 +8,7 @@
                              expand-on-hover
                              app>
 
-            <v-list>
+            <v-list dense nav>
                 <div v-for="item in filteredMenuItems"
                     :key="item.title">
                     <v-list-item v-if="item.title!='Assets' && item.title!='Sites'"
