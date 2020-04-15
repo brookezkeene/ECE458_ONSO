@@ -50,7 +50,6 @@
             </v-col>
 
             <!-- Blade Specific Fields (Blade Chassis & Slot) -->
-            <!-- TODO: replace edited item fields in v-model to integrate-->
             <v-col v-if="isBlade"
                    cols="12" sm="6" md="4">
                 <v-autocomplete v-if="!editedItem.datacenterId.length==0 && updateRacks()"
@@ -153,9 +152,8 @@
 */                        return true;
                     }
                     else {
-                        // TODO: for blades, get all blade chassis in the datacenter and set this equal to racks
+                        // for blades, get all blade chassis in the datacenter
                         this.chassis = await this.datacenterRepository.chassis(this.datacenterID);
-                        this.editedItem.rackId = null;
                         return true;
                     }
                 }
@@ -172,6 +170,10 @@
                     }*/
     /*                availablePorts.sort(a, b => a - b); //sorting port numbers so that they are easier to see in frontend
     */              this.availablePortsInRack = availablePorts;
+                }
+                else {
+                    var searchChassis = this.chassis.find(o => o.id === this.editedItem.chassisId);
+                    this.editedItem.rackId = searchChassis.rackId;
                 }
                 
                 this.$emit('selectedRack', this.selectedRack);

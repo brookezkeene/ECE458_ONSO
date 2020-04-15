@@ -257,6 +257,7 @@
                     ownerId: '',
                     modelId: '',
                     assetNumber: '',
+                    chassisId: '',
                 },
                 selectedModel: [],
                 datacenterID: '',
@@ -378,6 +379,7 @@
                 this.rackSelected = true;
                 this.sendNetworkPortRequest();
             },
+            
             makeNetworkPorts(model) {
                 console.log(model);
                 this.networkPorts = [];
