@@ -33,6 +33,8 @@
                               :server-items-length="totalItems"
                               :show-select="labelGen"
                               :options.sync="options"
+                              show-expand
+                              :expanded="getRowsToExpand"
                               :loading="loading">
 
                     <template v-slot:top v-slot:item.action="{ item }">
@@ -158,7 +160,7 @@
                         <v-row>
                             <span style="white-space:nowrap">Select All</span>
                         </v-row>
-                        
+
                         <v-simple-checkbox color="primary"
                                            class="pb-4"
                                            v-bind="props"
@@ -185,10 +187,18 @@
                         </v-row>
                     </template>
 
+                    <!-- TODO: integrate Expandable Rows for Blades -->
+                    <template v-slot:item.data-table-expand="{ item, isExpanded, expand }">
+                        <v-btn icon v-if="isExpanded"><v-icon>mdi-chevron-up</v-icon></v-btn>
+                    </template>
+
+                    <template v-slot:expanded-item="{ headers, item }">
+                    </template>
+
                     <!-- TODO: Integrate Custom Location Column -->
                     <template v-slot:item.location="{ item }">
                         <!-- v-if="item.mountType === blade" -->
-                        <div v-if="true"> 
+                        <div v-if="true">
                             Rack {{ item.rack }}, {{ item.rackPosition }} U
                         </div>
                         <!-- location for blades -->
@@ -436,6 +446,19 @@
                 } else {
                     return 'Assets in Offline Storage';
                 }
+            },
+            getRowsToExpand() {
+                /*eslint-disable*/
+                var arr = [];
+                var index = 0;
+                this.assets.forEach(item => {
+                    if (item.mountType === 'chassis') {
+                        arr[index] = item;
+                        index += 1;
+                    }
+                })
+                console.log(arr);
+                return arr;
             },
         },
         watch: {
