@@ -7,6 +7,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Renci.SshNet;
 using Web.Api.Common;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Dtos.Power;
@@ -310,6 +311,16 @@ namespace Web.Api.Controllers
         [HttpGet("decommission")]
         public async Task<ActionResult<PagedList<DecommissionedAssetDto>>> GetManyDecommissioned([FromQuery] SearchAssetQuery query)
         {
+            SshClient sshclient = new SshClient("hyposoft-mgt.colab.duke.edu", 2222, "admin3", "TSfS#458");
+            sshclient.Connect();
+            sshclient.ConnectionInfo.Timeout = TimeSpan.FromSeconds(1000);
+            SshCommand sc = sshclient.CreateCommand("chassis myChassis1");
+            sc.Execute();
+            sc = sshclient.CreateCommand("power");
+            sc.Execute();
+            sshclient.Disconnect();
+            
+
             var assets = await _assetService.GetDecommissionedAssetsAsync(query);
 
             var response = _mapper.Map<PagedList<DecommissionedAssetDto>>(assets);
