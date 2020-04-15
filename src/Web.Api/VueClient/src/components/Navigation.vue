@@ -87,6 +87,7 @@
                     { title: 'Reports', path: '/reports', icon: 'mdi-chart-pie' },
                     { title: 'Import/Export', path: '/import-export', icon: 'mdi-file-upload' },
                     { title: 'System Log', path: '/log', icon: 'mdi-post' },
+                    { title: 'Barcode Scanner', path: '/barcode-scanner', icon: 'mdi-barcode-scan'},
                 ],
             }
         },

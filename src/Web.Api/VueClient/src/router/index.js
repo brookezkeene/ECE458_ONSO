@@ -25,6 +25,7 @@ import ChangePlannerDetails from '@/components/ChangePlannerDetails'
 import ChangePlanEdit from '@/components/ChangePlanEdit'
 import AssetLabels from '@/components/AssetLabels'
 import WorkOrder from '@/components/PrintableChangePlan'
+import BarcodeScanner from '@/components/BarcodeScanner'
 import store from '@/store/store'
 
 Vue.use(Router)
@@ -201,6 +202,11 @@ const routes = [
                 name: 'log',
                 component: Log,
                 meta: { permission: 'audit' }
+            },
+            {
+                path: '/barcode-scanner',
+                name: 'barcode-scanner',
+                component: BarcodeScanner,
             }
 
             ]
