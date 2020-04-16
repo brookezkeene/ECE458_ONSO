@@ -69,10 +69,10 @@
                     <v-card-text>
                         <blade-diagram :chassisId="asset.chassisId"
                                        :assetId="asset.id"
-                                       :isBlade="isBlade"></blade-diagram>
+                                       :type="mountType"></blade-diagram>
                     </v-card-text>
                     <v-card-text v-if="isBlade">
-                        <a href="">View Blade Chassis Details</a>
+                        <router-link to="{ name: 'asset-details', params: { id: asset.chassisId } }">View Blade Chassis Details</router-link>
                     </v-card-text>
                 </div>
             </v-card-text>
@@ -174,6 +174,7 @@
 
                 const model = await this.modelRepository.find(this.asset.modelId);
                 this.mountType = model.mountType;
+                console.log(this.mountType)
             },
 
         }
