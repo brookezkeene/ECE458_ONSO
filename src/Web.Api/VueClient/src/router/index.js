@@ -208,6 +208,11 @@ const routes = [
                 name: 'log',
                 component: Log,
                 meta: { permission: 'audit' }
+            },
+            {
+                path: '/barcode-scanner',
+                name: 'barcode-scanner',
+                component: BarcodeScanner,
             }
 
             ]

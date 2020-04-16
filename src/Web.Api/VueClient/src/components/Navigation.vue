@@ -8,7 +8,7 @@
                              expand-on-hover
                              app>
 
-            <v-list>
+            <v-list dense nav>
                 <div v-for="item in filteredMenuItems"
                     :key="item.title">
                     <v-list-item v-if="item.title!='Assets' && item.title!='Sites'"
@@ -87,6 +87,7 @@
                     { title: 'Reports', path: '/reports', icon: 'mdi-chart-pie' },
                     { title: 'Import/Export', path: '/import-export', icon: 'mdi-file-upload' },
                     { title: 'System Log', path: '/log', icon: 'mdi-post' },
+                    { title: 'Barcode Scanner', path: '/barcode-scanner', icon: 'mdi-barcode-scan'},
                 ],
             }
         },
