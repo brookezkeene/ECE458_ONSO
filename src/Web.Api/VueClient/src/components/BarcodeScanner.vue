@@ -1,8 +1,8 @@
 ﻿<template>
     <div>
         <v-card flat>
-            <v-card-title>Asset Label Scanner</v-card-title>
-            <v-btn @click="scan=!scan" color="primary" class="center mb-2" :depressed="scan">Click to begin scanning</v-btn>
+            <v-card-title>Scan Asset Label</v-card-title>
+            <v-btn @click="scan=!scan" color="primary" class="center mb-2" :depressed="scan">Click to scan</v-btn>
             <v-quagga v-if="scan===true" :onDetected="logIt" :readerSize="readerSize" :readerTypes="['ean_reader']"></v-quagga>
         </v-card>
     </div>
