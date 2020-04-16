@@ -137,6 +137,21 @@ namespace Web.Api.Controllers
             return Ok();
         }
 
+        [HttpGet("asset/{assetNumber}")]
+        public async Task<ActionResult<GetAssetApiDto>> GetByNumber(int assetNumber)
+        {
+            var asset = await _assetService.GetAssetByNumber(assetNumber);
+
+            //is no asset is returned, may be a decommissioned asset
+            if (asset != null)
+            {
+                var response = _mapper.Map<GetAssetApiDto>(asset);
+                return Ok(response);
+            }
+            //nothign was found 
+            return Ok();
+        }
+
         /*
          * WHAT'S STORED IN THE CHANGEPLANITEM DATA: ApiDto or DecommissionedAssets
          */

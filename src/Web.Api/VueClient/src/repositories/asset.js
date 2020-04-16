@@ -8,6 +8,10 @@ export default {
         return axios.get(`${resource}/${id}`)
             .then(response => response.data);
     },
+    findByNumber(assetNumber) {
+        return axios.get(`${resource}/asset/${assetNumber}`)
+            .then(response => response.data);
+    },
     getPowerPortState(powerportid) {
         return axios.get(`${resource}/${powerportid}/power`)
             .then(response => {

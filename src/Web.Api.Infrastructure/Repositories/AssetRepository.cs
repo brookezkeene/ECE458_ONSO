@@ -249,6 +249,18 @@ namespace Web.Api.Infrastructure.Repositories
             return _dbContext.Assets.SingleOrDefault(asset => asset.AssetNumber == assetNumber);
         }
 
+
+        public async Task<Asset> GetAssetByNumber(int assetNumber)
+        {
+            return await _dbContext.Assets.Include(asset => asset.Rack)
+                .ThenInclude(rack => rack.Pdus)
+                .ThenInclude(pdu => pdu.Ports)
+                .Include(asset => asset.Rack)
+                .ThenInclude(rack => rack.Pdus)
+                .ThenInclude(pdu => pdu.Ports)
+                .SingleOrDefaultAsync(x => x.AssetNumber == assetNumber);
+        }
+
         public async Task<int> AddDecomissionedAssetAsync(DecommissionedAsset asset)
         {
             _dbContext.DecommissionedAssets.Add(asset);
