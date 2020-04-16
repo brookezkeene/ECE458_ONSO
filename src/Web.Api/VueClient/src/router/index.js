@@ -25,6 +25,7 @@ import ChangePlannerDetails from '@/components/ChangePlannerDetails'
 import ChangePlanEdit from '@/components/ChangePlanEdit'
 import AssetLabels from '@/components/AssetLabels'
 import WorkOrder from '@/components/PrintableChangePlan'
+import BarcodeScanner from '@/components/BarcodeScanner'
 import MoveAsset from '@/components/AssetMove'
 import store from '@/store/store'
 
