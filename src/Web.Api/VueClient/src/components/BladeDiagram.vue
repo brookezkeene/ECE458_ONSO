@@ -33,11 +33,11 @@
                                     <template v-slot:activator="{ on }">
                                         <v-btn v-if="blade.value"
                                                class="blade-btn"
-                                               :color="blade.style.backgroundColor"
+                                               :style="blade.style"
                                                height="250px"
                                                :depressed=true
                                                :tile=true
-                                               :to="{ name: 'assets'}"
+                                               :to="{ name: 'asset-details', params: { id: blade.id } }"
                                                v-on="on">
                                             {{ blade.text }}
                                         </v-btn>
@@ -89,6 +89,7 @@
 </style>
 
 <script>
+    /*eslint-disable*/
     import bladeDiagram from '@/bladeDiagram';
     export default {
         name: 'blade-diagram',
@@ -96,7 +97,7 @@
         props: {
             chassisId: String,
             assetId: String,
-            isBlade: Boolean,
+            type: String,
         },
         data () {
             return {
@@ -104,12 +105,20 @@
                 loading: true,
             }
         },
-        async created () {
+        computed: {
+            isBlade() {
+                return this.type === 'blade'
+            }
+        },
+        async created() {
+            console.log("created")
+            console.log(this.type)
             this.fetchBlades();
         },
         methods: {
             async fetchBlades() {
                 if (this.isBlade) {
+                    console.log("fetch blades callded with chassisId " + this.chassisId)
                     bladeDiagram.createSlots(this.chassisId).then((blades) => {
                         this.blades = blades
                         console.log(this.blades)
@@ -117,6 +126,7 @@
                     });
                 }
                 else {
+                    console.log("fetch blades callded with assetId " + this.assetId)
                     bladeDiagram.createSlots(this.assetId).then((blades) => {
                         this.blades = blades
                         console.log(this.blades)

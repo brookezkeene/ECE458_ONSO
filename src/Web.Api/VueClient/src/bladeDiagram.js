@@ -34,11 +34,10 @@ export default {
             const textColor = getContrast50(backgroundColor);
                 
             blades[slot].value = true;
-            blades[slot].text = assetBlades[j].vendor + ' ' + assetBlades[j].modelNumber;
+            blades[slot].text = assetBlades[j].hostname;
             blades[slot].id = assetBlades[j].id;
             blades[slot].style = { color: textColor, backgroundColor: backgroundColor };
         }
-        console.log(blades)
         return blades;
     },
 }
