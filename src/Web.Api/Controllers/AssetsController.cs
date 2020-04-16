@@ -137,7 +137,7 @@ namespace Web.Api.Controllers
             return Ok();
         }
 
-        [HttpGet("{assetNumber}")]
+        [HttpGet("asset/{assetNumber}")]
         public async Task<ActionResult<GetAssetApiDto>> GetByNumber(int assetNumber)
         {
             var asset = await _assetService.GetAssetByNumber(assetNumber);
