@@ -244,7 +244,13 @@ namespace Web.Api.Infrastructure.Repositories
             return pagedList;
         }
 
-        public async Task<Asset> GetAsset(int assetNumber)
+        public Asset GetAsset(int assetNumber)
+        {
+            return _dbContext.Assets.SingleOrDefault(asset => asset.AssetNumber == assetNumber);
+        }
+
+
+        public async Task<Asset> GetAssetByNumber(int assetNumber)
         {
             return await _dbContext.Assets.Include(asset => asset.Rack)
                 .ThenInclude(rack => rack.Pdus)
