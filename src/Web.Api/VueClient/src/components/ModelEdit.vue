@@ -220,6 +220,9 @@
                 if (this.validationInputs(this.newItem) > 0) {
                     return;
                 }
+                if (this.newItem.mountType === 'blade') {
+                    this.newItem.height = 0;
+                }
                 if (typeof this.id !== 'undefined') {
                     this.newItem.displayColor = this.newItem.displayColor.substring(0, 7);
 
