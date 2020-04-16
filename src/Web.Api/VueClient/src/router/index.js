@@ -25,7 +25,7 @@ import ChangePlannerDetails from '@/components/ChangePlannerDetails'
 import ChangePlanEdit from '@/components/ChangePlanEdit'
 import AssetLabels from '@/components/AssetLabels'
 import WorkOrder from '@/components/PrintableChangePlan'
-import BarcodeScanner from '@/components/BarcodeScanner'
+import MoveAsset from '@/components/AssetMove'
 import store from '@/store/store'
 
 Vue.use(Router)
@@ -102,6 +102,12 @@ const routes = [
                 path: 'assets/:type/labels',
                 name: 'asset-labels',
                 component: AssetLabels,
+                props: true
+            },
+            {
+                path: 'assets/:type/move',
+                name: 'move-asset',
+                component: MoveAsset,
                 props: true
             },
             // will be deprecated once the schema is fixed
