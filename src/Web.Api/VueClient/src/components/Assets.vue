@@ -210,13 +210,14 @@
                                 <th>Datacenter</th>
                                 <th>Slot</th>
                                 <th>Owner</th>
-                                <th></th>
+                                <th>Power</th>
+                                <th>Actions</th>
                             </thead>
                             <tbody>
                                 <tr v-for="(blade, index) in item.blades"
                                     :key="index"
                                     @click="showDetails(blade)">
-                                    <td></td>
+                                    <td>{{index+1}}</td>
                                     <td>{{item.blades[index].vendor}}</td>
                                     <td>{{item.blades[index].modelNumber}}</td>
                                     <td>{{item.blades[index].assetNumber}}</td>
@@ -225,21 +226,15 @@
                                     <td>{{item.blades[index].chassisSlot}}</td>
                                     <td>{{item.blades[index].owner}}</td>
                                     <td></td>
+                                    <td></td>
                                 </tr>
                             </tbody>
                         </td>
                     </template>
 
-                    <!-- TODO: Integrate Custom Location Column -->
+                    <!-- Custom Location Column -->
                     <template v-slot:item.location="{ item }">
-                        <!-- v-if="item.mountType === blade" -->
-                        <div v-if="true">
                             Rack {{ item.rack }}, {{ item.rackPosition }} U
-                        </div>
-                        <!-- location for blades -->
-                        <div v-else>
-                            Chassis {{ item.rack }}, Slot {{ item.rackPosition }}
-                        </div>
                     </template>
 
                     <template v-if="permission" v-slot:item.action="{ item }">
@@ -483,7 +478,6 @@
                 }
             },
             getRowsToExpand() {
-                /*eslint-disable*/
                 var arr = [];
                 var index = 0;
                 this.assets.forEach(item => {
@@ -492,7 +486,6 @@
                         index += 1;
                     }
                 })
-                console.log(arr);
                 return arr;
             },
         },
