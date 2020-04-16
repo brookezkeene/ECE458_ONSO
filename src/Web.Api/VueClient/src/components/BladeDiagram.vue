@@ -92,9 +92,11 @@
     import bladeDiagram from '@/bladeDiagram';
     export default {
         name: 'blade-diagram',
-        inject: ['datacenterRepository'],
+        inject: ['assetRepository'],
         props: {
-            id: String
+            chassisId: String,
+            assetId: String,
+            isBlade: Boolean,
         },
         data () {
             return {
@@ -107,10 +109,19 @@
         },
         methods: {
             async fetchBlades() {
-            /*eslint-disable*/
-                console.log(this.id);
-                this.blades = bladeDiagram.createSlots(this.id);
-                console.log(this.blades);
+                if (this.isBlade) {
+                    bladeDiagram.createSlots(this.chassisId).then((blades) => {
+                        this.blades = blades
+                        console.log(this.blades)
+
+                    });
+                }
+                else {
+                    bladeDiagram.createSlots(this.assetId).then((blades) => {
+                        this.blades = blades
+                        console.log(this.blades)
+                    });
+                }
 
                 this.loading = false
             }
