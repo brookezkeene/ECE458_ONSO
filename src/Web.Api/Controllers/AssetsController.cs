@@ -140,7 +140,7 @@ namespace Web.Api.Controllers
         [HttpGet("{assetNumber}")]
         public async Task<ActionResult<GetAssetApiDto>> GetByNumber(int assetNumber)
         {
-            var asset = await _assetService.GetAsset(assetNumber);
+            var asset = await _assetService.GetAssetByNumber(assetNumber);
 
             //is no asset is returned, may be a decommissioned asset
             if (asset != null)
