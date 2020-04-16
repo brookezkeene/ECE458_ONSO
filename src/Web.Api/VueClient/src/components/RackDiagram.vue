@@ -42,7 +42,7 @@
                             <td v-bind:style="slot.style">
                                 <div style="slot.style">
                                     <v-btn v-if="!slot.value.text==''"
-                                           :color="slot.style.backgroundColor"
+                                           :style="slot.style"
                                            :depressed=true
                                            :tile=true
                                            :to="{ name: 'asset-details', params: { id: slot.value.id } }">
