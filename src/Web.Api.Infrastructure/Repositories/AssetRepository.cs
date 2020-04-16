@@ -244,9 +244,15 @@ namespace Web.Api.Infrastructure.Repositories
             return pagedList;
         }
 
-        public Asset GetAsset(int assetNumber)
+        public async Task<Asset> GetAsset(int assetNumber)
         {
-            return _dbContext.Assets.SingleOrDefault(asset => asset.AssetNumber == assetNumber);
+            return await _dbContext.Assets.Include(asset => asset.Rack)
+                .ThenInclude(rack => rack.Pdus)
+                .ThenInclude(pdu => pdu.Ports)
+                .Include(asset => asset.Rack)
+                .ThenInclude(rack => rack.Pdus)
+                .ThenInclude(pdu => pdu.Ports)
+                .SingleOrDefaultAsync(x => x.AssetNumber == assetNumber);
         }
 
         public async Task<int> AddDecomissionedAssetAsync(DecommissionedAsset asset)

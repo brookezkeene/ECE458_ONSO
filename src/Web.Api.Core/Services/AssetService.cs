@@ -43,6 +43,12 @@ namespace Web.Api.Core.Services
             return _mapper.Map<AssetDto>(asset);
         }
 
+        public async Task<AssetDto> GetAsset(int assetNumber)
+        {
+            var asset = await _repository.GetAsset(assetNumber);
+            return _mapper.Map<AssetDto>(asset);
+        }
+
         public async Task<List<AssetDto>> GetAssetExportAsync(AssetExportQuery query)
         {
             query = query.ReformatQuery();
