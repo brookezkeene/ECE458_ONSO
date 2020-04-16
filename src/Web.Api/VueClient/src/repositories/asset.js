@@ -9,7 +9,6 @@ export default {
             .then(response => response.data);
     },
     findByNumber(assetNumber) {
-        console.log(assetNumber);
         return axios.get(`${resource}/asset/${assetNumber}`)
             .then(response => response.data);
     },
