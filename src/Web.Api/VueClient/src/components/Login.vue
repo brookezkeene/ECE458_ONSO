@@ -37,7 +37,7 @@
                             </v-row>
                         </v-container>
                     </v-form>
-                    <v-card flat v-resize-text>
+                    <v-card flat v-resize-text justify-center>
                         <v-layout align-center justify-center class="buttons" style="buttons">
                             <v-btn :disabled="!valid"
                                     color="primary"
@@ -70,7 +70,7 @@
       }
       .buttons {
           flex-direction: column;
-          width: 175px;
+          max-width: 300px;
           align-content: center;
       }
     }
