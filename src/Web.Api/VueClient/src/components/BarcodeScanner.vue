@@ -2,8 +2,10 @@
     <div v-resize-text>
         <v-card flat>
             <v-card-title>Scan Asset Label</v-card-title>
-            <v-btn @click="scan=!scan" color="primary" class="center mb-2" :depressed="scan">Click to scan</v-btn>
-            <v-quagga v-if="scan===true" :onDetected="logIt" :readerSize="readerSize"></v-quagga>
+            <v-card-text>
+                <v-btn @click="scan=!scan" color="primary" class="center mb-2" :depressed="scan">Click to scan</v-btn>
+                <v-quagga v-if="scan===true" :onDetected="logIt" :readerSize="readerSize"></v-quagga>
+            </v-card-text>
         </v-card>
     </div>
 </template>
