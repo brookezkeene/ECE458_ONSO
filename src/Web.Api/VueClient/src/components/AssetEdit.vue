@@ -90,28 +90,52 @@
                                             max-height="500px"
                                             flat
                                             v-if="index===1">
-                                        <div align="center">
-                                            <v-row>
-                                                <v-col cols="12" sm="6" md="4">
-                                                    <v-text-field v-model="customItem.cpu" label="CPU" placeholder="i.e. Intel Xeon E5520 2.2GHz" counter="50"></v-text-field>
-                                                </v-col>
-                                                <v-col cols="12" sm="6" md="4">
-                                                    <v-text-field v-model.number="customItem.memory" label="Memory (in GB)" type="number"></v-text-field>
-                                                </v-col>
-                                                <v-col cols="12" sm="6" md="4">
-                                                    <v-text-field v-model="customItem.storage" label="Storage" placeholder="2x500GB SSD RAID1"></v-text-field>
-                                                </v-col>
-                                            </v-row>
-                                            <v-row>
-                                                <v-col cols="12" sm="6" md="4">
-                                                    <v-label>
-                                                        Display Color
-                                                    </v-label>
-                                                    <v-color-picker v-model="customItem.displayColor">
-                                                    </v-color-picker>
-                                                </v-col>
-                                            </v-row>
-                                        </div>
+                                        <v-container>
+                                            <div>
+                                                <v-row>
+                                                    <v-col cols="12" sm="6" md="4">
+                                                        <v-text-field v-model="customItem.cpu" 
+                                                                      label="CPU" 
+                                                                      placeholder="i.e. Intel Xeon E5520 2.2GHz">
+
+                                                        </v-text-field>
+                                                    </v-col>
+                                                    <v-col cols="12" sm="6" md="4">
+                                                        <v-text-field v-model.number="customItem.memory" 
+                                                                      label="Memory (in GB)" 
+                                                                      type="number">
+
+                                                        </v-text-field>
+                                                    </v-col>
+                                                    <v-col cols="12" sm="6" md="4">
+                                                        <v-text-field v-model="customItem.storage" 
+                                                                      label="Storage" 
+                                                                      placeholder="2x500GB SSD RAID1">
+
+                                                        </v-text-field>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-row>
+                                                    <v-col cols="12" sm="6" md="4">
+                                                        <v-label>
+                                                            Display Color
+                                                        </v-label>
+                                                        <v-color-picker v-model="customItem.displayColor"
+                                                                        canvas-height="100">
+                                                        </v-color-picker>
+                                                    </v-col>
+                                                </v-row>
+                                            </div>
+                                            <div>
+                                                <v-row>
+                                                    <v-spacer></v-spacer>
+                                                    <v-btn color="primary"
+                                                           :disabled="true"
+                                                           outlined>Revert to Model Defaults</v-btn>
+                                                    <v-spacer></v-spacer>
+                                                </v-row>
+                                            </div>
+                                        </v-container>
                                     </v-card>
                                     <!-- MAC Addresses and Network Port Connections -->
                                     <v-card class="overflow-y-auto"
