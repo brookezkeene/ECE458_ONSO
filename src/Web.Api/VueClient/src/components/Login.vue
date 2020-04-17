@@ -2,14 +2,14 @@
     <v-container class="card" fill-height fluid v-resize-text>
         <v-row justify="center" class="logo">
             <v-img src="../assets/hyposoft_logo.png"
-                   max-width="300px"
+                   max-width="250px"
                    class="logo"
                    contain
                    ></v-img>
         </v-row>
         
         <v-row justify="center">
-            <v-card class="pa-5 mobile" v-resize-text>
+            <v-card width="300px" class="pa-5 mobile" v-resize-text>
                 <v-card-title class="justify-center">
                     Log In
                 </v-card-title>
@@ -48,7 +48,7 @@
                             </v-btn>
                             <v-spacer></v-spacer>
                             <v-form action="/api/login/external" method="post">
-                                <v-btn outlined color="primary" type="submit" class="buttons">Sign in with Duke NetID</v-btn>
+                                <v-btn outlined color="primary" type="submit" class="buttons">Duke NetID</v-btn>
                             </v-form>
                         </v-layout>
                     </v-card>
@@ -64,14 +64,13 @@
       .logo {
         height: 100px;
         width: 100px;
-
       }
       .mobile {
         width: 75%;
       }
       .buttons {
           flex-direction: column;
-          width: 250px;
+          width: 175px;
           align-content: center;
       }
     }
