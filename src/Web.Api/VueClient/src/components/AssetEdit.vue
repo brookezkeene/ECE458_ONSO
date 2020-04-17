@@ -130,8 +130,9 @@
                                                 <v-row>
                                                     <v-spacer></v-spacer>
                                                     <v-btn color="primary"
-                                                           :disabled="true"
-                                                           outlined>Revert to Model Defaults</v-btn>
+                                                           :disabled="!customizedAsset"
+                                                           outlined
+                                                           @click="revertCustom">Revert to Model Defaults</v-btn>
                                                     <v-spacer></v-spacer>
                                                 </v-row>
                                             </div>
@@ -304,6 +305,12 @@
                     assetNumber: '',
                     chassisId: '',
                 },
+                defaultCustomItem: {
+                    cpu: '',
+                    memory: 0,
+                    storage: '',
+                    displayColor: '',
+                },
                 customItem: {
                     cpu: '',
                     memory: 0,
@@ -386,10 +393,24 @@
                     this.titles.pop();
                 }
                 return this.titles;
+            },
+            // TODO: change when integrating with backend for customizable assets
+            customizedAsset() {
+                // Compare properties
+                console.log(this.defaultCustomItem)
+                console.log(this.customItem)
+                for (var key in this.defaultCustomItem) {
+                    if (this.defaultCustomItem[key] !== this.customItem[key]) {
+                        console.log(this.defaultCustomItem[key] + " vs. " + this.customItem[key])
+                        return true
+                    }
+		        }
+	            // If nothing failed, return true
+	            return false;
             }
         },
         methods: {
-            save() {
+            save() { // TODO: integrate customizable asset endpoints here
                 // Check if in a change plan context
                 if (this.$store.getters.isChangePlan) {
                     this.editedItem.changePlanId = this.$store.getters.changePlan.id;
@@ -398,7 +419,7 @@
                         this.editedItem.id = this.id;
                     }
                 }
-
+                
                 var promise = typeof this.id !== 'undefined'
                     ? this.assetRepository.update(this.editedItem)
                     : this.assetRepository.create(this.editedItem);
@@ -425,6 +446,14 @@
                 this.makeNetworkPorts(this.selectedModel);
                 this.makePowerPorts(this.selectedModel);
                 this.mountType = this.selectedModel.mountType;
+
+                // TODO: add GET api call for customizable information
+                // and set custom asset information fields here
+                for (var key in this.defaultCustomItem) {
+                    this.defaultCustomItem[key] = this.selectedModel[key];
+                    this.customItem[key] = this.selectedModel[key];
+		        }
+
             },
             async rackSelected() {
                 this.rackSelected = true;
@@ -502,6 +531,12 @@
 */              this.availablePortsInRack = availablePorts;
                 console.log(this.availablePortsInRack);
             },
+            // TODO: adapt for customizable asset integration
+            revertCustom() {
+                for (var key in this.defaultCustomItem) {
+                    this.customItem[key] = this.defaultCustomItem[key];
+		        }
+            }
         },
 
     }
