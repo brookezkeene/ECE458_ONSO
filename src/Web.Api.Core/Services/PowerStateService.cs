@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
@@ -127,6 +129,7 @@ namespace Web.Api.Core.Services
                 Id = assetId,
                 PowerPorts = powerStates
             };
+            //GetChassisPower();
             return ret;
         }
 
@@ -136,6 +139,28 @@ namespace Web.Api.Core.Services
             return matches.ToDictionary(match => int.Parse(match.Groups[1]
                 .Value), match => match.Groups[2]
                 .Value);
+        }
+
+        private void GetChassisPower()
+        {
+            var path = Directory.GetCurrentDirectory() + ".Core\\Services\\BCMAN.expect";
+            Process proc = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = path,
+                    Arguments = "myChassis 4",
+                    UseShellExecute = true,
+                    RedirectStandardOutput = false,
+                    CreateNoWindow = true
+                }
+            };
+            proc.Start();
+            while (!proc.StandardOutput.EndOfStream)
+            {
+                string line = proc.StandardOutput.ReadLine();
+                // do something with line
+            }
         }
     }
 }

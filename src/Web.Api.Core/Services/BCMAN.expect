@@ -1,0 +1,17 @@
+﻿#!/usr/bin/expect -d
+#Usage BCMAN.expect <chassis> <blade> <power>
+set timeout 60
+log_file bcman.log
+set prompt ": "
+
+spawn ssh admin3@hyposoft-mgt.colab.duke.edu -p 2222
+
+expect "password: " { send "TSfS#458\n" }
+expect "> " { send "chassis [lindex $argv 0]\r" }
+expect ": " { send "blade [lindex $argv 1]\r" }
+expect ": " { send "power [lindex $argv 2]\r"}
+expect ": " {send "exit\r"}
+expect ": " {send "exit\r"}
+exit
+
+

@@ -42,7 +42,7 @@ namespace Web.Api.Infrastructure.Repositories
                 .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
                 .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
                 //If we don't want the blades to appear on the table.... but how to add in the search requirements?
-                //.Where(asset => !asset.Model.MountType.Equals("blade"))
+                .Where(asset => !asset.Model.MountType.Contains("blade"))
                 .Where(x => x.RackId != null && x.RackId != Guid.Empty && 
                             String.Compare(x.Rack.Row.ToUpper(), rackStart[0].ToString()) >= 0 &&
                             String.Compare(x.Rack.Row.ToUpper(), rackEnd[0].ToString()) <= 0 &&
@@ -212,7 +212,7 @@ namespace Web.Api.Infrastructure.Repositories
                 .WhereIf(!string.IsNullOrEmpty(dateStart), startDateCondition)
                 .WhereIf(!string.IsNullOrEmpty(dateEnd), endDateCondition)
                 .WhereIf(!string.IsNullOrEmpty(datacenterName), datacenterCondition)
-                
+                //.Where(x => !x.Data.Contains("\"MountType\":\"blade"))
                 .PageBy(x => x.Id, page, pageSize)
                 .ToListAsync();
             assets = assets.Where(x => String.Compare(x.Rack[0].ToString().ToUpper(), rackStart[0].ToString()) >= 0 &&
@@ -222,14 +222,7 @@ namespace Web.Api.Infrastructure.Repositories
                 .ToList();
             assets = SortDecommissionedAsset(assets, sortBy, isDesc);
             pagedList.AddRange(assets);
-            var allAssets = await _dbContext.DecommissionedAssets
-                .WhereIf(!string.IsNullOrEmpty(datacenterName), datacenterCondition)
-                .WhereIf(!string.IsNullOrEmpty(generalSearch), hostnameCondition)
-                .WhereIf(!string.IsNullOrEmpty(decommissioner), decommissionerCondition)
-                .WhereIf(!string.IsNullOrEmpty(dateStart), startDateCondition)
-                .WhereIf(!string.IsNullOrEmpty(dateEnd), endDateCondition)
-                .WhereIf(!string.IsNullOrEmpty(datacenterName), datacenterCondition)
-                .ToListAsync();
+
             pagedList.TotalCount = await _dbContext.DecommissionedAssets
                 .WhereIf(!string.IsNullOrEmpty(datacenterName), datacenterCondition)
                 .WhereIf(!string.IsNullOrEmpty(generalSearch), hostnameCondition)
