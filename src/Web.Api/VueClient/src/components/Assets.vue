@@ -270,7 +270,7 @@
                                             <v-tooltip v-if="type==='active'" top>
                                                 <template v-slot:activator="{ on }">
                                                     <v-btn icon v-on="on"
-                                                           @click="moveToOffline(item.blades[index])">
+                                                           @click="moveAsset(item.blades[index])">
                                                         <v-icon medium
                                                                 class="mr-2">
                                                             mdi-server-minus
@@ -284,7 +284,7 @@
                                             <v-tooltip v-if="type==='offline'" top>
                                                 <template v-slot:activator="{ on }">
                                                     <v-btn icon v-on="on"
-                                                           @click="moveToActive(item.blades[index])">
+                                                           @click="moveAsset(item.blades[index])">
                                                         <v-icon medium
                                                                 class="mr-2">
                                                             mdi-server-plus
