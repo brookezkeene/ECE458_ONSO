@@ -101,7 +101,35 @@ namespace Web.Api.Core.Services
             await _repository.AddChangePlanItemAsync(entity);
             return entity.Id;
         }
-        public async Task<int> UpdateChangePlanItemAsync(ChangePlanItemDto changePlanItem)
+        public async Task<Guid> CreateChangePlanItemAsync(Guid changePlanId, string newData)
+        {
+            var changePlanItemDto = new ChangePlanItemDto
+            {
+                ChangePlanId = changePlanId,
+                ExecutionType = "create",
+                NewData = newData,
+                CreatedDate = DateTime.Now,
+            };
+            var entity = _mapper.Map<ChangePlanItem>(changePlanItemDto);
+            await _repository.AddChangePlanItemAsync(entity);
+            return entity.Id;
+        }
+        public async Task<Guid> CreateChangePlanItemAsync(Guid changePlanId, Guid assetId, string newData, string oldData)
+        {
+            var changePlanItemDto = new ChangePlanItemDto
+            {
+                ChangePlanId = changePlanId,
+                ExecutionType = "update",
+                AssetId = assetId,
+                NewData = newData,
+                PreviousData = oldData,
+                CreatedDate = DateTime.Now
+            };
+            var entity = _mapper.Map<ChangePlanItem>(changePlanItemDto);
+            await _repository.AddChangePlanItemAsync(entity);
+            return entity.Id;
+        }
+            public async Task<int> UpdateChangePlanItemAsync(ChangePlanItemDto changePlanItem)
         {
             var entity = _mapper.Map<ChangePlanItem>(changePlanItem);
             var updated = await _repository.UpdateChangePlanItemAsync(entity);

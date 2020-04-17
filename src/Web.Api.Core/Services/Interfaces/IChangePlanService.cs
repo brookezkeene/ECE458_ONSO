@@ -26,5 +26,7 @@ namespace Web.Api.Core.Services.Interfaces
         Task<int> ExecuteChangePlan(List<ChangePlanItemDto> changePlanItems);
         Task<AssetDto> FillFieldsInAssetApiForChangePlans(AssetDto assetDto);
         Task<int> CreateAssetAsync(AssetDto assetDto, ChangePlanItemDto changePlanItemDto);
+        Task<Guid> CreateChangePlanItemAsync(Guid changePlanId, string newData);
+        Task<Guid> CreateChangePlanItemAsync(Guid changePlanId, Guid assetId, string newData, string oldData);
     }
 }
