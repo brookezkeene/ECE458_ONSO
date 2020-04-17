@@ -54,8 +54,8 @@ export default {
         console.log(item);
         return axios.put(`${resource}`, item).then(response => response.data).catch(error => error);
     },
-    delete(item) {
-        return axios.delete(`${resource}/${item.id}`).then(response => { return response.data; }).catch(error => error);
+    delete(id) {
+        return axios.delete(`${resource}/${id}`).then(response => { return response.data; }).catch(error => error);
     },
     decommission(query) {
         /*eslint-disable*/

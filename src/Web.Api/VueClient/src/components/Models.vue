@@ -145,6 +145,37 @@
 
                         </template>
 
+                        <!-- Mount Type -->
+                        <template v-slot:item.type="{ item }">
+                            {{typeMap[item.mountType]}}
+                        </template>
+
+                        <!-- Blade Omitted Fields -->
+                        <template v-slot:item.mHeight="{ item }">
+                            <div v-if="item.mountType != 'blade'">
+                                {{item.height}}
+                            </div>
+                            <div v-else>
+                                N/A
+                            </div>
+                        </template>
+                        <template v-slot:item.netPorts="{ item }">
+                            <div v-if="item.mountType != 'blade'">
+                                {{item.ethernetPorts}}
+                            </div>
+                            <div v-else>
+                                N/A
+                            </div>
+                        </template>
+                        <template v-slot:item.powPorts="{ item }">
+                            <div v-if="item.mountType != 'blade'">
+                                {{item.powerPorts}}
+                            </div>
+                            <div v-else>
+                                N/A
+                            </div>
+                        </template>
+
                         <template v-slot:item.coloricon="{ item }">
                             <v-icon class="mr-2"
                                     :color=item.displayColor>
@@ -224,11 +255,11 @@
                         value: 'vendor'
                     },
                     { text: 'Model Number', value: 'modelNumber' },
-                    { text: 'Mount Type', value: 'modelNumber' }, // TODO: change value to mountType
-                    { text: 'Height', value: 'height' },
+                    { text: 'Mount Type', value: 'type' }, 
+                    { text: 'Height', value: 'mHeight' },
                     { text: 'Display Color', value: 'coloricon', sortable: false },
-                    { text: 'Network Ports', value: 'ethernetPorts' }, // TODO: change value to networkPorts!
-                    { text: 'Power Ports', value: 'powerPorts' },
+                    { text: 'Network Ports', value: 'netPorts' }, 
+                    { text: 'Power Ports', value: 'powPorts' },
                     { text: 'CPU', value: 'cpu' },
                     { text: 'Memory', value: 'memory' },
                     { text: 'Storage', value: 'storage' },
@@ -236,6 +267,13 @@
 
                 ],
                 models: [],
+
+                typeMap: {
+                    "normal" : "Normal", 
+                    "chassis" : "Blade Chassis", 
+                    "blade" : "Blade"
+                },
+
                 editedIndex: -1,
                 editedItem: {
                     vendor: '',

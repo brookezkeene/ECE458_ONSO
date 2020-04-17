@@ -33,6 +33,8 @@
                               :server-items-length="totalItems"
                               :show-select="labelGen"
                               :options.sync="options"
+                              show-expand
+                              :expanded="getRowsToExpand"
                               :loading="loading">
 
                     <template v-slot:top v-slot:item.action="{ item }">
@@ -185,16 +187,152 @@
                         </v-row>
                     </template>
 
-                    <!-- TODO: Integrate Custom Location Column -->
+                    <!-- TODO: integrate Expandable Rows for Blades -->
+                    <template v-slot:item.data-table-expand="{ item, isExpanded, expand }">
+                        <v-btn icon v-if="item.blades.length > 0 && isExpanded" 
+                               @click="editing=true; expand(false)">
+                            <v-icon>mdi-chevron-up</v-icon>
+                        </v-btn>
+                        <v-btn icon v-if="item.blades.length > 0 && !isExpanded" 
+                               @click="editing=true; expand(true)">
+                            <v-icon>mdi-chevron-down</v-icon>
+                        </v-btn>
+
+                    </template>
+                    <template v-slot:expanded-item="{ headers, item }">
+                        <td :colspan="headers.length">
+                            <thead>
+                                <th>Blades</th>
+                                <th>Vendor</th>
+                                <th>Model No.</th>
+                                <th>Asset No.</th>
+                                <th>Hostname</th>
+                                <th>Datacenter</th>
+                                <th>Slot</th>
+                                <th>Owner</th>
+                                <th>Power</th>
+                                <th>Actions</th>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(blade, index) in item.blades"
+                                    :key="index"
+                                    @click="showDetails(blade)">
+                                    <td>{{index+1}}</td>
+                                    <td>{{item.blades[index].vendor}}</td>
+                                    <td>{{item.blades[index].modelNumber}}</td>
+                                    <td>{{item.blades[index].assetNumber}}</td>
+                                    <td>{{item.blades[index].hostname}}</td>
+                                    <td>{{item.blades[index].datacenter}}</td>
+                                    <td>{{item.blades[index].chassisSlot}}</td>
+                                    <td>{{item.blades[index].owner}}</td>
+                                    <td> <!--Power-->
+                                        <!--v-if="displayPower(item)" ??-->
+                                        <v-row>
+                                            <v-item-group dense
+                                                          light
+                                                          tile>
+                                                <v-btn color="green lighten-1"
+                                                       @click="turnOn(item.blades[index])"
+                                                       x-small
+                                                       width="30%"
+                                                       min-width="30px"
+                                                       depressed>
+                                                    ON
+                                                </v-btn>
+                                                <v-btn color="red lighten-1"
+                                                       @click="turnOff(item.blades[index])"
+                                                       min-width="30px"
+                                                       x-small
+                                                       width="30%"
+                                                       depressed>
+                                                    OFF
+                                                </v-btn>
+                                            </v-item-group>
+                                        </v-row>
+                                    </td>
+                                    <td> <!--Actions-->
+                                        <v-row>
+                                            <v-tooltip top>
+                                                <template v-slot:activator="{ on }">
+                                                    <v-btn icon v-on="on"
+                                                           @click="editItem(item.blades[index])">
+                                                        <v-icon medium
+                                                                class="mr-2">
+                                                            mdi-pencil
+                                                        </v-icon>
+                                                    </v-btn>
+                                                </template>
+
+                                                <span>Edit Asset</span>
+                                            </v-tooltip>
+
+
+                                            <v-tooltip v-if="type==='active'" top>
+                                                <template v-slot:activator="{ on }">
+                                                    <v-btn icon v-on="on"
+                                                           @click="moveAsset(item.blades[index])">
+                                                        <v-icon medium
+                                                                class="mr-2">
+                                                            mdi-server-minus
+                                                        </v-icon>
+                                                    </v-btn>
+                                                </template>
+
+                                                <span>Move To Offline Storage</span>
+                                            </v-tooltip>
+
+                                            <v-tooltip v-if="type==='offline'" top>
+                                                <template v-slot:activator="{ on }">
+                                                    <v-btn icon v-on="on"
+                                                           @click="moveAsset(item.blades[index])">
+                                                        <v-icon medium
+                                                                class="mr-2">
+                                                            mdi-server-plus
+                                                        </v-icon>
+                                                    </v-btn>
+                                                </template>
+
+                                                <span>Move To Datacenter</span>
+                                            </v-tooltip>
+
+                                            <v-tooltip top>
+                                                <template v-slot:activator="{ on }">
+                                                    <v-btn icon v-on="on"
+                                                           @click="decommissionItem(item.blades[index])">
+                                                        <v-icon medium
+                                                                class="mr-2">
+                                                            mdi-archive-arrow-down
+                                                        </v-icon>
+                                                    </v-btn>
+                                                </template>
+
+                                                <span>Decommission Asset</span>
+                                            </v-tooltip>
+
+                                            <v-tooltip top>
+                                                <template v-if="!changePlanId()" v-slot:activator="{ on }">
+                                                    <v-btn icon v-on="on"
+                                                           @click="deleteItem(item.blades[index])">
+                                                        <v-icon medium
+                                                                class="mr-2">
+                                                            mdi-delete
+                                                        </v-icon>
+                                                    </v-btn>
+                                                </template>
+
+                                                <span>Delete Asset</span>
+                                            </v-tooltip>
+
+                                        </v-row>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </td>
+                    </template>
+
+                    <!-- Custom Location Column -->
                     <template v-slot:item.location="{ item }">
-                        <!-- v-if="item.mountType === blade" -->
-                        <div v-if="true">
                             Rack {{ item.rack }}, {{ item.rackPosition }} U
-                        </div>
-                        <!-- location for blades -->
-                        <div v-else>
-                            Chassis {{ item.rack }}, Slot {{ item.rackPosition }}
-                        </div>
                     </template>
 
                     <template v-if="permission" v-slot:item.action="{ item }">
@@ -425,6 +563,17 @@
                     return 'Assets in Offline Storage';
                 }
             },
+            getRowsToExpand() {
+                var arr = [];
+                var index = 0;
+                this.assets.forEach(item => {
+                    if (item.mountType === 'chassis') {
+                        arr[index] = item;
+                        index += 1;
+                    }
+                })
+                return arr;
+            },
         },
         watch: {
             instructionsDialog(val) {
@@ -527,7 +676,7 @@
             },
             deleteItem(item) {
                 this.editing = true;
-                confirm('Are you sure you want to delete this asset?') && this.assetRepository.delete(item)
+                confirm('Are you sure you want to delete this asset?') && this.assetRepository.delete(item.id)
                     .then(async () => {
                         await this.initialize();
                     })
@@ -639,6 +788,7 @@
                 console.log(this.selectedDatacenter);
                 console.log("In a change plan!");
             },
+            // TODO: ideally moving an asset offline will take an id (will ensure this works for blades as well)
             moveAsset(item) {
                 this.editing = true;
                 this.$router.push({ name: 'move-asset', params: {type: this.type, item: item}})

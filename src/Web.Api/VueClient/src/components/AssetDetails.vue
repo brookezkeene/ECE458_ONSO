@@ -40,7 +40,7 @@
                     <v-col>
                         <v-label>Location</v-label>
                         <v-card-text v-if="!isBlade"> Rack {{asset.rack}}, Rack Position {{asset.rackPosition}} </v-card-text>
-                        <v-card-text v-else> Blade Chassis {{asset.rack}}, Slot {{asset.rackPosition}} </v-card-text>
+                        <v-card-text v-else> Chassis {{asset.chassisId}}, Slot {{asset.chassisSlot}} </v-card-text>
                     </v-col>
                 </v-row>
                 <v-row>
@@ -63,14 +63,16 @@
                              :asset="asset" 
                              :id="id" 
                              :type="type"></PortDetails> 
-                <!--Blade Chassis Diagram - TODO: make v-if depend on mountType -->
-                <div v-if="true">
+                <!--Blade Chassis Diagram -->
+                <div v-if="isBlade || isChassis">
                     <v-label>Blade Diagram</v-label>
                     <v-card-text>
-                        <blade-diagram :id="asset.id"></blade-diagram>
+                        <blade-diagram :chassisId="asset.chassisId"
+                                       :assetId="asset.id"
+                                       :type="mountType"></blade-diagram>
                     </v-card-text>
-                    <v-card-text>
-                        <a href="">View Blade Chassis Details</a>
+                    <v-card-text v-if="isBlade">
+                        <router-link to="{ name: 'asset-details', params: { id: asset.chassisId } }">View Blade Chassis Details</router-link>
                     </v-card-text>
                 </div>
             </v-card-text>
@@ -102,7 +104,7 @@
 
     export default {
         name: 'asset-details',
-        inject: ['assetRepository', 'rackRepository'],
+        inject: ['assetRepository', 'modelRepository', 'rackRepository'],
         item: null,
         components: {
             ChangePlanBar,
@@ -129,12 +131,15 @@
                 },
                 ownerPresent: true, // in case the asset does not have an owner, don't need null pointer bc not a required field.
                 isDecommissioned: false,
+                mountType: '',
             };
         },
         computed: {
             isBlade() {
-                // TODO: implement based on mountType
-                return false
+                return this.mountType === 'blade'
+            },
+            isChassis() {
+                return this.mountType === 'chassis'
             }
         },
         created() {
@@ -153,11 +158,11 @@
             async initialize() {
                 /*eslint-disable*/
                 if (!this.loading) this.loading = true;
-                console.log(this.id);
-                const asset = await this.assetRepository.find(this.id, this.changePlanId());
+                const asset = await this.assetRepository.find(this.id, this.changePlanId())
                 asset.powerPorts.forEach(port => port.status = undefined);
                 asset.networkPorts.sort((a, b) => a.number - b.number);
                 asset.powerPorts.sort((a, b) => a.number - b.number);
+
                 this.asset = asset;
                 this.loading = false;
                 if (this.asset.owner === undefined) {
@@ -166,6 +171,10 @@
                 if (this.asset.networkPortGraph !== undefined) {
                     this.isDecommissioned = true;
                 }
+
+                const model = await this.modelRepository.find(this.asset.modelId);
+                this.mountType = model.mountType;
+                console.log(this.mountType)
             },
 
         }

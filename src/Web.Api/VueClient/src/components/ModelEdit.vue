@@ -12,8 +12,7 @@
                             <v-select v-model="newItem.mountType"
                                       :items="mountTypes"
                                       label="Mount Type"
-                                      placeholder="Select a mount type"
-                                      @change="checkType">
+                                      placeholder="Select a mount type">
                             </v-select>
                         </v-col>
                     </v-row>
@@ -221,7 +220,9 @@
                 if (this.validationInputs(this.newItem) > 0) {
                     return;
                 }
-                // TODO: possible alter blade data depending on backend integration
+                if (this.newItem.mountType === 'blade') {
+                    this.newItem.height = 0;
+                }
                 if (typeof this.id !== 'undefined') {
                     this.newItem.displayColor = this.newItem.displayColor.substring(0, 7);
 
@@ -331,11 +332,6 @@
                     count++
                 }
                 return count;
-            },
-            checkType() {
-                /*eslint-disable*/
-                console.log(this.newItem.mountType)
-                console.log(this.isBlade)
             },
             validationCreateAndUpdate(result) {
                 if (result != null && result.length != 0) {

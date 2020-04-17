@@ -17,7 +17,7 @@
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                         <v-label>Mount Type </v-label>
-                        <v-card-text> {{model.mountType}} </v-card-text>
+                        <v-card-text> {{typeMap[model.mountType]}} </v-card-text>
                     </v-col>
                     <v-col v-if="!isBlade"
                            cols="12" sm="6" md="4">
@@ -126,6 +126,11 @@
                 },
                 networkPorts: [ ],
                 viewNames: false,
+                typeMap: {
+                    "normal" : "Normal", 
+                    "chassis" : "Blade Chassis", 
+                    "blade" : "Blade"
+                },
             };
         },
         created() {
@@ -138,8 +143,7 @@
         },
         computed: {
             isBlade() {
-                //return this.model.mountType === 'blade'
-                return false // TODO: remove this and replace with line above when backend is integrated
+                return this.model.mountType === 'blade'
             }
         },
         methods: {

@@ -256,7 +256,8 @@
                     rackPosition: 1,
                     ownerId: '',
                     modelId: '',
-                    assetNumber: ''
+                    assetNumber: '',
+                    chassisId: '',
                 },
                 selectedModel: [],
                 datacenterID: '',
@@ -274,11 +275,11 @@
                     modelRules: v => /^(?!\s*$).+/.test(v) || 'Model is required',
                     hostnameRules: v => /^(?![0-9]+$)(?!.*-$)(?!-)[a-zA-Z0-9-]{1,63}$/.test(v) || 'Valid hostname is required',
                     assetRules: v => (/^[1-9]\d{5}$/.test(v) || (v || '').length==0) || 'Invalid Asset Number',
-                    slotRules: v => (/^(?!\s*$).+/.test(v) && v > 0 && v < 15) || 'Valid slot is required',
                     macAddressRules: v => (/^([0-9A-Fa-f]{2}[\W_]*){5}([0-9A-Fa-f]{2})$/.test(v) || /^$/.test(v)) || 'Invalid MAC Address.'
                 },
                 valid: true,
                 getDatacenters: false,
+                mountType: '',
             }
         },
 
@@ -326,8 +327,7 @@
                 return arr;
             },
             isBlade() {
-                //return this.editedItem.mountType === 'blade'
-                return false // TODO: replace this with line above when integrating with backend
+                return this.mountType === 'blade'
             },
             activeTitles() {
                 if (this.type === 'offline') {
@@ -373,11 +373,13 @@
                 console.log(this.selectedModel);
                 this.makeNetworkPorts(this.selectedModel);
                 this.makePowerPorts(this.selectedModel);
+                this.mountType = this.selectedModel.mountType;
             },
             async rackSelected() {
                 this.rackSelected = true;
                 this.sendNetworkPortRequest();
             },
+            
             makeNetworkPorts(model) {
                 console.log(model);
                 this.networkPorts = [];
@@ -437,8 +439,11 @@
             },
             async rackSelected() {
                 this.selectedRack = true;
+                
                 let availablePorts = {};
-                availablePorts = await this.rackRepository.getPdus(this.editedItem.rackId);
+                if (this.mountType !== 'blade') {
+                    availablePorts = await this.rackRepository.getPdus(this.editedItem.rackId);
+                }
 /*                for (var i = 0; i < availablePorts.length; i++) {
                     availablePorts[i].number = +port.number;
                 }*/
