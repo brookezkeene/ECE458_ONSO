@@ -129,7 +129,7 @@ namespace Web.Api.Core.Services
                 Id = assetId,
                 PowerPorts = powerStates
             };
-            GetChassisPower();
+            //GetChassisPower();
             return ret;
         }
 
