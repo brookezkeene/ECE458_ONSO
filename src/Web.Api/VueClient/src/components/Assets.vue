@@ -788,6 +788,7 @@
                 console.log(this.selectedDatacenter);
                 console.log("In a change plan!");
             },
+            // TODO: ideally moving an asset offline will take an id (will ensure this works for blades as well)
             moveAsset(item) {
                 this.editing = true;
                 this.$router.push({ name: 'move-asset', params: {type: this.type, item: item}})
