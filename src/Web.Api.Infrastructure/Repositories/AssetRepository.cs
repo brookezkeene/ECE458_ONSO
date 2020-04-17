@@ -57,6 +57,7 @@ namespace Web.Api.Infrastructure.Repositories
                 .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
                 .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
                 .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
+                .Where(asset => !asset.Model.MountType.Contains("blade"))
                 .Where(x => x.RackId != null && x.RackId != Guid.Empty &&
                             String.Compare(x.Rack.Row.ToUpper(), rackStart[0].ToString()) >= 0 &&
                             String.Compare(x.Rack.Row.ToUpper(), rackEnd[0].ToString()) <= 0 &&
@@ -150,6 +151,9 @@ namespace Web.Api.Infrastructure.Repositories
 
         public async Task<int> UpdateAssetAsync(Asset asset)
         {
+            if (asset.Model.MountType.Contains("blade")) {
+                await UpdateChassisBlade(asset);
+            }
             _dbContext.Assets.Update(asset);
             var updated = await _dbContext.SaveChangesAsync();
 
@@ -264,7 +268,25 @@ namespace Web.Api.Infrastructure.Repositories
             return await _dbContext.DecommissionedAssets
                 .SingleOrDefaultAsync(x => x.Id == assetId);
         }
-
+        
+        private async Task<int> UpdateChassisBlade(Asset blade)
+        {
+            var ogBlade = await GetAssetAsync(blade.Id);
+            if(blade.ChassisId != ogBlade.ChassisId)
+            {
+                //removing blade from previous chassis
+                var ogChassis = await GetAssetAsync(ogBlade.ChassisId);
+                var remove = ogChassis.Blades.Find(x => x.Id == ogBlade.Id);
+                ogChassis.Blades.Remove(ogBlade);
+                _dbContext.Assets.Update(ogChassis);
+                //adding blade into the new chassis
+                var chassis = await GetAssetAsync(blade.ChassisId);
+                chassis.Blades.Add(ogBlade);
+                _dbContext.Assets.Update(chassis);
+               
+            }
+            return await _dbContext.SaveChangesAsync();
+        }
         private static List<Asset> Sort(List<Asset> assets, string sortBy, string isDesc)
         {
             if (string.IsNullOrEmpty(sortBy))

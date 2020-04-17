@@ -132,5 +132,10 @@ namespace Web.Api.Core.Services
             var asset = await _repository.GetDecommissionedAssetAsync(assetId);
             return _mapper.Map<DecommissionedAssetDto>(asset);
         }
+
+        private void AddChangePlanItems(Guid changePlanId)
+        {
+
+        }
     }
 }
