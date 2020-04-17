@@ -90,7 +90,28 @@
                                             max-height="500px"
                                             flat
                                             v-if="index===1">
-
+                                        <div align="center">
+                                            <v-row>
+                                                <v-col cols="12" sm="6" md="4">
+                                                    <v-text-field v-model="customItem.cpu" label="CPU" placeholder="i.e. Intel Xeon E5520 2.2GHz" counter="50"></v-text-field>
+                                                </v-col>
+                                                <v-col cols="12" sm="6" md="4">
+                                                    <v-text-field v-model.number="customItem.memory" label="Memory (in GB)" type="number"></v-text-field>
+                                                </v-col>
+                                                <v-col cols="12" sm="6" md="4">
+                                                    <v-text-field v-model="customItem.storage" label="Storage" placeholder="2x500GB SSD RAID1"></v-text-field>
+                                                </v-col>
+                                            </v-row>
+                                            <v-row>
+                                                <v-col cols="12" sm="6" md="4">
+                                                    <v-label>
+                                                        Display Color
+                                                    </v-label>
+                                                    <v-color-picker v-model="customItem.displayColor">
+                                                    </v-color-picker>
+                                                </v-col>
+                                            </v-row>
+                                        </div>
                                     </v-card>
                                     <!-- MAC Addresses and Network Port Connections -->
                                     <v-card class="overflow-y-auto"
@@ -258,6 +279,12 @@
                     modelId: '',
                     assetNumber: '',
                     chassisId: '',
+                },
+                customItem: {
+                    cpu: '',
+                    memory: 0,
+                    storage: '',
+                    displayColor: '',
                 },
                 selectedModel: [],
                 datacenterID: '',
