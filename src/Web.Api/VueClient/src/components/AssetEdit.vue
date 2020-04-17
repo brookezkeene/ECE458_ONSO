@@ -94,32 +94,35 @@
                                             <div>
                                                 <v-row>
                                                     <v-col cols="12" sm="6" md="4">
-                                                        <v-text-field v-model="customItem.cpu" 
-                                                                      label="CPU" 
+                                                        <span v-if="customizedField('cpu')">CPU</span>
+                                                        <span v-else class="green--text">CPU *</span>
+                                                        <v-text-field v-model="customItem.cpu"
                                                                       placeholder="i.e. Intel Xeon E5520 2.2GHz">
 
                                                         </v-text-field>
                                                     </v-col>
                                                     <v-col cols="12" sm="6" md="4">
-                                                        <v-text-field v-model.number="customItem.memory" 
-                                                                      label="Memory (in GB)" 
+                                                        <span v-if="customizedField('memory')">Memory (in GB)</span>
+                                                        <span v-else class="green--text">Memory (in GB) *</span>
+                                                        <v-text-field v-model.number="customItem.memory"
+                                                                      placeholder=""
                                                                       type="number">
 
                                                         </v-text-field>
                                                     </v-col>
                                                     <v-col cols="12" sm="6" md="4">
-                                                        <v-text-field v-model="customItem.storage" 
-                                                                      label="Storage" 
-                                                                      placeholder="2x500GB SSD RAID1">
+                                                        <span v-if="customizedField('storage')">Storage</span>
+                                                        <span v-else class="green--text">Storage *</span>
+                                                        <v-text-field v-model="customItem.storage"
+                                                                      placeholder="i.e. 2x500GB SSD RAID1">
 
                                                         </v-text-field>
                                                     </v-col>
                                                 </v-row>
                                                 <v-row>
                                                     <v-col cols="12" sm="6" md="4">
-                                                        <v-label>
-                                                            Display Color
-                                                        </v-label>
+                                                        <span v-if="customizedField('displayColor')">Display Color</span>
+                                                        <span v-else class="green--text">Display Color *</span>
                                                         <v-color-picker v-model="customItem.displayColor"
                                                                         canvas-height="100">
                                                         </v-color-picker>
@@ -256,6 +259,10 @@
 
     .bottom-div {
         vertical-align: bottom;
+    }
+
+    .span {
+        font-size: 30px !important;
     }
 </style>
 
@@ -397,17 +404,14 @@
             // TODO: change when integrating with backend for customizable assets
             customizedAsset() {
                 // Compare properties
-                console.log(this.defaultCustomItem)
-                console.log(this.customItem)
                 for (var key in this.defaultCustomItem) {
                     if (this.defaultCustomItem[key] !== this.customItem[key]) {
-                        console.log(this.defaultCustomItem[key] + " vs. " + this.customItem[key])
                         return true
                     }
 		        }
 	            // If nothing failed, return true
 	            return false;
-            }
+            },
         },
         methods: {
             save() { // TODO: integrate customizable asset endpoints here
@@ -536,7 +540,10 @@
                 for (var key in this.defaultCustomItem) {
                     this.customItem[key] = this.defaultCustomItem[key];
 		        }
-            }
+            },
+            customizedField(key) {
+                return this.defaultCustomItem[key] === this.customItem[key]
+            },
         },
 
     }
