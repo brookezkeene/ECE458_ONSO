@@ -16,7 +16,7 @@
                             Upload a CSV file matching the specifications outlined in the following
                             <a target="_blank"
                                rel="noopener noreferrer"
-                               href="https://drive.google.com/file/d/1UB8J9E_cKlezRtgtk3g10ikO9Iqz5lGN/view?usp=sharing">
+                               href="https://d1b10bmlvqabco.cloudfront.net/attach/k4u27qnccr45oo/is4xdnkb8px4ee/k90vqcj1j0tn/ECE458__Bulk_Format_Proposal6.pdf">
                                 document
                             </a>.
                         </v-card-text>

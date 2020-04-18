@@ -73,24 +73,6 @@
             </v-col>
         </v-container>
 
-        <v-dialog v-model="extrainfomodel">
-            <v-card>
-                <model-import-format-info></model-import-format-info>
-            </v-card>
-        </v-dialog>
-
-        <v-dialog v-model="extrainfoasset">
-            <v-card>
-                <asset-import-format-info></asset-import-format-info>
-            </v-card>
-        </v-dialog>
-
-        <v-dialog v-model="extrainfonetwork">
-            <v-card>
-                <network-import-format-info></network-import-format-info>
-            </v-card>
-        </v-dialog>
-
         <v-dialog v-model="importModelWizard" max-width="500px">
             <v-card>
                 <import-wizard type="models" v-on:close-file-chooser="closeImport" @import-error="throwError(e)"></import-wizard>
@@ -143,9 +125,6 @@
 
 <script>
 
-import ModelImportFormatInfo from "./ModelImportFormatInfo"
-import AssetImportFormatInfo from "./AssetImportFormatInfo"
-import NetworkImportFormatInfo from "./NetworkImportFormatInfo"
 import ImportWizard from "./ImportWizard"
 import ExportModelWizard from "./ExportModelWizard"
 import ExportAssetWizard from "./ExportAssetWizard"
@@ -155,9 +134,6 @@ export default {
     data () {
         return {
             loading: false,       
-            extrainfomodel: false,
-            extrainfoasset: false,
-            extrainfonetwork: false,
             importModelWizard: false,
             importAssetWizard: false,
             importNetworkWizard: false,
@@ -195,24 +171,12 @@ export default {
         }
     },
     components: {
-      ModelImportFormatInfo,
-      AssetImportFormatInfo,
-      NetworkImportFormatInfo,
       ImportWizard,
       ExportModelWizard,
       ExportAssetWizard,
       ExportNetworkWizard
     },
     methods: {
-        showModelInfo() {
-            this.extrainfomodel = true
-        },
-        showAssetInfo() {
-            this.extrainfoasset = true
-        },
-        showNetworkInfo() {
-            this.extrainfonetwork = true
-        },
         openImportModels() {
             this.importModelWizard = true
         },
