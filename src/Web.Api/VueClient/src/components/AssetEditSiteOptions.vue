@@ -2,7 +2,7 @@
     <template>
 
         <v-row>
-            <v-col v-if="type==='active'" cols="12" sm="6" md="4">
+            <v-col v-if="type=='active'" cols="12" sm="6" md="4">
                 <v-autocomplete v-model="editedItem.datacenterId"
                                 label="Datacenter"
                                 placeholder="Please select an existing datacenter"
@@ -157,12 +157,11 @@
 
                     if (!this.isBlade) {
                         this.racks = await this.rackRepository.list(this.datacenterID);
-/*                        this.sendNetworkPortRequest(); //this request will always be sent if racks are updated, need different behavior for blades
-*/                        return true;
+                        this.$emit('selectedDatacenter');
+                        return true;
                     }
                     else if (!this.$store.getters.isChangePlan){
                         // for blades, get all blade chassis in the datacenter
-                        
                         this.chassis = await this.datacenterRepository.chassis(this.datacenterID);
                         return true;
                     }

@@ -58,6 +58,7 @@
                                             <div>
                                                 <!--Datacenter/Offline storage options-->
                                                 <SiteOptions v-on:selectedRack="rackSelected" 
+                                                             v-on:selectedDatacenter="sendNetworkPortRequest"
                                                              v-on:getDatacenters="getDatacenters=true" 
                                                              :editedItem="editedItem" 
                                                              :isBlade="isBlade"
@@ -439,7 +440,7 @@
                 this.selectedModelBool = false;
             },
             async sendNetworkPortRequest() {
-                this.networks = await this.datacenterRepository.networkPorts(this.datacenterIDd);
+                this.networks = await this.datacenterRepository.networkPorts(this.editedItem.datacenterId);
                 for (const network of this.networks) {
                     network.nameRackAssetNum = "Port name: " + network.name +
                         ",  " + "Hostname: " + network.assetHostname;
