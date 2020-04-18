@@ -85,9 +85,12 @@ namespace Web.Api.Controllers
                     changePlanAssetDto = await _changePlanService.FillFieldsInAssetApiForChangePlans(changePlanAssetDto);
                     var assetApiDto = _mapper.Map<GetAssetApiDto>(changePlanAssetDto);
                     assetApiDto.Blades = blades;
-                    if (changePlanAssetDto.ChassisId != null && changePlanAssetDto.ChassisId != Guid.Empty)
+                    if (changePlanAssetDto.ChassisId != null && changePlanAssetDto.ChassisId != Guid.Empty) //only happens when updating a blade
                     {
-                        var chassis = response.Find(x => x.Id == changePlanAssetDto.ChassisId);
+                        var oldChassisId = changePlanAssetDto.ChassisId ?? Guid.Empty;
+                        if (!string.IsNullOrEmpty(changePlanItem.PreviousData)) 
+                            oldChassisId=(JsonConvert.DeserializeObject<GetAssetApiDto>(changePlanItem.NewData)).Id; 
+                        var chassis = response.Find(x => x.Id == oldChassisId);
                         //remove previous blade
                         chassis.Blades.Remove( chassis.Blades.Find(x => x.Id == changePlanAssetDto.Id));
                         chassis.Blades.Add(assetApiDto); 
