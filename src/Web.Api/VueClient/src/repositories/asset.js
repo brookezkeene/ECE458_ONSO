@@ -9,9 +9,7 @@ export default {
             assetId: id,
             changePlanId: changePlanId
         };
-        /*eslint-disable*/
-        console.log(query);
-        console.log("this is the query");
+
         return axios.get(`${resource}/asset`, { params: query })
             .then(response => {
                 return response.data;

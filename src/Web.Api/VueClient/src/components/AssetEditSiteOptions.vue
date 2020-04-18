@@ -119,6 +119,13 @@
                     this.$emit('getDatacenters', true)
                 })
             }
+            if (this.$store.getters.isChangePlan) {
+                this.datacenterID = this.$store.getters.changePlan.datacenterId
+                this.racks = await this.rackRepository.list(this.datacenterID);               
+                this.chassis = await this.datacenterRepository.chassis(this.datacenterID);
+                
+            }
+
 
         },
         computed: {
@@ -151,7 +158,7 @@
 /*                        this.sendNetworkPortRequest(); //this request will always be sent if racks are updated, need different behavior for blades
 */                        return true;
                     }
-                    else {
+                    else if (!this.$store.getters.isChangePlan){
                         // for blades, get all blade chassis in the datacenter
                         
                         this.chassis = await this.datacenterRepository.chassis(this.datacenterID);
