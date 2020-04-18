@@ -27,5 +27,6 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
                     string dateStart, string dateEnd, string rackStart, string rackEnd, string sortBy, string isDesc, int page, int pageSize);
         Asset GetAsset(int assetNumber);
         Task<Asset> GetAssetByNumber(int assetNumber);
+        Task<List<Asset>> GetBlades(Guid chassisId);
     }
 }

@@ -57,6 +57,51 @@
                         <v-textarea :value="asset.comment" disabled>  </v-textarea>
                     </v-col>
                 </v-row>
+                <v-container>
+                    <v-row>
+                        <v-col cols="12" sm="6" md="3">
+                            <v-row>
+                                <v-label>CPU </v-label>
+                                <!--TODO: v-if data is different from model data-->
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on }">
+                                        <v-btn class="pb-4" 
+                                               color="primary" 
+                                               icon
+                                               v-on="on"
+                                               :to="{ name: 'model-details', params: { id: asset.modelId } }">
+                                            <v-icon>
+                                                mdi-open-in-new
+                                            </v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>Go to model details to view original attribute</span>
+                                </v-tooltip>
+                            </v-row>
+                            
+                            <v-card-text> {{custom.cpu}} </v-card-text>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="3">
+                            <v-label>Memory </v-label>
+                            <v-card-text> {{custom.memory}} </v-card-text>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="3">
+                            <v-label>Storage </v-label>
+                            <v-card-text> {{custom.storage}} </v-card-text>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="3">
+                            <v-label>Display Color </v-label>
+                            <v-card-text>
+                                {{custom.displayColor}}
+                                <v-icon class="mr-2"
+                                        :color=custom.displayColor>
+                                    mdi-circle
+                                </v-icon>
+                            </v-card-text>
+                        </v-col>
+                    </v-row>
+                </v-container>
+                
                 <!--NEW port detail page so we can exclude altogether for different kinds of assets-->
                 <!--TODO: make show connections false for offline assets-->
                 <PortDetails v-if="!isBlade"
@@ -67,12 +112,15 @@
                 <div v-if="isBlade || isChassis">
                     <v-label>Blade Diagram</v-label>
                     <v-card-text>
-                        <blade-diagram :chassisId="asset.chassisId"
+                        <blade-diagram :type="type"
+                                       :chassisId="asset.chassisId"
                                        :assetId="asset.id"
-                                       :type="mountType"></blade-diagram>
+                                       :mountType="mountType"></blade-diagram>
                     </v-card-text>
                     <v-card-text v-if="isBlade">
-                        <router-link to="{ name: 'asset-details', params: { id: asset.chassisId } }">View Blade Chassis Details</router-link>
+                        <v-btn color="primary"
+                               outlined
+                               @click="toChassisDetails">View Blade Chassis Details</v-btn>
                     </v-card-text>
                 </div>
             </v-card-text>
@@ -129,6 +177,12 @@
                     vendor: '',
                     modelNumber: ''
                 },
+                custom: {
+                    cpu: '',
+                    memory: 0,
+                    storage: '',
+                    displayColor: '#FF0000',
+                },
                 ownerPresent: true, // in case the asset does not have an owner, don't need null pointer bc not a required field.
                 isDecommissioned: false,
                 mountType: '',
@@ -145,10 +199,14 @@
         created() {
             this.initialize();
         },
-        beforeRouteUpdate(to) {
+        beforeRouteUpdate(to, from, next) {
+            /*eslint-disable*/
             this.id = to.params.id;
             this.$route.params.id = to.params.id;
             this.initialize();
+
+            console.log(from);
+            next()
         },
         methods: {
             changePlanId() {
@@ -156,6 +214,7 @@
                     return this.$store.getters.changePlan.id;
             },
             async initialize() {
+                // TODO: get customizable asset information when integrating
                 /*eslint-disable*/
                 if (!this.loading) this.loading = true;
                 const asset = await this.assetRepository.find(this.id, this.changePlanId())
@@ -163,8 +222,12 @@
                 asset.networkPorts.sort((a, b) => a.number - b.number);
                 asset.powerPorts.sort((a, b) => a.number - b.number);
 
+                const model = await this.modelRepository.find(asset.modelId);
+                this.mountType = model.mountType;
+                console.log(this.mountType)
+
                 this.asset = asset;
-                this.loading = false;
+                
                 if (this.asset.owner === undefined) {
                     this.ownerPresent = false;
                 }
@@ -172,11 +235,12 @@
                     this.isDecommissioned = true;
                 }
 
-                const model = await this.modelRepository.find(this.asset.modelId);
-                this.mountType = model.mountType;
-                console.log(this.mountType)
+                this.loading = false;
             },
-
+            toChassisDetails() {
+                console.log("new route to chassis")
+                this.$router.push({ name: 'asset-details', params: { type: this.type, id: this.asset.chassisId } })
+            }
         }
     }
 </script>

@@ -23,5 +23,6 @@ namespace Web.Api.Core.Services.Interfaces
         Task<DecommissionedAssetDto> GetDecommissionedAssetAsync(Guid assetId);
         Task<PagedList<DecommissionedAssetDto>> GetDecommissionedAssetsAsync(SearchAssetQuery query);
         Task<AssetDto> GetAssetByNumber(int assetNumber);
+        Task<List<AssetDto>> GetBlades(Guid chassisId);
     }
 }

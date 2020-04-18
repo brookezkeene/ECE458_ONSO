@@ -93,6 +93,12 @@ namespace Web.Api.Core.Services
 
         }
 
+        public async Task<List<AssetDto>> GetBlades(Guid chassisId )
+        {
+            var updated = await _repository.GetBlades(chassisId);
+            return _mapper.Map<List<AssetDto>>(updated);
+        }
+
         public async Task<int> UpdateAssetAsync(AssetDto asset)
         {
             var entity = _mapper.Map<Asset>(asset);
@@ -101,6 +107,7 @@ namespace Web.Api.Core.Services
             //await _auditEventLogger.LogEventAsync(new AssetUpdatedEvent(asset));
             return updated;
         }
+
         public async Task<AssetDto> GetAssetForDecommissioning(Guid assetId)
         {
             var decommissionedAsset = await _repository.GetAssetForDecommissioning(assetId);
@@ -131,6 +138,11 @@ namespace Web.Api.Core.Services
         {
             var asset = await _repository.GetDecommissionedAssetAsync(assetId);
             return _mapper.Map<DecommissionedAssetDto>(asset);
+        }
+
+        private void AddChangePlanItems(Guid changePlanId)
+        {
+
         }
     }
 }
