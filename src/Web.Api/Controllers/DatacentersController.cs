@@ -6,12 +6,15 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Newtonsoft.Json;
 using Web.Api.Common;
 using Web.Api.Core;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Services.Interfaces;
 using Web.Api.Dtos;
+using Web.Api.Dtos.Assets.Create;
 using Web.Api.Dtos.Assets.Read;
+using Web.Api.Dtos.Assets.Update;
 using Web.Api.Dtos.Datacenters;
 using Web.Api.Dtos.Datacenters.Create;
 using Web.Api.Dtos.Datacenters.Read;
@@ -28,12 +31,14 @@ namespace Web.Api.Controllers
     {
         private readonly IDatacenterService _datacenterService;
         private readonly IApiErrorResources _errorResources;
+        private readonly IChangePlanService _changePlanService;
         private readonly IMapper _mapper;
 
-        public DatacentersController(IDatacenterService datacenterService, IApiErrorResources errorResources, IMapper mapper)
+        public DatacentersController(IDatacenterService datacenterService, IApiErrorResources errorResources, IMapper mapper, IChangePlanService changePlanService)
         {
             _datacenterService = datacenterService;
             _errorResources = errorResources;
+            _changePlanService = changePlanService;
             _mapper = mapper;
         }
 
@@ -53,11 +58,15 @@ namespace Web.Api.Controllers
             var response = _mapper.Map<List<GetAssetNetworkPortFromDatacenterDto>>(ports);
             return Ok(response);
         }
-        [HttpGet("{id}/chassis")]
-        public async Task<ActionResult<List<GetAssetApiDto>>> GetChassis(Guid id)
+        [HttpGet("chassis")]
+        public async Task<ActionResult<List<GetAssetApiDto>>> GetChassis([FromQuery] GetAssetByIdQuery query)
         {
-            var assets = await _datacenterService.GetChassisOfDataCenterAsync(id);
+            var assets = await _datacenterService.GetChassisOfDataCenterAsync(query.AssetId);
             var response = _mapper.Map<List<GetAssetsApiDto>>(assets);
+            if (query.ChangePlanId != null && query.ChangePlanId != Guid.Empty)
+            {
+                await GetChangePlanChassis(response, query.ChangePlanId?? Guid.Empty);
+            }
             return Ok(response);
         }
 
@@ -97,6 +106,42 @@ namespace Web.Api.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
             await _datacenterService.DeleteDatacenterAsync(id);
+            return Ok();
+        }
+
+        private async Task<ActionResult> GetChangePlanChassis(List<GetAssetsApiDto> response, Guid changePlanId)
+        {
+            var changePlanItems = await _changePlanService.GetChangePlanItemsAsync(changePlanId);
+            foreach (ChangePlanItemDto changePlanItem in changePlanItems)
+            {
+                if (changePlanItem.ExecutionType.Equals("decommission"))
+                {
+                    var decommissionedAssetDto = (JsonConvert.DeserializeObject<DecommissionedAssetDto>(changePlanItem.NewData));
+                    var remove = response.Find(x => x.Id == decommissionedAssetDto.Id);
+                    response.Remove(remove);
+                }
+
+                //if the change plan item is a created or updated item
+                var assetDto = new AssetDto();
+                if (changePlanItem.ExecutionType.Equals("create"))
+                {
+                    assetDto = _mapper.Map<AssetDto>(JsonConvert.DeserializeObject<CreateAssetApiDto>(changePlanItem.NewData));
+                    assetDto.Id = changePlanItem.Id;
+                }
+                else if (changePlanItem.ExecutionType.Equals("update"))
+                {
+                    assetDto = _mapper.Map<AssetDto>(JsonConvert.DeserializeObject<UpdateAssetApiDto>(changePlanItem.NewData));
+                }
+                await _changePlanService.FillFieldsInAssetApiForChangePlans(assetDto);
+                var assetApiDto = _mapper.Map<GetAssetsApiDto>(assetDto);
+                if (assetApiDto.MountType.Contains("chassis"))
+                {
+                    var remove = response.Find(x => x.Id == assetDto.Id);
+                    response.Remove(remove);
+                    response.Add(assetApiDto);
+                }
+                
+            }
             return Ok();
         }
     }

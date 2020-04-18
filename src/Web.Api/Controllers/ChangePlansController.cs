@@ -131,6 +131,14 @@ namespace Web.Api.Controllers
                     var assetApiDto = JsonConvert.DeserializeObject<CreateAssetApiDto>(changePlanItem.NewData);
                     //assetApiDto.LastUpdatedDate = DateTime.Now;
                     var assetDto = _mapper.Map<AssetDto>(assetApiDto);
+                    if (assetDto.ChassisId != null && assetDto.ChassisId != Guid.Empty)
+                    {
+                        var item = await _changePlanService.GetChangePlanItemAsync(assetDto.ChassisId ?? Guid.Empty);
+                        if(item != null)
+                        {
+                            assetDto.ChassisId = item.AssetId;
+                        }
+                    }
                     await _changePlanService.CreateAssetAsync(assetDto, changePlanItem);
                 }
                 //NOTE: THE NEWDATA HERE IS A UpdateAssetApiDto (assetDto/asset entity cannot be serialized)

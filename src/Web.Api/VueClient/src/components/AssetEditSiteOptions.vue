@@ -119,8 +119,8 @@
             }
             if (this.$store.getters.isChangePlan) {
                 this.datacenterID = this.$store.getters.changePlan.datacenterId
-                this.racks = await this.rackRepository.list(this.datacenterID);               
-                this.chassis = await this.datacenterRepository.chassis(this.datacenterID);
+                //this.racks = await this.rackRepository.list(this.datacenterID);               
+                //this.chassis = await this.datacenterRepository.chassis(this.datacenterID, this.$store.getters.changePlan.id);
                 
             }
 
@@ -151,22 +151,30 @@
         methods: {
             async updateRacks() {
                 if (this.datacenterID != this.editedItem.datacenterId) {
-
                     this.datacenterID = this.editedItem.datacenterId;
 
-                    if (!this.isBlade) {
+                    
+                    if (this.$store.getters.isChangePlan && !this.isBlade) {
+                        this.racks = await this.rackRepository.list(this.$store.getters.changePlan.datacenterId);
+                    }
+                    else if (!this.isBlade) {
                         this.racks = await this.rackRepository.list(this.datacenterID);
                         this.$emit('selectedDatacenter');
                         return true;
                     }
-                    else if (!this.$store.getters.isChangePlan){
+                    else if (this.$store.getters.isChangePlan) {
+                        this.chassis = await this.datacenterRepository.chassis(this.$store.getters.changePlan.datacenterId, this.$store.getters.changePlan.id);
+                    }
+                    else {
                         // for blades, get all blade chassis in the datacenter
                         this.chassis = await this.datacenterRepository.chassis(this.datacenterID);
+                        
                         return true;
                     }
                 }
                 return false;
             },
+
             async rackSelected() {
                 this.selectedRack = true;
 

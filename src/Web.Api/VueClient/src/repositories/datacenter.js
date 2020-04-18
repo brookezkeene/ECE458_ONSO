@@ -13,9 +13,15 @@ export default {
         return axios.get(`${resource}/${id}/networkports`)
             .then(response => { return response.data; }).catch(error => error);
     },
-    chassis(id) {
-        return axios.get(`${resource}/${id}/chassis`)
-            .then(response => { return response.data; }).catch(error => error);
+    chassis(id, changePlanId) {
+        var query = {
+            assetId: id,
+            changePlanId: changePlanId
+        };
+        return axios.get(`${resource}/chassis`, { params: query })
+            .then(response => {
+            return response.data;
+        }).catch(error => error);
     },
     openNetworkPorts(id) {
         return axios.get(`${resource}/${id}/networkports/open`)
