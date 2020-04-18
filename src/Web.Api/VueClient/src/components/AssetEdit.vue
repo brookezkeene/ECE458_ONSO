@@ -392,7 +392,7 @@
                 return arr;
             },
             isBlade() {
-                return this.mountType === 'blade'
+                return this.mountType === 'blade' || this.editedItem.mountType === 'blade'
             },
             activeTitles() {
                 if (this.type === 'offline') {

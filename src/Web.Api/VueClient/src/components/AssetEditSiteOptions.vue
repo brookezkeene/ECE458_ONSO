@@ -104,6 +104,8 @@
             // Getting datacenters or offline assets
             /*eslint-disable*/
             console.log(this.type);
+            console.log(this.isBlade);
+            console.log(this.editedItem);
             if (this.type = "offline") {
                 this.$store.getters.isChangePlan
                 ? Promise.resolve(this.datacenters.push(this.$store.getters.changePlan.datacenterName)) // todo: this will change to getting from the offline endpoint
