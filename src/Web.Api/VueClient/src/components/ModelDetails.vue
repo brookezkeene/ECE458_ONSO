@@ -86,7 +86,7 @@
                         <tbody>
                             <tr v-for="(item, index) in model.assets" :key="index">
                                 <td @click="goToAssetDetails(item.id)">
-                                    {{item.assetId}}
+                                    {{item.assetNumber}}
                                     <v-icon small>mdi-open-in-new</v-icon>
                                 </td>
                                 <td @click="goToAssetDetails(id)">{{ item.hostname }}</td>
