@@ -135,12 +135,14 @@ namespace Web.Api.Core.UnitTests.Mappers
                 new AssetDto
                 {
                     Id = Guid.NewGuid(),
-                    Hostname = "server10"
+                    Hostname = "server10",
+                    AssetNumber = 999999,
                 },
                 new AssetDto
                 {
                     Id = Guid.NewGuid(),
-                    Hostname = "server11"
+                    Hostname = "server11",
+                    AssetNumber = 000000,
                 }
             };
             
