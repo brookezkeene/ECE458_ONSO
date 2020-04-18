@@ -57,6 +57,51 @@
                         <v-textarea :value="asset.comment" disabled>  </v-textarea>
                     </v-col>
                 </v-row>
+                <v-container>
+                    <v-row>
+                        <v-col cols="12" sm="6" md="3">
+                            <v-row>
+                                <v-label>CPU </v-label>
+                                <!--TODO: v-if data is different from model data-->
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on }">
+                                        <v-btn class="pb-4" 
+                                               color="primary" 
+                                               icon
+                                               v-on="on"
+                                               :to="{ name: 'model-details', params: { id: asset.modelId } }">
+                                            <v-icon>
+                                                mdi-open-in-new
+                                            </v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>Go to model details to view original attribute</span>
+                                </v-tooltip>
+                            </v-row>
+                            
+                            <v-card-text> {{custom.cpu}} </v-card-text>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="3">
+                            <v-label>Memory </v-label>
+                            <v-card-text> {{custom.memory}} </v-card-text>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="3">
+                            <v-label>Storage </v-label>
+                            <v-card-text> {{custom.storage}} </v-card-text>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="3">
+                            <v-label>Display Color </v-label>
+                            <v-card-text>
+                                {{custom.displayColor}}
+                                <v-icon class="mr-2"
+                                        :color=custom.displayColor>
+                                    mdi-circle
+                                </v-icon>
+                            </v-card-text>
+                        </v-col>
+                    </v-row>
+                </v-container>
+                
                 <!--NEW port detail page so we can exclude altogether for different kinds of assets-->
                 <!--TODO: make show connections false for offline assets-->
                 <PortDetails v-if="!isBlade"
@@ -132,6 +177,12 @@
                     vendor: '',
                     modelNumber: ''
                 },
+                custom: {
+                    cpu: '',
+                    memory: 0,
+                    storage: '',
+                    displayColor: '#FF0000',
+                },
                 ownerPresent: true, // in case the asset does not have an owner, don't need null pointer bc not a required field.
                 isDecommissioned: false,
                 mountType: '',
@@ -163,6 +214,7 @@
                     return this.$store.getters.changePlan.id;
             },
             async initialize() {
+                // TODO: get customizable asset information when integrating
                 /*eslint-disable*/
                 if (!this.loading) this.loading = true;
                 const asset = await this.assetRepository.find(this.id, this.changePlanId())
