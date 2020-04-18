@@ -90,7 +90,56 @@
                                             max-height="500px"
                                             flat
                                             v-if="index===1">
+                                        <v-container>
+                                            <div>
+                                                <v-row>
+                                                    <v-col cols="12" sm="6" md="4">
+                                                        <span v-if="customizedField('cpu')">CPU</span>
+                                                        <span v-else class="green--text">CPU *</span>
+                                                        <v-text-field v-model="customItem.cpu"
+                                                                      placeholder="i.e. Intel Xeon E5520 2.2GHz">
 
+                                                        </v-text-field>
+                                                    </v-col>
+                                                    <v-col cols="12" sm="6" md="4">
+                                                        <span v-if="customizedField('memory')">Memory (in GB)</span>
+                                                        <span v-else class="green--text">Memory (in GB) *</span>
+                                                        <v-text-field v-model.number="customItem.memory"
+                                                                      placeholder=""
+                                                                      type="number">
+
+                                                        </v-text-field>
+                                                    </v-col>
+                                                    <v-col cols="12" sm="6" md="4">
+                                                        <span v-if="customizedField('storage')">Storage</span>
+                                                        <span v-else class="green--text">Storage *</span>
+                                                        <v-text-field v-model="customItem.storage"
+                                                                      placeholder="i.e. 2x500GB SSD RAID1">
+
+                                                        </v-text-field>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-row>
+                                                    <v-col cols="12" sm="6" md="4">
+                                                        <span v-if="customizedField('displayColor')">Display Color</span>
+                                                        <span v-else class="green--text">Display Color *</span>
+                                                        <v-color-picker v-model="customItem.displayColor"
+                                                                        canvas-height="100">
+                                                        </v-color-picker>
+                                                    </v-col>
+                                                </v-row>
+                                            </div>
+                                            <div>
+                                                <v-row>
+                                                    <v-spacer></v-spacer>
+                                                    <v-btn color="primary"
+                                                           :disabled="!customizedAsset"
+                                                           outlined
+                                                           @click="revertCustom">Revert to Model Defaults</v-btn>
+                                                    <v-spacer></v-spacer>
+                                                </v-row>
+                                            </div>
+                                        </v-container>
                                     </v-card>
                                     <!-- MAC Addresses and Network Port Connections -->
                                     <v-card class="overflow-y-auto"
@@ -211,6 +260,10 @@
     .bottom-div {
         vertical-align: bottom;
     }
+
+    .span {
+        font-size: 30px !important;
+    }
 </style>
 
 <script>
@@ -258,6 +311,18 @@
                     modelId: '',
                     assetNumber: '',
                     chassisId: '',
+                },
+                defaultCustomItem: {
+                    cpu: '',
+                    memory: 0,
+                    storage: '',
+                    displayColor: '',
+                },
+                customItem: {
+                    cpu: '',
+                    memory: 0,
+                    storage: '',
+                    displayColor: '',
                 },
                 selectedModel: [],
                 datacenterID: '',
@@ -335,10 +400,21 @@
                     this.titles.pop();
                 }
                 return this.titles;
-            }
+            },
+            // TODO: change when integrating with backend for customizable assets
+            customizedAsset() {
+                // Compare properties
+                for (var key in this.defaultCustomItem) {
+                    if (this.defaultCustomItem[key] !== this.customItem[key]) {
+                        return true
+                    }
+		        }
+	            // If nothing failed, return true
+	            return false;
+            },
         },
         methods: {
-            save() {
+            save() { // TODO: integrate customizable asset endpoints here
                 // Check if in a change plan context
                 if (this.$store.getters.isChangePlan) {
                     this.editedItem.changePlanId = this.$store.getters.changePlan.id;
@@ -347,7 +423,7 @@
                         this.editedItem.id = this.id;
                     }
                 }
-
+                
                 var promise = typeof this.id !== 'undefined'
                     ? this.assetRepository.update(this.editedItem)
                     : this.assetRepository.create(this.editedItem);
@@ -374,6 +450,14 @@
                 this.makeNetworkPorts(this.selectedModel);
                 this.makePowerPorts(this.selectedModel);
                 this.mountType = this.selectedModel.mountType;
+
+                // TODO: add GET api call for customizable information
+                // and set custom asset information fields here
+                for (var key in this.defaultCustomItem) {
+                    this.defaultCustomItem[key] = this.selectedModel[key];
+                    this.customItem[key] = this.selectedModel[key];
+		        }
+
             },
             async rackSelected() {
                 this.rackSelected = true;
@@ -450,6 +534,15 @@
 /*                availablePorts.sort(a, b => a - b); //sorting port numbers so that they are easier to see in frontend
 */              this.availablePortsInRack = availablePorts;
                 console.log(this.availablePortsInRack);
+            },
+            // TODO: adapt for customizable asset integration
+            revertCustom() {
+                for (var key in this.defaultCustomItem) {
+                    this.customItem[key] = this.defaultCustomItem[key];
+		        }
+            },
+            customizedField(key) {
+                return this.defaultCustomItem[key] === this.customItem[key]
             },
         },
 
