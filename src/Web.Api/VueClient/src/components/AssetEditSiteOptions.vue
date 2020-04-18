@@ -29,7 +29,7 @@
                    cols="12" sm="6" md="4">
                 <v-autocomplete v-if="!editedItem.datacenterId.length==0 && updateRacks()"
                                 v-model="editedItem.rackId"
-                                label="Rack Number"
+                                label="Rack"
                                 placeholder="Please select a rack"
                                 :rules="[rules.rackRules]"
                                 :items="racks"
