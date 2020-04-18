@@ -62,6 +62,7 @@ namespace Web.Api.Controllers
                 foreach (ChangePlanItemDto changePlanItem in changePlanItems)
                 {
                     var changePlanAssetDto = new AssetDto();
+                    var blades = new List<GetAssetsApiDto>();
                     if (changePlanItem.ExecutionType.Equals("decommission"))
                     {
                         var oldAsset = response.Find(x => x.Id == changePlanItem.AssetId);
@@ -78,11 +79,12 @@ namespace Web.Api.Controllers
                     {
                         changePlanAssetDto = _mapper.Map<AssetDto>((JsonConvert.DeserializeObject<UpdateAssetApiDto>(changePlanItem.NewData)));
                         var oldAsset = response.Find(x => x.Id == changePlanItem.AssetId);
-                        changePlanAssetDto.Blades = _mapper.Map<List<AssetDto>>(oldAsset.Blades);
+                        if(oldAsset!= null && oldAsset.Blades != null && oldAsset.Blades.Count != 0) blades = (oldAsset.Blades);
                         response.Remove(oldAsset);
                     }
                     changePlanAssetDto = await _changePlanService.FillFieldsInAssetApiForChangePlans(changePlanAssetDto);
                     var assetApiDto = _mapper.Map<GetAssetApiDto>(changePlanAssetDto);
+                    assetApiDto.Blades = blades;
                     if (changePlanAssetDto.ChassisId != null && changePlanAssetDto.ChassisId != Guid.Empty)
                     {
                         var chassis = response.Find(x => x.Id == changePlanAssetDto.ChassisId);
@@ -369,13 +371,17 @@ namespace Web.Api.Controllers
         {
             var changePlanId = query.ChangePlanId ?? Guid.Empty;
             var changePlanItems = await _changePlanService.GetChangePlanItemsAsync(changePlanId);
+            var assetDto = await _assetService.GetAssetAsync(chassis.Id);
             //decommissioning all the current blades in the chassis 
-            foreach (AssetDto blade in chassis.Blades)
+            if (assetDto.Blades != null)
             {
-                var item = await _changePlanService.GetChangePlanItemAsync(query.ChangePlanId ?? Guid.Empty, blade.Id);
-                if (item != null) { continue;  } //if item != null, there's an updated version which exists and will be decommissioned below
-                var decommissionedAsset = CreateDecommissionedAsset(blade, query);
-                await _changePlanService.CreateChangePlanItemAsync(changePlanId, query.Id, decommissionedAsset);
+                foreach (AssetDto blade in assetDto.Blades)
+                {
+                    var item = await _changePlanService.GetChangePlanItemAsync(query.ChangePlanId ?? Guid.Empty, blade.Id);
+                    if (item != null) { continue; } //if item != null, there's an updated version which exists and will be decommissioned below
+                    var decommissionedAsset = CreateDecommissionedAsset(blade, query);
+                    await _changePlanService.CreateChangePlanItemAsync(changePlanId, query.Id, decommissionedAsset);
+                }
             }
             //decommissioning the rest of the blades (in the change plan items)
             foreach (ChangePlanItemDto changePlanItem in changePlanItems)

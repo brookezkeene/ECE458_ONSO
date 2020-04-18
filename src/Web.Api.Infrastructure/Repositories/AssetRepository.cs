@@ -128,7 +128,7 @@ namespace Web.Api.Infrastructure.Repositories
                 .ThenInclude(rack => rack.Pdus)
                 .ThenInclude(pdu => pdu.Ports)
                 .SingleOrDefaultAsync(x => x.Id == assetId);
-            asset.Blades = await GetBlades(asset.Id);
+            if(asset!=null) asset.Blades = await GetBlades(asset.Id);
             return asset;
         }
 
@@ -198,7 +198,7 @@ namespace Web.Api.Infrastructure.Repositories
         {
             var asset = await _dbContext.Assets
                 .SingleOrDefaultAsync(x => x.Id == assetId);
-            asset.Blades = await GetBlades(asset.Id);
+            if (asset != null) asset.Blades = await GetBlades(asset.Id);
             return asset;
         }
         public async Task<PagedList<DecommissionedAsset>> GetDecommissionedAssetsAsync(string datacenterName, string generalSearch, string decommissioner,
@@ -279,11 +279,14 @@ namespace Web.Api.Infrastructure.Repositories
 
         private async Task<List<Asset>> UpdateBlades(List<Asset> assets)
         {
-            foreach (Asset asset in assets)
+            if (assets != null)
             {
-                if(asset.Model.MountType.Contains("chassis"))
+                foreach (Asset asset in assets)
                 {
-                    asset.Blades = await GetBlades(asset.Id);
+                    if (asset.Model.MountType.Contains("chassis"))
+                    {
+                        asset.Blades = await GetBlades(asset.Id);
+                    }
                 }
             }
             return assets;
