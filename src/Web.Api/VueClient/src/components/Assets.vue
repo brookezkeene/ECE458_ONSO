@@ -189,11 +189,11 @@
 
                     <!-- TODO: integrate Expandable Rows for Blades -->
                     <template v-slot:item.data-table-expand="{ item, isExpanded, expand }">
-                        <v-btn icon v-if="isExpanded && item.mountType ==='chassis'" 
+                        <v-btn icon v-if="isExpanded && item.mountType ==='chassis'"
                                @click="editing=true; expand(false)">
                             <v-icon>mdi-chevron-up</v-icon>
                         </v-btn>
-                        <v-btn icon v-if="!isExpanded && item.mountType ==='chassis'" 
+                        <v-btn icon v-if="!isExpanded && item.mountType ==='chassis'"
                                @click="editing=true; expand(true)">
                             <v-icon>mdi-chevron-down</v-icon>
                         </v-btn>
@@ -225,7 +225,8 @@
                                     <td>{{item.blades[index].datacenter}}</td>
                                     <td>{{item.blades[index].chassisSlot}}</td>
                                     <td>{{item.blades[index].owner}}</td>
-                                    <td> <!--Power-->
+                                    <td>
+                                        <!--Power-->
                                         <!--v-if="displayPower(item)" ??-->
                                         <v-row>
                                             <v-item-group dense
@@ -250,7 +251,8 @@
                                             </v-item-group>
                                         </v-row>
                                     </td>
-                                    <td> <!--Actions-->
+                                    <td>
+                                        <!--Actions-->
                                         <v-row>
                                             <v-tooltip top>
                                                 <template v-slot:activator="{ on }">
@@ -333,7 +335,7 @@
 
                     <!-- Custom Location Column -->
                     <template v-slot:item.location="{ item }">
-                            Rack {{ item.rack }}, {{ item.rackPosition }} U
+                        Rack {{ item.rack }}, {{ item.rackPosition }} U
                     </template>
 
                     <template v-if="permission" v-slot:item.action="{ item }">
@@ -450,8 +452,24 @@
                     </template>
                 </v-data-table>
             </v-card>
+
+            <v-snackbar v-model="updateSnackbar.show"
+                        :bottom=true
+                        class="black--text"
+                        :color="updateSnackbar.color"
+                        :timeout=5000>
+                {{updateSnackbar.message}}
+                <v-btn dark
+                       class="black--text"
+                       text
+                       @click="updateSnackbar.show = false">
+                    Close
+                </v-btn>
+            </v-snackbar>
+
         </v-container>
     </v-card>
+
 </template>
 
 <script>
@@ -536,6 +554,11 @@
                     changePlanId: ''
                 },
                 editing: false,
+                updateSnackbar: {
+                    show: false,
+                    message: '',
+                    color: ''
+                },
             }
         },
         computed: {
@@ -609,13 +632,13 @@
             async getAssetsFromApi() {
                 this.loading = true;
                 const { sortBy, sortDesc, page, itemsPerPage } = this.options;
-                
+
                 this.fillQuery(sortBy, sortDesc, page, itemsPerPage);
                 console.log("this is the sorting stuff")
                 console.log(this.assetSearchQuery);
 
                 this.assetSearchQuery.changePlanId = this.changePlanId();
-                   
+
                 var info = await this.assetRepository.tablelist(this.assetSearchQuery);
                 this.assets = info.data;
                 return info;
@@ -702,10 +725,10 @@
             editItem(item) {
                 this.editing = true;
                 console.log(item);
-                this.$router.push({ name: 'asset-edit', params: { id: item.id, type: this.type} })
+                this.$router.push({ name: 'asset-edit', params: { id: item.id, type: this.type } })
             },
             addItem() {
-                this.$router.push({ name: 'asset-new',  params: { type: this.type} })
+                this.$router.push({ name: 'asset-new', params: { type: this.type } })
             },
             addLabels() {
                 /*eslint-disable*/
@@ -715,38 +738,54 @@
             displayPower(item) {
                 return item.hasNetworkManagedPower && (this.powerPermission || (item.ownerId == this.$store.getters.userId))
             },
-            turnOn(item) {
+            async turnOn(item) {
+                console.log(item);
                 this.editing = true;
                 var powerState = {
                     // 0 is on
                     action: 0,
                 };
-                confirm('Are you sure you would like to turn on this asset?') && this.assetRepository.postPowerState(item.id, powerState)
-                    .then(async () => {
-                        await this.initialize();
-                    })
+                if (confirm('Are you sure you would like to turn on this asset?')) {
+                    try {
+                        await this.assetRepository.postPowerState(item.id, powerState);
+                    } catch (e) {
+                        console.log('ERROR')
+                        alert('PDU Site Unavailable');
+                    }
+                    await this.initialize();
+                }
             },
-            turnOff(item) {
+            async turnOff(item) {
                 this.editing = true;
                 var powerState = {
                     // 1 is off
                     action: 1,
                 };
-                confirm('Are you sure you would like to power off this asset?') && this.assetRepository.postPowerState(item.id, powerState)
-                    .then(async () => {
-                        await this.initialize();
-                    })
+                if (confirm('Are you sure you would like to turn off this asset?')) {
+                    try {
+                        await this.assetRepository.postPowerState(item.id, powerState);
+                    } catch (e) {
+                        console.log('ERROR')
+                        alert('PDU Site Unavailable');
+                    }
+                    await this.initialize();
+                }
             },
-            cycle(item) {
+            async cycle(item) {
                 this.editing = true;
                 var powerState = {
                     // 2 is cycle
                     action: 2,
                 };
-                confirm('Are you sure you would like to cycle this asset?') && this.assetRepository.postPowerState(item.id, powerState)
-                    .then(async () => {
-                        await this.initialize();
-                    })
+                if (confirm('Are you sure you would like to cycle this asset?')) {
+                    try {
+                        await this.assetRepository.postPowerState(item.id, powerState);
+                    } catch (e) {
+                        console.log('ERROR')
+                        alert('PDU Site Unavailable');
+                    }
+                    await this.initialize();
+                }
             },
             showInstructions() {
                 this.instructionsDialog = true;
@@ -793,7 +832,7 @@
             moveAsset(item) {
                 this.editing = true;
                 this.$router.push({ name: 'move-asset', params: {type: this.type, item: item}})
-            }
+            },
         },
     }
 </script>

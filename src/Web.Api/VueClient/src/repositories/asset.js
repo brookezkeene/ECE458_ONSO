@@ -23,7 +23,7 @@ export default {
         return axios.get(`${resource}/${powerportid}/power`)
             .then(response => {
                 return response.data;
-            })
+            });
     },
     postPowerState(id, state) {
         return axios.put(`${resource}/${id}/power`, state)
@@ -31,7 +31,8 @@ export default {
                 console.log(response);
                 return response.data;
             }).catch(error => {
-                console.log(error);
+                console.log('Error', error);
+                throw new DOMException;
             });
     },
     list(datacenter) {
