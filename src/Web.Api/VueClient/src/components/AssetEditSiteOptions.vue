@@ -153,6 +153,7 @@
                     }
                     else {
                         // for blades, get all blade chassis in the datacenter
+                        
                         this.chassis = await this.datacenterRepository.chassis(this.datacenterID);
                         return true;
                     }
