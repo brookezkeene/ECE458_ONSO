@@ -189,18 +189,18 @@
 
                     <!-- TODO: integrate Expandable Rows for Blades -->
                     <template v-slot:item.data-table-expand="{ item, isExpanded, expand }">
-                        <v-btn icon v-if="item.blades.length > 0 && isExpanded" 
+                        <v-btn icon v-if="isExpanded && item.mountType ==='chassis'" 
                                @click="editing=true; expand(false)">
                             <v-icon>mdi-chevron-up</v-icon>
                         </v-btn>
-                        <v-btn icon v-if="item.blades.length > 0 && !isExpanded" 
+                        <v-btn icon v-if="!isExpanded && item.mountType ==='chassis'" 
                                @click="editing=true; expand(true)">
                             <v-icon>mdi-chevron-down</v-icon>
                         </v-btn>
-
                     </template>
                     <template v-slot:expanded-item="{ headers, item }">
-                        <td :colspan="headers.length">
+                        <td v-if="item.blades.length > 0"
+                            :colspan="headers.length">
                             <thead>
                                 <th>Blades</th>
                                 <th>Vendor</th>
@@ -328,6 +328,7 @@
                                 </tr>
                             </tbody>
                         </td>
+                        <td v-else :colspan="headers.length">This chassis has no blades</td>
                     </template>
 
                     <!-- Custom Location Column -->

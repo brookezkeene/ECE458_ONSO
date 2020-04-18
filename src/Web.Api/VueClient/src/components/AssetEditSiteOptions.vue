@@ -1,8 +1,7 @@
 ﻿
     <template>
-
         <v-row>
-            <v-col v-if="type==='active'" cols="12" sm="6" md="4">
+            <v-col v-if="assetType ==='active'" cols="12" sm="6" md="4">
                 <v-autocomplete v-model="editedItem.datacenterId"
                                 label="Datacenter"
                                 placeholder="Please select an existing datacenter"
@@ -25,7 +24,7 @@
                 </v-autocomplete>
             </v-col>
             <!-- Will need to update to show only racks from the selected datacenter -->
-            <v-col v-if="!isBlade && type==='active'"
+            <v-col v-if="!isBlade && assetType ==='active'"
                    cols="12" sm="6" md="4">
                 <v-autocomplete v-if="!editedItem.datacenterId.length==0 && updateRacks()"
                                 v-model="editedItem.rackId"
@@ -38,7 +37,7 @@
                                 @change="rackSelected">
                 </v-autocomplete>
             </v-col>
-            <v-col v-if="!isBlade && type==='active'"
+            <v-col v-if="!isBlade && assetType ==='active'"
                    cols="12" sm="6" md="4">
                 <v-text-field v-if="!editedItem.datacenterId.length==0 && updateRacks()"
                               v-model.number="editedItem.rackPosition"
@@ -103,8 +102,7 @@
         async created() {
             // Getting datacenters or offline assets
             /*eslint-disable*/
-            console.log(this.type);
-            if (this.type = "offline") {
+            if (this.assetType = "offline") {
                 this.$store.getters.isChangePlan
                 ? Promise.resolve(this.datacenters.push(this.$store.getters.changePlan.datacenterName)) // todo: this will change to getting from the offline endpoint
                 : this.datacenterRepository.list().then( datacenters => {
@@ -146,6 +144,9 @@
                     return this.datacenters;
                 }
             },
+            assetType() {
+                return this.type
+            }
         },
         methods: {
             async updateRacks() {
@@ -155,12 +156,11 @@
 
                     if (!this.isBlade) {
                         this.racks = await this.rackRepository.list(this.datacenterID);
-/*                        this.sendNetworkPortRequest(); //this request will always be sent if racks are updated, need different behavior for blades
-*/                        return true;
+                        this.$emit('selectedDatacenter');
+                        return true;
                     }
                     else if (!this.$store.getters.isChangePlan){
                         // for blades, get all blade chassis in the datacenter
-                        
                         this.chassis = await this.datacenterRepository.chassis(this.datacenterID);
                         return true;
                     }
