@@ -338,7 +338,7 @@
                 availablePortsInRack: [],
                 rules: {
                     modelRules: v => /^(?!\s*$).+/.test(v) || 'Model is required',
-                    hostnameRules: v => /^(?![0-9]+$)(?!.*-$)(?!-)[a-zA-Z0-9-]{1,63}$/.test(v) || 'Valid hostname is required',
+                    hostnameRules: v => (/^(?![0-9]+$)(?!.*-$)(?!-)[a-zA-Z0-9-]{1,63}$/.test(v) || (v || '').length==0) || 'Invalid Host Name',
                     assetRules: v => (/^[1-9]\d{5}$/.test(v) || (v || '').length==0) || 'Invalid Asset Number',
                     macAddressRules: v => (/^([0-9A-Fa-f]{2}[\W_]*){5}([0-9A-Fa-f]{2})$/.test(v) || /^$/.test(v)) || 'Invalid MAC Address.'
                 },
