@@ -470,6 +470,7 @@
             
             makeNetworkPorts(model) {
                 console.log(model);
+                
                 this.networkPorts = [];
                 for (var j = 0; j < model.networkPorts.length; j++) {
                     const portInfo = {
@@ -493,7 +494,6 @@
                     this.editedItem.networkPorts = networkPortsArray;
                 }
                 console.log(networkPortsArray);
-
             },
             makePowerPorts(model) {
 
