@@ -128,20 +128,29 @@
             async fetchPowerPortIds() {
                 var powerPortStates = [];
                 /*eslint-disable*/
-                powerPortStates = await this.assetRepository.getPowerPortState(this.asset.id);
-                console.log(powerPortStates);
-                for (var i = 0; i<powerPortStates.powerPorts.length; i++) {
-                    if (powerPortStates.powerPorts[i].status=='0') {
-                        powerPortStates.powerPorts[i].status = 'on';
-                    } else {
-                        powerPortStates.powerPorts[i].status = 'off'
+                try {
+                    powerPortStates = await this.assetRepository.getPowerPortState(this.asset.id);
+                    console.log(powerPortStates);
+                    for (var i = 0; i < powerPortStates.powerPorts.length; i++) {
+                        if (powerPortStates.powerPorts[i].status == '0') {
+                            powerPortStates.powerPorts[i].status = 'on';
+                        } else {
+                            powerPortStates.powerPorts[i].status = 'off'
+                        }
                     }
+                    this.asset.powerPorts.forEach(port => {
+                        var maybeState = powerPortStates.powerPorts.find(o => o.port === port.pduPort);
+                        port.status = maybeState && maybeState.status;
+                    })
                 }
-                this.asset.powerPorts.forEach(port => {
-                    var maybeState = powerPortStates.powerPorts.find(o => o.port === port.pduPort);
-                    port.status = maybeState && maybeState.status;
-                })
+                catch {
+                    console.log(this.asset.powerPorts.length);
+                    this.asset.powerPorts.forEach(port => {
+                        port.status = 'site unavailable';
+                    })
+                }
                 return powerPortStates;
+
             },
             async showNames() {
                 this.powerPorts = await this.fetchPowerPortIds();
