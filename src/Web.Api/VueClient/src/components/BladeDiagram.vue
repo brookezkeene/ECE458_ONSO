@@ -37,7 +37,7 @@
                                                height="250px"
                                                :depressed=true
                                                :tile=true
-                                               :to="{ name: 'asset-details', params: { id: blade.id } }"
+                                               :to="{ name: 'asset-details', params: { type: type, id: blade.id } }"
                                                v-on="on">
                                             {{ blade.text }}
                                         </v-btn>
@@ -95,9 +95,10 @@
         name: 'blade-diagram',
         inject: ['assetRepository'],
         props: {
+            type: String,
             chassisId: String,
             assetId: String,
-            type: String,
+            mountType: String,
         },
         data () {
             return {
@@ -107,12 +108,12 @@
         },
         computed: {
             isBlade() {
-                return this.type === 'blade'
+                return this.mountType === 'blade'
             }
         },
         async created() {
             console.log("created")
-            console.log(this.type)
+            console.log(this.mountType)
             this.fetchBlades();
         },
         methods: {
@@ -134,7 +135,8 @@
                 }
 
                 this.loading = false
-            }
-        }    
+            },
+        },
+        
     }
 </script>

@@ -67,12 +67,15 @@
                 <div v-if="isBlade || isChassis">
                     <v-label>Blade Diagram</v-label>
                     <v-card-text>
-                        <blade-diagram :chassisId="asset.chassisId"
+                        <blade-diagram :type="type"
+                                       :chassisId="asset.chassisId"
                                        :assetId="asset.id"
-                                       :type="mountType"></blade-diagram>
+                                       :mountType="mountType"></blade-diagram>
                     </v-card-text>
                     <v-card-text v-if="isBlade">
-                        <router-link to="{ name: 'asset-details', params: { id: asset.chassisId } }">View Blade Chassis Details</router-link>
+                        <v-btn color="primary"
+                               outlined
+                               @click="toChassisDetails">View Blade Chassis Details</v-btn>
                     </v-card-text>
                 </div>
             </v-card-text>
@@ -145,10 +148,14 @@
         created() {
             this.initialize();
         },
-        beforeRouteUpdate(to) {
+        beforeRouteUpdate(to, from, next) {
+            /*eslint-disable*/
             this.id = to.params.id;
             this.$route.params.id = to.params.id;
             this.initialize();
+
+            console.log(from);
+            next()
         },
         methods: {
             changePlanId() {
@@ -163,8 +170,12 @@
                 asset.networkPorts.sort((a, b) => a.number - b.number);
                 asset.powerPorts.sort((a, b) => a.number - b.number);
 
+                const model = await this.modelRepository.find(asset.modelId);
+                this.mountType = model.mountType;
+                console.log(this.mountType)
+
                 this.asset = asset;
-                this.loading = false;
+                
                 if (this.asset.owner === undefined) {
                     this.ownerPresent = false;
                 }
@@ -172,11 +183,12 @@
                     this.isDecommissioned = true;
                 }
 
-                const model = await this.modelRepository.find(this.asset.modelId);
-                this.mountType = model.mountType;
-                console.log(this.mountType)
+                this.loading = false;
             },
-
+            toChassisDetails() {
+                console.log("new route to chassis")
+                this.$router.push({ name: 'asset-details', params: { type: this.type, id: this.asset.chassisId } })
+            }
         }
     }
 </script>
