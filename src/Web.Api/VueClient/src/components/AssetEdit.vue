@@ -360,10 +360,10 @@
 
             const getUsers = this.userRepository.list()
                 .then(users => this.users = users);
-
+            
             const getAsset = typeof this.id === 'undefined' || this.id === 'new'
                 ? Promise.resolve()
-                : this.assetRepository.find(this.id, this.$store.getters.isChangePlan)
+                : this.assetRepository.find(this.id, this.changePlanId())
                     .then(asset => this.editedItem = asset)
                     .then(() => this.modelRepository.find(this.editedItem.modelId))
                     .then(model => this.selectedModel = model)
@@ -428,6 +428,10 @@
                     ? this.assetRepository.update(this.editedItem)
                     : this.assetRepository.create(this.editedItem);
                 promise.then(this.close);
+            },
+            changePlanId() {
+                if (this.$store.getters.isChangePlan)
+                    return this.$store.getters.changePlan.id;
             },
             close() {
                 this.$router.push({ name: 'assets' })
