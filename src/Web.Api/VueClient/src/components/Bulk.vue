@@ -2,16 +2,24 @@
     <v-card flat>
         <v-card-title>
             Bulk Import & Export
+            <a target="_blank"
+               rel="noopener noreferrer"
+               href="https://d1b10bmlvqabco.cloudfront.net/attach/k4u27qnccr45oo/is4xdnkb8px4ee/k90vqcj1j0tn/ECE458__Bulk_Format_Proposal6.pdf">
+                <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
+
+                <v-icon small
+                        class="mb-2"
+                        v-if="modelPermission">mdi-information</v-icon>
+            </a>
         </v-card-title>
         <v-container fill-height fluid>
             <v-col>
                 <v-card>
                     <v-card-title class="justify-center">
-                        <v-icon v-if="modelPermission" color="white">mdi-information</v-icon>
                         <v-spacer></v-spacer>
                         Models
                         <v-spacer></v-spacer>
-                        <v-icon v-if="modelPermission" @click="showModelInfo">mdi-information</v-icon>
                     </v-card-title>
                     <v-card-actions class="justify-center">
                         <v-container>
@@ -28,11 +36,9 @@
             <v-col>
                 <v-card>
                     <v-card-title class="justify-center">
-                        <v-icon v-if="assetPermission" color="white">mdi-information</v-icon>
                         <v-spacer></v-spacer>
                         Assets
                         <v-spacer></v-spacer>
-                        <v-icon v-if="assetPermission" @click="showAssetInfo">mdi-information</v-icon>
                     </v-card-title>
                     <v-card-actions class="justify-center">
                         <v-container>
@@ -49,11 +55,9 @@
             <v-col>
                 <v-card>
                     <v-card-title class="justify-center">
-                        <v-icon v-if="assetPermission" color="white">mdi-information</v-icon>
                         <v-spacer></v-spacer>
                         Networks
                         <v-spacer></v-spacer>
-                        <v-icon v-if="assetPermission" @click="showNetworkInfo">mdi-information</v-icon>
                     </v-card-title>
                     <v-card-actions class="justify-center">
                         <v-container>
@@ -132,6 +136,10 @@
         </v-snackbar>
     </v-card>
 </template>
+
+<style>
+    a {  text-decoration: none;}
+</style>
 
 <script>
 
