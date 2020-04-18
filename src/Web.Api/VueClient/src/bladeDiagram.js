@@ -1,5 +1,6 @@
 ﻿/* eslint-disable no-unused-vars, no-console */
 import assetRepository from '@/repositories/asset';
+import store from '@/store/store';
 
 const getContrast50 = (hexcolor) => {
     hexcolor = hexcolor.replace('#', '');
@@ -10,7 +11,7 @@ export default {
     /* Function to create text and styling for each blade */
     async createSlots(assetId) {
         // call asset API
-        var asset = await assetRepository.find(assetId, false)
+        var asset = await assetRepository.find(assetId, store.getters.changePlanId)
         var assetBlades = asset.blades;
 
         // create base slots
