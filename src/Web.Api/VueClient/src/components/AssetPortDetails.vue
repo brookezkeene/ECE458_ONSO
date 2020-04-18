@@ -154,7 +154,7 @@
             nodeClicked(e) {
                 /* eslint-disable no-unused-vars, no-console */
                 console.log('clicked');
-                this.$router.push({ name: 'asset-details', params: { id: e } });
+                this.$router.push({ name: 'asset-details', params: { id: e, type: this.type } });
             },
         }
     }
