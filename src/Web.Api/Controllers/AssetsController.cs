@@ -67,7 +67,7 @@ namespace Web.Api.Controllers
                     {
                         var oldAsset = response.Find(x => x.Id == changePlanItem.AssetId);
                         response.Remove(oldAsset);
-                        response.TotalCount -= 1; 
+                        response.TotalCount -= 1;
                         continue;
                     }
                     else if (changePlanItem.ExecutionType.Equals("create"))
@@ -79,7 +79,7 @@ namespace Web.Api.Controllers
                     {
                         changePlanAssetDto = _mapper.Map<AssetDto>((JsonConvert.DeserializeObject<UpdateAssetApiDto>(changePlanItem.NewData)));
                         var oldAsset = response.Find(x => x.Id == changePlanItem.AssetId);
-                        if(oldAsset!= null && oldAsset.Blades != null && oldAsset.Blades.Count != 0) blades = (oldAsset.Blades);
+                        if (oldAsset != null && oldAsset.Blades != null && oldAsset.Blades.Count != 0) blades = (oldAsset.Blades);
                         response.Remove(oldAsset);
                     }
                     changePlanAssetDto = await _changePlanService.FillFieldsInAssetApiForChangePlans(changePlanAssetDto);
@@ -88,17 +88,17 @@ namespace Web.Api.Controllers
                     if (changePlanAssetDto.ChassisId != null && changePlanAssetDto.ChassisId != Guid.Empty) //only happens when updating a blade
                     {
                         var oldChassisId = changePlanAssetDto.ChassisId ?? Guid.Empty;
-                        if (!string.IsNullOrEmpty(changePlanItem.PreviousData)) 
-                            oldChassisId=(JsonConvert.DeserializeObject<GetAssetApiDto>(changePlanItem.NewData)).Id; 
+                        if (!string.IsNullOrEmpty(changePlanItem.PreviousData))
+                            oldChassisId = (JsonConvert.DeserializeObject<GetAssetApiDto>(changePlanItem.NewData)).Id;
                         var chassis = response.Find(x => x.Id == oldChassisId);
                         //remove previous blade
-                        chassis.Blades.Remove( chassis.Blades.Find(x => x.Id == changePlanAssetDto.Id));
-                        chassis.Blades.Add(assetApiDto); 
+                        if(chassis!= null && chassis.Blades != null)chassis.Blades.Remove(chassis.Blades.Find(x => x.Id == changePlanAssetDto.Id));
+                        chassis.Blades.Add(assetApiDto);
                         continue;
                     }
                     response.Add(assetApiDto);
                     response.TotalCount++;
-                }                
+                }
             }
 
             return Ok(response);
@@ -107,7 +107,7 @@ namespace Web.Api.Controllers
         [HttpGet("asset")]
         public async Task<ActionResult<GetAssetApiDto>> GetById([FromQuery] GetAssetByIdQuery query)
         {
-            
+
             var changePlanItem = await _changePlanService.GetChangePlanItemAsync(query.AssetId);
             if (changePlanItem == null)
             {
@@ -129,12 +129,14 @@ namespace Web.Api.Controllers
                 if (changePlanItem.ExecutionType.Equals("create"))
                 {
                     assetDto = _mapper.Map<AssetDto>(JsonConvert.DeserializeObject<CreateAssetApiDto>(changePlanItem.NewData));
+                    assetDto.Id = changePlanItem.Id;
                 }
                 else if (changePlanItem.ExecutionType.Equals("update"))
                 {
                     assetDto = _mapper.Map<AssetDto>(JsonConvert.DeserializeObject<UpdateAssetApiDto>(changePlanItem.NewData));
                 }
                 await _changePlanService.FillFieldsInAssetApiForChangePlans(assetDto);
+                await AddBladesToGetCall(query, assetDto);
                 return Ok(_mapper.Map<GetAssetApiDto>(assetDto));
             }
             var asset = await _assetService.GetAssetAsync(query.AssetId);
@@ -149,7 +151,7 @@ namespace Web.Api.Controllers
                 var assetApi = JsonConvert.DeserializeObject<CreateDecommissionedAsset>(decommissionedAsset.Data);
                 return Ok(assetApi);
             }
-            
+
             //nothign was found 
             return Ok();
         }
@@ -295,9 +297,9 @@ namespace Web.Api.Controllers
                         newAssetDto = _mapper.Map<AssetDto>(updatedAssetApi);
                     }
                     var updateadAssetDto = await _changePlanService.FillFieldsInAssetApiForChangePlans(newAssetDto);
-                    if (updateadAssetDto.Model.MountType.Equals("chassis")) 
-                    { 
-                        await DecommissionBladeChangePlan(updateadAssetDto, query);  
+                    if (updateadAssetDto.Model.MountType.Equals("chassis"))
+                    {
+                        await DecommissionBladeChangePlan(updateadAssetDto, query);
                     }
                     decommissionedAsset = CreateDecommissionedAsset(updateadAssetDto, query);
 
@@ -361,7 +363,7 @@ namespace Web.Api.Controllers
         }
         private async Task<ActionResult> DecommissionBladeChassis(AssetDto assetDto, DecommissionedAssetQuery query)
         {
-
+            if (assetDto.Blades != null) return Ok();
             foreach (AssetDto blade in assetDto.Blades)
             {
                 var decommissionedAsset = CreateDecommissionedAsset(blade, query);
@@ -401,13 +403,47 @@ namespace Web.Api.Controllers
                     newAssetDto = _mapper.Map<AssetDto>(updatedAssetApi);
                 }
                 if (newAssetDto.ChassisId != query.Id) //this change plan item is not part of the chassis' blades
-                { 
-                    continue; 
+                {
+                    continue;
                 }
                 //var decommissionAssetExists = _changePlanService.GetChangePlanItemAsync(newAssetDto.Id);
                 var updateadAssetDto = await _changePlanService.FillFieldsInAssetApiForChangePlans(newAssetDto);
                 var decommissionedAsset = CreateDecommissionedAsset(updateadAssetDto, query);
                 await _changePlanService.CreateChangePlanItemAsync(changePlanId, query.Id, decommissionedAsset);
+            }
+            return Ok();
+        }
+        private async Task<ActionResult> AddBladesToGetCall(GetAssetByIdQuery query, AssetDto chassis)
+        {
+            if (!chassis.Model.MountType.Contains("chassis") || query.ChangePlanId == null || query.ChangePlanId==Guid.Empty) return Ok();
+            var changePlanId = query.ChangePlanId ?? Guid.Empty;
+            var changePlanItems = await _changePlanService.GetChangePlanItemsAsync(changePlanId);
+            foreach (ChangePlanItemDto changePlanItem in changePlanItems)
+            {
+                var newAssetDto = new AssetDto();
+                if (changePlanItem.ExecutionType.Equals("create"))
+                {
+                    var updatedAssetApi = JsonConvert.DeserializeObject<CreateAssetApiDto>(changePlanItem.NewData);
+                    newAssetDto = _mapper.Map<AssetDto>(updatedAssetApi);
+                    newAssetDto.Id = changePlanItem.Id;
+                }
+                else if (changePlanItem != null && changePlanItem.ExecutionType.Equals("update"))
+                {
+                    var updatedAssetApi = JsonConvert.DeserializeObject<UpdateAssetApiDto>(changePlanItem.NewData);
+                    newAssetDto = _mapper.Map<AssetDto>(updatedAssetApi);
+                }
+                if (newAssetDto.ChassisId != query.AssetId) //this change plan item is not part of the chassis' blades
+                {
+                    continue;
+                }
+                //var decommissionAssetExists = _changePlanService.GetChangePlanItemAsync(newAssetDto.Id);
+                var updateadAssetDto = await _changePlanService.FillFieldsInAssetApiForChangePlans(newAssetDto);
+                if (chassis.Blades != null)
+                {
+                    var remove = chassis.Blades.Find(x => x.Id == updateadAssetDto.Id);
+                    chassis.Blades.Remove(remove);
+                }
+                chassis.Blades.Add(updateadAssetDto);
             }
             return Ok();
         }

@@ -172,6 +172,9 @@ namespace Web.Api.Core.Services
         }
         public async Task<AssetDto> FillFieldsInAssetApiForChangePlans(AssetDto assetDto)
         {
+            var original = _mapper.Map<AssetDto>(await _assetRepository.GetAssetAsync(assetDto.Id));
+            if (original != null) assetDto.Blades = original.Blades;
+            else assetDto.Blades = new List<AssetDto>();
             assetDto.Model = _mapper.Map<ModelDto>(await _modelRepository.GetModelAsync(assetDto.ModelId));
             assetDto.Rack = _mapper.Map<RackDto>(await _rackRepository.GetRackAsync(assetDto.RackId));
             if (assetDto.OwnerId != null || assetDto.OwnerId != Guid.Empty)
