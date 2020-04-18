@@ -287,7 +287,11 @@ import Auth from "../auth"
                         this.editedRoles.push(this.allRoles[i].name);
                     }
                 }
-                this.selectedDatacenters = "All Datacenters"
+
+                this.selectedDatacenters = [];
+                for (var i = 0; i < this.datacenters.length; i++) {
+                    this.selectedDatacenters.push(this.datacenters[i].description);
+                }
             }
         },
         checkAll() {
