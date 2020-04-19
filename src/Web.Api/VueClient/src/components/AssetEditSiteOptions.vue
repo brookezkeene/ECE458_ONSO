@@ -56,7 +56,7 @@
                                 label="Blade Chassis"
                                 placeholder="Please select a blade chassis for this blade"
                                 :items="chassis"
-                                item-text="hostname"
+                                item-text="nameChassis"
                                 item-value="id"
                                 :rules="[rules.rackRules]"
                                 @change="rackSelected">
@@ -160,7 +160,6 @@
                     else if (!this.isBlade) {
                         this.racks = await this.rackRepository.list(this.datacenterID);
                         this.$emit('selectedDatacenter');
-                        return true;
                     }
                     else if (this.$store.getters.isChangePlan) {
                         this.chassis = await this.datacenterRepository.chassis(this.$store.getters.changePlan.datacenterId, this.$store.getters.changePlan.id);
@@ -168,9 +167,12 @@
                     else {
                         // for blades, get all blade chassis in the datacenter
                         this.chassis = await this.datacenterRepository.chassis(this.datacenterID);
-                        
-                        return true;
                     }
+                    for (const ch of this.chassis) {
+                        ch.nameChassis = "Hostname: " + ch.hostname + ", Asset #: " + ch.assetNumber;
+
+                    }
+                    return true;
                 }
                 return false;
             },
