@@ -92,8 +92,11 @@ namespace Web.Api.Controllers
                             oldChassisId = (JsonConvert.DeserializeObject<GetAssetApiDto>(changePlanItem.NewData)).Id;
                         var chassis = response.Find(x => x.Id == oldChassisId);
                         //remove previous blade
-                        if(chassis!= null && chassis.Blades != null)chassis.Blades.Remove(chassis.Blades.Find(x => x.Id == changePlanAssetDto.Id));
-                        chassis.Blades.Add(assetApiDto);
+                        if (chassis != null && chassis.Blades != null)
+                        {
+                            chassis.Blades.Remove(chassis.Blades.Find(x => x.Id == changePlanAssetDto.Id));
+                            chassis.Blades.Add(assetApiDto);
+                        }
                         continue;
                     }
                     response.Add(assetApiDto);
