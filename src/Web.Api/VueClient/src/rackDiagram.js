@@ -65,7 +65,7 @@ export default {
         for (var j = 0; j < assets_length; j++) {
             if (assets[j].slotsOccupied.length > 0) {
                 var rackU = assets[j].rackPosition - 1;
-                var color = assets[j].displayColor;
+                var color = assets[j].customDisplayColor;
                 var textColor = getContrast50(color);
                 rows[rackU].value = { text: assets[j].vendor + ' ' + assets[j].modelNumber + ' ' + assets[j].hostname, id: assets[j].id };
 
