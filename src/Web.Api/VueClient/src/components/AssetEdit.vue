@@ -492,6 +492,13 @@
                 this.makeNetworkPorts(this.selectedModel);
                 this.makePowerPorts(this.selectedModel);
                 this.mountType = this.selectedModel.mountType;
+
+                if (typeof this.id === 'undefined') {
+                    for (var key in this.defaultCustomItem) {
+                        this.defaultCustomItem[key] = this.selectedModel[key];
+                        this.customItem[key] = this.selectedModel[key];
+                    }
+                }
             },
             async rackSelected() {
                 this.rackSelected = true;
