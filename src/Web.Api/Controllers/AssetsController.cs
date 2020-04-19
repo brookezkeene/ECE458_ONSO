@@ -143,7 +143,8 @@ namespace Web.Api.Controllers
             var decommissionedAsset = await _assetService.GetDecommissionedAssetAsync(query.AssetId);
             if (asset != null)
             {
-                var response = _mapper.Map<GetAssetApiDto>(asset);
+                await AddBladesToGetCall(query, asset);
+                var response = _mapper.Map<GetAssetApiDto>(asset);               
                 return Ok(response);
             }
             else if (decommissionedAsset != null)
@@ -378,14 +379,14 @@ namespace Web.Api.Controllers
             var changePlanItems = await _changePlanService.GetChangePlanItemsAsync(changePlanId);
             var assetDto = await _assetService.GetAssetAsync(chassis.Id);
             //decommissioning all the current blades in the chassis 
-            if (assetDto.Blades != null)
+            if (assetDto!= null && assetDto.Blades != null)
             {
                 foreach (AssetDto blade in assetDto.Blades)
                 {
                     var item = await _changePlanService.GetChangePlanItemAsync(query.ChangePlanId ?? Guid.Empty, blade.Id);
                     if (item != null) { continue; } //if item != null, there's an updated version which exists and will be decommissioned below
                     var decommissionedAsset = CreateDecommissionedAsset(blade, query);
-                    await _changePlanService.CreateChangePlanItemAsync(changePlanId, query.Id, decommissionedAsset);
+                    await _changePlanService.CreateChangePlanItemAsync(changePlanId, blade.Id, decommissionedAsset);
                 }
             }
             //decommissioning the rest of the blades (in the change plan items)
@@ -409,7 +410,9 @@ namespace Web.Api.Controllers
                 //var decommissionAssetExists = _changePlanService.GetChangePlanItemAsync(newAssetDto.Id);
                 var updateadAssetDto = await _changePlanService.FillFieldsInAssetApiForChangePlans(newAssetDto);
                 var decommissionedAsset = CreateDecommissionedAsset(updateadAssetDto, query);
-                await _changePlanService.CreateChangePlanItemAsync(changePlanId, query.Id, decommissionedAsset);
+                Guid assetId = changePlanItem.AssetId;
+                if (assetId == Guid.Empty) assetId = changePlanItem.Id;
+                await _changePlanService.CreateChangePlanItemAsync(changePlanId, assetId, decommissionedAsset);
             }
             return Ok();
         }

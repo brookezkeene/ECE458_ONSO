@@ -361,7 +361,8 @@
 
             const getUsers = this.userRepository.list()
                 .then(users => this.users = users);
-            
+            console.log(this.changePlanId())
+            console.log("this is the change plan id")
             const getAsset = typeof this.id === 'undefined' || this.id === 'new'
                 ? Promise.resolve()
                 : this.assetRepository.find(this.id, this.changePlanId())
