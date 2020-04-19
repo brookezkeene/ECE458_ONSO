@@ -25,6 +25,9 @@ namespace Web.Api.Core.Dtos
         public virtual List<AssetDto> Blades { get; set; }
         public Guid? ChassisId { get; set; }
         public int? ChassisSlot { get; set; }
-        public bool? BladePowerState { get; set; }
+        public string CustomDisplayColor { get; set; }
+        public string CustomCpu { get; set; }
+        public int? CustomMemory { get; set; }
+        public string CustomStorage { get; set; }
     }
 }

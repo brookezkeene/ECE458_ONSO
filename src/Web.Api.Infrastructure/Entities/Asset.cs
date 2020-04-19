@@ -35,6 +35,13 @@ namespace Web.Api.Infrastructure.Entities
         public virtual List<Asset> Blades { get; set; }
         public Guid ChassisId { get; set; }
         public int ChassisSlot { get; set; }
-        public bool BladePowerState { get; set; }
+        [MinLength(6)]
+        [MaxLength(7)] // '#' is optional before hex color code
+        public string CustomDisplayColor { get; set; }
+        [MaxLength(50)]
+        public string CustomCpu { get; set; }
+        public int? CustomMemory { get; set; }
+        [MaxLength(50)]
+        public string CustomStorage { get; set; }
     }
 }
