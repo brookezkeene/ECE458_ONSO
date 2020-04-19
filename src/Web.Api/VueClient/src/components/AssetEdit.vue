@@ -473,9 +473,18 @@
             },
             async sendNetworkPortRequest() {
                 this.networks = await this.datacenterRepository.networkPorts(this.editedItem.datacenterId);
+
+                console.log(this.networks);
+                
+                this.networks = this.networks.filter(network => {
+                    return (network.assetHostname != this.editedItem.hostname);
+                });
+
                 for (const network of this.networks) {
+                    console.log(network.assetHostname);
+                    console.log(this.editedItem.hostname);
                     network.nameRackAssetNum = "Port name: " + network.name +
-                        ",  " + "Hostname: " + network.assetHostname;
+                    ",  " + "Hostname: " + network.assetHostname;
 
                 }
 
