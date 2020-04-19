@@ -199,7 +199,7 @@
                         </v-btn>
                     </template>
                     <template v-slot:expanded-item="{ headers, item }">
-                        <td v-if="item.blades.length > 0"
+                        <td v-if="showBlade(item)"
                             :colspan="headers.length">
                             <thead>
                                 <th>Blades</th>
@@ -505,7 +505,6 @@
                 toActive: false,
                 toOffline: false,
                 refresh: 0,
-
                 // Table data.
                 headers: [
                     { text: 'Model Vendor', value: 'vendor' },
@@ -629,6 +628,11 @@
                     this.modifyAssetsForChangePlan();
                 }
             },
+            showBlade(item) {
+                if (typeof item.blades !== 'undefined' && item.blades.length > 0)
+                    return true
+                return false;
+            },
             async getAssetsFromApi() {
                 this.loading = true;
                 const { sortBy, sortDesc, page, itemsPerPage } = this.options;
@@ -707,7 +711,7 @@
             },
             async decommissionItem(item) {
                 this.editing = true;
-                var graph = await networkNeighborhood.createGraph(item.id);
+                var graph = await networkNeighborhood.createGraph(item.id, this.changePlanId());
                 var query = { Id: item.id, NetworkPortGraph: JSON.stringify(graph), Decommissioner: this.$store.state.username }
                 query.changePlanId = this.changePlanId();
                 /*eslint-disable*/

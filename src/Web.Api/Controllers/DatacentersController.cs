@@ -119,6 +119,7 @@ namespace Web.Api.Controllers
                     var decommissionedAssetDto = (JsonConvert.DeserializeObject<DecommissionedAssetDto>(changePlanItem.NewData));
                     var remove = response.Find(x => x.Id == decommissionedAssetDto.Id);
                     response.Remove(remove);
+                    continue;
                 }
 
                 //if the change plan item is a created or updated item

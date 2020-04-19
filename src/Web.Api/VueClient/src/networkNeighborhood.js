@@ -2,7 +2,7 @@
 import assetRepository from '@/repositories/asset';
 
 export default {
-    async createGraph(assetId, isChangePlan) {
+    async createGraph(assetId, changePlanId) {
         var graphNodes = new Array(0);
         var graphLinks = new Array(0);
         const fakeNodes = [
@@ -31,7 +31,7 @@ export default {
         // Create Nodes and Links
         var seen = new Array();
         // Start with main asset
-        var asset = await assetRepository.find(assetId, isChangePlan);
+        var asset = await assetRepository.find(assetId, changePlanId);
         graphNodes.push({ id: asset.id, name: asset.hostname });
         seen.push(asset.id);
         // Find assets 1 level of separation away

@@ -152,18 +152,14 @@ namespace Web.Api.Controllers
                 //NOTE: THE NEWDATA HERE IS A DecommissionedAssetDto
                 else if (changePlanItem.ExecutionType.Equals("decommission"))
                 {
+                    var changePlanItemForAsset = await _changePlanService.GetChangePlanItemAsync(changePlanItem.AssetId);
+                    if (changePlanItemForAsset != null) changePlanItem.AssetId = changePlanItemForAsset.AssetId;
+
                     var decommisionedAsset = JsonConvert.DeserializeObject<DecommissionedAssetDto>(changePlanItem.NewData);
+                    var createDecommissionedAsset = JsonConvert.DeserializeObject<CreateDecommissionedAsset>(decommisionedAsset.Data);
+                    var assetDto = await _assetService.GetAssetForDecommissioning(changePlanItem.AssetId);
+                    decommisionedAsset = CreateDecommissionedAsset(assetDto, createDecommissionedAsset);
                     
-                    if (await _assetService.GetAssetAsync(changePlanItem.AssetId) != null) {
-                        decommisionedAsset.DateDecommissioned = DateTime.Now;   
-                    } 
-                    else
-                    {
-                        var item = await _changePlanService.GetChangePlanItemAsync(changePlanItem.AssetId);
-                        var assetDto = await _assetService.GetAssetAsync(item.AssetId);
-                        var createDecommissionedAsset = JsonConvert.DeserializeObject<CreateDecommissionedAsset>(decommisionedAsset.Data);
-                        decommisionedAsset = CreateDecommissionedAsset(assetDto, createDecommissionedAsset);
-                    }
                     await _assetService.DeleteAssetAsync(decommisionedAsset.Id);
                     await _assetService.CreateDecommissionedAssetAsync(decommisionedAsset);
                 }
