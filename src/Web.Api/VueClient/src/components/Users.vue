@@ -289,8 +289,8 @@ import Auth from "../auth"
                 }
 
                 this.selectedDatacenters = [];
-                for (var i = 0; i < this.datacenters.length; i++) {
-                    this.selectedDatacenters.push(this.datacenters[i].description);
+                for (var j = 0; j < this.datacenters.length; j++) {
+                    this.selectedDatacenters.push(this.datacenters[j].description);
                 }
             }
         },
