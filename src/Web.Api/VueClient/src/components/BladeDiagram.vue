@@ -39,7 +39,7 @@
                                                :tile=true
                                                :to="{ name: 'asset-details', params: { type: type, id: blade.id } }"
                                                v-on="on">
-                                            {{ blade.text }}
+                                            Asset #: {{ blade.text }}
                                         </v-btn>
                                         <v-btn v-else
                                                class="blade-btn"
@@ -50,7 +50,7 @@
                                                :tile=true>
                                         </v-btn>
                                     </template>
-                                    <span>Go to {{blade.text}} details</span>
+                                    <span>Go to blade {{blade.text}} details</span>
                                 </v-tooltip>
                             </div>
                             <div v-else

@@ -35,7 +35,7 @@ export default {
             const textColor = getContrast50(backgroundColor);
                 
             blades[slot].value = true;
-            blades[slot].text = assetBlades[j].hostname;
+            blades[slot].text = assetBlades[j].assetNumber;
             blades[slot].id = assetBlades[j].id;
             blades[slot].style = { color: textColor, backgroundColor: backgroundColor };
         }
