@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Dtos.Power;
 using Web.Api.Core.Services.Interfaces;
+using Web.Api.Core.ExceptionHandling;
 
 namespace Web.Api.Core.Services
 {
@@ -25,8 +26,7 @@ namespace Web.Api.Core.Services
             _regex = new Regex(Pattern, RegexOptions.Compiled | RegexOptions.Multiline);
             _assetService = assetService;
 
-            // TODO: REMEMBER TO CHANGE THIS BACK TO OUR GROUP PORT 8003
-            client.BaseAddress = new Uri("http://hyposoft-mgt.colab.duke.edu:8000");
+            client.BaseAddress = new Uri("http://hyposoft-mgt.colab.duke.edu:8003");
 
             Client = client;
 
@@ -43,25 +43,34 @@ namespace Web.Api.Core.Services
                         .ToList());
 
             var powerStates = new List<AssetPowerPortStateDto>();
+            var ret = new AssetPowerStateDto();
 
-            foreach (var kvp in pduPorts)
+            try
             {
-                var response = await Client.GetAsync(
-                    $"/pdu.php?pdu={kvp.Key}");
-                response.EnsureSuccessStatusCode();
-                var parsedResponse = ParseResponse(await response.Content.ReadAsStringAsync());
-                var states = kvp.Value.Select(n => new AssetPowerPortStateDto()
+                foreach (var kvp in pduPorts)
                 {
-                    Port = kvp.Key + n,
-                    Status = (PowerState)Enum.Parse(typeof(PowerState), parsedResponse[n], true)
-                });
-                powerStates.AddRange(states);
-            }
-            var ret = new AssetPowerStateDto()
+                    var response = await Client.GetAsync(
+                        $"/pdu.php?pdu={kvp.Key}");
+                    response.EnsureSuccessStatusCode();
+                    var parsedResponse = ParseResponse(await response.Content.ReadAsStringAsync());
+                    var states = kvp.Value.Select(n => new AssetPowerPortStateDto()
+                    {
+                        Port = kvp.Key + n,
+                        Status = (PowerState)Enum.Parse(typeof(PowerState), parsedResponse[n], true)
+                    });
+                    powerStates.AddRange(states);
+                }
+                ret = new AssetPowerStateDto()
+                {
+                    Id = assetId,
+                    PowerPorts = powerStates
+                };
+            } catch(Exception e)
             {
-                Id = assetId,
-                PowerPorts = powerStates
-            };
+                throw new UserFriendlyException(e.Message, e.StackTrace, e);
+            }
+
+            
 
             return ret;
         }
@@ -106,8 +115,13 @@ namespace Web.Api.Core.Services
                     } 
 
                     var data = new FormUrlEncodedContent(requestData);
+
                     var response = await Client.PostAsync("/power.php", data);
-                    Console.WriteLine(response);
+                    Console.WriteLine(response.StatusCode);
+
+                    if(response.StatusCode != System.Net.HttpStatusCode.OK) {
+                        throw new UserFriendlyException("Power site down", "Power Site Down", "Power Site Down");
+                    }
 
                     // Translate the action that was taken on the asset into a current power state
                     var powerState = PowerState.Off;
