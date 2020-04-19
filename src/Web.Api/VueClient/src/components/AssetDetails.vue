@@ -63,7 +63,7 @@
                             <v-row>
                                 <v-label>CPU </v-label>
                                 <!--TODO: v-if data is different from model data-->
-                                <v-tooltip bottom v-if="asset.customCpu != null">
+                                <v-tooltip bottom v-if="asset.customCpu !== assetModel.cpu">
                                     <template v-slot:activator="{ on }">
                                         <v-btn class="pb-4"
                                                color="primary"
@@ -79,14 +79,14 @@
                                 </v-tooltip>
                             </v-row>
 
-                            <v-card-text v-if="asset.customCpu != null"> {{asset.customCpu}} </v-card-text>
-                            <v-card-text> {{assetModel.cpu}} </v-card-text>
+                            <v-card-text v-if="asset.customCpu !== assetModel.cpu"> {{asset.customCpu}} </v-card-text>
+                            <v-card-text v-else> {{assetModel.cpu}} </v-card-text>
                         </v-col>
                         <v-col cols="12" sm="6" md="3">
                             <v-row>
                                 <v-label>Memory </v-label>
                                 <!--TODO: v-if data is different from model data-->
-                                <v-tooltip bottom v-if="asset.customMemory != null">
+                                <v-tooltip bottom v-if="asset.customMemory !== assetModel.memory">
                                     <template v-slot:activator="{ on }">
                                         <v-btn class="pb-4"
                                                color="primary"
@@ -101,15 +101,15 @@
                                     <span>Go to model details to view original attribute</span>
                                 </v-tooltip>
                             </v-row>
-                            <v-card-text v-if="asset.customMemory != null"> {{asset.customMemory}} </v-card-text>
-                            <v-card-text> {{assetModel.memory}} </v-card-text>
+                            <v-card-text v-if="asset.customMemory !== assetModel.memory"> {{asset.customMemory}} </v-card-text>
+                            <v-card-text v-else> {{assetModel.memory}} </v-card-text>
 
                         </v-col>
                         <v-col cols="12" sm="6" md="3">
                             <v-row>
                                 <v-label>Storage </v-label>
                                 <!--TODO: v-if data is different from model data-->
-                                <v-tooltip bottom v-if="asset.customStorage != null">
+                                <v-tooltip bottom v-if="asset.customStorage !== assetModel.storage">
                                     <template v-slot:activator="{ on }">
                                         <v-btn class="pb-4"
                                                color="primary"
@@ -124,14 +124,14 @@
                                     <span>Go to model details to view original attribute</span>
                                 </v-tooltip>
                             </v-row>
-                            <v-card-text v-if="asset.customStorage != null"> {{asset.customStorage}} </v-card-text>
-                            <v-card-text> {{assetModel.storage}} </v-card-text>
+                            <v-card-text v-if="asset.customStorage !== assetModel.storage"> {{asset.customStorage}} </v-card-text>
+                            <v-card-text v-else> {{assetModel.storage}} </v-card-text>
                         </v-col>
                         <v-col cols="12" sm="6" md="3">
                             <v-row>
                                 <v-label>Display Color </v-label>
                                 <!--TODO: v-if data is different from model data-->
-                                <v-tooltip bottom v-if="asset.customDisplayColor != null">
+                                <v-tooltip bottom v-if="asset.customDisplayColor !== assetModel.displayColor">
                                     <template v-slot:activator="{ on }">
                                         <v-btn class="pb-4"
                                                color="primary"
@@ -146,7 +146,7 @@
                                     <span>Go to model details to view original attribute</span>
                                 </v-tooltip>
                             </v-row>
-                            <v-card-text v-if="asset.customDisplayColor != null">
+                            <v-card-text v-if="asset.customDisplayColor !== assetModel.displayColor">
                                 {{asset.customDisplayColor}}
                                 <v-icon class="mr-2"
                                         :color=asset.customDisplayColor>
