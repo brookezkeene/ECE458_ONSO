@@ -23,6 +23,11 @@ namespace Web.Api.Core.Mappers.Import.Assets
                 .ForMember(x => x.ChassisId, opt => opt.Ignore())
                 .ForMember(x => x.Blades, opt => opt.Ignore())
                 .ForMember(x => x.ChassisSlot, opt => opt.Ignore())
+                .ForMember(x => x.CustomDisplayColor, opt => opt.Ignore())
+                .ForMember(x => x.CustomCpu, opt => opt.Ignore())
+                .ForMember(x => x.CustomMemory, opt => opt.Ignore())
+                .ForMember(x => x.CustomStorage, opt => opt.Ignore())
+
                 .AfterMap<HydrateAssetPowerPorts>();
         }
     }
