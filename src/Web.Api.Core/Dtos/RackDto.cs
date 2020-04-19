@@ -23,6 +23,6 @@ namespace Web.Api.Core.Dtos
         public string Name { get; set; }
         public string Description { get; set; }
         public bool HasNetworkManagedPower { get; set; }
-        public List<RackDto> Racks { get; set; }
+        //public List<RackDto> Racks { get; set; }
     }
 }

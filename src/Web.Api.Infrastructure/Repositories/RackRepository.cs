@@ -42,8 +42,8 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<List<Rack>> GetRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd, Guid? datacenterId)
         {
             var racks = await _dbContext.Racks
-                .Include(rack => rack.Pdus)
-                .ThenInclude(pdu => pdu.Ports)
+                //.Include(rack => rack.Pdus)
+                //.ThenInclude(pdu => pdu.Ports)
                 .Include(rack => rack.Assets)
                 .Where(x => x.Column >= colStart && x.Column <= colEnd)
                 .WhereIf(datacenterId != null && datacenterId.Value != default, x => x.DatacenterId == datacenterId)
@@ -57,8 +57,8 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<Rack> GetRackAsync(Guid rackId)
         {
             return await _dbContext.Racks
-                //.Include(o => o.Pdus)
-                //.ThenInclude(o => o.Ports)
+                .Include(o => o.Pdus)
+                .ThenInclude(o => o.Ports)
                 .Where(x => x.Id == rackId)
                 //.AsNoTracking()
                 .SingleOrDefaultAsync();
@@ -67,8 +67,8 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<Rack> GetRackAsync(string row, int column, Guid datacenterId)
         {
             return await _dbContext.Racks
-                .Include(rack => rack.Pdus)
-                .ThenInclude(pdu => pdu.Ports)
+                //.Include(rack => rack.Pdus)
+                //.ThenInclude(pdu => pdu.Ports)
                 .Include(rack => rack.Assets)
                 .SingleOrDefaultAsync(x => x.Row == row && x.Column == column && x.DatacenterId == datacenterId);
         }
@@ -163,10 +163,10 @@ namespace Web.Api.Infrastructure.Repositories
         private async Task<List<Rack>> Sort(Guid? datacenterId, string sortBy, string isDesc, int page = 1, int pageSize = 10)
         {
             var query = _dbContext.Racks
-                .WhereIf(datacenterId != null, x => x.DatacenterId == datacenterId)
-                .Include(rack => rack.Pdus)
-                .ThenInclude(pdu => pdu.Ports)
-                .Include(rack => rack.Assets);
+                .WhereIf(datacenterId != null, x => x.DatacenterId == datacenterId);
+                //.Include(rack => rack.Pdus)
+                //.ThenInclude(pdu => pdu.Ports)
+                //.Include(rack => rack.Assets);
             if (!string.IsNullOrEmpty(sortBy) && sortBy.Equals("address"))
             {
                 if (isDesc.Equals("false"))
