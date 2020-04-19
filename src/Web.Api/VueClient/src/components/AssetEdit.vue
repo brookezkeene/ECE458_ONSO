@@ -312,12 +312,10 @@
                     modelId: '',
                     assetNumber: '',
                     chassisId: '',
-                },
-                defaultCustomItem: {
-                    cpu: '',
-                    memory: 0,
-                    storage: '',
-                    displayColor: '',
+                    customCpu: '',
+                    customMemory: '',
+                    customStorage: '',
+                    customDisplayColor: ''
                 },
                 customItem: {
                     cpu: '',
@@ -366,7 +364,14 @@
             const getAsset = typeof this.id === 'undefined' || this.id === 'new'
                 ? Promise.resolve()
                 : this.assetRepository.find(this.id, this.changePlanId())
-                    .then(asset => this.editedItem = asset)
+                    .then(asset => {
+                        this.editedItem = asset
+                        this.customItem.cpu = this.editedItem.customCpu;
+                        this.customItem.memory = this.editedItem.customMemory;
+                        this.customItem.storage = this.editedItem.customStorage;
+                        this.customItem.displayColor = this.editedItem.customDisplayColor;
+                        console.log(this.editedItem)
+                    })
                     .then(() => this.modelRepository.find(this.editedItem.modelId))
                     .then(model => this.selectedModel = model)
                     .then(() => {
@@ -403,7 +408,25 @@
                 }
                 return this.titles;
             },
-            // TODO: change when integrating with backend for customizable assets
+            defaultCustomItem() {
+                if (this.selectedModel) {
+                    return {
+                        cpu: this.selectedModel.cpu,
+                        memory: this.selectedModel.memory,
+                        storage: this.selectedModel.storage,
+                        displayColor: this.selectedModel.displayColor,
+                    }
+                }
+                else {
+                    return {
+                    cpu: '',
+                    memory: 0,
+                    storage: '',
+                    displayColor: '',
+                }
+                }
+                
+            },
             customizedAsset() {
                 // Compare properties
                 for (var key in this.defaultCustomItem) {
@@ -425,7 +448,15 @@
                         this.editedItem.id = this.id;
                     }
                 }
-                
+
+                // Handle custom fields
+                this.editedItem.customCpu = this.customItem.cpu;
+                this.editedItem.customMemory =  this.customItem.memory;
+                this.editedItem.customStorage =  this.customItem.storage;
+                this.editedItem.customDisplayColor = this.customItem.displayColor;
+
+                console.log(this.editedItem)
+
                 var promise = typeof this.id !== 'undefined'
                     ? this.assetRepository.update(this.editedItem)
                     : this.assetRepository.create(this.editedItem);
@@ -456,14 +487,6 @@
                 this.makeNetworkPorts(this.selectedModel);
                 this.makePowerPorts(this.selectedModel);
                 this.mountType = this.selectedModel.mountType;
-
-                // TODO: add GET api call for customizable information
-                // and set custom asset information fields here
-                for (var key in this.defaultCustomItem) {
-                    this.defaultCustomItem[key] = this.selectedModel[key];
-                    this.customItem[key] = this.selectedModel[key];
-		        }
-
             },
             async rackSelected() {
                 this.rackSelected = true;
@@ -541,11 +564,11 @@
 */              this.availablePortsInRack = availablePorts;
                 console.log(this.availablePortsInRack);
             },
-            // TODO: adapt for customizable asset integration
             revertCustom() {
                 for (var key in this.defaultCustomItem) {
-                    this.customItem[key] = this.defaultCustomItem[key];
-		        }
+                    this.defaultCustomItem[key] = this.selectedModel[key];
+                    this.customItem[key] = this.selectedModel[key];
+                }
             },
             customizedField(key) {
                 return this.defaultCustomItem[key] === this.customItem[key]
