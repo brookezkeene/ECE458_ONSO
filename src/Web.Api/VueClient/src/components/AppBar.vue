@@ -10,10 +10,10 @@
             <v-toolbar-title>
                 <v-avatar size="36"
                           left>
-                    <v-img src="@/assets/hyposoft_logo.png"></v-img>
+                    <v-icon>mdi-tools</v-icon>
                 </v-avatar>
                 <router-link to="/" tag="span" style="cursor: pointer">
-                    {{ appTitle }}
+                    IT Management Tool
                 </router-link>
             </v-toolbar-title>
 

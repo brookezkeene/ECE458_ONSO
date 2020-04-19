@@ -1,24 +1,3 @@
-<style scoped>
-    @media print {
-        @page {
-            size: A4 landscape;
-        }
-        body {
-            margin: 0;
-            color: #000;
-            background-color: #fff;
-            -webkit-print-color-adjust: exact !important;
-        }
-    }
-
-    .diagram
-    {
-        break-before: always;
-        break-inside: avoid;
-    }
-    
-</style>
-
 
 <template>
     <div media="print">
@@ -71,6 +50,21 @@
 </template>
 
 <style scoped>
+    @media print {
+        @page {
+            size: A4 landscape;
+        }
+        body {
+            margin: 0;
+            color: #000;
+            background-color: #fff;
+            -webkit-print-color-adjust: exact !important;
+        }
+    }
+    .diagram {
+        break-before: always;
+        break-inside: avoid;
+    }
     .rack {
         color: white;
         background-color: black;

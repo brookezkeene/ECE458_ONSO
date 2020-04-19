@@ -58,7 +58,7 @@
     </v-container>
 </template>
 
-<style>
+<style scoped>
     
     @media only screen and (max-width: 576px) {
       .logo {
