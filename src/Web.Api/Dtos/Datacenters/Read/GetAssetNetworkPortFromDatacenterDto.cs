@@ -8,6 +8,7 @@ namespace Web.Api.Dtos.Datacenters.Read
     public class GetAssetNetworkPortFromDatacenterDto
     {
         public string AssetHostname { get; set; }
+        public string AssetNumber { get; set; }
         public string RowLetter { get; set; }
         public int RackNumber { get; set; }
         public Guid Id { get; set; }

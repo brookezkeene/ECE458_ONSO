@@ -278,6 +278,7 @@ namespace Web.Api.Controllers
                 await DecommissionBladeChassis(assetDto, query);
                 //deleting asset from active asset column + adding the decommissioned asset to the table
                 await _assetService.DeleteAssetAsync(query.Id);
+                await DecommissionBladeChassis(assetDto, query);
                 await _assetService.CreateDecommissionedAssetAsync(decommissionedAsset);
             }
 
@@ -367,7 +368,7 @@ namespace Web.Api.Controllers
         }
         private async Task<ActionResult> DecommissionBladeChassis(AssetDto assetDto, DecommissionedAssetQuery query)
         {
-            if (assetDto.Blades != null) return Ok();
+            if (assetDto.Blades == null) return Ok();
             foreach (AssetDto blade in assetDto.Blades)
             {
                 var decommissionedAsset = CreateDecommissionedAsset(blade, query);

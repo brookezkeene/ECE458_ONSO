@@ -381,7 +381,7 @@
                         this.selectedRack = true;
                         this.rackSelected();
                     });
-            if (this.$store.getters.isChangePlan && this.networks.length == 0 && typeof this.id !== 'undefined' && this.mountType !== 'blade') {
+            if (this.$store.getters.isChangePlan) {
                     this.sendNetworkPortRequest();
                 }
             /*getdatacenter needs to get emitted from child component*/
@@ -485,21 +485,32 @@
             async sendNetworkPortRequest() {
                 if (this.$store.getters.isChangePlan) {
                     this.networks = await this.datacenterRepository.networkPorts(this.$store.getters.changePlan.datacenterId);
+                /*eslint-disable*/
+                    console.log('in a change plan right now the infor');
+                    console.log(this.$store.getters.changePlan.datacenterId);
+                    console.log(this.networks)
                 }
                 else {
                     this.networks = await this.datacenterRepository.networkPorts(this.editedItem.datacenterId);
+                     console.log(this.networks)
                 }
+
                 
-                this.networks = this.networks.filter(network => {
-                    return (network.assetHostname != this.editedItem.hostname);
-                });
+                    this.networks = this.networks.filter(network => {
+                        return (network.assetNumber != this.editedItem.assetNumber);
+                    });
+                
+
+                console.log(this.networks)
+                console.log("these are the networks in the in between state")
 
                 for (const network of this.networks) {
                     network.nameRackAssetNum = "Port name: " + network.name +
-                    ",  " + "Hostname: " + network.assetHostname;
+                    ",  " + "AssetNumber: " + network.assetNumber;
 
                 }
-
+                console.log(this.networks)
+                console.log("these are the networks")
             },
             async modelSelected() {
                 this.selectedModelBool = true;
