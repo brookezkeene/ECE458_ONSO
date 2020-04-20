@@ -26,8 +26,9 @@ namespace Web.Api.Infrastructure.Repositories
         }
 
         public async Task<PagedList<Asset>> GetAssetsAsync(Guid? datacenterId, string vendor, string number, string hostname, string rackStart, string rackEnd,
-                    string sortBy, string isDesc, int page, int pageSize)
+                    string sortBy, string isDesc, int page, int pageSize, bool isOffline)
         {
+
             var pagedList = new PagedList<Asset>();
             Expression<Func<Asset, bool>> hostnameCondition = x => (x.Hostname.Contains(hostname));
             Expression<Func<Asset, bool>> vendorCondition = x => (x.Model.Vendor.Contains(vendor));
@@ -35,6 +36,7 @@ namespace Web.Api.Infrastructure.Repositories
 
             var assets = await _dbContext.Assets
                 .Include(asset => asset.Rack)
+                .Where(x => x.Rack.Datacenter.IsOffline == isOffline)
                 //.ThenInclude(rack => rack.Pdus)
                 //.ThenInclude(pdu => pdu.Ports)
                 .WhereIf(datacenterId != null, x => x.Rack.Datacenter.Id == datacenterId)
@@ -204,6 +206,7 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<PagedList<DecommissionedAsset>> GetDecommissionedAssetsAsync(string datacenterName, string generalSearch, string decommissioner,
                     string dateStart, string dateEnd, string rackStart, string rackEnd, string sortBy, string isDesc, int page, int pageSize)
         {
+            
             var pagedList = new PagedList<DecommissionedAsset>();
             Expression<Func<DecommissionedAsset, bool>> hostnameCondition = x => (x.Hostname.Contains(generalSearch) ||
                                            x.ModelName.Contains(generalSearch) || x.ModelNumber.Contains(generalSearch));
