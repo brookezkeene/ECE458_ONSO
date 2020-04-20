@@ -185,7 +185,6 @@
             },
 
             selectedOfflineDatacenter() {
-                console.log(this.editedItem.datacenterId);
                 this.$emit('selectedOfflineDatacenter', this.editedItem.datacenterId);
             },
 
