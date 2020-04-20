@@ -51,9 +51,9 @@
                                                   :items="datacenters"
                                                   item-text="description"
                                                   item-value=""
-                                                  label="Datacenter"
+                                                  label="Sites"
                                                   @change="initialize()"
-                                                  placeholder="Select a datacenter or all datacenters"
+                                                  placeholder="Select a site or all sites"
                                                   class="pt-8 pl-4">
                                         </v-select>
                                     </v-col>
@@ -489,7 +489,7 @@
                 changePlanner: false,
                 labelGen: false,
                 selectedAssets: [],
-                selectedDatacenter: 'All Datacenters',
+                selectedDatacenter: 'All Sites',
                 // Filter values.
                 hostnameSearch: '',
                 vendorSearch: '',
@@ -715,7 +715,7 @@
                         this.datacenters = await this.datacenterRepository.list();
                     }
                     datacenter = {
-                        description: "All Datacenters",
+                        description: "All Sites",
                         name: "All",
                     }
                 }
