@@ -76,4 +76,4 @@ deploy_cannon:
     name: cannon
     url: https://onso-cannon.colab.duke.edu/
   only:
-    - feature/https
+    - feature/bcman
