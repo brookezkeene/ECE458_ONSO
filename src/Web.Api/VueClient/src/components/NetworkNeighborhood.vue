@@ -50,12 +50,18 @@
         },  
         methods: {
             async initialize() {
-                /* eslint-disable no-unused-vars, no-console */
-                networkNeighborhood.createGraph(this.id, this.$store.getters.isChangePlan).then((response) =>
-                {
-                    this.nodes = response.nodes;
-                    this.links = response.links;
-                });
+            /* eslint-disable no-unused-vars, no-console */
+                if (this.$store.getters.isChangePlan) {
+                    networkNeighborhood.createGraph(this.id, this.$store.getters.changePlan.id).then((response) => {
+                        this.nodes = response.nodes;
+                        this.links = response.links;
+                    });
+                } else {
+                    networkNeighborhood.createGraph(this.id).then((response) => {
+                        this.nodes = response.nodes;
+                        this.links = response.links;
+                    });
+                }
                 console.log(this.nodes);
                 console.log(this.links);
             },

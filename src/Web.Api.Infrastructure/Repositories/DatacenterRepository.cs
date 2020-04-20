@@ -25,6 +25,7 @@ namespace Web.Api.Infrastructure.Repositories
 
         public async Task<int> AddDatacenterAsync(Datacenter datacenter)
         {
+           
             _dbContext.Datacenters.Add(datacenter);
             return await _dbContext.SaveChangesAsync();
         }
@@ -103,9 +104,9 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<Datacenter> GetDatacenterAsync(Guid datacenterId)
         {
             return await _dbContext.Datacenters
-                .Include(dc => dc.Racks)
-                .ThenInclude(rack => rack.Pdus)
-                .ThenInclude(pdu => pdu.Ports)
+                //.Include(dc => dc.Racks)
+                //.ThenInclude(rack => rack.Pdus)
+                //.ThenInclude(pdu => pdu.Ports)
                 .Where(x => x.Id == datacenterId)
                 //.AsNoTracking()
                 .SingleAsync();
@@ -118,9 +119,9 @@ namespace Web.Api.Infrastructure.Repositories
             Expression<Func<Datacenter, bool>> searchCondition = x => (x.Name.Contains(search) || x.Description.Contains(search));
 
             var datacenters = await _dbContext.Datacenters
-                .Include(dc => dc.Racks)
-                .ThenInclude(rack => rack.Pdus)
-                .ThenInclude(pdu => pdu.Ports)
+                //.Include(dc => dc.Racks)
+                //.ThenInclude(rack => rack.Pdus)
+                //.ThenInclude(pdu => pdu.Ports)
                 .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
                 .PageBy(x => x.Name, page, pageSize)
                 //.AsNoTracking()

@@ -19,7 +19,8 @@ namespace Web.Api.Infrastructure.Entities
         public string Description { get; set; }
 
         public bool HasNetworkManagedPower { get; set; }
+        public bool IsOffline { get; set; }
 
-        public virtual List<Rack> Racks { get; set; }
+        //public virtual List<Rack> Racks { get; set; }
     }
 }
