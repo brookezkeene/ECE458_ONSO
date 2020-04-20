@@ -709,7 +709,11 @@
                         id: this.$store.getters.changePlan.datacenterId,
                     }
                 } else {
-                    this.datacenters = await this.datacenterRepository.list();
+                    if (this.type === 'offline') {
+                        this.datacenters = await this.datacenterRepository.listOffline();
+                    } else {
+                        this.datacenters = await this.datacenterRepository.list();
+                    }
                     datacenter = {
                         description: "All Datacenters",
                         name: "All",
