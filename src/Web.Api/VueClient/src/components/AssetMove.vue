@@ -51,6 +51,11 @@
                 var updateItem = this.item;
                 updateItem.rackId = rack.id;
 
+                if (this.item.mountType === 'blade') {
+                    console.log(updateItem);
+                    updateItem.chassisId = null;
+                }
+
                 console.log(updateItem);
 
                 this.assetRepository.update(updateItem)
