@@ -277,9 +277,9 @@ namespace Web.Api.Controllers
                 //decommissionedAsset already has the information of all the blades in it already
                 await DecommissionBladeChassis(assetDto, query);
                 //deleting asset from active asset column + adding the decommissioned asset to the table
-                await _assetService.DeleteAssetAsync(query.Id);
-                await DecommissionBladeChassis(assetDto, query);
+                
                 await _assetService.CreateDecommissionedAssetAsync(decommissionedAsset);
+                await _assetService.DeleteAssetAsync(query.Id);
             }
 
             if (query.ChangePlanId != null && query.ChangePlanId != Guid.Empty)
