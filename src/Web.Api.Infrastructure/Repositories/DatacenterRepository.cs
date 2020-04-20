@@ -25,6 +25,7 @@ namespace Web.Api.Infrastructure.Repositories
 
         public async Task<int> AddDatacenterAsync(Datacenter datacenter)
         {
+           
             _dbContext.Datacenters.Add(datacenter);
             return await _dbContext.SaveChangesAsync();
         }

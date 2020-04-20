@@ -19,20 +19,28 @@ namespace Web.Api.Core.Services
     {
         private readonly IDatacenterRepository _repository;
         private readonly IAuditEventLogger _auditEventLogger;
+        private readonly IRackRepository _rackRepository;
         private readonly IMapper _mapper;
 
-        public DatacenterService(IDatacenterRepository repository, IAuditEventLogger auditEventLogger, IMapper mapper)
+        public DatacenterService(IDatacenterRepository repository, IAuditEventLogger auditEventLogger, IMapper mapper, IRackRepository rackRepository)
         {
             _repository = repository;
             _auditEventLogger = auditEventLogger;
             _mapper = mapper;
+            _rackRepository = rackRepository;
         }
 
         public async Task<Guid> CreateDatacenterAsync(DatacenterDto datacenter)
         {
             var entity = _mapper.Map<Datacenter>(datacenter);
+            entity.IsOffline = true;
             await _repository.AddDatacenterAsync(entity);
-
+            
+            if(entity.IsOffline)
+            {
+                Rack rack = new Rack { Row = "A", Column = 0,  DatacenterId = entity.Id, Assets = new List<Asset>()};
+                await _rackRepository.AddRackAsync(rack);
+            }
             await _auditEventLogger.LogEventAsync(new DatacenterCreatedEvent(datacenter));
 
             return entity.Id;

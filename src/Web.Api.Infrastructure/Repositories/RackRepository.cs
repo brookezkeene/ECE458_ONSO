@@ -129,7 +129,13 @@ namespace Web.Api.Infrastructure.Repositories
 
             return await _dbContext.SaveChangesAsync();
         }
-
+        public async Task<Rack> GetOfflineRack(Guid datacenterId)
+        {
+            return await _dbContext.Racks
+                .Include(rack => rack.Assets)
+                .Where(rack => rack.DatacenterId == datacenterId)
+                .SingleAsync();
+        }
         public async Task<int> DeleteRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd,
             Guid datacenterId)
         {

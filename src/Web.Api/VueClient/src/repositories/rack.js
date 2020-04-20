@@ -79,5 +79,12 @@ export default {
             .then(response => {
                 return response.data;
             }).catch (error => error);
+    },
+    getOfflineRack(datacenterId) {
+        var id = datacenterId;
+        return axios.get(`${resource}/${id}/datacenter`)
+            .then(response => {
+                return response.data;
+            }).catch(error => error);
     }
 }
