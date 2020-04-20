@@ -95,6 +95,15 @@
                 search: '',
             };
         },
+        beforeRouteUpdate(to, from, next) {
+            /*eslint-disable*/
+            this.type = to.params.type;
+            this.$route.params.type = to.params.type;
+            this.initialize();
+
+            console.log(from);
+            next()
+        },
         computed: {
             permission() {
                 return this.$store.getters.isAdmin || (this.$store.getters.hasAssetPermission && this.$store.getters.hasDatacenters.includes("All Datacenters"))
