@@ -71,9 +71,9 @@ namespace Web.Api.Core.Services
             var rack = await _rackRepository.GetRackAsync(id);
             return _mapper.Map<RackDto>(rack);
         }
-        public async Task<RackDto> GetOfflineRack(Guid datacenterId)
+        public async Task<RackDto> GetOfflineRack(string datacenterName)
         {
-            var rack = await _rackRepository.GetOfflineRack(datacenterId);
+            var rack = await _rackRepository.GetOfflineRack(datacenterName);
             return _mapper.Map<RackDto>(rack);
         }
     }
