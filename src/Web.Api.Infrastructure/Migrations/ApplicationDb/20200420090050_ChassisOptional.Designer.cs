@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Web.Api.Infrastructure.DbContexts;
 
 namespace Web.Api.Infrastructure.Migrations.ApplicationDb
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200420090050_ChassisOptional")]
+    partial class ChassisOptional
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -176,7 +178,8 @@ namespace Web.Api.Infrastructure.Migrations.ApplicationDb
                         .HasMaxLength(50);
 
                     b.Property<string>("CustomDisplayColor")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(7)")
+                        .HasMaxLength(7);
 
                     b.Property<int?>("CustomMemory")
                         .HasColumnType("int");

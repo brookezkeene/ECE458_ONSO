@@ -41,7 +41,11 @@
                     <v-col v-if="type!='offline'">
                         <v-label>Location</v-label>
                         <v-card-text v-if="!isBlade"> Rack {{asset.rack}}, Rack Position {{asset.rackPosition}} </v-card-text>
-                        <v-card-text v-else> Chassis {{asset.chassisId}}, Slot {{asset.chassisSlot}} </v-card-text>
+                        <v-card-text v-else> Chassis {{asset.chassisHostname}}, Slot {{asset.chassisSlot}} </v-card-text>
+                    </v-col>
+                    <v-col v-if="isBlade">
+                        <v-label>Power Status</v-label>
+                        <v-card-text>{{ bladePowerStatus }}</v-card-text>
                     </v-col>
                 </v-row>
                 <v-row>
@@ -248,6 +252,7 @@
                 ownerPresent: true, // in case the asset does not have an owner, don't need null pointer bc not a required field.
                 isDecommissioned: false,
                 mountType: '',
+                bladePowerStatus: null
             };
         },
         computed: {
@@ -283,6 +288,13 @@
                 asset.powerPorts.forEach(port => port.status = undefined);
                 asset.networkPorts.sort((a, b) => a.number - b.number);
                 asset.powerPorts.sort((a, b) => a.number - b.number);
+
+                if (asset.mountType === 'blade') {
+                    this.bladePowerStatus = (await this.assetRepository.getPowerPortState(asset.id)) === 0
+                        ? 'on'
+                        : 'off';
+                }
+                    
 
                 const model = await this.modelRepository.find(asset.modelId);
                 this.mountType = model.mountType;

@@ -17,6 +17,7 @@ namespace Web.Api.Dtos.Assets.Read
         public Guid Id { get; set; }
         public DateTime LastUpdatedDate { get; set; }
         public string MountType { get; set; }
-        public virtual List<GetAssetsApiDto> Blades { get; set; }
+        public List<GetAssetsApiDto> Blades { get; set; }
+        public string ChassisHostname { get; set; }
     }
 }
