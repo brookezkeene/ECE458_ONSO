@@ -4,6 +4,7 @@
         <v-card-title v-if="type==='active'"> Move Asset {{item.assetNumber}} to Offline Storage</v-card-title>
 
         <MoveOptions v-on:selectedOfflineDatacenter="setDatacenter"
+                     v-on:selectedOfflineRack="setRack"
                      :editedItem="item"
                      :isBlade="false"
                      :type="type"
@@ -11,7 +12,8 @@
 
         <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color='primary' @click="moveToOffline">Move</v-btn>
+            <v-btn v-if="type==='active'" color='primary' @click="moveToOffline">Move</v-btn>
+            <v-btn v-else color='primary' @click="moveToActive">Move</v-btn>
             <v-btn color='primary' @click="closeMove">Cancel</v-btn>
         </v-card-actions>
     </v-card>
@@ -44,26 +46,23 @@
         methods: {
             async moveToOffline() {
                 // Add backend call to move to offline assets (assetRepository.addOffline and also remove from active assets)
-                console.log(this.datacenterId);
                 var rack = await this.rackRepository.getOfflineRack(this.datacenterId);
-                console.log(rack)
 
                 var updateItem = this.item;
                 updateItem.rackId = rack.id;
 
                 if (this.item.mountType === 'blade') {
-                    console.log(updateItem);
                     updateItem.chassisId = null;
                 }
-
-                console.log(updateItem);
 
                 this.assetRepository.update(updateItem)
                 this.$router.push({ name: 'assets', params: {type: this.type }})
 ;
             },
             async moveToActive() {
-                this.assetRepository.update(this.item);
+                var updateItem = this.item;
+                updateItem.rackId = this.rackId;
+                this.assetRepository.update(updateItem);
                 this.$router.push({ name: 'assets', params: {type: this.type }})
             },
             closeMove() {
@@ -71,6 +70,11 @@
             },
             async setDatacenter(id) {
                 this.datacenterId = id;
+            },        
+            async setRack(id) {
+                this.rackId = id;
+            /*eslint-disable*/
+                console.log(this.rackId);
             }
         }
     }

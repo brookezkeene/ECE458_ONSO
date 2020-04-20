@@ -43,7 +43,8 @@
                           placeholder="Please enter a rack U for the asset"
                           :rules="[rules.rackuRules]"
                           label="Rack Position"
-                          type="number">
+                          type="number"
+                          @change="offlineRackSelected">
             </v-text-field>
         </v-col>
 
@@ -192,9 +193,12 @@
                     var searchChassis = this.chassis.find(o => o.id === this.editedItem.chassisId);
                     this.editedItem.rackId = searchChassis.rackId;
                 }
-
                 this.$emit('selectedRack', this.selectedRack);
             },
+
+            offlineRackSelected() {
+                this.$emit('selectedOfflineRack', this.editedItem.rackId);
+            }
         }
 
     }
