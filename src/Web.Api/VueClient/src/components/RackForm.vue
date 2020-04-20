@@ -21,7 +21,7 @@
                                   placeholder="Enter the end of a range of racks (i.e. Z20)"></v-text-field>
 
                     <v-row>
-                        <v-btn class="mr-4 ml-4" color="primary" :disabled="startFilled" @click="viewDiagram">View Diagrams</v-btn>
+                        <v-btn class="mr-4 ml-4" color="primary" @click="viewDiagram">View Rack Diagrams</v-btn>
                         <v-spacer></v-spacer>
                         <v-btn v-if="permission" class="mr-4" color="primary" @click="createInRange">Add Racks</v-btn>
                         <v-btn v-if="permission" class="mr-4" color="primary" @click="deleteInRange">Delete Racks</v-btn>
@@ -87,9 +87,6 @@ export default {
             else {
                 return this.datacenters;
             }
-        },
-        startFilled() {
-            return this.range.start === '';
         },
     },
     async created () {
@@ -163,6 +160,12 @@ export default {
                 this.updateSnackbar.show = true;
                 this.updateSnackbar.color = 'red lighten-4';
                 this.updateSnackbar.message = this.updateSnackbar.message + 'Rack action failed. Rack name must be a letter followed by a number ';
+                count++;
+            }
+            else if (this.range.start === '' || this.range.end === '') {
+                 this.updateSnackbar.show = true;
+                this.updateSnackbar.color = 'red lighten-4';
+                this.updateSnackbar.message = this.updateSnackbar.message + 'Rack action failed. Must enter both a start and end rack ';
                 count++;
             }
             return count;
