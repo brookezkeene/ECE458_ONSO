@@ -1,4 +1,4 @@
-﻿# !/usr/bin/expect -d
+# !/usr/bin/expect -d
 # Usage BCMAN.expect <chassis> <blade> <power>
 
 set timeout 1
