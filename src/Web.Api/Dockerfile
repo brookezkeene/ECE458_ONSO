@@ -2,7 +2,7 @@
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 RUN apt-get update -yq \
-    && apt-get install expect -yq
+    && apt-get install expect openssh-client -yq
 WORKDIR /app
 EXPOSE 8080
 
