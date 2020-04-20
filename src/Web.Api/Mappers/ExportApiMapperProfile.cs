@@ -15,6 +15,7 @@ namespace Web.Api.Mappers
         {
             // need to get from full -> export ready DTOs for models and assets 
             CreateMap<ModelDto, ExportModelDto>()
+                .ForMember(o => o.mount_type, opts => opts.MapFrom(src => src.MountType))
                 .ForMember(o => o.vendor, opts => opts.MapFrom(src => src.Vendor))
                 .ForMember(o => o.model_number, opts => opts.MapFrom(src => src.ModelNumber))
                 .ForMember(o => o.height, opts => opts.MapFrom(src => src.Height))

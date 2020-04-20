@@ -381,7 +381,9 @@
                         this.selectedRack = true;
                         this.rackSelected();
                     });
-
+            if (this.$store.getters.isChangePlan && this.networks.length == 0 && typeof this.id !== 'undefined' && this.mountType !== 'blade') {
+                    this.sendNetworkPortRequest();
+                }
             /*getdatacenter needs to get emitted from child component*/
             Promise.all([getModels, getUsers, this.getDatacenters, getAsset])
                 .then(() => this.loading = false);
@@ -472,7 +474,12 @@
                 this.selectedModelBool = false;
             },
             async sendNetworkPortRequest() {
-                this.networks = await this.datacenterRepository.networkPorts(this.editedItem.datacenterId);
+                if (this.$store.getters.isChangePlan) {
+                    this.networks = await this.datacenterRepository.networkPorts(this.$store.getters.changePlan.datacenterId);
+                }
+                else {
+                    this.networks = await this.datacenterRepository.networkPorts(this.editedItem.datacenterId);
+                }
                 
                 this.networks = this.networks.filter(network => {
                     return (network.assetHostname != this.editedItem.hostname);
@@ -499,6 +506,7 @@
                         this.customItem[key] = this.selectedModel[key];
                     }
                 }
+
             },
             async rackSelected() {
                 this.rackSelected = true;
