@@ -22,8 +22,9 @@ namespace Web.Api.Core.Dtos
         public int? AssetNumber { get; set; }
         public List<AssetPowerPortDto> PowerPorts { get; set; }
         public List<AssetNetworkPortDto> NetworkPorts { get; set; }
-        public virtual List<AssetDto> Blades { get; set; }
+        public List<AssetDto> Blades { get; set; }
         public Guid? ChassisId { get; set; }
+        public AssetDto Chassis { get; set; }
         public int? ChassisSlot { get; set; }
         public string CustomDisplayColor { get; set; }
         public string CustomCpu { get; set; }
