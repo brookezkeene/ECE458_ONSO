@@ -148,9 +148,9 @@ namespace Web.Api.Core.Services
         private static AssetPowerStateDto GetBladePowerStatus(AssetDto blade)
         {
             var response = $"expect BCMAN.expect {blade.Chassis.Hostname} {blade.ChassisSlot}".Execute();
-            var regex = new Regex($"^OK: chassis '{blade.Chassis.Hostname}' blade {blade.ChassisSlot} is (ON|OFF)$");
+            var regex = new Regex($"OK: chassis '{blade.Chassis.Hostname}' blade {blade.ChassisSlot} is (ON|OFF)", RegexOptions.Multiline);
             var match = regex.Match(response);
-            var status = match.Groups.Count == 1
+            var status = match.Groups.Count >= 2
                 ? match.Groups[1]
                     .Value
                 : "ERROR";
@@ -189,7 +189,7 @@ namespace Web.Api.Core.Services
 
             var response = $"expect BCMAN.expect {blade.Chassis.Hostname} {blade.ChassisSlot} {action}".Execute();
 
-            return null;
+            return GetBladePowerStatus(blade);
         }
     }
 
