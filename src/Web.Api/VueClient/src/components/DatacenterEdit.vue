@@ -53,7 +53,8 @@
                 newItem: {
                     name: '',
                     description: '',
-                    HasNetworkManagedPower: false
+                    HasNetworkManagedPower: false,
+                    isOffline: false,
                 },
                 rules: {
                     nameRules: v => /^(?=\s*\S).*$/.test(v) || 'Name is required',
@@ -85,6 +86,12 @@
                 if (this.newItem.name.toLowerCase() === "rtp1") {
                     this.newItem.HasNetworkManagedPower = true;
                 }
+
+                if (this.type === 'offline-storage') {
+                    this.newItem.isOffline = true;
+                }
+
+                console.log(this.newItem);
 
                 if (typeof this.id === 'undefined') {
                     this.datacenterRepository.create(this.newItem);
