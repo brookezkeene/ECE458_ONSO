@@ -37,10 +37,10 @@ namespace Web.Api.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{id}/datacenter")]
-        public async Task<ActionResult<GetRacksApiDto>> GetOfflineRack(Guid id)
+        [HttpGet("{datacenterName}/datacenter")]
+        public async Task<ActionResult<GetRacksApiDto>> GetOfflineRack(string datacenterName)
         {
-            var rack = await _rackService.GetOfflineRack(id);
+            var rack = await _rackService.GetOfflineRack(datacenterName);
             var response = _mapper.Map<GetRacksApiDto>(rack);
             return Ok(response);
         }
