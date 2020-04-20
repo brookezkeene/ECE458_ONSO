@@ -359,8 +359,7 @@
 
             const getUsers = this.userRepository.list()
                 .then(users => this.users = users);
-            console.log(this.changePlanId())
-            console.log("this is the change plan id")
+
             const getAsset = typeof this.id === 'undefined' || this.id === 'new'
                 ? Promise.resolve()
                 : this.assetRepository.find(this.id, this.changePlanId())
@@ -441,7 +440,7 @@
             },
         },
         methods: {
-            save() { // TODO: integrate customizable asset endpoints here
+            async save() { // TODO: integrate customizable asset endpoints here
                 // Check if in a change plan context
                 if (this.$store.getters.isChangePlan) {
                     this.editedItem.changePlanId = this.$store.getters.changePlan.id;
@@ -451,10 +450,11 @@
                     }
                 }
 
-/*                if (this.type === 'offline') {
-                    this.rack = await this.rackRepository.getOfflineRack()
-                    this.editedItem.Rack = 
-                }*/
+                if (this.type === 'offline') {
+                    console.log(this.editedItem);
+                    var rack = await this.rackRepository.getOfflineRack('off4')
+                    this.editedItem.rackId = rack.id;
+                }
 
                 // Handle custom fields
                 this.editedItem.customCpu = this.customItem.cpu;
@@ -500,7 +500,6 @@
             async modelSelected() {
                 this.selectedModelBool = true;
                 this.selectedModel = await this.modelRepository.find(this.editedItem.modelId);
-                console.log(this.selectedModel);
                 this.makeNetworkPorts(this.selectedModel);
                 this.makePowerPorts(this.selectedModel);
                 this.mountType = this.selectedModel.mountType;
@@ -519,7 +518,6 @@
             },
             
             makeNetworkPorts(model) {
-                console.log(model);
                 
                 this.networkPorts = [];
                 for (var j = 0; j < model.networkPorts.length; j++) {

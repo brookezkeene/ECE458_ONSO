@@ -269,7 +269,7 @@
                                             </v-tooltip>
 
 
-                                            <v-tooltip v-if="type==='active'" top>
+                                            <v-tooltip v-if="assetType==='active'" top>
                                                 <template v-slot:activator="{ on }">
                                                     <v-btn icon v-on="on"
                                                            @click="moveAsset(item.blades[index])">
@@ -283,7 +283,7 @@
                                                 <span>Move To Offline Storage</span>
                                             </v-tooltip>
 
-                                            <v-tooltip v-if="type==='offline'" top>
+                                            <v-tooltip v-if="assetType==='offline'" top>
                                                 <template v-slot:activator="{ on }">
                                                     <v-btn icon v-on="on"
                                                            @click="moveAsset(item.blades[index])">
@@ -355,7 +355,7 @@
                             </v-tooltip>
 
 
-                            <v-tooltip v-if="type==='active'" top>
+                            <v-tooltip v-if="assetType==='active'" top>
                                 <template v-slot:activator="{ on }">
                                     <v-btn icon v-on="on"
                                            @click="moveAsset(item)">
@@ -369,7 +369,7 @@
                                 <span>Move To Offline Storage</span>
                             </v-tooltip>
 
-                            <v-tooltip v-if="type==='offline'" top>
+                            <v-tooltip v-if="assetType==='offline'" top>
                                 <template v-slot:activator="{ on }">
                                     <v-btn icon v-on="on"
                                            @click="moveAsset(item)">
@@ -511,7 +511,7 @@
                     { text: 'Model No.', value: 'modelNumber', },
                     { text: 'Asset No.', value: 'assetNumber'},
                     { text: 'Hostname', value: 'hostname' },
-                    { text: 'Datacenter', value: 'datacenter' },
+                    { text: 'Site', value: 'datacenter' },
                     { text: 'Location', value: 'location' },
                     { text: 'Owner', value: 'owner' },
                     { text: 'Power', value: 'power', sortable: false },
@@ -551,7 +551,7 @@
                     isDesc: '',
                     sortBy: '',
                     changePlanId: '',
-                    ifOffline: false,
+                    isOffline: false,
                 },
                 editing: false,
                 updateSnackbar: {
@@ -559,11 +559,12 @@
                     message: '',
                     color: ''
                 },
+                assetType: this.type,
             }
         },
         beforeRouteUpdate(to, from, next) {
             /*eslint-disable*/
-            this.type = to.params.type;
+            this.assetType = to.params.type;
             this.$route.params.type = to.params.type;
             this.createPage();
 
@@ -590,7 +591,7 @@
                 return newHeaders;
             },
             formTitle() {
-                if (this.type === 'active') {
+                if (this.assetType === 'active') {
                     return 'Assets';
                 } else {
                     return 'Assets in Offline Storage';
@@ -626,7 +627,7 @@
         },
         async created() { 
             /* eslint-disable no-unused-vars, no-console */
-            console.log(this.type)
+            console.log(this.assetType)
             this.createPage();
         },
         methods: {
@@ -667,8 +668,10 @@
                     this.assetSearchQuery.datacenter = searchDatacenter.id;
                 }
                 
-                if (this.type === 'offline') {
+                if (this.assetType === 'offline') {
                     this.assetSearchQuery.isOffline = true;
+                } else {
+                    this.assetSearchQuery.isOffline = false;
                 }
 
                 this.assetSearchQuery.vendor = this.vendorSearch;
@@ -709,7 +712,7 @@
                         id: this.$store.getters.changePlan.datacenterId,
                     }
                 } else {
-                    if (this.type === 'offline') {
+                    if (this.assetType === 'offline') {
                         this.datacenters = await this.datacenterRepository.listOffline();
                     } else {
                         this.datacenters = await this.datacenterRepository.list();
@@ -749,10 +752,10 @@
             editItem(item) {
                 this.editing = true;
                 console.log(item);
-                this.$router.push({ name: 'asset-edit', params: { id: item.id, type: this.type } })
+                this.$router.push({ name: 'asset-edit', params: { id: item.id, type: this.assetType } })
             },
             addItem() {
-                this.$router.push({ name: 'asset-new', params: { type: this.type } })
+                this.$router.push({ name: 'asset-new', params: { type: this.assetType } })
             },
             addLabels() {
                 /*eslint-disable*/
@@ -823,7 +826,7 @@
             },
             showDetails(item) {
                 if (!this.editing) {
-                    this.$router.push({ name: 'asset-details', params: { id: item.id, type: this.type } })
+                    this.$router.push({ name: 'asset-details', params: { id: item.id, type: this.assetType } })
                 }
                 this.editing = false;
             },
@@ -855,7 +858,7 @@
             // TODO: ideally moving an asset offline will take an id (will ensure this works for blades as well)
             moveAsset(item) {
                 this.editing = true;
-                this.$router.push({ name: 'move-asset', params: {type: this.type, item: item}})
+                this.$router.push({ name: 'move-asset', params: {type: this.assetType, item: item}})
             },
         },
     }

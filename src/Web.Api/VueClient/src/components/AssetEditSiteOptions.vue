@@ -104,8 +104,8 @@
             /*eslint-disable*/
             if (this.assetType = "offline") {
                 this.$store.getters.isChangePlan
-                ? Promise.resolve(this.datacenters.push(this.$store.getters.changePlan.datacenterName)) // todo: this will change to getting from the offline endpoint
-                : this.datacenterRepository.list().then( datacenters => {
+                ? Promise.resolve(this.datacenters.push(this.$store.getters.changePlan.datacenterName))
+                : this.datacenterRepository.listOffline().then( datacenters => {
                     this.datacenters = datacenters;
                     this.$emit('getDatacenters', true)
                 })
