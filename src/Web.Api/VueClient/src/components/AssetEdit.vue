@@ -61,8 +61,8 @@
                                                              v-on:selectedDatacenter="sendNetworkPortRequest"
                                                              v-on:getDatacenters="getDatacenters=true" 
                                                              :editedItem="editedItem" 
-                                                             :isBlade="isBlade"
-                                                             :type="type"></SiteOptions>
+                                                             :type="assetType"
+                                                             :isBlade="isBlade"></SiteOptions>
                                             </div>
 
                                             <div>
@@ -146,7 +146,7 @@
                                     <v-card class="overflow-y-auto"
                                             max-height="500px"
                                             flat
-                                            v-if="index===2 && type!='offline'">
+                                            v-if="index===2 && assetType!='offline'">
                                         <div v-if="!isBlade">
                                             <div>
                                                 <p v-if="editedItem.networkPorts.length === 0">This model has no network ports.</p>
@@ -190,7 +190,7 @@
                                     <v-card class="overflow-y-auto"
                                             max-height="500px"
                                             flat
-                                            v-if="index===3&& type!='offline'">
+                                            v-if="index===3&& assetType!='offline'">
                                         <div v-if="!isBlade">
                                             <div>
                                                 <p v-if="(editedItem.powerPorts.length===0) || (id!=undefined)">This model has no power ports.</p>
@@ -347,9 +347,10 @@
             }
         },
 
+
         async created() {
 
-            console.log(this.type);
+            console.log(this.assetType);
 
             const getModels = this.modelRepository.list()
                 .then(models => {
@@ -359,8 +360,7 @@
 
             const getUsers = this.userRepository.list()
                 .then(users => this.users = users);
-            console.log(this.changePlanId())
-            console.log("this is the change plan id")
+
             const getAsset = typeof this.id === 'undefined' || this.id === 'new'
                 ? Promise.resolve()
                 : this.assetRepository.find(this.id, this.changePlanId())
@@ -404,7 +404,7 @@
                 return this.mountType === 'blade' || this.editedItem.mountType === 'blade'
             },
             activeTitles() {
-                if (this.type === 'offline') {
+                if (this.assetType === 'offline') {
                     this.titles.pop();
                     this.titles.pop();
                 }
@@ -439,9 +439,12 @@
 	            // If nothing failed, return true
 	            return false;
             },
+            assetType() {
+                return this.type;
+            }
         },
         methods: {
-            save() { // TODO: integrate customizable asset endpoints here
+            async save() { // TODO: integrate customizable asset endpoints here
                 // Check if in a change plan context
                 if (this.$store.getters.isChangePlan) {
                     this.editedItem.changePlanId = this.$store.getters.changePlan.id;
@@ -449,6 +452,12 @@
                     if (this.id !== 'undefined') {
                         this.editedItem.id = this.id;
                     }
+                }
+
+                if (this.assetType === 'offline') {
+                    console.log(this.editedItem);
+                    var rack = await this.rackRepository.getOfflineRack(this.editedItem.datacenterId);
+                    this.editedItem.rackId = rack.id;
                 }
 
                 // Handle custom fields
@@ -495,7 +504,6 @@
             async modelSelected() {
                 this.selectedModelBool = true;
                 this.selectedModel = await this.modelRepository.find(this.editedItem.modelId);
-                console.log(this.selectedModel);
                 this.makeNetworkPorts(this.selectedModel);
                 this.makePowerPorts(this.selectedModel);
                 this.mountType = this.selectedModel.mountType;
@@ -514,7 +522,6 @@
             },
             
             makeNetworkPorts(model) {
-                console.log(model);
                 
                 this.networkPorts = [];
                 for (var j = 0; j < model.networkPorts.length; j++) {

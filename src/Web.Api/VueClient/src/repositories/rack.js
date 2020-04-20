@@ -80,8 +80,9 @@ export default {
                 return response.data;
             }).catch (error => error);
     },
-    getOfflineRack(datacenterName) {
-        return axios.get(`${resource}/${datacenterName}/datacenter`)
+    getOfflineRack(datacenterId) {
+        var id = datacenterId;
+        return axios.get(`${resource}/${id}/datacenter`)
             .then(response => {
                 return response.data;
             }).catch(error => error);

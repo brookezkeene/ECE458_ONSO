@@ -53,7 +53,8 @@
                 newItem: {
                     name: '',
                     description: '',
-                    HasNetworkManagedPower: false
+                    HasNetworkManagedPower: false,
+                    isOffline: false,
                 },
                 rules: {
                     nameRules: v => /^(?=\s*\S).*$/.test(v) || 'Name is required',
@@ -84,6 +85,10 @@
             save() {
                 if (this.newItem.name.toLowerCase() === "rtp1") {
                     this.newItem.HasNetworkManagedPower = true;
+                }
+
+                if (this.type === 'offline-storage') {
+                    this.newItem.isOffline = true;
                 }
 
                 if (typeof this.id === 'undefined') {

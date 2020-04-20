@@ -51,9 +51,9 @@
                                                   :items="datacenters"
                                                   item-text="description"
                                                   item-value=""
-                                                  label="Datacenter"
+                                                  label="Sites"
                                                   @change="initialize()"
-                                                  placeholder="Select a datacenter or all datacenters"
+                                                  placeholder="Select a site or all sites"
                                                   class="pt-8 pl-4">
                                         </v-select>
                                     </v-col>
@@ -269,7 +269,7 @@
                                             </v-tooltip>
 
 
-                                            <v-tooltip v-if="type==='active'" top>
+                                            <v-tooltip v-if="assetType==='active'" top>
                                                 <template v-slot:activator="{ on }">
                                                     <v-btn icon v-on="on"
                                                            @click="moveAsset(item.blades[index])">
@@ -283,7 +283,7 @@
                                                 <span>Move To Offline Storage</span>
                                             </v-tooltip>
 
-                                            <v-tooltip v-if="type==='offline'" top>
+                                            <v-tooltip v-if="assetType==='offline'" top>
                                                 <template v-slot:activator="{ on }">
                                                     <v-btn icon v-on="on"
                                                            @click="moveAsset(item.blades[index])">
@@ -355,7 +355,7 @@
                             </v-tooltip>
 
 
-                            <v-tooltip v-if="type==='active'" top>
+                            <v-tooltip v-if="assetType==='active'" top>
                                 <template v-slot:activator="{ on }">
                                     <v-btn icon v-on="on"
                                            @click="moveAsset(item)">
@@ -369,7 +369,7 @@
                                 <span>Move To Offline Storage</span>
                             </v-tooltip>
 
-                            <v-tooltip v-if="type==='offline'" top>
+                            <v-tooltip v-if="assetType==='offline'" top>
                                 <template v-slot:activator="{ on }">
                                     <v-btn icon v-on="on"
                                            @click="moveAsset(item)">
@@ -489,7 +489,7 @@
                 changePlanner: false,
                 labelGen: false,
                 selectedAssets: [],
-                selectedDatacenter: 'All Datacenters',
+                selectedDatacenter: 'All Sites',
                 // Filter values.
                 hostnameSearch: '',
                 vendorSearch: '',
@@ -511,7 +511,7 @@
                     { text: 'Model No.', value: 'modelNumber', },
                     { text: 'Asset No.', value: 'assetNumber'},
                     { text: 'Hostname', value: 'hostname' },
-                    { text: 'Datacenter', value: 'datacenter' },
+                    { text: 'Site', value: 'datacenter' },
                     { text: 'Location', value: 'location' },
                     { text: 'Owner', value: 'owner' },
                     { text: 'Power', value: 'power', sortable: false },
@@ -550,7 +550,8 @@
                     pageSize: 0,
                     isDesc: '',
                     sortBy: '',
-                    changePlanId: ''
+                    changePlanId: '',
+                    isOffline: false,
                 },
                 editing: false,
                 updateSnackbar: {
@@ -559,6 +560,15 @@
                     color: ''
                 },
             }
+        },
+        beforeRouteUpdate(to, from, next) {
+            /*eslint-disable*/
+            this.type = to.params.type;
+            this.$route.params.type = to.params.type;
+            this.createPage();
+
+            console.log(from);
+            next()
         },
         computed: {
             permission() {
@@ -570,17 +580,20 @@
             filteredHeaders() {
                 var newHeaders = this.headers;
 
-                if (!this.powerPermission || this.$store.getters.isChangePlan) {
+                if (!this.powerPermission || this.$store.getters.isChangePlan || this.assetType==='offline') {
                     newHeaders = newHeaders.filter(h => h.text !== "Power")
                 }
                 if (!this.permission) {
                     newHeaders = newHeaders.filter(h => h.text !== "Actions")
                 }
+                if (this.assetType === 'offline') {
+                    newHeaders = newHeaders.filter(h => h.text !== "Location")
+                }
 
                 return newHeaders;
             },
             formTitle() {
-                if (this.type === 'active') {
+                if (this.assetType === 'active') {
                     return 'Assets';
                 } else {
                     return 'Assets in Offline Storage';
@@ -597,6 +610,10 @@
                 })
                 return arr;
             },
+            assetType() {
+                return this.type;
+            }
+
         },
         watch: {
             instructionsDialog(val) {
@@ -616,7 +633,7 @@
         },
         async created() { 
             /* eslint-disable no-unused-vars, no-console */
-            console.log(this.type)
+            console.log(this.assetType)
             this.createPage();
         },
         methods: {
@@ -644,6 +661,7 @@
                 this.assetSearchQuery.changePlanId = this.changePlanId();
 
                 var info = await this.assetRepository.tablelist(this.assetSearchQuery);
+   
                 this.assets = info.data;
                 return info;
             },
@@ -655,6 +673,13 @@
                 } else {
                     this.assetSearchQuery.datacenter = searchDatacenter.id;
                 }
+                
+                if (this.assetType === 'offline') {
+                    this.assetSearchQuery.isOffline = true;
+                } else {
+                    this.assetSearchQuery.isOffline = false;
+                }
+
                 this.assetSearchQuery.vendor = this.vendorSearch;
                 this.assetSearchQuery.modelNumber = this.numberSearch;
                 this.assetSearchQuery.hostname = this.hostnameSearch;
@@ -693,9 +718,13 @@
                         id: this.$store.getters.changePlan.datacenterId,
                     }
                 } else {
-                    this.datacenters = await this.datacenterRepository.list();
+                    if (this.assetType === 'offline') {
+                        this.datacenters = await this.datacenterRepository.listOffline();
+                    } else {
+                        this.datacenters = await this.datacenterRepository.list();
+                    }
                     datacenter = {
-                        description: "All Datacenters",
+                        description: "All Sites",
                         name: "All",
                     }
                 }
@@ -729,10 +758,11 @@
             editItem(item) {
                 this.editing = true;
                 console.log(item);
-                this.$router.push({ name: 'asset-edit', params: { id: item.id, type: this.type } })
+                console.log(this.assetType);
+                this.$router.push({ name: 'asset-edit', params: { id: item.id, type: this.assetType } })
             },
             addItem() {
-                this.$router.push({ name: 'asset-new', params: { type: this.type } })
+                this.$router.push({ name: 'asset-new', params: { type: this.assetType } })
             },
             addLabels() {
                 /*eslint-disable*/
@@ -803,7 +833,7 @@
             },
             showDetails(item) {
                 if (!this.editing) {
-                    this.$router.push({ name: 'asset-details', params: { id: item.id, type: this.type } })
+                    this.$router.push({ name: 'asset-details', params: { id: item.id, type: this.assetType } })
                 }
                 this.editing = false;
             },
@@ -835,7 +865,7 @@
             // TODO: ideally moving an asset offline will take an id (will ensure this works for blades as well)
             moveAsset(item) {
                 this.editing = true;
-                this.$router.push({ name: 'move-asset', params: {type: this.type, item: item}})
+                this.$router.push({ name: 'move-asset', params: {type: this.assetType, item: item}})
             },
         },
     }

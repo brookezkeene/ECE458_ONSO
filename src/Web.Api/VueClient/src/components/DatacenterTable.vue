@@ -95,6 +95,15 @@
                 search: '',
             };
         },
+        beforeRouteUpdate(to, from, next) {
+            /*eslint-disable*/
+            this.type = to.params.type;
+            this.$route.params.type = to.params.type;
+            this.initialize();
+
+            console.log(from);
+            next()
+        },
         computed: {
             permission() {
                 return this.$store.getters.isAdmin || (this.$store.getters.hasAssetPermission && this.$store.getters.hasDatacenters.includes("All Datacenters"))
@@ -115,7 +124,11 @@
         },
         methods: {
             async initialize() {
-                this.datacenters = await this.datacenterRepository.list();
+                if (this.type === 'offline-storage') {
+                    this.datacenters = await this.datacenterRepository.listOffline();
+                } else {
+                    this.datacenters = await this.datacenterRepository.list();
+                }
                 this.loading = false;
             },
             createItem() {

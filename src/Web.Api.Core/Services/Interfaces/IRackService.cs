@@ -15,6 +15,6 @@ namespace Web.Api.Core.Services.Interfaces
         Task DeleteRacksAsync(RackRangeQuery query);
         Task<RackDto> GetAvailablePowerPorts(Guid id);
         Task<RackDto> GetRackDtoAsync(Guid id);
-        Task<RackDto> GetOfflineRack(string datacenterName);
+        Task<RackDto> GetOfflineRack(Guid id);
     }
 }
