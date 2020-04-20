@@ -33,6 +33,14 @@ namespace Web.Api.Infrastructure.Repositories
         public async Task<bool> CanDeleteDatacenterAsync(Datacenter datacenter) // not sure if this is proper implementation here
         {
             bool racksExist = await RacksInDatacenterExistAsync(datacenter);
+            if(datacenter.IsOffline)
+            {
+                var rack = await _dbContext.Racks
+                    .Where(rack => rack.DatacenterId == datacenter.Id)
+                    .SingleAsync();
+                if (rack.Assets.Count != 0) return false;
+                return true;
+            }
             return !racksExist;
         }
 
@@ -97,6 +105,13 @@ namespace Web.Api.Infrastructure.Repositories
 
         public async Task<int> DeleteDatacenterAsync(Datacenter datacenter)
         {
+            if (datacenter.IsOffline)
+            {
+                var rack = await _dbContext.Racks
+                    .Where(rack => rack.DatacenterId == datacenter.Id)
+                    .SingleAsync();
+                _dbContext.Racks.Remove(rack);
+            }
             _dbContext.Datacenters.Remove(datacenter);
             return await _dbContext.SaveChangesAsync();
         }
