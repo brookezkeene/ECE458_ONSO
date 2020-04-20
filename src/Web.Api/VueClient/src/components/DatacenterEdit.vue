@@ -91,8 +91,6 @@
                     this.newItem.isOffline = true;
                 }
 
-                console.log(this.newItem);
-
                 if (typeof this.id === 'undefined') {
                     this.datacenterRepository.create(this.newItem);
                 } else {

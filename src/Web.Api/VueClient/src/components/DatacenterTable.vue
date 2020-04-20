@@ -115,7 +115,11 @@
         },
         methods: {
             async initialize() {
-                this.datacenters = await this.datacenterRepository.list();
+                if (this.type === 'offline-storage') {
+                    this.datacenters = await this.datacenterRepository.listOffline();
+                } else {
+                    this.datacenters = await this.datacenterRepository.list();
+                }
                 this.loading = false;
             },
             createItem() {
