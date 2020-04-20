@@ -38,6 +38,7 @@ namespace Web.Api.Controllers
             {
                 foreach (ModelDto model in models)
                 {
+                    if (model.MountType.Equals("normal")) model.MountType = "asset";
                     response.Add(_mapper.Map<ExportModelDto>(model));
                 }
             }
@@ -53,7 +54,25 @@ namespace Web.Api.Controllers
             {
                 foreach (AssetDto asset in assets)
                 {
-                    response.Add(_mapper.Map<ExportAssetDto>(asset));
+                    var export = _mapper.Map<ExportAssetDto>(asset);
+                    
+                    //this is if it's an offline storage 
+                    if (asset.Rack.RackAddress.Equals("AO"))
+                    {
+                        export.rack = "";
+                        export.rack_position = 0;
+                        export.offline_site = export.datacenter;
+                        export.datacenter = "";
+                    }
+                    else export.offline_site = "";
+                    if (asset.ChassisId != null && asset.ChassisId != Guid.Empty)
+                    {
+                        var chassis = await _assetService.GetAssetAsync(asset.ChassisId ?? Guid.Empty);
+                        export.chassis_number = (chassis.AssetNumber ?? 0).ToString();
+                        export.chassis_slot = (asset.ChassisSlot ?? 0).ToString();
+                    }
+                    else { export.chassis_number = ""; export.chassis_slot = ""; }
+                    response.Add(export);
                 }
             }
             return Ok(response);
