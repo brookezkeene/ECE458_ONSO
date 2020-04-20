@@ -3,7 +3,8 @@
         <v-card-title v-if="type==='offline'"> Move Asset {{item.assetNumber}} to a Datacenter</v-card-title>
         <v-card-title v-if="type==='active'"> Move Asset {{item.assetNumber}} to Offline Storage</v-card-title>
 
-        <SiteOptions :editedItem="assets"
+        <SiteOptions v-on:selectedOfflineDatacenter="setDatacenter"
+                     :editedItem="assets"
                      :isBlade="false"
                      :type="type"></SiteOptions>
 
@@ -20,35 +21,41 @@
 
     export default {
         props: ['item', 'type'],
-        inject: ['assetRepository'],
+        inject: ['assetRepository', 'rackRepository'],
         components: {
             SiteOptions
         },
         data() {
             return {
                 assets: [],
+                datacenterId: '',
             }
         },
         async created() {
             this.assets = await this.assetRepository.list();
         },
         methods: {
-            async moveToOffline(item) {
+            async moveToOffline() {
                 // Add backend call to move to offline assets (assetRepository.addOffline and also remove from active assets)
+                console.log(this.datacenterId);
+                var rack = await this.rackRepository.getOfflineRack(this.datacenterId);
+                console.log(rack)
 
-                var rack = await this.rackRepository.getOfflineRack(this.editedItem.datacenterId);
-                item.rackId = rack.id;
+                var updateItem = this.item;
+                updateItem.rackId = rack.id;
 
-                this.assetRepository.update(item);
+                console.log(updateItem);
+
+                this.assetRepository.update(updateItem);
             },
-            async moveToActive(item) {
-
-                this.assetRepository.update(item);
-
-                // Add backend call to move to active assets (assetRepository.add() and also need to remove from offline assets)
+            async moveToActive() {
+                this.assetRepository.update(this.item);
             },
             closeMove() {
                 this.$router.push({ name: 'assets', params: {type: this.type }})
+            },
+            async setDatacenter(id) {
+                this.datacenterId = id;
             }
         }
     }

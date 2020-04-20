@@ -1,7 +1,7 @@
 ﻿
     <template>
         <v-row>
-            <v-col v-if="type ==='active'" cols="12" sm="6" md="4">
+            <v-col v-if="assetType==='active'" cols="12" sm="6" md="4">
                 <v-autocomplete v-model="editedItem.datacenterId"
                                 label="Datacenter"
                                 placeholder="Please select an existing datacenter"
@@ -19,11 +19,12 @@
                                 :rules="[rules.offlineRules]"
                                 :items="filteredDatacenters"
                                 item-text="name"
-                                item-value="id">
+                                item-value="id"
+                                @change="selectedOfflineDatacenter">
                 </v-autocomplete>
             </v-col>
             <!-- Will need to update to show only racks from the selected datacenter -->
-            <v-col v-if="!isBlade && type ==='active'"
+            <v-col v-if="!isBlade && assetType ==='active'"
                    cols="12" sm="6" md="4">
                 <v-autocomplete v-if="!editedItem.datacenterId.length==0 && updateRacks()"
                                 v-model="editedItem.rackId"
@@ -36,7 +37,7 @@
                                 @change="rackSelected">
                 </v-autocomplete>
             </v-col>
-            <v-col v-if="!isBlade && type ==='active'"
+            <v-col v-if="!isBlade && assetType ==='active'"
                    cols="12" sm="6" md="4">
                 <v-text-field v-if="!editedItem.datacenterId.length==0 && updateRacks()"
                               v-model.number="editedItem.rackPosition"
@@ -80,8 +81,9 @@
     export default {
 
         name: 'asset-edit-site',
-        props: ['editedItem', 'isBlade', 'isOffline', 'type'],
+        props: ['editedItem', 'isBlade', 'type'],
         inject: ['datacenterRepository', 'rackRepository'],
+
         data()  {
             return {
                 datacenters: [],
@@ -94,14 +96,15 @@
                     rackuRules: v => (/^(?!\s*$).+/.test(v) && v > 0 && v < 43) || 'Valid rack U is required',
                     rackRules: v => /^(?!\s*$).+/.test(v) || 'Location is required',
                     slotRules: v => (/^(?!\s*$).+/.test(v) && v > 0 && v < 15) || 'Valid slot is required',
-                }
-
+                },
             }
         },
+
         async created() {
+            console.log(this.assetType);
             // Getting datacenters or offline assets
             /*eslint-disable*/
-            if (this.type = "offline") {
+            if (this.assetType === "offline") {
                 this.$store.getters.isChangePlan
                 ? Promise.resolve(this.datacenters.push(this.$store.getters.changePlan.datacenterName))
                 : this.datacenterRepository.listOffline().then( datacenters => {
@@ -126,6 +129,9 @@
 
         },
         computed: {
+            assetType() {
+                return this.type;
+            },
             datacenterPermissions() {
                 return this.$store.getters.hasDatacenters
             },
@@ -173,6 +179,11 @@
                     return true;
                 }
                 return false;
+            },
+
+            selectedOfflineDatacenter() {
+                console.log(this.editedItem.datacenterId);
+                this.$emit('selectedOfflineDatacenter', this.editedItem.datacenterId);
             },
 
             async rackSelected() {

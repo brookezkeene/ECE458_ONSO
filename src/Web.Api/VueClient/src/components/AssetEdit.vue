@@ -61,8 +61,8 @@
                                                              v-on:selectedDatacenter="sendNetworkPortRequest"
                                                              v-on:getDatacenters="getDatacenters=true" 
                                                              :editedItem="editedItem" 
-                                                             :isBlade="isBlade"
-                                                             :type="type"></SiteOptions>
+                                                             :type="assetType"
+                                                             :isBlade="isBlade"></SiteOptions>
                                             </div>
 
                                             <div>
@@ -146,7 +146,7 @@
                                     <v-card class="overflow-y-auto"
                                             max-height="500px"
                                             flat
-                                            v-if="index===2 && type!='offline'">
+                                            v-if="index===2 && assetType!='offline'">
                                         <div v-if="!isBlade">
                                             <div>
                                                 <p v-if="editedItem.networkPorts.length === 0">This model has no network ports.</p>
@@ -190,7 +190,7 @@
                                     <v-card class="overflow-y-auto"
                                             max-height="500px"
                                             flat
-                                            v-if="index===3&& type!='offline'">
+                                            v-if="index===3&& assetType!='offline'">
                                         <div v-if="!isBlade">
                                             <div>
                                                 <p v-if="(editedItem.powerPorts.length===0) || (id!=undefined)">This model has no power ports.</p>
@@ -347,9 +347,10 @@
             }
         },
 
+
         async created() {
 
-            console.log(this.type);
+            console.log(this.assetType);
 
             const getModels = this.modelRepository.list()
                 .then(models => {
@@ -403,7 +404,7 @@
                 return this.mountType === 'blade' || this.editedItem.mountType === 'blade'
             },
             activeTitles() {
-                if (this.type === 'offline') {
+                if (this.assetType === 'offline') {
                     this.titles.pop();
                     this.titles.pop();
                 }
@@ -438,6 +439,9 @@
 	            // If nothing failed, return true
 	            return false;
             },
+            assetType() {
+                return this.type;
+            }
         },
         methods: {
             async save() { // TODO: integrate customizable asset endpoints here
@@ -450,7 +454,7 @@
                     }
                 }
 
-                if (this.type === 'offline') {
+                if (this.assetType === 'offline') {
                     console.log(this.editedItem);
                     var rack = await this.rackRepository.getOfflineRack(this.editedItem.datacenterId);
                     this.editedItem.rackId = rack.id;

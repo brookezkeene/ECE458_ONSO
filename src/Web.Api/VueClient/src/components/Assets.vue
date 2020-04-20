@@ -559,7 +559,6 @@
                     message: '',
                     color: ''
                 },
-                assetType: this.type,
             }
         },
         beforeRouteUpdate(to, from, next) {
@@ -611,6 +610,10 @@
                 })
                 return arr;
             },
+            assetType() {
+                return this.type;
+            }
+
         },
         watch: {
             instructionsDialog(val) {
@@ -755,6 +758,7 @@
             editItem(item) {
                 this.editing = true;
                 console.log(item);
+                console.log(this.assetType);
                 this.$router.push({ name: 'asset-edit', params: { id: item.id, type: this.assetType } })
             },
             addItem() {
