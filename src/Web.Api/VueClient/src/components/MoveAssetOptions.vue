@@ -105,7 +105,6 @@
         },
 
         async created() {
-            console.log(this.assetType);
             // Getting datacenters or offline assets
             /*eslint-disable*/
             if (this.assetType === "active" || this.assetType === '') {
