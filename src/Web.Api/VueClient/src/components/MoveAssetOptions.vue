@@ -79,12 +79,12 @@
 <script>
 
     export default {
-
-        name: 'asset-edit-site',
+        name: 'move-asset-options',
         props: {
             editedItem: Object,
             isBlade: Boolean,
             type: String,
+            offlineToDatacenter: Boolean,
         },
         inject: ['datacenterRepository', 'rackRepository'],
 
@@ -190,16 +190,7 @@
             async rackSelected() {
                 this.selectedRack = true;
 
-                if (!this.isBlade) {
-                    let availablePorts = {};
-                    availablePorts = await this.rackRepository.getPdus(this.editedItem.rackId);
-    /*                for (var i = 0; i < availablePorts.length; i++) {
-                        availablePorts[i].number = +port.number;
-                    }*/
-    /*                availablePorts.sort(a, b => a - b); //sorting port numbers so that they are easier to see in frontend
-    */              this.availablePortsInRack = availablePorts;
-                }
-                else {
+                if (this.isBlade)  {
                     var searchChassis = this.chassis.find(o => o.id === this.editedItem.chassisId);
                     this.editedItem.rackId = searchChassis.rackId;
                 }

@@ -60,8 +60,8 @@
 ;
             },
             async moveToActive() {
+                /*eslint-disable*/
                 var updateItem = this.item;
-                updateItem.rackId = this.rackId;
                 this.assetRepository.update(updateItem);
                 this.$router.push({ name: 'assets', params: {type: this.type }})
             },
