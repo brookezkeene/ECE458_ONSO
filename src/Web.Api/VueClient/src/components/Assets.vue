@@ -643,7 +643,11 @@
 
                 this.assetSearchQuery.changePlanId = this.changePlanId();
 
-                var info = await this.assetRepository.tablelist(this.assetSearchQuery);
+                if (this.type === 'offline') {
+                    var info = await this.assetRepository.tablelist(this.assetSearchQuery);
+                } else {
+                    var info = await this.assetRepository.tablelist(this.assetSearchQuery);
+                }
                 this.assets = info.data;
                 return info;
             },
