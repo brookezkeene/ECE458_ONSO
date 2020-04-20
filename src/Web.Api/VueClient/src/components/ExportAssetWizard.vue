@@ -143,9 +143,13 @@
                     var powerPorts = temp[i].power_port;
                     var powPortLength = powerPorts.length;
                     delete temp[i].power_port;
-                    for (j = 0; j < powPortLength; j++) {
-                        var name = "power_port_name_" + (j + 1).toString();
-                        temp[i][`${name}`] = powerPorts[j].power_port_location + powerPorts[j].power_port_number;
+                    for (j = 0; j < 2; j++) {
+                        var name = "power_port_connection_" + (j + 1).toString();
+                        var pow = ""; 
+                        if (powPortLength >= (j + 1)) {
+                            pow = powerPorts[j].power_port_location + powerPorts[j].power_port_number;
+                        }
+                        temp[i][`${name}`] = pow;
                     }
                 }
 

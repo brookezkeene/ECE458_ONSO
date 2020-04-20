@@ -100,10 +100,13 @@
                     var networkPorts = temp[i].network_port_names;
                     var netPortLength = networkPorts.length;
                     delete temp[i].network_port_names;
-                    for (j = 0; j < netPortLength; j++) {
-                        if (j > 3) break;
+                    for (j = 0; j < 4; j++) {
                         var name = "network_port_name_" + (j + 1).toString();
-                        temp[i][`${name}`] = networkPorts[j].network_port_names;
+                        var net = ""; 
+                        if (netPortLength >= (j + 1)) {
+                            net = networkPorts[j].network_port_names;
+                        }
+                        temp[i][`${name}`] = net;
                     }
                 }
 

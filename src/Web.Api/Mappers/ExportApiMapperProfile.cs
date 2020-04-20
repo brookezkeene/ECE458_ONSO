@@ -30,14 +30,23 @@ namespace Web.Api.Mappers
             CreateMap<AssetDto, ExportAssetDto>()
                 .ForMember(o => o.asset_number, opts => opts.MapFrom(src => src.AssetNumber))
                 .ForMember(o => o.hostname, opts => opts.MapFrom(src => src.Hostname))
+
                 .ForMember(o => o.datacenter, opts => opts.MapFrom(src => src.Rack.Datacenter.Name))
+                .ForMember(x => x.offline_site, opt => opt.Ignore())
                 .ForMember(o => o.rack, opts => opts.MapFrom(src => src.Rack.RackAddress))
                 .ForMember(o => o.rack_position, opts => opts.MapFrom(src => src.RackPosition))
+                .ForMember(x => x.chassis_number, opt => opt.Ignore())
+                .ForMember(o => o.chassis_slot, opts => opts.Ignore())
                 .ForMember(o => o.vendor, opts => opts.MapFrom(src => src.Model.Vendor))
                 .ForMember(o => o.model_number, opts => opts.MapFrom(src => src.Model.ModelNumber))
                 .ForMember(o => o.owner, opts => opts.MapFrom(src => src.Owner.Username))
                 .ForMember(o => o.comment, opts => opts.MapFrom(src => src.Comment))
-                .ForMember(o => o.power_port, opts => opts.MapFrom(src => src.PowerPorts));
+                .ForMember(o => o.power_port, opts => opts.MapFrom(src => src.PowerPorts))
+                .ForMember(o => o.custom_display_color, opts => opts.MapFrom(src => src.CustomDisplayColor))
+                .ForMember(o => o.custom_cpu, opts => opts.MapFrom(src => src.CustomCpu))
+                .ForMember(o => o.custom_memory, opts => opts.MapFrom(src => src.CustomMemory))
+                .ForMember(o => o.custom_storage, opts => opts.MapFrom(src => src.CustomStorage)); 
+               
             CreateMap<ModelNetworkPortDto, ExportModelNetworkPortDto>()
                 .ForMember(o => o.network_port_name, opts => opts.MapFrom(src => src.Name));
             CreateMap<AssetPowerPortDto, ExportAssetPowerPortDto>()
