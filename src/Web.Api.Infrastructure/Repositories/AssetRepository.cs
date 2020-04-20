@@ -33,7 +33,8 @@ namespace Web.Api.Infrastructure.Repositories
             Expression<Func<Asset, bool>> hostnameCondition = x => (x.Hostname.Contains(hostname));
             Expression<Func<Asset, bool>> vendorCondition = x => (x.Model.Vendor.Contains(vendor));
             Expression<Func<Asset, bool>> numberCondition = x => (x.Model.ModelNumber.Contains(number));
-
+            Expression<Func<Asset, bool>> bladeCondition = asset => (!asset.Model.MountType.Contains("blade"));
+            Expression<Func<Asset, bool>> otherBladeCondition = asset => ((asset.ChassisId == null || asset.ChassisId == Guid.Empty));
             var assets = await _dbContext.Assets
                 .Include(asset => asset.Rack)
                 .Where(x => x.Rack.Datacenter.IsOffline == isOffline)
@@ -44,7 +45,8 @@ namespace Web.Api.Infrastructure.Repositories
                 .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
                 .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
                 //If we don't want the blades to appear on the table.... but how to add in the search requirements?
-                .Where(asset => !asset.Model.MountType.Contains("blade"))
+                .WhereIf(!isOffline, bladeCondition)
+                .WhereIf(isOffline, otherBladeCondition)
                 .Where(x => x.RackId != null && x.RackId != Guid.Empty &&
                             String.Compare(x.Rack.Row.ToUpper(), rackStart[0].ToString()) >= 0 &&
                             String.Compare(x.Rack.Row.ToUpper(), rackEnd[0].ToString()) <= 0 &&
