@@ -8,100 +8,79 @@
             </span>
         </v-card-title>
         <div id='print'>
-            <v-container>
-                <v-layout child-flex>
-                    <v-card flat>
-                        <v-spacer></v-spacer>
-                        <v-data-table :headers="headers"
-                                      :items="changePlanItems"
-                                      multi-sort
-                                      show-expand
-                                      :expanded="getRowsToExpand"
-                                      disable-pagination
-                                      hide-default-footer
-                                      class="scaled">
+            <v-container v-for="(item, index) in changePlanItems" :key="index">
+                <div v-if="item.executionType === 'create'">
+                    <h4>Create an Asset with:</h4>
+                    <ul>
+                        <li>
+                            Vendor and Model Number: {{item.newData.Vendor}} {{item.newData.ModelNumber}}
+                        </li>
+                        <li>
+                            Hostname: {{item.newData.Hostname}}
+                        </li>
+                        <li v-if="item.newData.MountType !== 'blade'">
+                            Rack, Rack U: {{item.newData.Rack}}, {{item.newData.RackPosition}}
+                        </li>
+                        <li v-else>
+                            Chassis, Slot: {{item.newData.ChassisId}}, {{item.newData.ChassisSlot}}
+                        </li>
+                        <li>
+                            With MAC Addresses:
+                            <ul>
+                                <li v-for="(port, index) in macAddresses" :key="index">
 
-                            <template v-slot:item.data-table-expand="{ item, isExpanded, expand }">
-                                <v-btn id="noPrint" icon v-if="isExpanded"><v-icon>mdi-chevron-up</v-icon></v-btn>
-                            </template>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            With Network Connections:
+                            <ul>
+                                <li v-for="(port, index) in networkConnections" :key="index">
 
-                            <template v-slot:expanded-item="{ headers, item }">
-                                <td v-if="item.executionType=='update'"></td>
-                                <td v-if="item.executionType=='update'">{{item.previousData.Vendor}}</td>
-                                <td v-if="item.executionType=='update'">{{item.previousData.ModelNumber}}</td>
-                                <td v-if="item.executionType=='update'">{{item.previousData.AssetNumber}}</td>
-                                <td v-if="item.executionType=='update'">{{item.previousData.Hostname}}</td>
-                                <td v-if="item.executionType=='update'">{{item.previousData.Datacenter}}</td>
-                                <td v-if="item.executionType=='update'">{{item.previousData.Rack}}</td>
-                                <td v-if="item.executionType=='update'">{{item.previousData.RackPosition}}</td>
-                                <td v-if="item.executionType=='update'">{{item.previousData.Owner}}</td>
-                                <td v-if="item.executionType=='update'">{{item.previousData.powerConnections}}</td>
-                                <td v-if="item.executionType=='update'">{{item.previousData.macAddresses}}</td>
-                                <td v-if="item.executionType=='update'">{{item.previousData.networkConnections}}</td>
-
-                            </template>
-
-                            <template v-slot:item.executed="{ item }">
-                                <div v-if="item.executedDate">
-                                    <v-icon color="primary">
-                                        mdi-check-circle-outline
-                                    </v-icon>
-                                </div>
-                                <div v-else>
-                                    <v-icon color="red">
-                                        mdi-close-circle-outline
-                                    </v-icon>
-                                </div>
-                            </template>
-
-                            <template v-slot:item.action="{ item }">
-                                <v-row>
-                                    <v-tooltip top>
-                                        <template v-if="item.executionType==='update'" v-slot:activator="{ on }">
-                                            <v-btn icon v-on="on">
-                                                <v-icon medium
-                                                        class="mr-2"
-                                                        color="primary">
-                                                    mdi-pencil
-                                                </v-icon>
-                                            </v-btn>
-                                        </template>
-                                        <span>Asset Edited</span>
-                                    </v-tooltip>
-
-                                    <v-tooltip top>
-                                        <template v-if="item.executionType==='create'" v-slot:activator="{ on }">
-                                            <v-btn icon v-on="on">
-                                                <v-icon medium
-                                                        class="mr-2"
-                                                        color="primary">
-                                                    mdi-plus
-                                                </v-icon>
-                                            </v-btn>
-                                        </template>
-                                        <span>Asset Created</span>
-                                    </v-tooltip>
-
-                                    <v-tooltip top>
-                                        <template v-if="item.executionType==='decommission'" v-slot:activator="{ on }">
-                                            <v-btn icon v-on="on">
-                                                <v-icon medium
-                                                        class="mr-2"
-                                                        color="primary">
-                                                    mdi-archive
-                                                </v-icon>
-                                            </v-btn>
-                                        </template>
-                                        <span>Asset Decommissioned</span>
-                                    </v-tooltip>
-
-                                </v-row>
-
-                            </template>
-                        </v-data-table>
-
-                    </v-card>
-                </v-layout>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            With Power Connections:
+                            <ul>
+                                <li v-for="(port, index) in powerConnections" :key="index">
+                                    
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div v-if="item.executionType === 'update'">
+                    <h4>Update Asset with hostname {{item.previousData.Hostname}} and asset number {{item.previousData.AssetNumber}} the following changes:</h4>
+                    <ul>
+                        <li>
+           
+                        </li>
+                    </ul>
+                </div>
+                <div v-if="item.executionType === 'decommission'">
+                    <h4>Decommission the following Asset:</h4>
+                    <ul>
+                        <li>
+                            Hostname: {{item.previousData.Hostname}}
+                        </li>
+                        <li>
+                            Asset Number: {{item.previousData.AssetNumber}}
+                        </li>
+                        <li v-if="item.previousData.MountType !== 'blade'">
+                            Rack: {{item.previousData.Rack}}
+                        </li>
+                        <li v-else>
+                            Chassis: {{item.previousData.ChassisId}}
+                        </li>
+                        <li v-if="item.previousData.MountType !== 'blade'">
+                            Rack U: {{item.previousData.RackPosition}}
+                        </li>
+                        <li v-else>
+                            Slot: {{item.previousData.ChassisSlot}}
+                        </li>
+                    </ul>
+                </div>
             </v-container>
         </div>
         <v-spacer></v-spacer>
@@ -121,7 +100,7 @@
         }
 
         @page {
-            size: A4 landscape;
+            size: A4 portrait;
             margin: 12.7mm 7.874mm 10.668mm 9.906mm;
         }
 
@@ -132,6 +111,7 @@
 </style>
 
 <script>
+    //import workOrder from '@/workOrder';
 
     export default {
         name: 'changePlan-details',
@@ -140,34 +120,7 @@
         data() {
             return {
                 loading: false,
-                headers: [
-                    { text: 'Model Vendor', value: 'newData.Vendor' },
-                    { text: 'Model No.', value: 'newData.ModelNumber', },
-                    { text: 'Asset No.', value: 'newData.AssetNumber', },
-                    { text: 'Hostname', value: 'newData.Hostname' },
-                    { text: 'Center', value: 'newData.Datacenter' },
-                    { text: 'Rack', value: 'newData.Rack' },
-                    { text: 'Rack U', value: 'newData.RackPosition', },
-                    { text: 'Owner Username', value: 'newData.Owner' },
-                    { text: 'Power Ports', value: 'newData.powerConnections' },
-                    { text: 'Network Port Mac Addresses', value: 'newData.macAddresses' },
-                    { text: 'Network Port Connections', value: 'newData.networkConnections' },
-                    { text: 'Change', value: 'action', sortable: false },
-                ],
                 changePlanItems: [],
-            }
-        },
-        computed: {
-            getRowsToExpand() {
-                var arr = [];
-                var index = 0;
-                this.changePlanItems.forEach(item => {
-                    if (item.executionType === "update") {
-                        arr[index] = item;
-                        index += 1;
-                    }
-                })
-                return arr;
             }
         },
         async created() {
@@ -186,8 +139,8 @@
                     item.previousData = JSON.parse(item.previousData);
                     item.newData = JSON.parse(item.newData);
                     if (item.executionType === 'decommission') {
-                        item.newData.Vendor = item.previousData.Model.Vendor;
-                        item.newData.ModelNumber = item.previousData.Model.Number;
+                        //item.newData.Vendor = item.previousData.Model.Vendor;
+                        //item.newData.ModelNumber = item.previousData.Model.Number;
                         item.newData.Rack = item.previousData.Rack.RackLetter + item.previousData.Rack.RackNumber;
                         item.newData.Owner = item.previousData.OwnerName;
                         item.newData.AssetNumber = item.previousData.AssetNumber;
@@ -243,8 +196,20 @@
                             })
                         }
                     }
+                    if (item.executionType === 'update') {
+                        var changes = [];
+                        for (var field in item.newData) {
+                            console.log(field)
+                        }
+                        item.changes = changes;
+                    }
                 });
                 console.log(this.changePlanItems);
+            },
+            isolateChanges() {
+                for (var item in this.changePlanItems) {
+
+                }
             },
         }
     }
