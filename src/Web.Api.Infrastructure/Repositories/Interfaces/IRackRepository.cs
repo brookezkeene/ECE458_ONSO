@@ -19,6 +19,6 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
         Task<int> CreateRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd, Guid datacenterId);
         Task<int> DeleteRacksInRangeAsync(string rowStart, int colStart, string rowEnd, int colEnd, Guid datacenterId);
         Task<bool> AddressExistsAsync(string rackRow, int rackColumn, Guid datacenterId);
-        Task<Rack> GetOfflineRack(string datacenterName);
+        Task<Rack> GetOfflineRack(Guid id);
     }
 }

@@ -452,7 +452,7 @@
 
                 if (this.type === 'offline') {
                     console.log(this.editedItem);
-                    var rack = await this.rackRepository.getOfflineRack('off4')
+                    var rack = await this.rackRepository.getOfflineRack(this.editedItem.datacenterId);
                     this.editedItem.rackId = rack.id;
                 }
 

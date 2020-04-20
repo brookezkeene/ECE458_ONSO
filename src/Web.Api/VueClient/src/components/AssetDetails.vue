@@ -34,10 +34,11 @@
                 </v-row>
                 <v-row>
                     <v-col cols="12" sm="6" md="4">
-                        <v-label>Data Center</v-label>
+                        <v-label v-if="type==='offline'">Offline Storage Site</v-label>
+                        <v-label v-else>Datacenter</v-label>
                         <v-card-text> {{asset.datacenter}} </v-card-text>
                     </v-col>
-                    <v-col>
+                    <v-col v-if="type!='offline'">
                         <v-label>Location</v-label>
                         <v-card-text v-if="!isBlade"> Rack {{asset.rack}}, Rack Position {{asset.rackPosition}} </v-card-text>
                         <v-card-text v-else> Chassis {{asset.chassisId}}, Slot {{asset.chassisSlot}} </v-card-text>

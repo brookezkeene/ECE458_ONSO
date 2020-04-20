@@ -33,10 +33,18 @@
             this.assets = await this.assetRepository.list();
         },
         methods: {
-            async moveToOffline() {
+            async moveToOffline(item) {
                 // Add backend call to move to offline assets (assetRepository.addOffline and also remove from active assets)
+
+                var rack = await this.rackRepository.getOfflineRack(this.editedItem.datacenterId);
+                item.rackId = rack.id;
+
+                this.assetRepository.update(item);
             },
-            async moveToActive() {
+            async moveToActive(item) {
+
+                this.assetRepository.update(item);
+
                 // Add backend call to move to active assets (assetRepository.add() and also need to remove from offline assets)
             },
             closeMove() {

@@ -1,7 +1,7 @@
 ﻿
     <template>
         <v-row>
-            <v-col v-if="assetType ==='active'" cols="12" sm="6" md="4">
+            <v-col v-if="type ==='active'" cols="12" sm="6" md="4">
                 <v-autocomplete v-model="editedItem.datacenterId"
                                 label="Datacenter"
                                 placeholder="Please select an existing datacenter"
@@ -12,7 +12,6 @@
                                 @change="updateRacks">
                 </v-autocomplete>
             </v-col>
-            <!--todo: replace this data with offline storage data-->
             <v-col v-else cols="12" sm="6" md="4">
                 <v-autocomplete v-model="editedItem.datacenterId"
                                 label="Offline Storage"
@@ -24,7 +23,7 @@
                 </v-autocomplete>
             </v-col>
             <!-- Will need to update to show only racks from the selected datacenter -->
-            <v-col v-if="!isBlade && assetType ==='active'"
+            <v-col v-if="!isBlade && type ==='active'"
                    cols="12" sm="6" md="4">
                 <v-autocomplete v-if="!editedItem.datacenterId.length==0 && updateRacks()"
                                 v-model="editedItem.rackId"
@@ -37,7 +36,7 @@
                                 @change="rackSelected">
                 </v-autocomplete>
             </v-col>
-            <v-col v-if="!isBlade && assetType ==='active'"
+            <v-col v-if="!isBlade && type ==='active'"
                    cols="12" sm="6" md="4">
                 <v-text-field v-if="!editedItem.datacenterId.length==0 && updateRacks()"
                               v-model.number="editedItem.rackPosition"
@@ -102,7 +101,7 @@
         async created() {
             // Getting datacenters or offline assets
             /*eslint-disable*/
-            if (this.assetType = "offline") {
+            if (this.type = "offline") {
                 this.$store.getters.isChangePlan
                 ? Promise.resolve(this.datacenters.push(this.$store.getters.changePlan.datacenterName))
                 : this.datacenterRepository.listOffline().then( datacenters => {
@@ -133,9 +132,11 @@
             filteredDatacenters() {
                 if (!this.datacenterPermissions.includes("All Datacenters")) {
                     var newDatacenters = []
-                    for (var i = 0; i < this.datacenters.length; i++) {
-                        if (this.datacenterPermissions.includes(this.datacenters[i].description)) {
-                            newDatacenters.push(this.datacenters[i]);
+                    if (this.datacenters != undefined) {
+                        for (var i = 0; i < this.datacenters.length; i++) {
+                            if (this.datacenterPermissions.includes(this.datacenters[i].description)) {
+                                newDatacenters.push(this.datacenters[i]);
+                            }
                         }
                     }
                     return newDatacenters;
@@ -144,9 +145,6 @@
                     return this.datacenters;
                 }
             },
-            assetType() {
-                return this.type
-            }
         },
         methods: {
             async updateRacks() {

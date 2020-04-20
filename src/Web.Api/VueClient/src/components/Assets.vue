@@ -581,11 +581,14 @@
             filteredHeaders() {
                 var newHeaders = this.headers;
 
-                if (!this.powerPermission || this.$store.getters.isChangePlan) {
+                if (!this.powerPermission || this.$store.getters.isChangePlan || this.assetType==='offline') {
                     newHeaders = newHeaders.filter(h => h.text !== "Power")
                 }
                 if (!this.permission) {
                     newHeaders = newHeaders.filter(h => h.text !== "Actions")
+                }
+                if (this.assetType === 'offline') {
+                    newHeaders = newHeaders.filter(h => h.text !== "Location")
                 }
 
                 return newHeaders;
