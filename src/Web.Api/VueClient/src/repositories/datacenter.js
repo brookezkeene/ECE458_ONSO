@@ -33,6 +33,12 @@ export default {
                 return response.data.data;
             });
     },
+    listOffline() {
+        return axios.get(`${resource}/offline`, { params: { pageSize: 2000000000 } })
+            .then(response => {
+                return response.data.data;
+            });
+    },
     create(item) {
         return axios.post(`${resource}`, item).then(response => response.data).catch(error => error);
     },
