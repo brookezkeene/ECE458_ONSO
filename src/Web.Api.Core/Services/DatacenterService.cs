@@ -82,6 +82,12 @@ namespace Web.Api.Core.Services
             return _mapper.Map<PagedList<DatacenterDto>>(pagedList);
         }
 
+        public async Task<PagedList<DatacenterDto>> GetOfflineDatacentersAsync(string search, int page = 1, int pageSize = 10)
+        {
+            var pagedList = await _repository.GetOfflineDatacentersAsync(search, page, pageSize);
+            return _mapper.Map<PagedList<DatacenterDto>>(pagedList);
+        }
+
         public async Task<int> UpdateDatacenterAsync(DatacenterDto datacenter)
         {
             var entity = _mapper.Map<Datacenter>(datacenter);

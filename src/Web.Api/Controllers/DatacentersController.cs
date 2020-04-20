@@ -50,6 +50,14 @@ namespace Web.Api.Controllers
             return Ok(response);
         }
 
+        [HttpGet("offline")]
+        public async Task<ActionResult<PagedList<GetDatacenterApiDto>>> GetManyOffline(string searchText, int page = 1, int pageSize = 10)
+        {
+            var datacenters = await _datacenterService.GetOfflineDatacentersAsync(searchText, page, pageSize);
+            var response = _mapper.Map<PagedList<GetDatacenterApiDto>>(datacenters);
+            return Ok(response);
+        }
+
 
         [HttpGet("{id}/networkports")]
         public async Task<ActionResult<List<GetAssetNetworkPortFromDatacenterDto>>> GetNetworks(Guid id)

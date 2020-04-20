@@ -122,6 +122,7 @@ namespace Web.Api.Infrastructure.Repositories
                 //.Include(dc => dc.Racks)
                 //.ThenInclude(rack => rack.Pdus)
                 //.ThenInclude(pdu => pdu.Ports)
+                .Where(x => x.IsOffline == false)
                 .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
                 .PageBy(x => x.Name, page, pageSize)
                 //.AsNoTracking()
@@ -136,7 +137,31 @@ namespace Web.Api.Infrastructure.Repositories
 
             return pagedList;
         }
+        public async Task<PagedList<Datacenter>> GetOfflineDatacentersAsync(string search, int page = 1, int pageSize = 10)
+        {
+            var pagedList = new PagedList<Datacenter>();
+            //if 
+            Expression<Func<Datacenter, bool>> searchCondition = x => (x.Name.Contains(search) || x.Description.Contains(search));
 
+            var datacenters = await _dbContext.Datacenters
+                //.Include(dc => dc.Racks)
+                //.ThenInclude(rack => rack.Pdus)
+                //.ThenInclude(pdu => pdu.Ports)
+                .Where(x => x.IsOffline == true)
+                .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
+                .PageBy(x => x.Name, page, pageSize)
+                //.AsNoTracking()
+                .ToListAsync();
+
+            pagedList.AddRange(datacenters);
+            pagedList.TotalCount = await _dbContext.Datacenters
+                .WhereIf(!string.IsNullOrEmpty(search), searchCondition)
+                .CountAsync();
+            pagedList.PageSize = pageSize;
+            pagedList.CurrentPage = page;
+
+            return pagedList;
+        }
         public async Task<bool> RacksInDatacenterExistAsync(Datacenter datacenter) // TODO: add datacenters to racks
         {
             return await _dbContext.Racks.Where(x => x.Datacenter == datacenter)
