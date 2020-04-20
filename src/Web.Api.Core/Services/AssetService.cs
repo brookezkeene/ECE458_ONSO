@@ -32,7 +32,7 @@ namespace Web.Api.Core.Services
         {
             query.ToUpper();
             var pagedList = await _repository.GetAssetsAsync(query.Datacenter, query.Vendor, query.ModelNumber, query.Hostname, 
-                    query.RackStart, query.RackEnd, query.SortBy, query.IsDesc, query.Page, query.PageSize);
+                    query.RackStart, query.RackEnd, query.SortBy, query.IsDesc, query.Page, query.PageSize, query.IsOffline ?? false);
             pagedList.CurrentPage = query.Page;
             return _mapper.Map<PagedList<AssetDto>>(pagedList);
         }
