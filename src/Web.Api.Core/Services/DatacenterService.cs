@@ -33,7 +33,6 @@ namespace Web.Api.Core.Services
         public async Task<Guid> CreateDatacenterAsync(DatacenterDto datacenter)
         {
             var entity = _mapper.Map<Datacenter>(datacenter);
-            entity.IsOffline = true;
             await _repository.AddDatacenterAsync(entity);
             
             if(entity.IsOffline)
