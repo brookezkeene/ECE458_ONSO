@@ -31,7 +31,7 @@ export default {
         var numBlades = Object.keys(assetBlades).length;
         for (var j = 0; j < numBlades; j++) {
             var slot = assetBlades[j].chassisSlot - 1;
-            var backgroundColor = assetBlades[j].displayColor;
+            var backgroundColor = assetBlades[j].customDisplayColor;
             const textColor = getContrast50(backgroundColor);
                 
             blades[slot].value = true;
