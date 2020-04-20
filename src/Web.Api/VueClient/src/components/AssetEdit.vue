@@ -451,6 +451,11 @@
                     }
                 }
 
+/*                if (this.type === 'offline') {
+                    this.rack = await this.rackRepository.getOfflineRack()
+                    this.editedItem.Rack = 
+                }*/
+
                 // Handle custom fields
                 this.editedItem.customCpu = this.customItem.cpu;
                 this.editedItem.customMemory =  this.customItem.memory;
