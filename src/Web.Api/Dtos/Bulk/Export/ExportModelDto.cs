@@ -4,6 +4,7 @@ namespace Web.Api.Dtos.Bulk.Export
 {
     public class ExportModelDto
     {
+        public string mount_type { get; set; }
         public string vendor { get; set; }
         public string model_number { get; set; }
         public int height { get; set; }
