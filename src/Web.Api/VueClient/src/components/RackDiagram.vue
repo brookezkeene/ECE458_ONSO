@@ -83,12 +83,12 @@
         border-collapse: collapse;
     }
     .v-btn {
-        width: 200px;
+        width: 250px;
         max-height: 15px;
     }
     .v-btn[disabled] {
         opacity:.05;
-        width: 200px;
+        width: 250px;
         max-height: 15px;
     }
 </style>
