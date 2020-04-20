@@ -53,8 +53,8 @@
                 <div v-if="item.executionType === 'update'">
                     <h4>Update Asset with hostname {{item.previousData.Hostname}} and asset number {{item.previousData.AssetNumber}} the following changes:</h4>
                     <ul>
-                        <li>
-           
+                        <li v-for="(change, index) in item.changes" :key="index">
+                            {{change}}
                         </li>
                     </ul>
                 </div>
@@ -134,7 +134,6 @@
                 console.log(this.changePlanItems);
             },
             deserializeData() {
-                console.log(this.changePlanItems);
                 this.changePlanItems.forEach(item => {
                     item.previousData = JSON.parse(item.previousData);
                     item.newData = JSON.parse(item.newData);
@@ -198,18 +197,57 @@
                     }
                     if (item.executionType === 'update') {
                         var changes = [];
-                        for (var field in item.newData) {
-                            console.log(field)
+                        for (var key in item.newData) {
+                            var change = '';
+                            if (item.newData[key] !== item.previousData[key]) {
+                                if (key === 'Vendor' || key === 'ModelNumber' || key === 'Hostname' || key === 'AssetNumber' || key === 'Owner' || key === 'Comment') {
+                                    change = 'update value ' + key + ' to ' + item.newData[key];
+                                }
+                                else if (key === 'Rack' || key === 'RackPosition' || key === 'ChassisId' || key === 'ChassisSlot') {
+                                    if (item.newData.MountType === 'blade') {
+                                        change = 'move asset from chassis ' + item.previousData.ChassisId + ', slot ' + item.previousData.ChassisSlot + ' to chassis ' + item.newData.ChassisId + ', slot ' + item.newData.ChassisSlot;
+                                    }
+                                    else {
+                                        change = 'move asset from rack ' + item.previousData.Rack + ', ' + item.previousData.RackPosition + 'U to rack ' + item.newData.Rack + ', ' + item.newData.RackPosition + ' U';
+                                    }
+                                }
+                                else if (key === 'networkConnections') {
+                                    for (var i = 0; i < item.newData.networkConnections.length; i++) {
+                                        if (!item.previousData.networkConnections.includes(item.newData.networkConnections[i])) {
+                                            change = 'network connection created for port ' + item.newData.networkConnections[i];
+                                            changes.push(change);
+                                            change = '';
+                                        }
+                                    }
+                                }
+                                else if (key === 'powerConnections') {
+                                    for (var j = 0; j < item.newData.powerConnections.length; j++) {
+                                        if (!item.previousData.powerConnections.includes(item.newData.powerConnections[j])) {
+                                            change = 'power connection created for port ' + item.newData.powerConnections[j];
+                                            changes.push(change);
+                                            change = '';
+                                        }
+                                    }
+                                }
+                                else if (key === 'macAddresses') {
+                                    for (var k = 0; k < item.newData.macAddresses.length; k++) {
+                                        console.log(item.newData.macAddresses)
+                                        if (!item.previousData.macAddresses.includes(item.newData.macAddresses[k])) {
+                                            change = 'changed MAC address for port ' + item.newData.macAddresses[k];
+                                            changes.push(change);
+                                            change = '';
+                                        }
+                                    }
+                                }
+
+                                if (!changes.includes(change) && change !== '') {
+                                     changes.push(change);
+                                }
+                            }
                         }
                         item.changes = changes;
                     }
                 });
-                console.log(this.changePlanItems);
-            },
-            isolateChanges() {
-                for (var item in this.changePlanItems) {
-
-                }
             },
         }
     }
