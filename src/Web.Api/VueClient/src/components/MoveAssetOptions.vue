@@ -1,6 +1,7 @@
-﻿<template>
+﻿
+<template>
     <v-row>
-        <v-col v-if="assetType ==='active'" cols="12" sm="6" md="4">
+        <v-col v-if="assetType==='offline'" cols="12" sm="6" md="4">
             <v-autocomplete v-model="editedItem.datacenterId"
                             label="Datacenter"
                             placeholder="Please select an existing datacenter"
@@ -11,7 +12,6 @@
                             @change="updateRacks">
             </v-autocomplete>
         </v-col>
-        <!--todo: replace this data with offline storage data-->
         <v-col v-else cols="12" sm="6" md="4">
             <v-autocomplete v-model="editedItem.datacenterId"
                             label="Offline Storage"
@@ -19,11 +19,12 @@
                             :rules="[rules.offlineRules]"
                             :items="filteredDatacenters"
                             item-text="name"
-                            item-value="id">
+                            item-value="id"
+                            @change="selectedOfflineDatacenter">
             </v-autocomplete>
         </v-col>
         <!-- Will need to update to show only racks from the selected datacenter -->
-        <v-col v-if="!isBlade && assetType ==='active'"
+        <v-col v-if="(!isBlade && assetType ==='offline')"
                cols="12" sm="6" md="4">
             <v-autocomplete v-if="!editedItem.datacenterId.length==0 && updateRacks()"
                             v-model="editedItem.rackId"
@@ -36,7 +37,7 @@
                             @change="rackSelected">
             </v-autocomplete>
         </v-col>
-        <v-col v-if="!isBlade && assetType ==='active'"
+        <v-col v-if="(!isBlade && assetType ==='offline')"
                cols="12" sm="6" md="4">
             <v-text-field v-if="!editedItem.datacenterId.length==0 && updateRacks()"
                           v-model.number="editedItem.rackPosition"
@@ -80,9 +81,14 @@
     export default {
 
         name: 'asset-edit-site',
-        props: ['editedItem', 'isBlade', 'isOffline', 'type'],
+        props: {
+            editedItem: Object,
+            isBlade: Boolean,
+            type: String,
+        },
         inject: ['datacenterRepository', 'rackRepository'],
-        data() {
+
+        data()  {
             return {
                 datacenters: [],
                 datacenterID: '',
@@ -94,27 +100,28 @@
                     rackuRules: v => (/^(?!\s*$).+/.test(v) && v > 0 && v < 43) || 'Valid rack U is required',
                     rackRules: v => /^(?!\s*$).+/.test(v) || 'Location is required',
                     slotRules: v => (/^(?!\s*$).+/.test(v) && v > 0 && v < 15) || 'Valid slot is required',
-                }
-
+                },
             }
         },
+
         async created() {
+            console.log(this.assetType);
             // Getting datacenters or offline assets
             /*eslint-disable*/
-            if (this.assetType === "offline") {
+            if (this.assetType === "active" || this.assetType === '') {
                 this.$store.getters.isChangePlan
-                    ? Promise.resolve(this.datacenters.push(this.$store.getters.changePlan.datacenterName)) // todo: this will change to getting from the offline endpoint
-                    : this.datacenterRepository.listOffline().then(datacenters => {
-                        this.datacenters = datacenters;
-                        this.$emit('getDatacenters', true)
-                    })
+                ? Promise.resolve(this.datacenters.push(this.$store.getters.changePlan.datacenterName))
+                : this.datacenterRepository.listOffline().then( datacenters => {
+                    this.datacenters = datacenters;
+                    this.$emit('getDatacenters', true)
+                })
             } else {
                 this.$store.getters.isChangePlan
-                    ? Promise.resolve(this.datacenters.push(this.$store.getters.changePlan.datacenterName))
-                    : this.datacenterRepository.list().then(datacenters => {
-                        this.datacenters = datacenters;
-                        this.$emit('getDatacenters', true)
-                    })
+                ? Promise.resolve(this.datacenters.push(this.$store.getters.changePlan.datacenterName))
+                : this.datacenterRepository.list().then( datacenters => {
+                    this.datacenters = datacenters;
+                    this.$emit('getDatacenters', true)
+                })
             }
             if (this.$store.getters.isChangePlan) {
                 this.datacenterID = this.$store.getters.changePlan.datacenterId
@@ -126,6 +133,9 @@
 
         },
         computed: {
+            assetType() {
+                return this.type;
+            },
             datacenterPermissions() {
                 return this.$store.getters.hasDatacenters
             },
@@ -137,15 +147,13 @@
                             newDatacenters.push(this.datacenters[i]);
                         }
                     }
+
                     return newDatacenters;
                 }
                 else {
                     return this.datacenters;
                 }
             },
-            assetType() {
-                return this.type
-            }
         },
         methods: {
             async updateRacks() {
@@ -174,6 +182,11 @@
                     return true;
                 }
                 return false;
+            },
+
+            selectedOfflineDatacenter() {
+                console.log(this.editedItem.datacenterId);
+                this.$emit('selectedOfflineDatacenter', this.editedItem.datacenterId);
             },
 
             async rackSelected() {

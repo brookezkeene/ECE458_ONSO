@@ -3,11 +3,11 @@
         <v-card-title v-if="type==='offline'"> Move Asset {{item.assetNumber}} to a Datacenter</v-card-title>
         <v-card-title v-if="type==='active'"> Move Asset {{item.assetNumber}} to Offline Storage</v-card-title>
 
-        <SiteOptions v-on:selectedOfflineDatacenter="setDatacenter"
+        <MoveOptions v-on:selectedOfflineDatacenter="setDatacenter"
                      :editedItem="item"
                      :isBlade="false"
                      :type="type"
-                     :offlineToDatacenter="offlineToDatacenter"></SiteOptions>
+                     :offlineToDatacenter="offlineToDatacenter"></MoveOptions>
 
         <v-card-actions>
             <v-spacer></v-spacer>
@@ -18,13 +18,13 @@
 </template>
 
 <script>
-    import SiteOptions from '@/components/AssetEditSiteOptions.vue';
+    import MoveOptions from '@/components/MoveAssetOptions.vue';
 
     export default {
         props: ['item', 'type'],
         inject: ['assetRepository', 'rackRepository'],
         components: {
-            SiteOptions
+            MoveOptions
         },
         data() {
             return {
@@ -53,10 +53,13 @@
 
                 console.log(updateItem);
 
-                this.assetRepository.update(updateItem);
+                this.assetRepository.update(updateItem)
+                this.$router.push({ name: 'assets', params: {type: this.type }})
+;
             },
             async moveToActive() {
                 this.assetRepository.update(this.item);
+                this.$router.push({ name: 'assets', params: {type: this.type }})
             },
             closeMove() {
                 this.$router.push({ name: 'assets', params: {type: this.type }})

@@ -563,7 +563,7 @@
         },
         beforeRouteUpdate(to, from, next) {
             /*eslint-disable*/
-            this.assetType = to.params.type;
+            this.type = to.params.type;
             this.$route.params.type = to.params.type;
             this.createPage();
 
