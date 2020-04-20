@@ -37,7 +37,7 @@ namespace Web.Api.Controllers
             return Ok(response);
         }
 
-        [HttpGet("offline")]
+        [HttpGet("{datacenterName}/datacenter")]
         public async Task<ActionResult<GetRacksApiDto>> GetOfflineRack(string datacenterName)
         {
             var rack = await _rackService.GetOfflineRack(datacenterName);
