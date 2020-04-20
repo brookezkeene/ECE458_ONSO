@@ -148,7 +148,7 @@ namespace Web.Api.Core.Services
         private static AssetPowerStateDto GetBladePowerStatus(AssetDto blade)
         {
             var response = $"expect BCMAN.expect {blade.Chassis.Hostname} {blade.ChassisSlot}".Execute();
-            Console.WriteLine($"BCMAN response: {response}");
+            //Console.WriteLine($"BCMAN response: {response}");
             var regex = new Regex($"OK: chassis '{blade.Chassis.Hostname}' blade {blade.ChassisSlot} is (ON|OFF)", RegexOptions.Multiline);
             var match = regex.Match(response);
             foreach (var g in match.Groups)

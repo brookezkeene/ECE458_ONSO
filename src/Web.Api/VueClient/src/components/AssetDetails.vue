@@ -290,7 +290,7 @@
                 asset.powerPorts.sort((a, b) => a.number - b.number);
 
                 if (asset.mountType === 'blade') {
-                    this.bladePowerStatus = (await this.assetRepository.getPowerPortState(asset.id)) === 0
+                    this.bladePowerStatus = (await this.assetRepository.getPowerPortState(asset.id)).powerPorts[0].status === 0
                         ? 'on'
                         : 'off';
                 }
