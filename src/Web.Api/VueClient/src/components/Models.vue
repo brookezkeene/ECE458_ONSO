@@ -403,6 +403,13 @@
                 confirm('Are you sure you want to delete this item?') && this.modelRepository.delete(item)
                     .then(async () => {
                         await this.initialize();
+                        this.getDataFromApi()
+                        .then(data => {
+                            this.models = data.data;
+                            this.totalItems = data.totalCount;
+                            this.loading = false;
+                        })
+
                     })
             },
             showDetails(item) {
