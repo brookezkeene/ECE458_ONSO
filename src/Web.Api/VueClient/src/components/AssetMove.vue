@@ -4,9 +4,10 @@
         <v-card-title v-if="type==='active'"> Move Asset {{item.assetNumber}} to Offline Storage</v-card-title>
 
         <SiteOptions v-on:selectedOfflineDatacenter="setDatacenter"
-                     :editedItem="assets"
+                     :editedItem="item"
                      :isBlade="false"
-                     :type="type"></SiteOptions>
+                     :type="type"
+                     :offlineToDatacenter="offlineToDatacenter"></SiteOptions>
 
         <v-card-actions>
             <v-spacer></v-spacer>
@@ -29,10 +30,16 @@
             return {
                 assets: [],
                 datacenterId: '',
+                offlineToDatacenter: false,
             }
         },
         async created() {
             this.assets = await this.assetRepository.list();
+            if (this.type === 'offline') {
+                this.offlineToDatacenter = true;
+            } else {
+                this.offlineToDatacenter = false;
+            }
         },
         methods: {
             async moveToOffline() {

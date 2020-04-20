@@ -1,7 +1,7 @@
 ﻿
     <template>
         <v-row>
-            <v-col v-if="assetType==='active'" cols="12" sm="6" md="4">
+            <v-col v-if="assetType==='active' || offlineToDatacenter" cols="12" sm="6" md="4">
                 <v-autocomplete v-model="editedItem.datacenterId"
                                 label="Datacenter"
                                 placeholder="Please select an existing datacenter"
@@ -24,7 +24,7 @@
                 </v-autocomplete>
             </v-col>
             <!-- Will need to update to show only racks from the selected datacenter -->
-            <v-col v-if="!isBlade && assetType ==='active'"
+            <v-col v-if="(!isBlade && assetType ==='active') || offlineToDatacenter"
                    cols="12" sm="6" md="4">
                 <v-autocomplete v-if="!editedItem.datacenterId.length==0 && updateRacks()"
                                 v-model="editedItem.rackId"
@@ -37,7 +37,7 @@
                                 @change="rackSelected">
                 </v-autocomplete>
             </v-col>
-            <v-col v-if="!isBlade && assetType ==='active'"
+            <v-col v-if="(!isBlade && assetType ==='active') || offlineToDatacenter"
                    cols="12" sm="6" md="4">
                 <v-text-field v-if="!editedItem.datacenterId.length==0 && updateRacks()"
                               v-model.number="editedItem.rackPosition"
@@ -49,7 +49,7 @@
             </v-col>
 
             <!-- Blade Specific Fields (Blade Chassis & Slot) -->
-            <v-col v-if="isBlade"
+            <v-col v-if="isBlade && !offlineToDatacenter"
                    cols="12" sm="6" md="4">
                 <v-autocomplete v-if="!editedItem.datacenterId.length==0 && updateRacks()"
                                 v-model="editedItem.chassisId"
@@ -63,7 +63,7 @@
                 </v-autocomplete>
             </v-col>
             <!-- Will need to update to show only slots in the selected blade chassis -->
-            <v-col v-if="isBlade"
+            <v-col v-if="isBlade && !offlineToDatacenter"
                    cols="12" sm="6" md="4">
                 <v-text-field v-if="!editedItem.datacenterId.length==0 && updateRacks()"
                               v-model="editedItem.chassisSlot"
@@ -81,7 +81,12 @@
     export default {
 
         name: 'asset-edit-site',
-        props: ['editedItem', 'isBlade', 'type'],
+        props: {
+            editedItem: Object,
+            isBlade: Boolean,
+            type: String,
+            offlineToDatacenter: { type: Boolean, default: false }
+        },
         inject: ['datacenterRepository', 'rackRepository'],
 
         data()  {
@@ -138,13 +143,12 @@
             filteredDatacenters() {
                 if (!this.datacenterPermissions.includes("All Datacenters")) {
                     var newDatacenters = []
-                    if (this.datacenters != undefined) {
-                        for (var i = 0; i < this.datacenters.length; i++) {
-                            if (this.datacenterPermissions.includes(this.datacenters[i].description)) {
-                                newDatacenters.push(this.datacenters[i]);
-                            }
+                    for (var i = 0; i < this.datacenters.length; i++) {
+                        if (this.datacenterPermissions.includes(this.datacenters[i].description)) {
+                            newDatacenters.push(this.datacenters[i]);
                         }
                     }
+               
                     return newDatacenters;
                 }
                 else {
