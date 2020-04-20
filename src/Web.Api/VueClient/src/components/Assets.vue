@@ -550,7 +550,8 @@
                     pageSize: 0,
                     isDesc: '',
                     sortBy: '',
-                    changePlanId: ''
+                    changePlanId: '',
+                    ifOffline: false,
                 },
                 editing: false,
                 updateSnackbar: {
@@ -559,6 +560,15 @@
                     color: ''
                 },
             }
+        },
+        beforeRouteUpdate(to, from, next) {
+            /*eslint-disable*/
+            this.type = to.params.type;
+            this.$route.params.type = to.params.type;
+            this.createPage();
+
+            console.log(from);
+            next()
         },
         computed: {
             permission() {
@@ -643,11 +653,8 @@
 
                 this.assetSearchQuery.changePlanId = this.changePlanId();
 
-                if (this.type === 'offline') {
-                    var info = await this.assetRepository.tablelist(this.assetSearchQuery);
-                } else {
-                    var info = await this.assetRepository.tablelist(this.assetSearchQuery);
-                }
+                var info = await this.assetRepository.tablelist(this.assetSearchQuery);
+   
                 this.assets = info.data;
                 return info;
             },
@@ -659,6 +666,11 @@
                 } else {
                     this.assetSearchQuery.datacenter = searchDatacenter.id;
                 }
+                
+                if (this.type === 'offline') {
+                    this.assetSearchQuery.isOffline = true;
+                }
+
                 this.assetSearchQuery.vendor = this.vendorSearch;
                 this.assetSearchQuery.modelNumber = this.numberSearch;
                 this.assetSearchQuery.hostname = this.hostnameSearch;
