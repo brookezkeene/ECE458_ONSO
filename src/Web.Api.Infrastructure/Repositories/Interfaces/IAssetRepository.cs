@@ -10,7 +10,7 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
     public interface IAssetRepository
     {
         Task<PagedList<Asset>> GetAssetsAsync(Guid? datacenterId, string vendor, string number, string hostname, string rackStart, string rackEnd,
-                            string sortBy, string isDesc, int page, int pageSize);
+                            string sortBy, string isDesc, int page, int pageSize, bool isOffline);
         Task<Asset> GetAssetAsync(Guid assetId);
         Task<int> AddAssetAsync(Asset asset);
         Task<int> UpdateAssetAsync(Asset asset);
@@ -26,5 +26,7 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
         Task<PagedList<DecommissionedAsset>> GetDecommissionedAssetsAsync(string datacenterName, string generalSearch, string decommissioner,
                     string dateStart, string dateEnd, string rackStart, string rackEnd, string sortBy, string isDesc, int page, int pageSize);
         Asset GetAsset(int assetNumber);
+        Task<Asset> GetAssetByNumber(int assetNumber);
+        Task<List<Asset>> GetBlades(Guid chassisId);
     }
 }

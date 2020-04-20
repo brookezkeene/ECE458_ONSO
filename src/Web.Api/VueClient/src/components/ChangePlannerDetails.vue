@@ -131,10 +131,12 @@
                     item.previousData = JSON.parse(item.previousData);
                     item.newData = JSON.parse(item.newData);
                     if (item.executionType === 'decommission') {
-                        item.newData.Vendor = item.previousData.Model.Vendor;
-                        item.newData.ModelNumber = item.previousData.Model.Number;
-                        item.newData.Rack = item.previousData.Rack.RackLetter + item.previousData.Rack.RackNumber;
-                        item.newData.Owner = item.previousData.OwnerName;
+                        console.log(item.previousData);
+                        console.log("this is the previous data of the itme");
+                        item.newData.Vendor = item.previousData.Vendor;
+                        item.newData.ModelNumber = item.previousData.ModelNumber;
+                        item.newData.Rack = item.previousData.Rack;
+                        item.newData.Owner = item.previousData.Owner;
                         item.newData.AssetNumber = item.previousData.AssetNumber;
                     } else {
                         var index = 0;

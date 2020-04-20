@@ -162,8 +162,28 @@ namespace Web.Api.Infrastructure.Migrations.ApplicationDb
                         .HasColumnType("int")
                         .HasDefaultValueSql("NEXT VALUE FOR AssetNumberSequence");
 
+                    b.Property<Guid?>("ChassisId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("ChassisSlot")
+                        .HasColumnType("int");
+
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomCpu")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("CustomDisplayColor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CustomMemory")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CustomStorage")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("Hostname")
                         .HasColumnType("nvarchar(63)")
@@ -188,6 +208,8 @@ namespace Web.Api.Infrastructure.Migrations.ApplicationDb
 
                     b.HasIndex("AssetNumber")
                         .IsUnique();
+
+                    b.HasIndex("ChassisId");
 
                     b.HasIndex("ModelId");
 
@@ -302,6 +324,9 @@ namespace Web.Api.Infrastructure.Migrations.ApplicationDb
                     b.Property<bool>("HasNetworkManagedPower")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsOffline")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(6)")
@@ -400,6 +425,10 @@ namespace Web.Api.Infrastructure.Migrations.ApplicationDb
                         .IsRequired()
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<string>("MountType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("PowerPorts")
                         .HasColumnType("int");
@@ -692,6 +721,10 @@ namespace Web.Api.Infrastructure.Migrations.ApplicationDb
 
             modelBuilder.Entity("Web.Api.Infrastructure.Entities.Asset", b =>
                 {
+                    b.HasOne("Web.Api.Infrastructure.Entities.Asset", "Chassis")
+                        .WithMany("Blades")
+                        .HasForeignKey("ChassisId");
+
                     b.HasOne("Web.Api.Infrastructure.Entities.Model", "Model")
                         .WithMany("Assets")
                         .HasForeignKey("ModelId")
@@ -756,7 +789,7 @@ namespace Web.Api.Infrastructure.Migrations.ApplicationDb
             modelBuilder.Entity("Web.Api.Infrastructure.Entities.Rack", b =>
                 {
                     b.HasOne("Web.Api.Infrastructure.Entities.Datacenter", "Datacenter")
-                        .WithMany("Racks")
+                        .WithMany()
                         .HasForeignKey("DatacenterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

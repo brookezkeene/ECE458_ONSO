@@ -32,7 +32,7 @@ namespace Web.Api.Core.Services
         {
             query.ToUpper();
             var pagedList = await _repository.GetAssetsAsync(query.Datacenter, query.Vendor, query.ModelNumber, query.Hostname, 
-                    query.RackStart, query.RackEnd, query.SortBy, query.IsDesc, query.Page, query.PageSize);
+                    query.RackStart, query.RackEnd, query.SortBy, query.IsDesc, query.Page, query.PageSize, query.IsOffline ?? false);
             pagedList.CurrentPage = query.Page;
             return _mapper.Map<PagedList<AssetDto>>(pagedList);
         }
@@ -40,6 +40,12 @@ namespace Web.Api.Core.Services
         public async Task<AssetDto> GetAssetAsync(Guid assetId)
         {
             var asset = await _repository.GetAssetAsync(assetId);
+            return _mapper.Map<AssetDto>(asset);
+        }
+
+        public async Task<AssetDto> GetAssetByNumber(int assetNumber)
+        {
+            var asset = await _repository.GetAssetByNumber(assetNumber);
             return _mapper.Map<AssetDto>(asset);
         }
 
@@ -87,6 +93,12 @@ namespace Web.Api.Core.Services
 
         }
 
+        public async Task<List<AssetDto>> GetBlades(Guid chassisId )
+        {
+            var updated = await _repository.GetBlades(chassisId);
+            return _mapper.Map<List<AssetDto>>(updated);
+        }
+
         public async Task<int> UpdateAssetAsync(AssetDto asset)
         {
             var entity = _mapper.Map<Asset>(asset);
@@ -95,6 +107,7 @@ namespace Web.Api.Core.Services
             //await _auditEventLogger.LogEventAsync(new AssetUpdatedEvent(asset));
             return updated;
         }
+
         public async Task<AssetDto> GetAssetForDecommissioning(Guid assetId)
         {
             var decommissionedAsset = await _repository.GetAssetForDecommissioning(assetId);
@@ -125,6 +138,11 @@ namespace Web.Api.Core.Services
         {
             var asset = await _repository.GetDecommissionedAssetAsync(assetId);
             return _mapper.Map<DecommissionedAssetDto>(asset);
+        }
+
+        private void AddChangePlanItems(Guid changePlanId)
+        {
+
         }
     }
 }

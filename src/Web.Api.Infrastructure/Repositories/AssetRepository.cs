@@ -23,30 +23,38 @@ namespace Web.Api.Infrastructure.Repositories
         public AssetRepository(TDbContext dbContext)
         {
             _dbContext = dbContext;
-        } 
+        }
 
         public async Task<PagedList<Asset>> GetAssetsAsync(Guid? datacenterId, string vendor, string number, string hostname, string rackStart, string rackEnd,
-                    string sortBy, string isDesc, int page, int pageSize)
+                    string sortBy, string isDesc, int page, int pageSize, bool isOffline)
         {
+
             var pagedList = new PagedList<Asset>();
             Expression<Func<Asset, bool>> hostnameCondition = x => (x.Hostname.Contains(hostname));
             Expression<Func<Asset, bool>> vendorCondition = x => (x.Model.Vendor.Contains(vendor));
             Expression<Func<Asset, bool>> numberCondition = x => (x.Model.ModelNumber.Contains(number));
-
+            Expression<Func<Asset, bool>> bladeCondition = asset => (!asset.Model.MountType.Contains("blade"));
+            Expression<Func<Asset, bool>> otherBladeCondition = asset => ((asset.ChassisId == null || asset.ChassisId == Guid.Empty));
             var assets = await _dbContext.Assets
                 .Include(asset => asset.Rack)
-                .ThenInclude(rack => rack.Pdus)
-                .ThenInclude(pdu => pdu.Ports)
+                .Where(x => x.Rack.Datacenter.IsOffline == isOffline)
+                //.ThenInclude(rack => rack.Pdus)
+                //.ThenInclude(pdu => pdu.Ports)
                 .WhereIf(datacenterId != null, x => x.Rack.Datacenter.Id == datacenterId)
                 .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
                 .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
                 .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
-                .Where(x => String.Compare(x.Rack.Row.ToUpper(), rackStart[0].ToString()) >= 0 &&
+                //If we don't want the blades to appear on the table.... but how to add in the search requirements?
+                .WhereIf(!isOffline, bladeCondition)
+                .WhereIf(isOffline, otherBladeCondition)
+                .Where(x => x.RackId != null && x.RackId != Guid.Empty &&
+                            String.Compare(x.Rack.Row.ToUpper(), rackStart[0].ToString()) >= 0 &&
                             String.Compare(x.Rack.Row.ToUpper(), rackEnd[0].ToString()) <= 0 &&
                             x.Rack.Column >= int.Parse(rackStart.Substring(1)) &&
                             x.Rack.Column <= int.Parse(rackEnd.Substring(1)))
                 .PageBy(x => x.Hostname, page, pageSize)
                 .ToListAsync();
+            assets = await UpdateBlades(assets);
             assets = Sort(assets, sortBy, isDesc);
             pagedList.AddRange(assets);
             pagedList.TotalCount = await _dbContext.Assets
@@ -54,7 +62,9 @@ namespace Web.Api.Infrastructure.Repositories
                 .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
                 .WhereIf(!string.IsNullOrEmpty(vendor), vendorCondition)
                 .WhereIf(!string.IsNullOrEmpty(number), numberCondition)
-                .Where(x => String.Compare(x.Rack.Row.ToUpper(), rackStart[0].ToString()) >= 0 &&
+                .Where(asset => !asset.Model.MountType.Contains("blade"))
+                .Where(x => x.RackId != null && x.RackId != Guid.Empty &&
+                            String.Compare(x.Rack.Row.ToUpper(), rackStart[0].ToString()) >= 0 &&
                             String.Compare(x.Rack.Row.ToUpper(), rackEnd[0].ToString()) <= 0 &&
                             x.Rack.Column >= int.Parse(rackStart.Substring(1)) &&
                             x.Rack.Column <= int.Parse(rackEnd.Substring(1)))
@@ -71,7 +81,7 @@ namespace Web.Api.Infrastructure.Repositories
 
             Expression<Func<Asset, bool>> modelCondition = x => x.Model.ModelNumber.ToUpper().Contains(search) || x.Model.Vendor.ToUpper().Contains(search);
             Expression<Func<Asset, bool>> hostnameCondition = x => x.Hostname.ToUpper().Contains(hostname);
-            
+
 
             var assets = await _dbContext.Assets
                 .Where(x => x.Rack.Column >= colStart)
@@ -79,8 +89,8 @@ namespace Web.Api.Infrastructure.Repositories
                 .WhereIf(!string.IsNullOrEmpty(search), modelCondition)
                 .WhereIf(!string.IsNullOrEmpty(hostname), hostnameCondition)
                 .ToListAsync();
-                assets = assets.Where(x => x.Rack.Row[0] >= rowStart[0] && x.Rack.Row[0] <= rowEnd[0]).ToList();
-    
+            assets = assets.Where(x => x.Rack.Row[0] >= rowStart[0] && x.Rack.Row[0] <= rowEnd[0]).ToList();
+            assets = await UpdateBlades(assets);
 
             return assets;
         }
@@ -104,7 +114,7 @@ namespace Web.Api.Infrastructure.Repositories
         {
             return await _dbContext.AssetNetworkPort
                 .Where(x => x.Id == id)
-                .SingleOrDefaultAsync();      
+                .SingleOrDefaultAsync();
         }
         public async Task<PduPort> GetPowerPortAsync(Guid id)
         {
@@ -114,7 +124,7 @@ namespace Web.Api.Infrastructure.Repositories
         }
         public async Task<Asset> GetAssetAsync(Guid assetId)
         {
-            return await _dbContext.Assets
+            var asset = await _dbContext.Assets
                 .Include(asset => asset.Rack)
                 .ThenInclude(rack => rack.Pdus)
                 .ThenInclude(pdu => pdu.Ports)
@@ -122,15 +132,26 @@ namespace Web.Api.Infrastructure.Repositories
                 .ThenInclude(rack => rack.Pdus)
                 .ThenInclude(pdu => pdu.Ports)
                 .SingleOrDefaultAsync(x => x.Id == assetId);
+            if(asset!=null) asset.Blades = await GetBlades(asset.Id);
+            return asset;
         }
 
         public async Task<int> AddAssetAsync(Asset asset)
         {
+            //asset.ChassisId = Guid.Parse("fc7dd01e-54a8-4a2e-1c45-08d7de8bceb8");
             _dbContext.Assets.Add(asset);
             var added = await _dbContext.SaveChangesAsync();
 
             _dbContext.DeletePreviousNetworkConnections();
             _dbContext.DeletePreviousPowerConnections();
+
+           /* if (asset.ChassisId != null && asset.ChassisId != Guid.Empty)
+            {
+                var chassis = await GetAssetAsync(asset.ChassisId);
+                chassis.Blades.Add(asset);
+                _dbContext.Assets.Update(chassis);
+                await _dbContext.SaveChangesAsync();
+            }*/
 
             return added;
         }
@@ -145,14 +166,26 @@ namespace Web.Api.Infrastructure.Repositories
 
             return updated;
         }
-
         public async Task<int> DeleteAssetAsync(Asset asset)
-        { 
+        {
+            if (asset.Blades != null && asset.Blades.Count != 0)
+            {
+                while (asset.Blades != null && asset.Blades.Count != 0)
+                {
+                    var remove = await GetAssetAsync(asset.Blades[0].Id);
+                    _dbContext.Assets.Remove(remove);
+                    asset.Blades.RemoveAt(0);
+                    //await _dbContext.SaveChangesAsync();
+                }
+            }
+
             _dbContext.Assets.Remove(asset);
             var deleted = await _dbContext.SaveChangesAsync();
 
             _dbContext.DeletePreviousNetworkConnections();
             _dbContext.DeletePreviousPowerConnections();
+
+
 
             return deleted;
         }
@@ -167,14 +200,17 @@ namespace Web.Api.Infrastructure.Repositories
 
         public async Task<Asset> GetAssetForDecommissioning(Guid assetId)
         {
-            return await _dbContext.Assets
+            var asset = await _dbContext.Assets
                 .SingleOrDefaultAsync(x => x.Id == assetId);
+            if (asset != null) asset.Blades = await GetBlades(asset.Id);
+            return asset;
         }
         public async Task<PagedList<DecommissionedAsset>> GetDecommissionedAssetsAsync(string datacenterName, string generalSearch, string decommissioner,
                     string dateStart, string dateEnd, string rackStart, string rackEnd, string sortBy, string isDesc, int page, int pageSize)
         {
+            
             var pagedList = new PagedList<DecommissionedAsset>();
-            Expression<Func<DecommissionedAsset, bool>> hostnameCondition = x => (x.Hostname.Contains(generalSearch) || 
+            Expression<Func<DecommissionedAsset, bool>> hostnameCondition = x => (x.Hostname.Contains(generalSearch) ||
                                            x.ModelName.Contains(generalSearch) || x.ModelNumber.Contains(generalSearch));
             Expression<Func<DecommissionedAsset, bool>> decommissionerCondition = x => (x.Decommissioner.Contains(decommissioner));
             Expression<Func<DecommissionedAsset, bool>> startDateCondition = x => (x.DateDecommissioned >= DateTime.Parse(dateStart));
@@ -187,7 +223,7 @@ namespace Web.Api.Infrastructure.Repositories
                 .WhereIf(!string.IsNullOrEmpty(dateStart), startDateCondition)
                 .WhereIf(!string.IsNullOrEmpty(dateEnd), endDateCondition)
                 .WhereIf(!string.IsNullOrEmpty(datacenterName), datacenterCondition)
-                
+                //.Where(x => !x.Data.Contains("\"MountType\":\"blade"))
                 .PageBy(x => x.Id, page, pageSize)
                 .ToListAsync();
             assets = assets.Where(x => String.Compare(x.Rack[0].ToString().ToUpper(), rackStart[0].ToString()) >= 0 &&
@@ -197,14 +233,7 @@ namespace Web.Api.Infrastructure.Repositories
                 .ToList();
             assets = SortDecommissionedAsset(assets, sortBy, isDesc);
             pagedList.AddRange(assets);
-            var allAssets = await _dbContext.DecommissionedAssets
-                .WhereIf(!string.IsNullOrEmpty(datacenterName), datacenterCondition)
-                .WhereIf(!string.IsNullOrEmpty(generalSearch), hostnameCondition)
-                .WhereIf(!string.IsNullOrEmpty(decommissioner), decommissionerCondition)
-                .WhereIf(!string.IsNullOrEmpty(dateStart), startDateCondition)
-                .WhereIf(!string.IsNullOrEmpty(dateEnd), endDateCondition)
-                .WhereIf(!string.IsNullOrEmpty(datacenterName), datacenterCondition)
-                .ToListAsync();
+
             pagedList.TotalCount = await _dbContext.DecommissionedAssets
                 .WhereIf(!string.IsNullOrEmpty(datacenterName), datacenterCondition)
                 .WhereIf(!string.IsNullOrEmpty(generalSearch), hostnameCondition)
@@ -224,6 +253,24 @@ namespace Web.Api.Infrastructure.Repositories
             return _dbContext.Assets.SingleOrDefault(asset => asset.AssetNumber == assetNumber);
         }
 
+        public async Task<List<Asset>> GetBlades(Guid chassisId)
+        {
+            return await _dbContext.Assets
+                .Where(x => x.ChassisId == chassisId)
+                .ToListAsync();
+        }
+
+        public async Task<Asset> GetAssetByNumber(int assetNumber)
+        {
+            return await _dbContext.Assets.Include(asset => asset.Rack)
+                .ThenInclude(rack => rack.Pdus)
+                .ThenInclude(pdu => pdu.Ports)
+                .Include(asset => asset.Rack)
+                .ThenInclude(rack => rack.Pdus)
+                .ThenInclude(pdu => pdu.Ports)
+                .SingleOrDefaultAsync(x => x.AssetNumber == assetNumber);
+        }
+
         public async Task<int> AddDecomissionedAssetAsync(DecommissionedAsset asset)
         {
             _dbContext.DecommissionedAssets.Add(asset);
@@ -235,8 +282,23 @@ namespace Web.Api.Infrastructure.Repositories
                 .SingleOrDefaultAsync(x => x.Id == assetId);
         }
 
+        private async Task<List<Asset>> UpdateBlades(List<Asset> assets)
+        {
+            if (assets != null)
+            {
+                foreach (Asset asset in assets)
+                {
+                    if (asset.Model.MountType.Contains("chassis"))
+                    {
+                        asset.Blades = await GetBlades(asset.Id);
+                    }
+                }
+            }
+            return assets;
+        }
         private static List<Asset> Sort(List<Asset> assets, string sortBy, string isDesc)
         {
+            
             if (string.IsNullOrEmpty(sortBy))
             {
                 return assets;

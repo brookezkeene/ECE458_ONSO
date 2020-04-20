@@ -48,12 +48,12 @@
                             Download a CSV file matching the specifications outlined in the following
                             <a target="_blank"
                                rel="noopener noreferrer"
-                               href="https://drive.google.com/file/d/1UB8J9E_cKlezRtgtk3g10ikO9Iqz5lGN/view?usp=sharing">
+                               href="https://d1b10bmlvqabco.cloudfront.net/attach/k4u27qnccr45oo/is4xdnkb8px4ee/k90vqcj1j0tn/ECE458__Bulk_Format_Proposal6.pdf">
                                 document
                             </a>.
                             <div class="pt-10">
                                 <downloadCsv :data="exportRaw"
-                                             name="models.csv"
+                                             name="assets.csv"
                                              type="csv">
                                     <v-spacer></v-spacer>
                                     <v-btn>
@@ -143,9 +143,13 @@
                     var powerPorts = temp[i].power_port;
                     var powPortLength = powerPorts.length;
                     delete temp[i].power_port;
-                    for (j = 0; j < powPortLength; j++) {
-                        var name = "power_port_name_" + (j + 1).toString();
-                        temp[i][`${name}`] = powerPorts[j].power_port_location + powerPorts[j].power_port_number;
+                    for (j = 0; j < 2; j++) {
+                        var name = "power_port_connection_" + (j + 1).toString();
+                        var pow = ""; 
+                        if (powPortLength >= (j + 1)) {
+                            pow = powerPorts[j].power_port_location + powerPorts[j].power_port_number;
+                        }
+                        temp[i][`${name}`] = pow;
                     }
                 }
 
@@ -160,7 +164,7 @@
             },
             close() {
                 this.step = 1;
-                this.$emit('close-model-export');
+                this.$emit('close-asset-export');
             },
             handleError() {
                 this.assetErrorDialog = true;

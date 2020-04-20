@@ -22,5 +22,7 @@ namespace Web.Api.Infrastructure.Repositories.Interfaces
 
         Datacenter GetDatacenter(string name);
         Task<List<AssetNetworkPort>> GetOpenNetworkPortsFromDatacenterAsync(Guid datacenterId);
+        Task<List<Asset>> GetChassisFromDatacenterAsync(Guid datacenterId);
+        Task<PagedList<Datacenter>> GetOfflineDatacentersAsync(string search, int page = 1, int pageSize = 10);
     }
 }

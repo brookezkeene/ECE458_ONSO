@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Web.Api.Core.Dtos;
 using Web.Api.Core.Dtos.Power;
 using Web.Api.Core.Services.Interfaces;
+using Web.Api.Infrastructure.Entities;
 
 namespace Web.Api.Core.Services
 {
@@ -23,8 +27,7 @@ namespace Web.Api.Core.Services
             _regex = new Regex(Pattern, RegexOptions.Compiled | RegexOptions.Multiline);
             _assetService = assetService;
 
-            // TODO: REMEMBER TO CHANGE THIS BACK TO OUR GROUP PORT 8003
-            client.BaseAddress = new Uri("http://hyposoft-mgt.colab.duke.edu:8000");
+            client.BaseAddress = new Uri("http://hyposoft-mgt.colab.duke.edu:8003");
 
             Client = client;
 
@@ -33,6 +36,8 @@ namespace Web.Api.Core.Services
         public async Task<AssetPowerStateDto> GetPowerStateAsync(Guid assetId)
         {
             var asset = await _assetService.GetAssetAsync(assetId);
+            if (asset.Model.MountType == "blade") return GetBladePowerStatus(asset); 
+            
             var pduPorts = asset.PowerPorts
                 .Where(o => o.PduPort != null)
                 .GroupBy(o => o.PduPort.Pdu.ToString())
@@ -66,9 +71,10 @@ namespace Web.Api.Core.Services
 
         public async Task<AssetPowerStateDto> UpdatePowerStateAsync(Guid assetId, PowerAction state)
         {
+            var asset = await _assetService.GetAssetAsync(assetId);
+            if (asset.Model.MountType == "blade") return await SetBladePowerStatus(asset, state);
 
-            var pduPorts = (await _assetService.GetAssetAsync(assetId))
-                .PowerPorts
+            var pduPorts = asset.PowerPorts
                 .Where(o => o.PduPort != null)
                 .GroupBy(o => o.PduPort.Pdu.ToString())
                 .ToDictionary(d => d.Key,
@@ -127,6 +133,7 @@ namespace Web.Api.Core.Services
                 Id = assetId,
                 PowerPorts = powerStates
             };
+            //GetChassisPower();
             return ret;
         }
 
@@ -136,6 +143,79 @@ namespace Web.Api.Core.Services
             return matches.ToDictionary(match => int.Parse(match.Groups[1]
                 .Value), match => match.Groups[2]
                 .Value);
+        }
+
+        private static AssetPowerStateDto GetBladePowerStatus(AssetDto blade)
+        {
+            var response = $"expect BCMAN.expect {blade.Chassis.Hostname} {blade.ChassisSlot}".Execute();
+            var regex = new Regex($"^OK: chassis '{blade.Chassis.Hostname}' blade {blade.ChassisSlot} is (ON|OFF)$");
+            var match = regex.Match(response);
+            var status = match.Groups.Count == 1
+                ? match.Groups[1]
+                    .Value
+                : "ERROR";
+
+            return new AssetPowerStateDto()
+            {
+                Id = blade.Id,
+                PowerPorts = new List<AssetPowerPortStateDto>()
+                {
+                    new AssetPowerPortStateDto()
+                    {
+                        Port = "_",
+                        Status = MapBcmanStatusToPowerState(status)
+                    }
+                }
+            };
+        }
+
+        private static PowerState MapBcmanStatusToPowerState(string state)
+        {
+            return state switch
+            {
+                "ON" => PowerState.On,
+                _ => PowerState.Off
+            };
+        }
+
+        private static async Task<AssetPowerStateDto> SetBladePowerStatus(AssetDto blade, PowerAction action)
+        {
+            if (action == PowerAction.Cycle)
+            {
+                await SetBladePowerStatus(blade, PowerAction.Off);
+                await Task.Delay(2000);
+                action = PowerAction.On;
+            }
+
+            var response = $"expect BCMAN.expect {blade.Chassis.Hostname} {blade.ChassisSlot} {action}".Execute();
+
+            return null;
+        }
+    }
+
+    public static class BashExtensions
+    {
+        public static string Execute(this string cmd)
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return string.Empty; // fuck you microsoft. i liked this language before this project. not anymore.
+
+            var escapedArgs = cmd.Replace("\"", "\\\"");
+
+            var process = new Process()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "/bin/bash",
+                    Arguments = $"-c \"{escapedArgs}\"",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                }
+            };
+            process.Start();
+            var result = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+            return result;
         }
     }
 }

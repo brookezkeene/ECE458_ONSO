@@ -18,5 +18,6 @@ namespace Web.Api.Dtos.Racks
         public int RackPosition { get; set; }
         public IEnumerable<int> SlotsOccupied { get; set; }
         public int AssetNumber { get; set; }
+        public string CustomDisplayColor { get; set; }
     }
 }

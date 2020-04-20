@@ -31,7 +31,7 @@
                             Download a CSV file matching the specifications outlined in the following
                             <a target="_blank"
                                rel="noopener noreferrer"
-                               href="https://drive.google.com/file/d/1UB8J9E_cKlezRtgtk3g10ikO9Iqz5lGN/view?usp=sharing">
+                               href="https://d1b10bmlvqabco.cloudfront.net/attach/k4u27qnccr45oo/is4xdnkb8px4ee/k90vqcj1j0tn/ECE458__Bulk_Format_Proposal6.pdf">
                                 document
                             </a>.
                             <div class="pt-10">
@@ -97,12 +97,16 @@
                 var temp = await this.exportRepository.exportModel(this.query);
                 var i; var j;
                 for (i = 0; i < temp.length; i++) {
-                    var networkPorts = temp[i].network_ports;
+                    var networkPorts = temp[i].network_port_names;
                     var netPortLength = networkPorts.length;
-                    delete temp[i].network_ports;
-                    for (j = 0; j < netPortLength; j++) {
+                    delete temp[i].network_port_names;
+                    for (j = 0; j < 4; j++) {
                         var name = "network_port_name_" + (j + 1).toString();
-                        temp[i][`${name}`] = networkPorts[j].network_port_name;
+                        var net = ""; 
+                        if (netPortLength >= (j + 1)) {
+                            net = networkPorts[j].network_port_names;
+                        }
+                        temp[i][`${name}`] = net;
                     }
                 }
 

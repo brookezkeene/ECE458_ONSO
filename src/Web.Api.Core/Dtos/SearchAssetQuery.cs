@@ -22,6 +22,7 @@ namespace Web.Api.Core.Dtos
         public int PageSize { get; set; }
         public string IsDesc { get; set; }
         public string SortBy { get; set; }
+        public bool? IsOffline { get; set; }
     }
     public static class SearchAssetQueryExtensions
     {
@@ -108,6 +109,10 @@ namespace Web.Api.Core.Dtos
             if (query.PageSize == 0)
             {
                 query.PageSize = 10;
+            }
+            if(query.IsOffline == null)
+            {
+                query.IsOffline = false;
             }
 
         }

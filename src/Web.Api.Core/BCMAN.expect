@@ -1,0 +1,16 @@
+﻿# !/usr/bin/expect -d
+# Usage BCMAN.expect <chassis> <blade> <power>
+
+set timeout 1
+set chassis [lindex $argv 0]
+set blade [lindex $argv 1]
+set status [lindex $argv 2]
+
+spawn ssh -o StrictHostKeyChecking=no admin3@hyposoft-mgt.colab.duke.edu -p 2222
+
+expect "assword:" { send "TSfS#458\n" }
+expect "bcman*>" { send "chassis $chassis\n" }
+expect "bcman*:*$chassis*>" { send "blade $blade\n" }
+expect "bcman*:*$chassis*:*$blade*>" { send "power $status \n" }
+expect "OK: " {  send "exit\n" }
+puts ""

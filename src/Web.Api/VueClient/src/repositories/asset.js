@@ -5,18 +5,25 @@ const resource = '/assets';
 
 export default {
     find(id, changePlanId) {
-        const endpoint = typeof changePlanId === 'undefined' || !changePlanId
-            ? `${resource}/${id}`
-            : `${resource}/${id}/changePlan`;
+        var query = {
+            assetId: id,
+            changePlanId: changePlanId
+        };
 
-        return axios.get(endpoint)
+        return axios.get(`${resource}/asset`, { params: query })
+            .then(response => {
+                return response.data;
+            }).catch(error => error);
+    },
+    findByNumber(assetNumber) {
+        return axios.get(`${resource}/asset/${assetNumber}`)
             .then(response => response.data);
     },
     getPowerPortState(powerportid) {
         return axios.get(`${resource}/${powerportid}/power`)
             .then(response => {
                 return response.data;
-            })
+            });
     },
     postPowerState(id, state) {
         return axios.put(`${resource}/${id}/power`, state)
@@ -24,7 +31,8 @@ export default {
                 console.log(response);
                 return response.data;
             }).catch(error => {
-                console.log(error);
+                console.log('Error', error);
+                throw new DOMException;
             });
     },
     list(datacenter) {
@@ -54,8 +62,8 @@ export default {
         console.log(item);
         return axios.put(`${resource}`, item).then(response => response.data).catch(error => error);
     },
-    delete(item) {
-        return axios.delete(`${resource}/${item.id}`).then(response => { return response.data; }).catch(error => error);
+    delete(id) {
+        return axios.delete(`${resource}/${id}`).then(response => { return response.data; }).catch(error => error);
     },
     decommission(query) {
         /*eslint-disable*/
@@ -65,16 +73,7 @@ export default {
                 return response.data;
             }).catch(error => error);
     },
-    getDecommissionedAsset(id, isChangePlan) {
-        const endpoint = !isChangePlan
-            ? `${resource}/${id}/decommission`
-            : `${resource}/${id}/decommission/changePlan`;
 
-        return axios.get(endpoint)
-            .then(response => {
-                return response.data;
-            });
-    },
     getDecommissionedAssets() {
         var query = {
             pageSize: 2000000000,

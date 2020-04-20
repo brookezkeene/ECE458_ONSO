@@ -21,4 +21,10 @@
     <Folder Include="Mappers\Import\NetworkConnections\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="BCMAN.expect">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

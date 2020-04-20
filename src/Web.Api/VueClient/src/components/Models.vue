@@ -10,6 +10,7 @@
                                   :options.sync="options"
                                   :server-items-length="totalItems"
                                   class="pa-10"
+                                  :loading="loading"
                                   @click:row="showDetails">
                         <template v-slot:top v-slot:item.action="{ item }">
 
@@ -144,6 +145,37 @@
 
                         </template>
 
+                        <!-- Mount Type -->
+                        <template v-slot:item.type="{ item }">
+                            {{typeMap[item.mountType]}}
+                        </template>
+
+                        <!-- Blade Omitted Fields -->
+                        <template v-slot:item.mHeight="{ item }">
+                            <div v-if="item.mountType != 'blade'">
+                                {{item.height}}
+                            </div>
+                            <div v-else>
+                                N/A
+                            </div>
+                        </template>
+                        <template v-slot:item.netPorts="{ item }">
+                            <div v-if="item.mountType != 'blade'">
+                                {{item.ethernetPorts}}
+                            </div>
+                            <div v-else>
+                                N/A
+                            </div>
+                        </template>
+                        <template v-slot:item.powPorts="{ item }">
+                            <div v-if="item.mountType != 'blade'">
+                                {{item.powerPorts}}
+                            </div>
+                            <div v-else>
+                                N/A
+                            </div>
+                        </template>
+
                         <template v-slot:item.coloricon="{ item }">
                             <v-icon class="mr-2"
                                     :color=item.displayColor>
@@ -162,7 +194,7 @@
                             </v-row>
                         </template>
                         <template v-slot:no-data>
-                            <v-btn color="primary" @click="initialize">Reset</v-btn>
+                            <v-btn color="primary" @click="initialize">Refresh</v-btn>
                         </template>
                     </v-data-table>
                 </v-card>
@@ -222,11 +254,12 @@
                         align: 'left',
                         value: 'vendor'
                     },
-                    { text: 'Model Number', value: 'modelNumber', },
-                    { text: 'Height', value: 'height' },
+                    { text: 'Model Number', value: 'modelNumber' },
+                    { text: 'Mount Type', value: 'type' }, 
+                    { text: 'Height', value: 'mHeight' },
                     { text: 'Display Color', value: 'coloricon', sortable: false },
-                    { text: 'Network Ports', value: 'ethernetPorts' }, // TODO: change value to networkPorts!
-                    { text: 'Power Ports', value: 'powerPorts' },
+                    { text: 'Network Ports', value: 'netPorts' }, 
+                    { text: 'Power Ports', value: 'powPorts' },
                     { text: 'CPU', value: 'cpu' },
                     { text: 'Memory', value: 'memory' },
                     { text: 'Storage', value: 'storage' },
@@ -234,6 +267,13 @@
 
                 ],
                 models: [],
+
+                typeMap: {
+                    "normal" : "Normal", 
+                    "chassis" : "Blade Chassis", 
+                    "blade" : "Blade"
+                },
+
                 editedIndex: -1,
                 editedItem: {
                     vendor: '',
@@ -333,6 +373,7 @@
 
                 var info = await this.modelRepository.tablelist(this.searchQuery);
                 this.models = info.data;
+                this.loading = false;
                 return info;
             },
             async initialize() {
@@ -362,6 +403,13 @@
                 confirm('Are you sure you want to delete this item?') && this.modelRepository.delete(item)
                     .then(async () => {
                         await this.initialize();
+                        this.getDataFromApi()
+                        .then(data => {
+                            this.models = data.data;
+                            this.totalItems = data.totalCount;
+                            this.loading = false;
+                        })
+
                     })
             },
             showDetails(item) {

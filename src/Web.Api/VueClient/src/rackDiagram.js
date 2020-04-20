@@ -12,6 +12,11 @@ const validAddress = (address) => {
     return /^[a-zA-Z]\d+$/.test(address);
 }
 
+const getContrast50 = (hexcolor) => {
+    hexcolor = hexcolor.replace('#', '');
+    return (parseInt(hexcolor, 16) > 0xffffff / 2) ? 'black' : 'white';
+}
+
 export default {
 
     async createRacksByRows(start, end) {
@@ -58,12 +63,15 @@ export default {
         //filling the rack diagram with asset data  
         var assets_length = Object.keys(assets).length;
         for (var j = 0; j < assets_length; j++) {
-            var rackU = assets[j].rackPosition - 1;
-            var color = assets[j].displayColor;
-            rows[rackU].value = { text: assets[j].vendor + ' ' + assets[j].modelNumber + ' ' + assets[j].hostname, id: assets[j].id };
+            if (assets[j].slotsOccupied.length > 0) {
+                var rackU = assets[j].rackPosition - 1;
+                var color = assets[j].customDisplayColor;
+                var textColor = getContrast50(color);
+                rows[rackU].value = { text: assets[j].vendor + ' ' + assets[j].modelNumber + ' ' + assets[j].hostname, id: assets[j].id };
 
-            for (const k of assets[j].slotsOccupied) {
-                rows[k - 1].style = { color: 'black', backgroundColor: color };
+                for (const k of assets[j].slotsOccupied) {
+                    rows[k - 1].style = { color: textColor, backgroundColor: color };
+                }
             }
         }
         return rows.reverse();

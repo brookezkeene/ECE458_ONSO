@@ -4,6 +4,9 @@ namespace Web.Api.Core.Dtos
 {
     public class ImportModelDto
     {
+        [Name("mount_type")]
+        public string MountType { get; set; }
+
         [Name("vendor")]
         public string Vendor { get; set; }
 
