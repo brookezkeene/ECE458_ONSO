@@ -5,3 +5,10 @@ Senior design project completed through the course Engineering Software for Main
 For our system, we chose to create a web-based solution using ASP.NET for our backend infrastructure and Vue.js as our frontend framework. This repository contains the code from our final submission for the project. 
 
 To view our marketing video, click [here](https://youtu.be/0Ymy7ShU7zc)
+
+Included below are images of our applications:
+![Models Page](ModelPage.png)
+
+![Create New Model Form](ModelForm.png)
+
+![Asset Details Page](AssetDetails.png)
